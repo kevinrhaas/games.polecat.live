@@ -82,7 +82,7 @@
   RetroSaga.create({
     id: 'robinhood',
     title: 'Robin Hood',
-    subtitle: 'THE SHERWOOD SAGA',
+    subtitle: 'FIVE TALES OF SHERWOOD',
     currency: 'GLORY',
     accent: '#5dff8f',
     credit: 'AN 8-BIT TRIBUTE · ENGLISH FOLKLORE',
@@ -92,6 +92,21 @@
     menuLabel: 'LEGENDS OF SHERWOOD',
     menuHint: 'CHOOSE YOUR CHAPTER',
     menuDone: 'SHERWOOD IS FREE',
+    menu: {
+      colors: { title: '#e8c84a', label: '#8aa86a', cur: '#cfe89a' },
+      card(api, info) {
+        const g = api.gfx, { ch, i, x, y, w, h, sel, done, best } = info;
+        g.rect(x, y, w, h, sel ? '#5a3f22' : '#3e2c18');           // wooden plank sign
+        g.rectO(x, y, w, h, sel ? '#e8c84a' : '#6a4a28', sel ? 2 : 1);
+        for (let gy = y + 5; gy < y + h - 2; gy += 7) g.rect(x + 3, gy, w - 6, 1, 'rgba(20,12,6,.35)'); // grain
+        g.circle(x + 8, y + 8, 2, '#1a0e06'); g.circle(x + w - 8, y + 8, 2, '#1a0e06');                 // nails
+        if (ch.icon) ch.icon(api, x + 22, y + h / 2);
+        api.txt((i + 1) + '. ' + ch.name, x + 40, y + 9, 10, done ? '#e8c84a' : '#f0e6c0');
+        api.txt(ch.sub || '', x + 40, y + 25, 9, '#a0b87a');
+        if (done) api.txt('✦' + best, x + w - 52, y + 16, 9, '#e8c84a');
+        else api.txt('▸', x + w - 20, y + 16, 12, sel ? '#e8c84a' : '#6a5a3a');
+      },
+    },
     finale: ['THE SHERIFF FALLS.', 'MAID MARIAN WALKS', 'FREE IN THE SUNLIGHT.', '', 'SHERWOOD SINGS.'],
     width: 270, height: 480, parent: '#game',
     palette: { gold: '#e3c567', green: '#5dff8f', brown: '#8b5e3c', blood: '#c8102e' },

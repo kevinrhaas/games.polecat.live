@@ -131,6 +131,21 @@
     menuLabel: 'CHRONICLES OF CAMELOT',
     menuHint: 'CHOOSE YOUR QUEST',
     menuDone: 'THE ONCE AND FUTURE KING',
+    menu: {
+      colors: { title: '#ffd966', label: '#8a9ad0', cur: '#cfe0ff' },
+      card(api, info) {
+        const g = api.gfx, { ch, i, x, y, w, h, sel, done, best } = info;
+        g.rect(x, y, w, h, sel ? '#1a2a5a' : '#10193a');           // royal-blue banner
+        g.rectO(x, y, w, h, sel ? '#ffd966' : '#3a4a8a', sel ? 2 : 1);
+        g.rect(x, y, w, 3, '#ffd966');                              // gold top rail
+        g.circle(x + 22, y + h / 2, 10, done ? '#c8a030' : '#26356a'); // crest disc
+        if (ch.icon) ch.icon(api, x + 22, y + h / 2);
+        api.txt((i + 1) + '. ' + ch.name, x + 42, y + 9, 10, done ? '#ffd966' : '#e8eeff');
+        api.txt(ch.sub || '', x + 42, y + 25, 9, '#8a9ad0');
+        if (done) api.txt('✦' + best, x + w - 52, y + 16, 9, '#ffd966');
+        else api.txt('▸', x + w - 20, y + 16, 12, sel ? '#ffd966' : '#3a4a8a');
+      },
+    },
     finale: ['EXCALIBUR GLEAMS.', 'CAMELOT STANDS.', 'THE GRAIL IS FOUND.', '', 'THE LEGEND LIVES ON.'],
     tagline: 'A POLECAT ARCADE TRIBUTE',
     width: 270, height: 480, parent: '#game',

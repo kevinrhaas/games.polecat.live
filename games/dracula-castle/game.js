@@ -56,6 +56,22 @@
     menuLabel: 'CHRONICLE OF THE COUNT',
     menuHint: 'CHOOSE A CHAPTER TO BEGIN',
     menuDone: 'THE COUNT IS UNDONE',
+    menu: {
+      colors: { title: '#e23b4a', label: '#8a6a6a', cur: '#e8c0c0' },
+      card(api, info) {
+        const g = api.gfx, { ch, i, x, y, w, h, sel, done, best } = info;
+        g.rect(x, y, w, h, sel ? '#251016' : '#160a10');           // dark stone slab
+        g.rectO(x, y, w, h, sel ? '#e23b4a' : '#5a1822', sel ? 2 : 1);
+        g.rect(x, y, w, 2, '#3a1820');
+        g.circle(x + 22, y + h / 2, 11, done ? '#8a1224' : '#5a0c18'); // blood-wax seal
+        g.circle(x + 22, y + h / 2, 11, 'rgba(255,80,80,0)');
+        if (ch.icon) ch.icon(api, x + 22, y + h / 2);
+        api.txt((i + 1) + '. ' + ch.name, x + 42, y + 9, 10, done ? '#e23b4a' : '#e8d9d0');
+        api.txt(ch.sub || '', x + 42, y + 25, 9, '#8a6a6a');
+        if (done) api.txt('✦' + best, x + w - 52, y + 16, 9, '#e23b4a');
+        else api.txt('▸', x + w - 20, y + 16, 12, sel ? '#e23b4a' : '#5a3a3a');
+      },
+    },
     finale: ['THE COUNT IS DUST.', 'THE CRIMSON DAWN', 'BREAKS CLEAN.', '', 'HARKER GOES HOME.'],
     width: 270, height: 480, parent: '#game',
     palette: { gold: '#e3c567', blood: '#c8102e' },

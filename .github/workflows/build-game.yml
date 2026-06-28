@@ -66,11 +66,18 @@ jobs:
             Build the next status:"soon" property in js/catalog.js (most-famous-first;
             vary the genre from recent builds) as a full multi-chapter game using
             RetroSaga (js/saga.js) — FIVE varied, easy, faithful mini-games that hit the
-            property's iconic scenes, PLUS a UNIQUE on-property title/menu/chapter look
-            (supply scenery, per-chapter icon, emblem, and custom currency/subtitle/
-            bootCta/menuLabel/menuHint/menuDone/finale). Stay faithful to the source's
-            era and mood; reserve CRT/terminal styling for genuinely sci-fi works only.
-            Mobile-first; must work fullscreen. Use games/dracula-castle as the reference.
+            property's iconic scenes, PLUS a WILDLY UNIQUE on-property look — two games
+            must look nothing alike. Supply: a BOLD property-specific palette (bright &
+            colorful for children's tales, dark for horror, royal for myth — do NOT
+            default to gold-on-black); scenery(api,scene,t); a per-chapter icon; emblem;
+            and a `menu` block that re-skins the chapter-select to the property via
+            menu.colors + menu.card(api,info) drawing each chapter entry as something
+            thematic (parchment, folders, wooden signs, banners, map nodes, cards…) and
+            optionally menu.layout for non-list arrangements. Set custom currency/
+            subtitle/bootCta/menuLabel/menuHint/menuDone/finale. Stay faithful to the
+            source's era and mood; reserve CRT/terminal styling for genuinely sci-fi
+            works only; never use the word "saga" in user-facing text. Mobile-first; must
+            work fullscreen. Use games/dracula-castle and games/sherlock-hound as menu refs.
 
             Then: run `node --check` on every JS file; load-test headless with Playwright
             (zero pageerrors; the menu and each chapter must render); capture the

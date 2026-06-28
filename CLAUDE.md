@@ -44,14 +44,27 @@ t, score, addScore(n), win(), lose(), shake(a,t), flash(c,t), burst(x,y,c,n),
 confirm(), keyDown(b), keyPressed(b), clear/txt/txtC/lines/panel/topBar/
 vignette/scanlines, colors`.
 
-**Make the framed screens unique & on-property** (not the default gold-on-black).
-Every game MUST supply: `emblem(api,cx,cy)`, `scenery(api,scene,t)` (an animated
-backdrop for boot/menu/intro/result/finale — paint the story's world, e.g.
-gothic castle for Dracula, foggy moor for Sherlock), a per-chapter `icon(api,x,y)`
-(themed glyph in the menu), and custom `currency`, `subtitle`, `bootCta`,
-`menuLabel`, `menuHint`, `menuDone`, `bootLine`, `finale`. Stay FAITHFUL to the
-source — match its era/mood. Reserve CRT/terminal looks for genuinely techy or
-sci-fi works (War of the Worlds, Time Machine, Metropolis); never as a default.
+**Make the framed screens WILDLY unique & on-property** — never the default
+gold-on-black list. Two games should look nothing alike. Every game MUST supply:
+- a **bold, property-specific palette** (bright & colorful for children's tales
+  like Oz/Alice/Pooh; dark & moody for horror; royal for myth). Don't reuse the
+  gold-on-near-black scheme for everything.
+- `emblem(api,cx,cy)` and `scenery(api,scene,t)` — an animated backdrop for
+  boot/menu/intro/result/finale that paints the story's world.
+- a per-chapter `icon(api,x,y)` themed glyph.
+- a **`menu` block** that re-skins the chapter-select to the property:
+  `menu.colors` (title/label/cur/…), `menu.card(api,{ch,i,x,y,w,h,sel,done,best})`
+  to draw each chapter entry as something thematic (Dracula = blood-wax stone
+  tablets, Sherlock = manila case-file folders, Robin Hood = wooden Sherwood
+  signs, Arthur = heraldic banners; others could be a treasure map, a deck of
+  cards, road stops, constellations…), and optionally `menu.layout(api,chapters)`
+  returning custom rects for non-list arrangements (map nodes, a winding road).
+- custom `currency`, `subtitle`, `bootCta`, `menuLabel`, `menuHint`, `menuDone`,
+  `bootLine`, `finale`.
+
+Stay FAITHFUL to the source's era/mood. Reserve CRT/terminal looks for genuinely
+techy/sci-fi works (War of the Worlds, Time Machine, Metropolis) — never a
+default. Do NOT use the word "saga" in any user-facing text.
 
 The five existing single-mechanic games (sherlock, alice, oz, frankenstein) are
 legacy — upgrade them to sagas as the loop comes around to them.

@@ -63,11 +63,16 @@ big feedback (shake/flash/particles). Variety across the five is the whole point
 borrow the *ideas*, never copy them):
 - Give the game a **voice/host with personality** — narrate the interstitials and
   win/lose lines in-character (a storyteller, a machine, a villain).
-- **Unique, on-property title/menu screens are required**, not the default
-  gold-on-black. Give each game its own `scenery(api,scene,t)` animated backdrop
-  (paint the story's world), per-chapter menu `icon`s, and custom labels
-  (`menuLabel`, `bootCta`, `currency`, etc.). Stay FAITHFUL to the source's era
-  and mood — Dracula is gothic, Sherlock is a foggy Victorian moor.
+- **WILDLY unique, on-property screens are required** — two games must look
+  nothing alike. Each game needs: a BOLD property-specific palette (bright for
+  children's tales, dark for horror, royal for myth — never default to
+  gold-on-black); its own `scenery(api,scene,t)` backdrop; per-chapter `icon`s;
+  AND a `menu` block re-skinning the chapter-select via `menu.colors` +
+  `menu.card(api,info)` (draw each entry as something thematic — parchment, case
+  folders, wooden signs, banners, map nodes, cards) and optionally `menu.layout`
+  for non-list arrangements. See the menu blocks in dracula-castle, sherlock-hound,
+  robinhood-archer, arthur-sword. Stay FAITHFUL to era/mood. Never use the word
+  "saga" in user-facing text.
 - A CRT / terminal / type-on "establishing" intro is great BUT only where the
   source actually supports it — genuinely techy/sci-fi works (War of the Worlds,
   The Time Machine, Metropolis). Never use CRT as a default; faithfulness first.

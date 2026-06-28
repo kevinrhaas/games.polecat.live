@@ -156,9 +156,9 @@
       } else if (scene === 'menu') {
         if (input.pressed('down')) { menuSel = (menuSel + 1) % chapters.length; audio.sfx('blip'); }
         if (input.pressed('up')) { menuSel = (menuSel + chapters.length - 1) % chapters.length; audio.sfx('blip'); }
-        // pointer selection
+        // pointer selection (hit-tests the actual chapter rects, custom or list)
         if (ptr.justDown) {
-          const idx = menuIndexAt(ptr.y);
+          const idx = menuHit(ptr.x, ptr.y);
           if (idx >= 0) { menuSel = idx; startChapter(idx); audio.sfx('select'); }
         }
         if (input.pressed('a') || input.pressed('start')) { startChapter(menuSel); audio.sfx('select'); }
@@ -214,29 +214,52 @@
     }
 
     const MENU_TOP = 92, ROW_H = 52;
-    function menuIndexAt(y) {
-      const i = Math.floor((y - MENU_TOP) / ROW_H);
-      return (i >= 0 && i < chapters.length) ? i : -1;
+    // Menu theme — games override colors via cfg.menu.colors for bold,
+    // property-specific looks instead of the default gold-on-black.
+    const MT = Object.assign({
+      panel: 'rgba(8,6,4,.7)', panelSel: 'rgba(30,22,14,.9)', border: PAL.gold,
+      name: PAL.cream, nameDone: PAL.gold, sub: PAL.dim,
+      title: PAL.gold, label: PAL.dim, cur: PAL.cream, hint: PAL.dim,
+    }, (cfg.menu && cfg.menu.colors) || {});
+
+    // Chapter hit-rects: a game can fully re-arrange them via cfg.menu.layout
+    // (e.g. map nodes, road stops) — default is the vertical list.
+    function getMenuRects() {
+      if (cfg.menu && cfg.menu.layout) return cfg.menu.layout(api, chapters);
+      return chapters.map((_, i) => ({ x: 14, y: MENU_TOP + i * ROW_H, w: W - 28, h: ROW_H - 8 }));
+    }
+    function menuHit(px, py) {
+      const rects = getMenuRects();
+      for (let i = 0; i < rects.length; i++) { const r = rects[i]; if (px >= r.x && px <= r.x + r.w && py >= r.y && py <= r.y + r.h) return i; }
+      return -1;
+    }
+    function defaultCard(info) {
+      const { ch, i, x, y, w, h, sel, done, best } = info;
+      gfx.rect(x, y, w, h, sel ? MT.panelSel : MT.panel); gfx.rectO(x, y, w, h, MT.border, 1);
+      let tx = x + 10;
+      if (ch.icon) { ch.icon(api, x + 18, y + h / 2); tx = x + 36; }
+      txt((i + 1) + '. ' + ch.name, tx, y + 8, 10, done ? MT.nameDone : MT.name);
+      txt(ch.sub || '', tx, y + 24, 9, MT.sub);
+      if (done) txt('✓ ' + best, x + w - 58, y + 14, 9, MT.nameDone);
+      else txt('▶', x + w - 18, y + 14, 11, sel ? MT.name : MT.sub);
     }
     function drawMenu() {
       backdrop('menu');
-      txtC((cfg.title || '').toUpperCase(), W / 2, 22, 16, PAL.gold, true);
-      txtC(cfg.menuLabel || 'CHOOSE YOUR CHAPTER', W / 2, 50, 9, PAL.dim);
-      txtC(CUR + '  ' + respect(), W / 2, 68, 9, PAL.cream);
-      for (let i = 0; i < chapters.length; i++) {
-        const ch = chapters[i], y = MENU_TOP + i * ROW_H;
-        const selp = (i === menuSel);
-        panel(14, y, W - 28, ROW_H - 8, selp ? 'rgba(30,22,14,.9)' : 'rgba(8,6,4,.7)');
-        let tx = 24;
-        if (ch.icon) { ch.icon(api, 32, y + (ROW_H - 8) / 2); tx = 50; }
-        const done = save.done[ch.id];
-        txt((i + 1) + '. ' + ch.name, tx, y + 8, 10, done ? PAL.gold : PAL.cream);
-        txt(ch.sub || '', tx, y + 24, 9, PAL.dim);
-        if (done) txt('✓ ' + (save.best[ch.id] || 0), W - 72, y + 14, 9, PAL.gold);
-        else txt('▶', W - 32, y + 14, 11, selp ? PAL.cream : PAL.dim);
+      if (cfg.menu && cfg.menu.title) cfg.menu.title(api, respect());
+      else {
+        txtC((cfg.title || '').toUpperCase(), W / 2, 22, 16, MT.title, true);
+        txtC(cfg.menuLabel || 'CHOOSE YOUR CHAPTER', W / 2, 50, 9, MT.label);
+        txtC(CUR + '  ' + respect(), W / 2, 68, 9, MT.cur);
       }
-      if (allDone()) txtC('★ ' + (cfg.menuDone || 'ALL CHAPTERS CLEARED') + ' ★', W / 2, H - 22, 9, PAL.gold);
-      else txtC(cfg.menuHint || 'TAP A CHAPTER TO PLAY', W / 2, H - 20, 8, PAL.dim);
+      const rects = getMenuRects();
+      for (let i = 0; i < chapters.length; i++) {
+        const ch = chapters[i], r = rects[i];
+        const info = { ch, i, x: r.x, y: r.y, w: r.w, h: r.h, sel: i === menuSel, done: !!save.done[ch.id], best: save.best[ch.id] || 0 };
+        if (cfg.menu && cfg.menu.card) cfg.menu.card(api, info);
+        else defaultCard(info);
+      }
+      if (allDone()) txtC('★ ' + (cfg.menuDone || 'ALL CHAPTERS CLEARED') + ' ★', W / 2, H - 22, 9, MT.title);
+      else txtC(cfg.menuHint || 'TAP A CHAPTER TO PLAY', W / 2, H - 20, 8, MT.hint);
       vignette(); scanlines();
     }
 

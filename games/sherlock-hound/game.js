@@ -65,8 +65,23 @@
     scenery,
     bootCta: 'TAP TO INVESTIGATE',
     menuLabel: 'THE CASE FILES',
-    menuHint: 'OPEN A CHAPTER TO INVESTIGATE',
+    menuHint: 'OPEN A FILE TO INVESTIGATE',
     menuDone: 'THE CASE IS CLOSED',
+    menu: {
+      colors: { title: '#e8dcb0', label: '#8a9a86', cur: '#cde8b0' },
+      card(api, info) {
+        const g = api.gfx, { ch, i, x, y, w, h, sel, done } = info;
+        g.rect(x + 10, y - 4, 44, 8, sel ? '#e8d8a8' : '#cdbf92');   // folder tab
+        g.rect(x, y, w, h, sel ? '#e8d8a8' : '#cdbf92');             // manila folder
+        g.rectO(x, y, w, h, '#9a8a58', 1);
+        g.rect(x + 6, y + 6, w - 12, 1, 'rgba(120,100,60,.4)');
+        g.circle(x + 20, y + h / 2, 5, '#b03030'); g.circle(x + 20, y + h / 2, 2, '#7a1818'); // red pin
+        api.txt((i + 1) + '. ' + ch.name, x + 36, y + 9, 10, '#2a2210');
+        api.txt(ch.sub || '', x + 36, y + 25, 9, '#6a5a38');
+        if (done) api.txt('SOLVED', x + w - 70, y + 17, 8, '#2c6a2c');
+        else api.txt('OPEN ▸', x + w - 64, y + 17, 8, sel ? '#7a1818' : '#7a6a44');
+      },
+    },
     finale: ['THE HOUND IS NO PHANTOM —', 'ONLY PHOSPHOR AND MALICE.', 'STAPLETON SINKS INTO', 'THE MIRE. CASE CLOSED.'],
     width: 270, height: 480, parent: '#game',
     palette: { gold: '#cde8b0', blood: '#c8102e' },

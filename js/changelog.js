@@ -7,6 +7,8 @@
  * Entry shape: { ts: "Jun 28, 2026 · 2:46 PM CT", title: "...", notes: ["..."] }
  * ============================================================================ */
 window.POLECAT_CHANGELOG = [
+  { ts: "Jun 28, 2026 · 6:39 PM CT", title: "Each game looks its own way now",
+    notes: ["Bold, property-specific chapter menus: Dracula's blood-red stone tablets, Sherlock's manila case files, Robin Hood's wooden Sherwood signs, King Arthur's royal banners.", "Robin Hood and King Arthur also shipped automatically from the new hourly builder."] },
   { ts: "Jun 28, 2026 · 5:55 PM CT", title: "New game: King Arthur — The Legend of Camelot",
     notes: ["Five chapters of Arthurian legend: pull Excalibur from the stone, fly as Merlin's hawk dodging rocks and arrows, joust at the grand tournament, tap-defend Camelot's gates against the Saxon siege, and seek the Holy Grail while dark knights patrol.", "Unique scenery: rolling hills, a Camelot silhouette against a starlit sky, misty lake, and a glowing sacred chapel for the Grail quest."] },
   { ts: "Jun 28, 2026 · 5:21 PM CT", title: "New game: Robin Hood — The Sherwood Saga",
