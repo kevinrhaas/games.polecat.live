@@ -63,7 +63,14 @@ capture console errors, screenshot.
 ### 4. Ship it
 - Flip the catalog entry `status: "soon"` → `"live"` in the same commit.
 - Commit with a clear message naming the game + genre.
-- `git push -u origin <branch>` (retry with backoff on network errors).
+- Work on and push **`main`**: `git push -u origin main` (retry with backoff on
+  network errors). **Pushing to `main` is what publishes the site** — the
+  `.github/workflows/deploy-pages.yml` workflow deploys to GitHub Pages on every
+  push to main (and hourly as a backstop). So each shipped game goes live
+  automatically; no separate deploy step.
+- After pushing, you may confirm the deploy via the GitHub Actions tools
+  (workflow `deploy-pages.yml`) — but a green build is expected and you don't
+  need to babysit it.
 
 ### 5. Every few iterations (not every hour)
 - Improve the **home page / navigation**: featured carousel, "new this week"
