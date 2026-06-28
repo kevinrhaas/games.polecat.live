@@ -18,6 +18,8 @@ on:
 
 permissions:
   contents: write
+  id-token: write       # the action mints its GitHub token via OIDC
+  pull-requests: write
 
 concurrency:
   group: build-game
@@ -52,7 +54,9 @@ jobs:
       - name: Build one game with Claude
         uses: anthropics/claude-code-action@v1
         with:
-          # Provide either secret; the empty one is ignored.
+          # Use the workflow's own token for GitHub ops (avoids the OIDC path).
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          # Provide either Claude secret; the empty one is ignored.
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           prompt: |
