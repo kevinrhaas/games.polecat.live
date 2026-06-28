@@ -33,6 +33,7 @@
       shadow: 'rgba(0,0,0,.55)',
     }, cfg.palette || {});
     const chapters = cfg.chapters || [];
+    const CUR = cfg.currency || 'SCORE'; // thematic name for the banked cross-chapter total
     const SAVE_KEY = 'saga.' + (cfg.id || cfg.title || 'game');
 
     const engine = new Retro.Engine({ width: W, height: H, parent: cfg.parent || '#game', touch: false });
@@ -203,10 +204,10 @@
       ctx.globalAlpha = 1;
       if (cfg.emblem) cfg.emblem(api, cx, cy);
       txtC((cfg.title || '').toUpperCase(), cx, H * 0.46, 22, PAL.gold, true);
-      txtC(cfg.subtitle || 'A PIXEL SAGA', cx, H * 0.46 + 30, 10, PAL.dim, true);
+      txtC(cfg.subtitle || (chapters.length + ' CHAPTERS'), cx, H * 0.46 + 30, 10, PAL.dim, true);
       if (Math.floor(sceneT * 1.5) % 2 === 0) txtC('TAP TO BEGIN', cx, H * 0.66, 12, PAL.cream);
       txtC(cfg.credit || 'AN ORIGINAL PIXEL TRIBUTE', cx, H - 40, 8, PAL.dim);
-      txtC(chapters.length + ' CHAPTERS · ONE LEGEND', cx, H - 26, 8, PAL.dim);
+      txtC(cfg.bootLine || (chapters.length + ' CHAPTERS · ONE STORY'), cx, H - 26, 8, PAL.dim);
       vignette(); scanlines();
     }
 
@@ -219,7 +220,7 @@
       clear(PAL.dark);
       txtC((cfg.title || '').toUpperCase(), W / 2, 24, 16, PAL.gold, true);
       txtC('CHOOSE YOUR CHAPTER', W / 2, 52, 9, PAL.dim);
-      txtC('RESPECT  ' + respect(), W / 2, 70, 9, PAL.cream);
+      txtC(CUR + '  ' + respect(), W / 2, 70, 9, PAL.cream);
       for (let i = 0; i < chapters.length; i++) {
         const c = chapters[i], y = MENU_TOP + i * ROW_H;
         const selp = (i === menuSel);
@@ -259,7 +260,7 @@
       const outcome = won ? (cur.winText || '') : (cur.loseText || '');
       if (outcome) lines(wrapText(outcome, 26), W / 2, H * 0.3 + 34, 10, PAL.cream, 15);
       txtC('SCORE  ' + result.score, W / 2, H * 0.56, 11, PAL.cream);
-      txtC('RESPECT  ' + respect(), W / 2, H * 0.56 + 20, 10, PAL.gold);
+      txtC(CUR + '  ' + respect(), W / 2, H * 0.56 + 20, 10, PAL.gold);
       if (Math.floor(sceneT * 1.5) % 2 === 0 && sceneT > 0.4)
         txtC(result.finale ? 'TAP FOR THE FINALE' : 'TAP TO CONTINUE', W / 2, H * 0.74, 11, PAL.cream);
       vignette(); scanlines();
@@ -269,8 +270,8 @@
       clear(PAL.ink);
       if (cfg.emblem) cfg.emblem(api, W / 2, H * 0.3);
       lines(cfg.finale || ['THE LEGEND IS COMPLETE.'], W / 2, H * 0.46, 11, PAL.gold, 18);
-      txtC('FINAL RESPECT  ' + respect(), W / 2, H * 0.66, 11, PAL.cream);
-      txtC('A POLECAT SAGA', W / 2, H * 0.74, 8, PAL.dim);
+      txtC('FINAL ' + CUR + '  ' + respect(), W / 2, H * 0.66, 11, PAL.cream);
+      txtC(cfg.tagline || 'A POLECAT GAME', W / 2, H * 0.74, 8, PAL.dim);
       if (Math.floor(sceneT * 1.5) % 2 === 0 && sceneT > 0.6) txtC('TAP TO RETURN', W / 2, H - 40, 11, PAL.cream);
       vignette(); scanlines();
     }

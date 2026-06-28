@@ -1,353 +1,313 @@
 /* ============================================================================
- * THE HOUND OF THE BASKERVILLES — a foggy-moor mystery maze
- * Genre: Mystery Maze / Stealth.  Built on RetroEngine.
- *
- * Gather every clue scattered across the procedurally-generated moor, then
- * reach Baskerville Hall. The Hound patrols the mire; if it spots your lantern
- * it gives chase. Lantern light reveals the fog; darkness hides the path.
+ * THE HOUND OF THE BASKERVILLES — A CASE IN FIVE CHAPTERS
+ * Sherlock Holmes told as five different little games:
+ *   1. THE WALKING STICK — observation / deduction (tap the clues)
+ *   2. THE GRIMPEN MIRE  — timing hops across the bog
+ *   3. THE MOOR          — explore a fog-bound maze, gather the clues
+ *   4. THE WARNING       — reassemble the cut-out letter in order
+ *   5. THE HOUND         — aim & fire on the moor at last
+ * Built on RetroSaga (js/saga.js) + RetroEngine.
  * ============================================================================ */
 (function () {
   'use strict';
-  const { clamp, choice } = Retro.util;
+  const clamp = Retro.util.clamp;
 
-  const COLS = 15, ROWS = 11, TILE = 16;
-  const MAZE_W = COLS * TILE, MAZE_H = ROWS * TILE;
-  const W = 256, H = 240;
-  const OX = (W - MAZE_W) / 2, OY = 40; // maze offset (HUD on top)
+  function emblem(api, cx, cy) {
+    const c = api.ctx;
+    c.strokeStyle = '#5dff8f'; c.lineWidth = 5;
+    c.beginPath(); c.arc(cx - 6, cy - 4, 19, 0, Math.PI * 2); c.stroke();
+    c.strokeStyle = '#8a6a3a'; c.lineWidth = 6;
+    c.beginPath(); c.moveTo(cx + 7, cy + 9); c.lineTo(cx + 25, cy + 27); c.stroke();
+  }
 
-  const engine = new Retro.Engine({
-    width: W, height: H, parent: '#game', touch: 'dpad', showB: false, buttonLabels: { a: '👁' },
-  });
-  const g = engine.gfx, input = engine.input, audio = engine.audio;
-  const GAME = 'sherlock-hound';
-
-  let grid, player, hound, clues, exit, state, level, lives, score, timer, caughtFlash, msgTimer;
-
-  /* ---- maze generation: recursive backtracker on odd grid ---- */
-  function genMaze() {
+  // recursive-backtracker maze: 1 = wall, 0 = floor
+  function genMaze(COLS, ROWS) {
     const m = [];
     for (let y = 0; y < ROWS; y++) { m[y] = []; for (let x = 0; x < COLS; x++) m[y][x] = 1; }
-    const stack = [[1, 1]];
-    m[1][1] = 0;
+    const stack = [[1, 1]]; m[1][1] = 0;
     const dirs = [[0, -2], [0, 2], [-2, 0], [2, 0]];
     while (stack.length) {
       const [cx, cy] = stack[stack.length - 1];
       const opts = [];
-      for (const [dx, dy] of dirs) {
-        const nx = cx + dx, ny = cy + dy;
-        if (nx > 0 && nx < COLS - 1 && ny > 0 && ny < ROWS - 1 && m[ny][nx] === 1) opts.push([nx, ny, dx, dy]);
-      }
-      if (opts.length) {
-        const [nx, ny, dx, dy] = choice(opts);
-        m[cy + dy / 2][cx + dx / 2] = 0; m[ny][nx] = 0;
-        stack.push([nx, ny]);
-      } else stack.pop();
-    }
-    // braid a little: knock out some walls so it's less of a dead-end trap
-    for (let i = 0; i < 18; i++) {
-      const x = 1 + Math.floor(Math.random() * (COLS - 2));
-      const y = 1 + Math.floor(Math.random() * (ROWS - 2));
-      if (m[y][x] === 1) {
-        let open = 0;
-        if (m[y - 1] && m[y - 1][x] === 0) open++; if (m[y + 1] && m[y + 1][x] === 0) open++;
-        if (m[y][x - 1] === 0) open++; if (m[y][x + 1] === 0) open++;
-        if (open >= 2) m[y][x] = 0;
-      }
+      for (const [dx, dy] of dirs) { const nx = cx + dx, ny = cy + dy; if (nx > 0 && nx < COLS - 1 && ny > 0 && ny < ROWS - 1 && m[ny][nx] === 1) opts.push([nx, ny, dx, dy]); }
+      if (opts.length) { const [nx, ny, dx, dy] = opts[Math.floor(Math.random() * opts.length)]; m[cy + dy / 2][cx + dx / 2] = 0; m[ny][nx] = 0; stack.push([nx, ny]); }
+      else stack.pop();
     }
     return m;
   }
 
-  const isWall = (cx, cy) => cx < 0 || cy < 0 || cx >= COLS || cy >= ROWS || grid[cy][cx] === 1;
-  const floors = () => {
-    const f = [];
-    for (let y = 1; y < ROWS - 1; y++) for (let x = 1; x < COLS - 1; x++) if (grid[y][x] === 0) f.push([x, y]);
-    return f;
-  };
+  RetroSaga.create({
+    id: 'baskervilles',
+    title: 'Baskervilles',
+    subtitle: 'A CASE IN FIVE CHAPTERS',
+    currency: 'INSIGHT',
+    accent: '#5dff8f',
+    credit: 'THE HOUND OF THE BASKERVILLES · A. C. DOYLE',
+    bootLine: 'FIVE CHAPTERS · ONE MYSTERY',
+    tagline: 'A POLECAT MYSTERY',
+    emblem,
+    finale: ['THE HOUND IS NO PHANTOM —', 'ONLY PHOSPHOR AND MALICE.', 'STAPLETON SINKS INTO', 'THE MIRE. CASE CLOSED.'],
+    width: 270, height: 480, parent: '#game',
+    palette: { gold: '#cde8b0', blood: '#c8102e' },
 
-  /* ---- BFS for hound pathfinding ---- */
-  function bfsNext(from, to) {
-    const key = (x, y) => y * COLS + x;
-    const q = [from]; const prev = {}; prev[key(from[0], from[1])] = null;
-    while (q.length) {
-      const [cx, cy] = q.shift();
-      if (cx === to[0] && cy === to[1]) break;
-      for (const [dx, dy] of [[0, -1], [0, 1], [-1, 0], [1, 0]]) {
-        const nx = cx + dx, ny = cy + dy;
-        if (isWall(nx, ny)) continue;
-        if (prev[key(nx, ny)] !== undefined) continue;
-        prev[key(nx, ny)] = [cx, cy]; q.push([nx, ny]);
-      }
-    }
-    let cur = to;
-    if (prev[key(cur[0], cur[1])] === undefined) return null;
-    while (prev[key(cur[0], cur[1])] && !(prev[key(cur[0], cur[1])][0] === from[0] && prev[key(cur[0], cur[1])][1] === from[1])) {
-      cur = prev[key(cur[0], cur[1])];
-    }
-    return cur;
-  }
+    chapters: [
+      /* ===================== 1. THE WALKING STICK ====================== */
+      {
+        id: 'stick', name: 'THE WALKING STICK', sub: '221B BAKER STREET',
+        intro: ['A VISITOR LEFT HIS CANE', 'AT BAKER STREET. READ THE', 'MAN FROM HIS STICK', 'as Holmes would.'],
+        quote: 'You are a conductor of light. Some people without possessing genius have a remarkable power of stimulating it.',
+        help: 'TAP the four clues on the cane',
+        winText: '"A country doctor — and he keeps a dog." Mortimer, to the life.',
+        loseText: 'The details escape you. Holmes raises a single eyebrow.',
+        init() {
+          this.clues = [
+            { x: 108, y: 132, r: 24, found: false, t: '"C.C.H." — a hunt club gift' },
+            { x: 134, y: 212, r: 24, found: false, t: 'Engraved 1884 — a parting present' },
+            { x: 158, y: 296, r: 24, found: false, t: 'Worn ferrule — a great walker' },
+            { x: 180, y: 372, r: 22, found: false, t: 'Tooth-marks — he keeps a dog' },
+          ];
+          this.timer = 34; this.msg = ''; this.msgT = 0;
+        },
+        update(api, dt) {
+          this.timer -= dt; if (this.msgT > 0) this.msgT -= dt;
+          if (api.pointer.justDown) {
+            for (const c of this.clues) {
+              if (!c.found && Math.hypot(api.pointer.x - c.x, api.pointer.y - c.y) < c.r) {
+                c.found = true; api.score += 60; api.audio.sfx('coin'); api.burst(c.x, c.y, api.colors.gold, 8); this.msg = c.t; this.msgT = 2.4;
+              }
+            }
+          }
+          const found = this.clues.filter((c) => c.found).length;
+          if (found === this.clues.length) { api.score += Math.floor(this.timer * 4); api.win(); }
+          else if (this.timer <= 0) api.lose();
+        },
+        draw(api) {
+          const g = api.gfx, W = api.W, H = api.H, c = api.ctx;
+          api.clear('#181410');
+          g.rect(0, H - 60, W, 60, '#2a1f16');
+          g.rect(20, H - 54, W - 40, 44, '#5a2a2a'); g.rectO(20, H - 54, W - 40, 44, '#7a3a3a', 1);
+          for (let i = 0; i < 60; i++) { const x = 96 + i * 1.5, y = 112 + i * 4.3; g.rect(x, y, 9, 6, '#7a5a2a'); }
+          g.circle(96, 112, 12, '#9a7a3a'); g.circle(96, 112, 8, '#caa15a');
+          for (const cl of this.clues) {
+            if (cl.found) { c.strokeStyle = api.colors.gold; c.lineWidth = 2; c.beginPath(); c.arc(cl.x, cl.y, cl.r - 4, 0, Math.PI * 2); c.stroke(); api.txtC('✓', cl.x, cl.y - 6, 11, api.colors.gold); }
+            else { c.globalAlpha = 0.18 + Math.sin(api.t * 3 + cl.y) * 0.1; g.circle(cl.x, cl.y, cl.r, '#cde8b0'); c.globalAlpha = 1; c.strokeStyle = 'rgba(205,232,176,.5)'; c.lineWidth = 1; c.beginPath(); c.arc(cl.x, cl.y, cl.r, 0, Math.PI * 2); c.stroke(); }
+          }
+          api.topBar('THE WALKING STICK');
+          const found = this.clues.filter((cl) => cl.found).length;
+          api.txt('CLUES ' + found + '/4', 6, 20, 9, api.colors.gold);
+          g.rect(W - 70, 21, 64, 6, '#2a2620'); g.rect(W - 70, 21, 64 * clamp(this.timer / 34, 0, 1), 6, api.colors.gold);
+          if (this.msgT > 0) { api.panel(14, H - 40, W - 28, 28); api.txtC(this.msg, W / 2, H - 32, 9, api.colors.cream); }
+          else api.txtC('TAP THE GLOWING DETAILS', W / 2, H - 30, 8, api.colors.dim);
+          api.vignette(); api.scanlines();
+        },
+      },
 
-  function reset(full) {
-    if (full) { level = 1; lives = 3; score = 0; }
-    grid = genMaze();
-    const fl = floors();
-    player = { cx: 1, cy: 1, x: 1 * TILE, y: 1 * TILE, dir: [0, 0], moving: false, target: null, speed: 1.4 };
-    // exit far from player
-    exit = { cx: COLS - 2, cy: ROWS - 2 };
-    grid[exit.cy][exit.cx] = 0;
-    // clues
-    clues = [];
-    const pool = fl.filter(([x, y]) => Math.abs(x - 1) + Math.abs(y - 1) > 4 && !(x === exit.cx && y === exit.cy));
-    const count = Math.min(4 + level, 7);
-    for (let i = 0; i < count && pool.length; i++) {
-      const idx = Math.floor(Math.random() * pool.length);
-      const [x, y] = pool.splice(idx, 1)[0];
-      clues.push({ cx: x, cy: y, got: false });
-    }
-    // hound start far
-    const far = fl.reduce((best, c) => {
-      const d = Math.abs(c[0] - 1) + Math.abs(c[1] - 1);
-      return d > best.d ? { c, d } : best;
-    }, { c: [COLS - 2, 1], d: 0 }).c;
-    hound = { cx: far[0], cy: far[1], x: far[0] * TILE, y: far[1] * TILE, dir: [0, 0], moving: false, target: null, speed: 0.9 + level * 0.12, state: 'patrol', lunge: 0 };
-    state = 'play';
-    timer = 0; caughtFlash = 0; msgTimer = 0;
-    msg('LEVEL ' + level);
-  }
+      /* ====================== 2. THE GRIMPEN MIRE ===================== */
+      {
+        id: 'mire', name: 'THE GRIMPEN MIRE', sub: 'ONE FALSE STEP',
+        intro: ['ONLY TUFTS OF GRASS GIVE', 'SAFE FOOTING ON THE GREAT', 'GRIMPEN MIRE. TIME EACH HOP', 'or be sucked under.'],
+        quote: 'A false step yonder means death to man or beast.',
+        help: 'TAP to hop when a tuft reaches the line',
+        winText: 'Tuft by tuft, you reach the firm ground beyond the mire.',
+        loseText: 'The green slime closes over your head. The moor keeps its dead.',
+        init(api) { this.cross = 0; this.need = 12; this.sinks = 0; this.tufts = []; this.spawn = 0; this.hop = 0; this.cx = api.W / 2; this.lineY = api.H - 100; },
+        update(api, dt) {
+          const f = dt * 60; const cx = this.cx;
+          this.spawn -= dt;
+          if (this.spawn <= 0) { this.spawn = api.rnd(0.55, 0.95); this.tufts.push({ x: api.W + 14, y: this.lineY }); }
+          for (const t of this.tufts) t.x -= 2.0 * f;
+          this.tufts = this.tufts.filter((t) => t.x > -16);
+          if (this.hop > 0) this.hop -= dt;
+          if (api.confirm()) {
+            const near = this.tufts.find((t) => Math.abs(t.x - cx) < 12 && !t.used);
+            if (near) { near.used = true; this.cross++; api.score += 20; this.hop = 0.25; api.audio.sfx('jump'); api.burst(cx, this.lineY, '#6a8a4a', 5); if (this.cross >= this.need) { api.score += 60; api.win(); } }
+            else { this.sinks++; api.shake(5, 0.25); api.flash('#2a3a1a', 0.18); api.audio.sfx('hurt'); if (this.sinks >= 3) api.lose(); }
+          }
+        },
+        draw(api) {
+          const g = api.gfx, W = api.W, H = api.H;
+          api.clear('#20281a');
+          g.rect(0, 70, W, H - 70, '#2e3a22');
+          for (let i = 0; i < 40; i++) { const x = (i * 47 + api.t * 6) % W, y = 80 + (i * 53) % (H - 90); g.rect(x, y, 2, 1, '#3e4a2e'); }
+          for (let i = 0; i < 5; i++) { api.ctx.globalAlpha = 0.06; g.rect(0, 120 + i * 60 + Math.sin(api.t + i) * 6, W, 18, '#cfe8c0'); api.ctx.globalAlpha = 1; }
+          api.ctx.globalAlpha = 0.4; g.rect(this.cx - 16, this.lineY - 18, 32, 36, '#5dff8f'); api.ctx.globalAlpha = 1;
+          g.rect(this.cx - 16, this.lineY + 16, 32, 2, '#5dff8f');
+          for (const t of this.tufts) { if (t.used) continue; g.sprite(['.ggg.', 'ggggg', '.bbb.'], t.x - 8, t.y - 6, { g: '#5a7a3a', b: '#3a2a1a' }, 3); }
+          const hy = this.lineY - (this.hop > 0 ? 14 : 0);
+          g.sprite(['.cc.', 'cffc', '.kk.', 'k..k'], this.cx - 8, hy - 14, { c: '#2a2a3a', f: '#caa07a', k: '#3a2a1a' }, 4);
+          api.topBar('THE GRIMPEN MIRE');
+          api.txt('CROSS ' + this.cross + '/' + this.need, 6, 20, 9, api.colors.gold);
+          for (let i = 0; i < 3; i++) g.rect(W - 44 + i * 13, 20, 9, 8, i < 3 - this.sinks ? '#5dff8f' : '#3a2a1a');
+          api.vignette(); api.scanlines();
+        },
+      },
 
-  let message = '';
-  function msg(t) { message = t; msgTimer = 1.6; }
+      /* ========================== 3. THE MOOR ======================== */
+      {
+        id: 'moor', name: 'THE MOOR', sub: 'THE TRACKS OF A HOUND',
+        intro: ['MILES OF FOG-BOUND MOOR.', 'SOMEWHERE OUT THERE THE', 'BEAST LEFT ITS TRACKS.', 'Gather the clues, find the cairn.'],
+        quote: 'Mr. Holmes, they were the footprints of a gigantic hound!',
+        help: 'DRAG / arrows to explore · gather clues, reach the cairn',
+        winText: 'Pawprints vast as a calf’s, a gnawed bone, a shred of cloth. The trail is real.',
+        loseText: 'The fog beats you. You stumble back to Baskerville Hall.',
+        init(api) {
+          const COLS = 9, ROWS = 13, TILE = 26;
+          this.COLS = COLS; this.ROWS = ROWS; this.TILE = TILE;
+          this.OX = Math.floor((api.W - COLS * TILE) / 2); this.OY = 82;
+          this.grid = genMaze(COLS, ROWS);
+          this.px = this.OX + TILE + TILE / 2; this.py = this.OY + TILE + TILE / 2;
+          const floors = [];
+          for (let y = 1; y < ROWS - 1; y++) for (let x = 1; x < COLS - 1; x++) if (this.grid[y][x] === 0 && (x > 2 || y > 2) && !(x === COLS - 2 && y === ROWS - 2)) floors.push([x, y]);
+          this.clues = [];
+          for (let i = 0; i < 4 && floors.length; i++) { const k = Math.floor(Math.random() * floors.length); const cc = floors.splice(k, 1)[0]; this.clues.push({ cx: cc[0], cy: cc[1], got: false }); }
+          this.exit = { cx: COLS - 2, cy: ROWS - 2 }; this.grid[this.exit.cy][this.exit.cx] = 0;
+          this.timer = 55;
+        },
+        update(api, dt) {
+          const f = dt * 60; this.timer -= dt;
+          const hs = 6, sp = 2.5 * f;
+          let dx = 0, dy = 0; const p = api.pointer;
+          if (p.down) { const ddx = p.x - this.px, ddy = p.y - this.py, d = Math.hypot(ddx, ddy) || 1; if (d > 2) { dx = ddx / d; dy = ddy / d; } }
+          if (api.keyDown('left')) dx = -1; if (api.keyDown('right')) dx = 1; if (api.keyDown('up')) dy = -1; if (api.keyDown('down')) dy = 1;
+          const wall = (x, y) => { const cx = Math.floor((x - this.OX) / this.TILE), cy = Math.floor((y - this.OY) / this.TILE); if (cx < 0 || cy < 0 || cx >= this.COLS || cy >= this.ROWS) return true; return this.grid[cy][cx] === 1; };
+          const ok = (nx, ny) => !(wall(nx - hs, ny - hs) || wall(nx + hs, ny - hs) || wall(nx - hs, ny + hs) || wall(nx + hs, ny + hs));
+          const nx = this.px + dx * sp; if (ok(nx, this.py)) this.px = nx;
+          const ny = this.py + dy * sp; if (ok(this.px, ny)) this.py = ny;
+          for (const cl of this.clues) { if (!cl.got) { const xp = this.OX + cl.cx * this.TILE + this.TILE / 2, yp = this.OY + cl.cy * this.TILE + this.TILE / 2; if (Math.hypot(this.px - xp, this.py - yp) < 14) { cl.got = true; api.score += 100; api.audio.sfx('coin'); api.burst(xp, yp, api.colors.gold, 8); } } }
+          const allGot = this.clues.every((cl) => cl.got);
+          const xp = this.OX + this.exit.cx * this.TILE + this.TILE / 2, yp = this.OY + this.exit.cy * this.TILE + this.TILE / 2;
+          if (allGot && Math.hypot(this.px - xp, this.py - yp) < 14) { api.score += Math.floor(this.timer * 3); api.win(); }
+          if (this.timer <= 0) api.lose();
+        },
+        draw(api) {
+          const g = api.gfx, W = api.W, H = api.H, T = this.TILE, c = api.ctx;
+          api.clear('#0b0f0c');
+          for (let y = 0; y < this.ROWS; y++) for (let x = 0; x < this.COLS; x++) {
+            const px = this.OX + x * T, py = this.OY + y * T;
+            if (this.grid[y][x] === 1) { g.rect(px, py, T, T, '#1a2118'); g.rect(px + 2, py + 2, T - 4, T - 5, '#24301f'); }
+            else g.rect(px, py, T, T, '#12180f');
+          }
+          const allGot = this.clues.every((cl) => cl.got);
+          const ex = this.OX + this.exit.cx * T, ey = this.OY + this.exit.cy * T;
+          g.sprite(['.kk.', 'kkkk', 'kkkk'], ex + 4, ey + 4, { k: allGot ? '#5dff8f' : '#3a3a3a' }, 5);
+          for (const cl of this.clues) { if (cl.got) continue; const xp = this.OX + cl.cx * T + T / 2, yp = this.OY + cl.cy * T + T / 2; api.txtC('✦', xp, yp - 6 + Math.sin(api.t * 4 + cl.cx) * 2, 12, api.colors.gold); }
+          g.sprite(['.cc.', 'cffc', '.cc.', 'c..c'], this.px - 8, this.py - 12, { c: '#2a2a3a', f: '#caa07a' }, 4);
+          g.circle(this.px, this.py, 2, '#ffcf6a');
+          const grd = c.createRadialGradient(this.px, this.py, 16, this.px, this.py, 84);
+          grd.addColorStop(0, 'rgba(11,15,12,0)'); grd.addColorStop(0.7, 'rgba(7,10,8,.6)'); grd.addColorStop(1, 'rgba(5,7,5,.96)');
+          c.fillStyle = grd; c.fillRect(this.OX, this.OY, this.COLS * T, this.ROWS * T);
+          api.topBar('THE MOOR');
+          const got = this.clues.filter((cl) => cl.got).length;
+          api.txt('CLUES ' + got + '/4', 6, 20, 9, api.colors.gold);
+          g.rect(W - 70, 21, 64, 6, '#2a2620'); g.rect(W - 70, 21, 64 * clamp(this.timer / 55, 0, 1), 6, api.colors.gold);
+          if (got >= 4) api.txtC('FIND THE CAIRN ▣', W / 2, H - 16, 8, '#5dff8f');
+          api.vignette(); api.scanlines();
+        },
+      },
 
-  function tileCenter(cx, cy) { return { x: cx * TILE, y: cy * TILE }; }
+      /* ========================= 4. THE WARNING ====================== */
+      {
+        id: 'warning', name: 'THE WARNING', sub: 'CUT FROM THE TIMES',
+        intro: ['A NOTE OF PASTED WORDS', 'WARNS SIR HENRY OFF.', 'PIECE THE MESSAGE BACK', 'together, word by word.'],
+        quote: 'As you value your life or your reason, keep away from the moor.',
+        help: 'TAP the words in the right order',
+        winText: 'The warning reads whole. Someone fears what Sir Henry might find.',
+        loseText: 'The paste-up makes no sense. The message is lost.',
+        init() {
+          this.target = ['AS', 'YOU', 'VALUE', 'YOUR', 'LIFE', 'KEEP', 'AWAY', 'THE', 'MOOR'];
+          this.placed = 0; this.wrong = 0;
+          const order = this.target.map((w, i) => i);
+          for (let i = order.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [order[i], order[j]] = [order[j], order[i]]; }
+          this.tiles = order.map((idx, k) => ({ idx, word: this.target[idx], x: 22 + (k % 3) * 80, y: 250 + Math.floor(k / 3) * 50, w: 72, h: 36, gone: false }));
+        },
+        update(api, dt) {
+          if (api.pointer.justDown) {
+            for (const t of this.tiles) {
+              if (t.gone) continue;
+              if (api.pointer.x > t.x && api.pointer.x < t.x + t.w && api.pointer.y > t.y && api.pointer.y < t.y + t.h) {
+                if (t.idx === this.placed) { t.gone = true; this.placed++; api.score += 30; api.audio.sfx('coin'); api.burst(t.x + t.w / 2, t.y + t.h / 2, api.colors.gold, 6); if (this.placed >= this.target.length) { api.score += 80; api.win(); } }
+                else { this.wrong++; api.shake(4, 0.2); api.audio.sfx('hurt'); if (this.wrong >= 4) api.lose(); }
+                break;
+              }
+            }
+          }
+        },
+        draw(api) {
+          const g = api.gfx, W = api.W, H = api.H;
+          api.clear('#161410');
+          g.rect(16, 40, W - 32, 150, '#d8c89a'); g.rectO(16, 40, W - 32, 150, '#9a8a5a', 2);
+          let x = 28, y = 58;
+          for (let i = 0; i < this.target.length; i++) {
+            const wd = this.target[i], wpx = wd.length * 9 + 8;
+            if (x + wpx > W - 28) { x = 28; y += 26; }
+            if (i < this.placed) { g.rect(x, y, wpx, 20, '#1a1408'); api.txt(wd, x + 4, y + 5, 9, '#d8c89a'); }
+            else g.rectO(x, y, wpx, 20, '#9a8a5a', 1);
+            x += wpx + 6;
+          }
+          for (const t of this.tiles) {
+            if (t.gone) continue;
+            g.rect(t.x, t.y, t.w, t.h, '#efe6cf'); g.rectO(t.x, t.y, t.w, t.h, '#8a7a4a', 1);
+            api.txtC(t.word, t.x + t.w / 2, t.y + 12, 9, '#1a1408');
+          }
+          api.topBar('THE WARNING');
+          api.txt('WORD ' + this.placed + '/' + this.target.length, 6, 20, 9, api.colors.gold);
+          for (let i = 0; i < 4; i++) g.rect(W - 56 + i * 13, 20, 9, 8, i < 4 - this.wrong ? '#5dff8f' : '#3a2a1a');
+          api.vignette(); api.scanlines();
+        },
+      },
 
-  /* ---- grid-stepped movement for an actor ---- */
-  function stepActor(a, wantDir) {
-    if (!a.moving) {
-      // pick a direction
-      if (wantDir && (wantDir[0] || wantDir[1])) {
-        const nx = a.cx + wantDir[0], ny = a.cy + wantDir[1];
-        if (!isWall(nx, ny)) { a.target = { cx: nx, cy: ny }; a.dir = wantDir; a.moving = true; }
-        else a.dir = wantDir; // face but don't move
-      }
-    }
-    if (a.moving && a.target) {
-      const tc = tileCenter(a.target.cx, a.target.cy);
-      const sp = a.speed;
-      if (a.x < tc.x) a.x = Math.min(tc.x, a.x + sp);
-      else if (a.x > tc.x) a.x = Math.max(tc.x, a.x - sp);
-      if (a.y < tc.y) a.y = Math.min(tc.y, a.y + sp);
-      else if (a.y > tc.y) a.y = Math.max(tc.y, a.y - sp);
-      if (a.x === tc.x && a.y === tc.y) { a.cx = a.target.cx; a.cy = a.target.cy; a.moving = false; a.target = null; }
-    }
-  }
-
-  function update(dt) {
-    if (msgTimer > 0) msgTimer -= dt;
-    if (state === 'win' || state === 'over') {
-      if (input.anyPressed()) { reset(state === 'over'); }
-      return;
-    }
-    if (caughtFlash > 0) { caughtFlash -= dt; return; }
-
-    timer += dt;
-
-    // player input
-    let wd = [0, 0];
-    if (input.down('left')) wd = [-1, 0];
-    else if (input.down('right')) wd = [1, 0];
-    else if (input.down('up')) wd = [0, -1];
-    else if (input.down('down')) wd = [0, 1];
-    stepActor(player, wd);
-
-    // pick up clues
-    for (const c of clues) {
-      if (!c.got && c.cx === player.cx && c.cy === player.cy && !player.moving) {
-        c.got = true; score += 100; audio.sfx('coin'); msg('CLUE FOUND!');
-      }
-    }
-    const remaining = clues.filter((c) => !c.got).length;
-
-    // exit
-    if (remaining === 0 && player.cx === exit.cx && player.cy === exit.cy && !player.moving) {
-      level++; score += 250 + Math.max(0, 600 - Math.floor(timer * 10));
-      audio.sfx('win'); Retro.Store.setHigh(GAME, score);
-      // brief level-complete
-      grid = null; state = 'win';
-      return;
-    }
-
-    // hound AI
-    const dpx = player.cx - hound.cx, dpy = player.cy - hound.cy;
-    const manh = Math.abs(dpx) + Math.abs(dpy);
-    // detection: close, or line of sight along a corridor
-    let sees = manh <= 3;
-    if (!sees && (player.cx === hound.cx || player.cy === hound.cy)) {
-      sees = lineClear(hound.cx, hound.cy, player.cx, player.cy);
-    }
-    if (sees) hound.state = 'hunt'; else if (hound.state === 'hunt' && manh > 7) hound.state = 'patrol';
-
-    if (!hound.moving) {
-      let dir = [0, 0];
-      if (hound.state === 'hunt') {
-        const nxt = bfsNext([hound.cx, hound.cy], [player.cx, player.cy]);
-        if (nxt) dir = [nxt[0] - hound.cx, nxt[1] - hound.cy];
-        hound.speed = clamp(0.95 + level * 0.12, 0.95, player.speed - 0.05);
-      } else {
-        // wander: keep going, turn at junctions
-        const opts = [[0, -1], [0, 1], [-1, 0], [1, 0]].filter(([dx, dy]) => !isWall(hound.cx + dx, hound.cy + dy));
-        const fwd = opts.filter(([dx, dy]) => !(dx === -hound.dir[0] && dy === -hound.dir[1]));
-        dir = (fwd.length ? choice(fwd) : (opts.length ? choice(opts) : [0, 0]));
-        hound.speed = 0.7 + level * 0.06;
-      }
-      stepActor(hound, dir);
-    } else stepActor(hound, hound.dir);
-
-    // caught?
-    if (Math.abs(hound.x - player.x) < 10 && Math.abs(hound.y - player.y) < 10) {
-      lives--; audio.sfx('hurt'); caughtFlash = 1.1;
-      if (lives <= 0) { state = 'over'; audio.sfx('lose'); Retro.Store.setHigh(GAME, score); }
-      else {
-        // respawn player at start, hound pushed away
-        player.cx = 1; player.cy = 1; player.x = TILE; player.y = TILE; player.moving = false; player.target = null;
-        msg('CAUGHT! ' + lives + ' LEFT');
-      }
-    }
-  }
-
-  function lineClear(x0, y0, x1, y1) {
-    if (x0 === x1) { const s = Math.sign(y1 - y0); for (let y = y0 + s; y !== y1; y += s) if (isWall(x0, y)) return false; return true; }
-    if (y0 === y1) { const s = Math.sign(x1 - x0); for (let x = x0 + s; x !== x1; x += s) if (isWall(x, y0)) return false; return true; }
-    return false;
-  }
-
-  /* ---------------------------- rendering ---------------------------- */
-  function render() {
-    g.clear('#06010f');
-    if (state === 'win') { renderLevelClear(); drawHUD(); return; }
-
-    // moor tiles
-    for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++) {
-      const px = OX + x * TILE, py = OY + y * TILE;
-      if (grid[y][x] === 1) {
-        // rocky outcrop
-        g.rect(px, py, TILE, TILE, '#241a33');
-        g.rect(px + 2, py + 2, TILE - 4, TILE - 5, '#2f2247');
-        g.rect(px + 3, py + 3, 3, 3, '#3c2f57');
-      } else {
-        g.rect(px, py, TILE, TILE, '#10172a');
-        if (((x + y) & 1) === 0) g.rect(px + 6, py + 7, 2, 2, '#16203a');
-      }
-    }
-    // exit (Baskerville Hall)
-    const allClues = clues.filter((c) => !c.got).length === 0;
-    const ec = tileCenter(exit.cx, exit.cy);
-    g.rect(OX + ec.x + 2, OY + ec.y + 1, 12, 14, allClues ? '#5dff8f' : '#2b3a4a');
-    g.rect(OX + ec.x + 5, OY + ec.y + 6, 6, 9, '#0b0420');
-    g.textC('⌂', OX + ec.x + TILE / 2, OY + ec.y + 1, allClues ? '#0b0420' : '#6a7a8a', 8);
-
-    // clues
-    const tw = engine.frame * 0.15;
-    for (const c of clues) {
-      if (c.got) continue;
-      const cc = tileCenter(c.cx, c.cy);
-      const yb = Math.sin(tw + c.cx) * 1.5;
-      g.textC('✦', OX + cc.x + TILE / 2, OY + cc.y + 4 + yb, '#ffe14d', 9);
-    }
-
-    // hound
-    drawHound(OX + hound.x, OY + hound.y);
-    // player (Holmes with lantern)
-    drawHolmes(OX + player.x, OY + player.y);
-
-    // fog of war — darken tiles far from the lantern
-    drawFog();
-
-    drawHUD();
-
-    if (caughtFlash > 0 && state === 'play') {
-      g.ctx.globalAlpha = Math.min(0.6, caughtFlash); g.rect(0, 0, W, H, '#ff2e97'); g.ctx.globalAlpha = 1;
-    }
-    if (msgTimer > 0 && message) {
-      g.textC(message, W / 2, OY - 2, '#fff', 9);
-    }
-    if (state === 'over') renderOver();
-  }
-
-  function drawFog() {
-    const ctx = g.ctx;
-    const lx = OX + player.x + TILE / 2, ly = OY + player.y + TILE / 2;
-    const grd = ctx.createRadialGradient(lx, ly, 14, lx, ly, 72);
-    grd.addColorStop(0, 'rgba(6,1,15,0)');
-    grd.addColorStop(0.7, 'rgba(6,1,15,0.55)');
-    grd.addColorStop(1, 'rgba(4,1,10,0.92)');
-    ctx.fillStyle = grd;
-    ctx.fillRect(OX, OY, MAZE_W, MAZE_H);
-  }
-
-  function drawHolmes(x, y) {
-    g.sprite([
-      '..cc..',
-      '.cccc.',
-      '..ff..',
-      '.ffff.',
-      'b.ff.b',
-      '..ff..',
-      '.f..f.',
-    ], x + 2, y + 1, { c: '#3a2f57', f: '#d9c7a0', b: '#21e6ff' }, 2);
-    // lantern glow dot
-    g.circle(x + TILE / 2, y + TILE / 2, 2, '#ffe14d');
-  }
-
-  function drawHound(x, y) {
-    const hot = hound.state === 'hunt';
-    const eye = hot ? '#ff2e97' : '#ff8a3d';
-    g.sprite([
-      'k....k',
-      'kk..kk',
-      'kkkkkk',
-      'ekkkke',
-      'kkkkkk',
-      'k.kk.k',
-    ], x + 2, y + 2, { k: hot ? '#1b0e22' : '#241a33', e: eye }, 2);
-    if (hot) { g.circle(x + 5, y + 8, 1.5, eye); g.circle(x + 11, y + 8, 1.5, eye); }
-  }
-
-  function drawHUD() {
-    g.rect(0, 0, W, OY - 4, '#0b0420');
-    g.line(0, OY - 4, W, OY - 4, '#3a2f57');
-    g.text('SCORE ' + score, 6, 6, '#fff', 8);
-    const remaining = clues ? clues.filter((c) => !c.got).length : 0;
-    g.text('CLUES ' + (clues ? clues.length - remaining : 0) + '/' + (clues ? clues.length : 0), 6, 20, '#ffe14d', 8);
-    g.text('LVL ' + level, W - 52, 6, '#21e6ff', 8);
-    let hearts = '';
-    for (let i = 0; i < lives; i++) hearts += '♥';
-    g.text(hearts || ' ', W - 52, 20, '#ff2e97', 8);
-    if (hound && hound.state === 'hunt') g.textC('! THE HOUND !', W / 2, 13, '#ff2e97', 8);
-  }
-
-  function renderLevelClear() {
-    g.clear('#0b0420');
-    g.textC('THE GAME', W / 2, 70, '#21e6ff', 12);
-    g.textC('IS AFOOT', W / 2, 92, '#21e6ff', 12);
-    g.textC('Level ' + (level - 1) + ' solved!', W / 2, 130, '#fff', 9);
-    g.textC('SCORE ' + score, W / 2, 152, '#ffe14d', 9);
-    g.textC('Press any key', W / 2, 186, '#9d92c7', 8);
-  }
-
-  function renderOver() {
-    g.ctx.globalAlpha = 0.82; g.rect(0, 0, W, H, '#06010f'); g.ctx.globalAlpha = 1;
-    g.textC('THE HOUND', W / 2, 80, '#ff2e97', 14);
-    g.textC('WINS', W / 2, 104, '#ff2e97', 14);
-    g.textC('Score ' + score, W / 2, 140, '#fff', 9);
-    g.textC('Best ' + Retro.Store.getHigh(GAME), W / 2, 158, '#ffe14d', 8);
-    g.textC('Press any key to retry', W / 2, 192, '#9d92c7', 8);
-  }
-
-  /* --------------------------- controls UI --------------------------- */
-  document.getElementById('muteBtn').addEventListener('click', function () {
-    this.textContent = audio.toggleMute() ? '🔇' : '🔊';
+      /* ========================== 5. THE HOUND ======================= */
+      {
+        id: 'hound', name: 'THE HOUND', sub: 'A CREATURE OF FIRE',
+        intro: ['FROM THE FOG IT COMES —', 'A GIANT HOUND, ITS JAWS', 'AND EYES AFLAME WITH', 'phosphorus. Fire!'],
+        quote: 'A hound it was, an enormous coal-black hound, but not such a hound as mortal eyes have ever seen.',
+        help: 'TAP the hound to fire · keep it off Sir Henry',
+        winText: 'Five barrels empty into its flank. The legend dies in the mire.',
+        loseText: 'The fiery jaws reach Sir Henry first. The curse holds.',
+        init(api) { this.hp = 5; this.hx = api.W / 2; this.hy = 110; this.vx = (Math.random() < 0.5 ? -1 : 1) * (0.7 + Math.random() * 0.6); this.flash = 0; this.recoil = 0; },
+        update(api, dt) {
+          const f = dt * 60;
+          this.hy += (0.5 + (5 - this.hp) * 0.12) * f;
+          this.hx += this.vx * f; if (this.hx < 30 || this.hx > api.W - 30) this.vx *= -1;
+          if (this.recoil > 0) { this.recoil -= dt; this.hy -= 1.4 * f; }
+          if (this.flash > 0) this.flash -= dt;
+          const sirY = api.H - 44;
+          if (this.hy >= sirY) { api.lose(); return; }
+          api.score = Math.floor((1 - (this.hy - 110) / (sirY - 110)) * 100) + (5 - this.hp) * 20;
+          if (api.pointer.justDown) {
+            this.flash = 0.08; api.audio.sfx('shoot'); api.shake(2, 0.1);
+            if (Math.hypot(api.pointer.x - this.hx, api.pointer.y - this.hy) < 26) {
+              this.hp--; this.recoil = 0.25; api.burst(this.hx, this.hy, '#5dff8f', 12); api.audio.sfx('hurt');
+              if (this.hp <= 0) { api.score += Math.floor(sirY - this.hy); api.flash('#fff', 0.3); api.shake(8, 0.5); api.win(); }
+            }
+          }
+        },
+        draw(api) {
+          const g = api.gfx, W = api.W, H = api.H, c = api.ctx;
+          api.clear('#0a0e0c');
+          g.circle(W - 40, 44, 14, '#cdd3c6');
+          g.rect(0, H - 40, W, 40, '#141a14');
+          g.sprite(['.cc.', 'cffc', 'cccc', 'c..c'], W / 2 - 8, H - 56, { c: '#3a3a2a', f: '#caa07a' }, 4);
+          api.txtC('SIR HENRY', W / 2, H - 12, 8, api.colors.dim);
+          c.globalAlpha = 0.4 + Math.sin(api.t * 6) * 0.2; g.circle(this.hx, this.hy, 22, '#1aff6a'); c.globalAlpha = 1;
+          g.sprite([
+            'k......k',
+            'kk....kk',
+            'kkkkkkkk',
+            'gkkkkkkg',
+            'kkkkkkkk',
+            'k.kk.kk.',
+          ], this.hx - 16, this.hy - 12, { k: '#0a1a0e', g: '#1aff6a' }, 4);
+          g.rect(this.hx - 9, this.hy - 2, 3, 3, '#bfffd0'); g.rect(this.hx + 6, this.hy - 2, 3, 3, '#bfffd0');
+          for (let i = 0; i < 6; i++) { c.globalAlpha = 0.08; g.rect(0, 80 + i * 50 + Math.sin(api.t + i) * 8, W, 22, '#9ab0a0'); c.globalAlpha = 1; }
+          if (this.flash > 0) { c.globalAlpha = 0.5; g.rect(0, 0, W, H, '#2a3a2a'); c.globalAlpha = 1; }
+          api.topBar('THE HOUND');
+          api.txt('SHOTS LANDED ' + (5 - this.hp) + '/5', 6, 20, 9, api.colors.gold);
+          const sirY = H - 44, prox = clamp((this.hy - 110) / (sirY - 110), 0, 1);
+          g.rect(W - 70, 21, 64, 6, '#2a2230'); g.rect(W - 70, 21, 64 * prox, 6, prox > 0.7 ? api.colors.blood : '#e8a030');
+          api.vignette(); api.scanlines();
+        },
+      },
+    ],
   });
-  document.getElementById('restartBtn').addEventListener('click', () => reset(true));
-
-  reset(true);
-  engine.run(update, render);
 })();

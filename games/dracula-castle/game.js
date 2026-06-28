@@ -1,11 +1,11 @@
 /* ============================================================================
- * DRACULA — A PIXEL SAGA
+ * DRACULA — A PIXEL TALE
  * Five chapters through Bram Stoker's novel, each a different mini-game:
- *   1. THE CARPATHIAN ROAD — night carriage dodge
- *   2. THE CASTLE WALL     — timing-based climb
- *   3. THE DEMETER         — defend the doomed ship
- *   4. LUCY'S TOMB         — precision stake-strike
- *   5. THE RECKONING       — sunset chase + final blow
+ *   1. THE CASTLE WALL — timing-based climb (escape the castle)
+ *   2. THE DEMETER     — defend the doomed ship
+ *   3. RENFIELD        — catch the flies in the asylum
+ *   4. LUCY'S TOMB     — precision stake-strike
+ *   5. THE RECKONING   — sunset chase + final blow
  * Built on RetroSaga (js/saga.js) + RetroEngine.
  * ============================================================================ */
 (function () {
@@ -28,7 +28,8 @@
   RetroSaga.create({
     id: 'dracula',
     title: 'Dracula',
-    subtitle: 'A SAGA IN FIVE CHAPTERS',
+    subtitle: 'A TALE IN FIVE CHAPTERS',
+    currency: 'RESOLVE',
     accent: '#e3c567',
     credit: 'AN ORIGINAL 8-BIT TRIBUTE · B. STOKER, 1897',
     emblem,
@@ -37,73 +38,6 @@
     palette: { gold: '#e3c567', blood: '#c8102e' },
 
     chapters: [
-      /* ============================ 1. THE ROAD ========================= */
-      {
-        id: 'road', name: 'THE CARPATHIAN ROAD', sub: 'TO CASTLE DRACULA',
-        intro: ['JONATHAN HARKER RIDES', 'THE NIGHT ROAD INTO', 'THE CARPATHIANS —', 'and wolves give chase.'],
-        quote: 'Listen to them — the children of the night. What music they make!',
-        help: 'DRAG or ◀ ▶ to steer · survive the road',
-        winText: 'The gates of Castle Dracula loom from the dark. Harker arrives.',
-        loseText: 'The wolves take the horses. The night road swallows all.',
-        init(api) { this.x = api.W / 2; this.hits = 0; this.obs = []; this.timer = 26; this.spawn = 0.6; this.dist = 0; },
-        update(api, dt) {
-          const f = dt * 60;
-          this.timer -= dt; this.dist += dt * 12; api.score = Math.floor(this.dist);
-          const p = api.pointer;
-          if (p.down) this.x = p.x;
-          if (api.keyDown('left')) this.x -= 3 * f;
-          if (api.keyDown('right')) this.x += 3 * f;
-          this.x = clamp(this.x, 30, api.W - 30);
-          this.spawn -= dt;
-          const rate = Math.max(0.42, 1.05 - this.dist / 380);
-          if (this.spawn <= 0) { this.spawn = rate; this.obs.push({ x: api.rnd(26, api.W - 26), y: -14, kind: api.chance(0.5) ? 'wolf' : 'rock', vy: api.rnd(2.6, 3.8), ph: api.rnd(0, 6) }); }
-          const cy = api.H - 64;
-          for (const o of this.obs) {
-            o.y += o.vy * f; o.ph += 0.2 * f;
-            if (!o.dead && Math.abs(o.x - this.x) < 18 && Math.abs(o.y - cy) < 16) {
-              o.dead = true; this.hits++; api.shake(6, 0.3); api.flash(api.colors.blood, 0.18); api.burst(o.x, o.y, api.colors.blood, 10); api.audio.sfx('hurt');
-              if (this.hits >= 3) { api.lose(); return; }
-            }
-          }
-          this.obs = this.obs.filter((o) => o.y < api.H + 20 && !o.dead);
-          if (this.timer <= 0) { api.score += 120; api.win(); }
-        },
-        draw(api) {
-          const g = api.gfx, W = api.W, H = api.H;
-          api.clear('#0a0a16');
-          // moon
-          g.circle(W - 44, 48, 16, '#cdd3e6'); g.circle(W - 38, 44, 13, '#0a0a16');
-          // road
-          g.rect(W / 2 - 60, 0, 120, H, '#15131f');
-          g.rect(W / 2 - 60, 0, 5, H, '#2a2740'); g.rect(W / 2 + 55, 0, 5, H, '#2a2740');
-          const sc = (api.t * 220) % 40;
-          for (let y = -40 + sc; y < H; y += 40) g.rect(W / 2 - 2, y, 4, 20, '#3a3760');
-          // passing pines
-          for (let i = 0; i < 6; i++) { const ty = (api.t * 200 + i * 90) % (H + 40) - 20; const tx = i % 2 ? 18 : W - 26; g.sprite(['..g..', '.ggg.', 'ggggg', '..w..'], tx - 8, ty, { g: '#13261a', w: '#2a1a10' }, 3); }
-          // obstacles
-          for (const o of this.obs) {
-            if (o.kind === 'wolf') { const step = Math.sin(o.ph) > 0 ? 0 : 1; g.sprite(['k.k', 'kkk', 'k.k'], o.x - 9 + step, o.y - 9, { k: '#2a2a33' }, 6); g.rect(o.x - 6, o.y - 4, 2, 2, '#ff3b3b'); g.rect(o.x + 4, o.y - 4, 2, 2, '#ff3b3b'); }
-            else g.sprite(['.kk.', 'kkkk', 'kkkk'], o.x - 8, o.y - 8, { k: '#3a3340' }, 4);
-          }
-          // carriage
-          const cyy = H - 64;
-          g.sprite([
-            '.bbbbbb.',
-            'bbbbbbbb',
-            'b.bwwb.b',
-            'bbbbbbbb',
-            '.k....k.',
-            '.kk..kk.',
-          ], this.x - 16, cyy - 18, { b: '#241018', w: '#e3c567', k: '#3a2a1a' }, 4);
-          api.topBar('THE CARPATHIAN ROAD');
-          api.txt('DIST ' + Math.floor(this.dist), 6, 20, 9, api.colors.gold);
-          for (let i = 0; i < 3; i++) g.rect(W - 50 + i * 14, 5, 10, 8, i < 3 - this.hits ? api.colors.blood : '#3a1a1a');
-          // survive bar
-          g.rect(6, H - 12, W - 12, 5, '#2a2230'); g.rect(6, H - 12, (W - 12) * (1 - clamp(this.timer / 26, 0, 1)), 5, api.colors.gold);
-          api.vignette(); api.scanlines();
-        },
-      },
-
       /* ============================ 2. THE WALL ======================== */
       {
         id: 'wall', name: 'THE CASTLE WALL', sub: 'A THING OF DARKNESS',
@@ -194,6 +128,53 @@
           api.txt('WARDED ' + this.warded, 6, 20, 9, api.colors.gold);
           for (let i = 0; i < 5; i++) g.rect(W - 70 + i * 13, 5, 9, 8, i < this.crew ? '#5dff8f' : '#2a1a1a');
           g.rect(6, H - 12, W - 12, 5, '#2a2230'); g.rect(6, H - 12, (W - 12) * (1 - clamp(this.timer / 26, 0, 1)), 5, api.colors.gold);
+          api.vignette(); api.scanlines();
+        },
+      },
+
+      /* ========================= 3b. RENFIELD ======================== */
+      {
+        id: 'renfield', name: 'RENFIELD', sub: "DR SEWARD'S ASYLUM",
+        intro: ['IN THE ASYLUM, RENFIELD', 'DEVOURS FLIES AND SPIDERS', 'TO DRINK THEIR LIVES —', 'his Master draws near.'],
+        quote: 'The blood is the life! The blood is the life!',
+        help: 'TAP the flies & spiders to fill the jar',
+        winText: 'The jar seethes with life. "The Master is coming," he whispers.',
+        loseText: 'The orderlies wrestle him down before the jar is full.',
+        init(api) { this.caught = 0; this.need = 16; this.timer = 22; this.bugs = []; this.spawn = 0; },
+        update(api, dt) {
+          const f = dt * 60;
+          this.timer -= dt; api.score = this.caught * 5 + Math.floor(22 - this.timer);
+          this.spawn -= dt;
+          if (this.spawn <= 0) { this.spawn = api.rnd(0.32, 0.6); const kind = api.chance(0.3) ? 'spider' : 'fly'; this.bugs.push({ x: api.rnd(20, api.W - 20), y: api.rnd(56, api.H - 40), vx: api.rnd(-1.2, 1.2), vy: api.rnd(-1.2, 1.2), kind, life: kind === 'fly' ? api.rnd(2, 3.2) : api.rnd(3, 4.2) }); }
+          for (const b of this.bugs) {
+            b.x += b.vx * f; b.y += b.vy * f; b.life -= dt;
+            if (b.x < 14 || b.x > api.W - 14) b.vx *= -1; if (b.y < 50 || b.y > api.H - 28) b.vy *= -1;
+            if (api.chance(0.02)) { b.vx = api.rnd(-1.5, 1.5); b.vy = api.rnd(-1.5, 1.5); }
+          }
+          this.bugs = this.bugs.filter((b) => b.life > 0);
+          if (api.pointer.justDown) {
+            let hit = false;
+            for (const b of this.bugs) { if (!b.gone && Math.hypot(api.pointer.x - b.x, api.pointer.y - b.y) < (b.kind === 'spider' ? 17 : 13)) { b.gone = true; hit = true; this.caught++; api.score += 5; api.audio.sfx('coin'); api.burst(b.x, b.y, '#9adf6a', 6); break; } }
+            this.bugs = this.bugs.filter((b) => !b.gone);
+            if (!hit) api.audio.sfx('blip');
+          }
+          if (this.caught >= this.need) { api.score += Math.floor(this.timer * 4); api.win(); }
+          else if (this.timer <= 0) api.lose();
+        },
+        draw(api) {
+          const g = api.gfx, W = api.W, H = api.H;
+          api.clear('#15171c');
+          for (let y = 20; y < H; y += 26) for (let x = 0; x < W; x += 26) { g.rect(x + 2, y + 2, 22, 22, '#23262e'); g.rectO(x + 2, y + 2, 22, 22, '#1a1c22', 1); }
+          const jx = W / 2 - 22, jy = H - 70;
+          g.rect(jx, jy, 44, 56, 'rgba(120,160,120,.12)'); g.rectO(jx, jy, 44, 56, '#8aa080', 1);
+          const fill = Math.min(1, this.caught / this.need); g.rect(jx + 2, jy + 54 - 52 * fill, 40, 52 * fill, 'rgba(110,200,90,.45)');
+          for (const b of this.bugs) {
+            if (b.kind === 'fly') { g.rect(b.x - 2, b.y - 1, 4, 3, '#101010'); g.rect(b.x - 4, b.y - 2, 2, 1, '#cfe0d0'); g.rect(b.x + 3, b.y - 2, 2, 1, '#cfe0d0'); }
+            else { g.rect(b.x - 3, b.y - 3, 6, 6, '#101010'); for (const sgn of [-5, 5]) { g.rect(b.x + sgn, b.y - 3, 2, 1, '#101010'); g.rect(b.x + sgn, b.y + 2, 2, 1, '#101010'); } }
+          }
+          api.topBar('RENFIELD');
+          api.txt('JAR ' + this.caught + '/' + this.need, 6, 20, 9, '#9adf6a');
+          g.rect(W - 70, 21, 64, 6, '#2a2230'); g.rect(W - 70, 21, 64 * (1 - clamp(this.timer / 22, 0, 1)), 6, api.colors.gold);
           api.vignette(); api.scanlines();
         },
       },
