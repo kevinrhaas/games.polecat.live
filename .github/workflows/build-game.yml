@@ -72,8 +72,12 @@ jobs:
             default to gold-on-black); scenery(api,scene,t); a per-chapter icon; emblem;
             and a `menu` block that re-skins the chapter-select to the property via
             menu.colors + menu.card(api,info) drawing each chapter entry as something
-            thematic (parchment, folders, wooden signs, banners, map nodes, cards…) and
-            optionally menu.layout for non-list arrangements. Set custom currency/
+            thematic (parchment, folders, wooden signs, banners, map nodes, cards…).
+            STRONGLY prefer a non-list LAYOUT via menu.layout — vary the actual
+            arrangement, button shapes and background so games don't all feel like a
+            vertical list (see the references: Dracula = scattered graveyard tombstones,
+            Sherlock = a pinned corkboard with red string, Robin Hood = zigzag archery
+            targets in a bright clearing, Arthur = a radial Round Table of shields). Set custom currency/
             subtitle/bootCta/menuLabel/menuHint/menuDone/finale. Stay faithful to the
             source's era and mood; reserve CRT/terminal styling for genuinely sci-fi
             works only; never use the word "saga" in user-facing text. Mobile-first; must

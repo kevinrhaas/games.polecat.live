@@ -109,8 +109,18 @@
       c.fillStyle = 'rgba(4, 10, 20, 0.68)';
       c.fillRect(0, 0, W, H);
     } else if (scene === 'menu') {
-      c.fillStyle = 'rgba(4, 10, 20, 0.52)';
-      c.fillRect(0, 0, W, H);
+      // a torch-lit stone hall with the Round Table — unlike the night vista
+      for (let yy = 0; yy < H; yy += 26) for (let xx = 0; xx < W; xx += 40) { c.fillStyle = ((Math.floor(yy / 26) + Math.floor(xx / 40)) % 2) ? '#231e18' : '#1b1712'; c.fillRect(xx, yy, 39, 25); }
+      for (const tx of [22, W - 22]) {
+        c.fillStyle = '#3a2a16'; c.fillRect(tx - 2, 74, 4, 26);
+        c.globalAlpha = 0.5 + 0.2 * Math.sin(t * 6 + tx); c.fillStyle = '#ff9a30'; c.beginPath(); c.arc(tx, 70, 8, 0, 7); c.fill(); c.globalAlpha = 1;
+        c.fillStyle = '#ffd060'; c.beginPath(); c.arc(tx, 71, 3, 0, 7); c.fill();
+      }
+      const tcx = W / 2, tcy = 296;
+      c.fillStyle = '#2e2012'; c.beginPath(); c.arc(tcx, tcy, 122, 0, 7); c.fill();
+      c.fillStyle = '#4a3520'; c.beginPath(); c.arc(tcx, tcy, 112, 0, 7); c.fill();
+      c.strokeStyle = '#caa15a'; c.lineWidth = 2; c.beginPath(); c.arc(tcx, tcy, 112, 0, 7); c.stroke();
+      g.rect(tcx - 1, tcy - 30, 3, 44, '#cfe0ff'); g.rect(tcx - 8, tcy + 12, 17, 3, '#caa15a'); g.rect(tcx - 2, tcy + 14, 5, 9, '#8a6a3a'); // Excalibur
     }
   }
 
@@ -132,18 +142,29 @@
     menuHint: 'CHOOSE YOUR QUEST',
     menuDone: 'THE ONCE AND FUTURE KING',
     menu: {
-      colors: { title: '#ffd966', label: '#8a9ad0', cur: '#cfe0ff' },
+      // chapters are SHIELDS seated around the Round Table (radial layout)
+      title(api, honour) {
+        api.txtC('KING ARTHUR', api.W / 2, 22, 15, '#ffd966', true);
+        api.txtC('THE ROUND TABLE', api.W / 2, 48, 9, '#8a9ad0');
+        api.txtC('HONOUR  ' + honour, api.W / 2, 64, 9, '#cfe0ff');
+      },
+      layout(api) {
+        const cx = api.W / 2, cy = 296, R = 94, out = [];
+        for (let i = 0; i < 5; i++) { const a = (-90 + i * 72) * Math.PI / 180; out.push({ x: cx + Math.cos(a) * R - 26, y: cy + Math.sin(a) * R - 26, w: 52, h: 56 }); }
+        return out;
+      },
       card(api, info) {
-        const g = api.gfx, { ch, i, x, y, w, h, sel, done, best } = info;
-        g.rect(x, y, w, h, sel ? '#1a2a5a' : '#10193a');           // royal-blue banner
-        g.rectO(x, y, w, h, sel ? '#ffd966' : '#3a4a8a', sel ? 2 : 1);
-        g.rect(x, y, w, 3, '#ffd966');                              // gold top rail
-        g.circle(x + 22, y + h / 2, 10, done ? '#c8a030' : '#26356a'); // crest disc
-        if (ch.icon) ch.icon(api, x + 22, y + h / 2);
-        api.txt((i + 1) + '. ' + ch.name, x + 42, y + 9, 10, done ? '#ffd966' : '#e8eeff');
-        api.txt(ch.sub || '', x + 42, y + 25, 9, '#8a9ad0');
-        if (done) api.txt('✦' + best, x + w - 52, y + 16, 9, '#ffd966');
-        else api.txt('▸', x + w - 20, y + 16, 12, sel ? '#ffd966' : '#3a4a8a');
+        const g = api.gfx, c = api.ctx, { ch, i, x, y, w, h, sel, done } = info;
+        const cx = x + w / 2, cy = y + 24;
+        c.fillStyle = sel ? '#2a3a7a' : '#16244e';
+        c.beginPath(); c.moveTo(cx - 22, cy - 22); c.lineTo(cx + 22, cy - 22); c.lineTo(cx + 22, cy + 6);
+        c.quadraticCurveTo(cx + 22, cy + 26, cx, cy + 30); c.quadraticCurveTo(cx - 22, cy + 26, cx - 22, cy + 6); c.closePath(); c.fill();
+        c.strokeStyle = (done || sel) ? '#ffd966' : '#5a6aa8'; c.lineWidth = sel ? 2 : 1; c.stroke();
+        if (ch.icon) ch.icon(api, cx, cy - 2);
+        api.txtC('' + (i + 1), cx, cy + 11, 8, '#cfe0ff', true);
+        const tw = ch.name.length * 5 + 6;
+        g.rect(cx - tw / 2, cy + 34, tw, 12, 'rgba(8,10,24,.88)');
+        api.txtC(ch.name, cx, cy + 36, 7, done ? '#ffd966' : '#cfe0ff');
       },
     },
     finale: ['EXCALIBUR GLEAMS.', 'CAMELOT STANDS.', 'THE GRAIL IS FOUND.', '', 'THE LEGEND LIVES ON.'],

@@ -11,6 +11,8 @@
 (function () {
   'use strict';
   const clamp = Retro.util.clamp;
+  // scattered positions of the pinned case files on the corkboard menu
+  const FILES = [[20, 108, 110, 66], [150, 168, 98, 62], [26, 248, 110, 66], [150, 330, 100, 62], [42, 408, 112, 58]];
 
   function emblem(api, cx, cy) {
     const c = api.ctx;
@@ -49,7 +51,12 @@
     c.globalAlpha = 0.14; g.circle(W - 48, H - 95, 16, '#e8d27a'); c.globalAlpha = 1; g.circle(W - 48, H - 95, 4, '#e8d27a');
     for (let i = 0; i < 5; i++) { c.globalAlpha = 0.06; const fy = 110 + i * 60 + Math.sin(t * 0.6 + i) * 8, fx = (t * (8 + i * 3)) % (W + 80) - 40; g.rect(fx, fy, 90, 16, '#9fb8a4'); g.rect(fx - 60, fy + 6, 70, 12, '#9fb8a4'); c.globalAlpha = 1; }
     if (scene === 'intro' || scene === 'finale' || scene === 'result') { c.fillStyle = 'rgba(6,10,8,.6)'; c.fillRect(0, 0, W, H); }
-    else if (scene === 'menu') { c.fillStyle = 'rgba(6,10,8,.4)'; c.fillRect(0, 0, W, H); }
+    else if (scene === 'menu') {
+      // a detective's corkboard — case files are pinned to it
+      c.fillStyle = '#8a6638'; c.fillRect(0, 0, W, H);
+      for (let i = 0; i < 300; i++) { const x = (i * 71 + 13) % W, y = (i * 53 + 7) % H; c.fillStyle = 'rgba(0,0,0,' + (0.05 + (i % 4) * 0.015) + ')'; c.fillRect(x, y, 2, 2); }
+      c.fillStyle = '#3a2410'; c.fillRect(0, 0, W, 9); c.fillRect(0, H - 9, W, 9); c.fillRect(0, 0, 9, H); c.fillRect(W - 9, 0, 9, H);
+    }
   }
 
   RetroSaga.create({
@@ -68,18 +75,26 @@
     menuHint: 'OPEN A FILE TO INVESTIGATE',
     menuDone: 'THE CASE IS CLOSED',
     menu: {
-      colors: { title: '#e8dcb0', label: '#8a9a86', cur: '#cde8b0' },
+      // chapters are pinned case files scattered across a corkboard, linked by red string
+      title(api, insight) {
+        const g = api.gfx, c = api.ctx, W = api.W;
+        g.rect(64, 22, W - 128, 46, '#efe6cf'); g.rectO(64, 22, W - 128, 46, '#9a8a5a', 1);
+        g.circle(W / 2, 26, 4, '#b03030');
+        api.txtC('THE CASE FILES', W / 2, 32, 10, '#2a2210');
+        api.txtC('INSIGHT  ' + insight, W / 2, 52, 9, '#7a1818');
+        c.strokeStyle = 'rgba(176,40,40,.85)'; c.lineWidth = 1.5; c.beginPath();
+        FILES.forEach((p, i) => { const cx = p[0] + p[2] / 2, cy = p[1] + 6; if (i) c.lineTo(cx, cy); else c.moveTo(cx, cy); });
+        c.stroke();
+      },
+      layout() { return FILES.map((p) => ({ x: p[0], y: p[1], w: p[2], h: p[3] })); },
       card(api, info) {
         const g = api.gfx, { ch, i, x, y, w, h, sel, done } = info;
-        g.rect(x + 10, y - 4, 44, 8, sel ? '#e8d8a8' : '#cdbf92');   // folder tab
-        g.rect(x, y, w, h, sel ? '#e8d8a8' : '#cdbf92');             // manila folder
-        g.rectO(x, y, w, h, '#9a8a58', 1);
-        g.rect(x + 6, y + 6, w - 12, 1, 'rgba(120,100,60,.4)');
-        g.circle(x + 20, y + h / 2, 5, '#b03030'); g.circle(x + 20, y + h / 2, 2, '#7a1818'); // red pin
-        api.txt((i + 1) + '. ' + ch.name, x + 36, y + 9, 10, '#2a2210');
-        api.txt(ch.sub || '', x + 36, y + 25, 9, '#6a5a38');
-        if (done) api.txt('SOLVED', x + w - 70, y + 17, 8, '#2c6a2c');
-        else api.txt('OPEN ▸', x + w - 64, y + 17, 8, sel ? '#7a1818' : '#7a6a44');
+        g.rect(x, y, w, h, sel ? '#fffdf0' : '#ece2c8'); g.rectO(x, y, w, h, sel ? '#b03030' : '#9a8a58', sel ? 2 : 1);
+        g.rect(x + 6, y + 13, w - 12, h - 30, '#c4b586');           // photo area
+        if (ch.icon) ch.icon(api, x + 20, y + 13 + (h - 30) / 2);
+        api.txt((i + 1) + '. ' + ch.name, x + 6, y + h - 13, 8, '#2a2210');
+        g.circle(x + w / 2, y + 4, 4, '#b03030'); g.circle(x + w / 2, y + 4, 2, '#7a1818'); // thumbtack
+        if (done) api.txt('SOLVED', x + w - 50, y + 5, 7, '#2c6a2c');
       },
     },
     finale: ['THE HOUND IS NO PHANTOM —', 'ONLY PHOSPHOR AND MALICE.', 'STAPLETON SINKS INTO', 'THE MIRE. CASE CLOSED.'],

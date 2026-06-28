@@ -40,7 +40,13 @@
     for (const tw of towers) { c.fillStyle = '#0a0610'; c.fillRect(tw[0], baseY - tw[1], 20, tw[1]); for (let bx = 0; bx < 20; bx += 8) c.fillRect(tw[0] + bx, baseY - tw[1] - 5, 5, 5); g.rect(tw[0] + 7, baseY - tw[1] + 12, 6, 9, '#e3a030'); }
     for (let i = 0; i < 5; i++) { const bx = (t * 26 + i * 64) % (W + 40) - 20, by = 116 + Math.sin(t * 2 + i) * 16 + i * 10; const flap = Math.sin(t * 12 + i) > 0; g.sprite(flap ? ['k.kk.k', '.kkkk.'] : ['.k..k.', 'kkkkkk'], bx, by, { k: '#120814' }, 2); }
     if (scene === 'intro' || scene === 'finale' || scene === 'result') { c.fillStyle = 'rgba(6,3,9,.62)'; c.fillRect(0, 0, W, H); }
-    else if (scene === 'menu') { c.fillStyle = 'rgba(6,3,9,.42)'; c.fillRect(0, 0, W, H); }
+    else if (scene === 'menu') {
+      // a misty graveyard — the chapter buttons are tombstones
+      c.fillStyle = 'rgba(6,3,9,.4)'; c.fillRect(0, 0, W, H);
+      c.fillStyle = '#0e0a12'; c.fillRect(0, H - 64, W, 64);
+      c.fillStyle = '#160e1a'; for (let i = 0; i < 4; i++) { c.beginPath(); c.ellipse(36 + i * 72, H - 60, 30, 8, 0, 0, 7); c.fill(); }
+      c.globalAlpha = 0.07; c.fillStyle = '#9b7bbf'; for (let i = 0; i < 4; i++) c.fillRect(0, 150 + i * 80 + Math.sin(t + i) * 6, W, 18); c.globalAlpha = 1;
+    }
   }
 
   RetroSaga.create({
@@ -58,18 +64,21 @@
     menuDone: 'THE COUNT IS UNDONE',
     menu: {
       colors: { title: '#e23b4a', label: '#8a6a6a', cur: '#e8c0c0' },
+      // chapters are scattered TOMBSTONES in the graveyard
+      layout(api) {
+        const P = [[40, 150], [150, 134], [28, 252], [160, 246], [88, 352]];
+        return P.map((p) => ({ x: p[0], y: p[1], w: 84, h: 74 }));
+      },
       card(api, info) {
-        const g = api.gfx, { ch, i, x, y, w, h, sel, done, best } = info;
-        g.rect(x, y, w, h, sel ? '#251016' : '#160a10');           // dark stone slab
-        g.rectO(x, y, w, h, sel ? '#e23b4a' : '#5a1822', sel ? 2 : 1);
-        g.rect(x, y, w, 2, '#3a1820');
-        g.circle(x + 22, y + h / 2, 11, done ? '#8a1224' : '#5a0c18'); // blood-wax seal
-        g.circle(x + 22, y + h / 2, 11, 'rgba(255,80,80,0)');
-        if (ch.icon) ch.icon(api, x + 22, y + h / 2);
-        api.txt((i + 1) + '. ' + ch.name, x + 42, y + 9, 10, done ? '#e23b4a' : '#e8d9d0');
-        api.txt(ch.sub || '', x + 42, y + 25, 9, '#8a6a6a');
-        if (done) api.txt('✦' + best, x + w - 52, y + 16, 9, '#e23b4a');
-        else api.txt('▸', x + w - 20, y + 16, 12, sel ? '#e23b4a' : '#5a3a3a');
+        const g = api.gfx, c = api.ctx, { ch, i, x, y, w, h, sel, done } = info;
+        c.fillStyle = sel ? '#2a1f30' : '#1b1522';                  // headstone
+        c.beginPath(); c.moveTo(x, y + 24); c.quadraticCurveTo(x, y, x + w / 2, y); c.quadraticCurveTo(x + w, y, x + w, y + 24); c.lineTo(x + w, y + h); c.lineTo(x, y + h); c.closePath(); c.fill();
+        c.strokeStyle = sel ? '#e23b4a' : '#3a2f44'; c.lineWidth = sel ? 2 : 1; c.stroke();
+        g.rect(x + 10, y + 28, w - 20, 1, '#0a0610');
+        api.txtC('† R.I.P. †', x + w / 2, y + 9, 6, '#6a5a7a');
+        api.txtC((i + 1) + '. ' + ch.name, x + w / 2, y + 34, 7, done ? '#e23b4a' : '#cdbfe0');
+        if (ch.sub) api.txtC(ch.sub, x + w / 2, y + 50, 6, '#7a6a8a');
+        if (done) api.txtC('✦', x + w / 2, y + h - 13, 9, '#e23b4a');
       },
     },
     finale: ['THE COUNT IS DUST.', 'THE CRIMSON DAWN', 'BREAKS CLEAN.', '', 'HARKER GOES HOME.'],

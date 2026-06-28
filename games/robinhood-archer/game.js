@@ -75,7 +75,14 @@
     if (scene === 'intro' || scene === 'finale' || scene === 'result') {
       c.fillStyle = 'rgba(3,8,2,.70)'; c.fillRect(0, 0, W, H);
     } else if (scene === 'menu') {
-      c.fillStyle = 'rgba(3,8,2,.50)'; c.fillRect(0, 0, W, H);
+      // a BRIGHT Sherwood clearing — totally unlike the dark in-game forest
+      const sky = c.createLinearGradient(0, 0, 0, H); sky.addColorStop(0, '#aee07a'); sky.addColorStop(0.45, '#7ec24a'); sky.addColorStop(1, '#3e7a26');
+      c.fillStyle = sky; c.fillRect(0, 0, W, H);
+      c.fillStyle = '#fff6c0'; c.beginPath(); c.arc(W - 40, 46, 20, 0, 7); c.fill();
+      c.globalAlpha = 0.3; c.beginPath(); c.arc(W - 40, 46, 32, 0, 7); c.fill(); c.globalAlpha = 1;
+      c.fillStyle = '#3a7a2a'; for (let i = 0; i < 9; i++) { c.beginPath(); c.arc(i * 34 + 8, 118, 24, 0, 7); c.fill(); }
+      c.fillStyle = '#2f6320'; c.fillRect(0, 128, W, H - 128);
+      c.fillStyle = '#3f8a2c'; for (let i = 0; i < 70; i++) { const gx = (i * 31) % W, gy = 138 + (i * 53) % (H - 150); c.fillRect(gx, gy, 1, 4); }
     }
   }
 
@@ -93,18 +100,31 @@
     menuHint: 'CHOOSE YOUR CHAPTER',
     menuDone: 'SHERWOOD IS FREE',
     menu: {
-      colors: { title: '#e8c84a', label: '#8aa86a', cur: '#cfe89a' },
+      // chapters are ARCHERY TARGETS scattered in a zigzag across the clearing
+      title(api, glory) {
+        const g = api.gfx, W = api.W;
+        g.rect(40, 22, W - 80, 4, '#3e2c18');                      // hang rope
+        g.rect(54, 26, W - 108, 34, '#5a3f22'); g.rectO(54, 26, W - 108, 34, '#e8c84a', 2); // wooden banner
+        api.txtC('LEGENDS OF SHERWOOD', W / 2, 32, 9, '#f0e6c0');
+        api.txtC('GLORY  ' + glory, W / 2, 48, 9, '#ffe14d');
+      },
+      layout(api) {
+        const C = [[58, 152], [206, 214], [70, 280], [198, 346], [84, 414]];
+        return C.map((p) => ({ x: p[0] - 30, y: p[1] - 30, w: 60, h: 60 }));
+      },
       card(api, info) {
-        const g = api.gfx, { ch, i, x, y, w, h, sel, done, best } = info;
-        g.rect(x, y, w, h, sel ? '#5a3f22' : '#3e2c18');           // wooden plank sign
-        g.rectO(x, y, w, h, sel ? '#e8c84a' : '#6a4a28', sel ? 2 : 1);
-        for (let gy = y + 5; gy < y + h - 2; gy += 7) g.rect(x + 3, gy, w - 6, 1, 'rgba(20,12,6,.35)'); // grain
-        g.circle(x + 8, y + 8, 2, '#1a0e06'); g.circle(x + w - 8, y + 8, 2, '#1a0e06');                 // nails
-        if (ch.icon) ch.icon(api, x + 22, y + h / 2);
-        api.txt((i + 1) + '. ' + ch.name, x + 40, y + 9, 10, done ? '#e8c84a' : '#f0e6c0');
-        api.txt(ch.sub || '', x + 40, y + 25, 9, '#a0b87a');
-        if (done) api.txt('✦' + best, x + w - 52, y + 16, 9, '#e8c84a');
-        else api.txt('▸', x + w - 20, y + 16, 12, sel ? '#e8c84a' : '#6a5a3a');
+        const g = api.gfx, c = api.ctx, { ch, i, x, y, w, h, sel, done } = info;
+        const cx = x + w / 2, cy = y + h / 2;
+        const rings = ['#f6f0dc', '#3a6abf', '#f6f0dc', '#e03030', '#f6f0dc'];
+        for (let r = 0; r < 5; r++) { c.fillStyle = rings[r]; c.beginPath(); c.arc(cx, cy, 28 - r * 5, 0, 7); c.fill(); }
+        c.fillStyle = '#d8a020'; c.beginPath(); c.arc(cx, cy, 4, 0, 7); c.fill();
+        api.txtC('' + (i + 1), cx, cy - 4, 8, '#1a1008', true);
+        if (sel) { g.rect(cx - 1, cy - 30, 2, 18, '#caa15a'); g.sprite(['f.', 'ff', 'f.'], cx - 4, cy - 30, { f: '#c8102e' }, 2); } // arrow stuck in
+        if (done) { c.strokeStyle = '#e8c84a'; c.lineWidth = 2; c.beginPath(); c.arc(cx, cy, 31, 0, 7); c.stroke(); }
+        const left = cx < api.W / 2;
+        const tw = ch.name.length * 6 + 10, bx = left ? cx + 34 : cx - 34 - tw;
+        g.rect(bx, cy - 9, tw, 18, '#3e2c18'); g.rectO(bx, cy - 9, tw, 18, sel ? '#e8c84a' : '#6a4a28', 1);
+        api.txt(ch.name, bx + 5, cy - 4, 8, done ? '#e8c84a' : '#f0e6c0');
       },
     },
     finale: ['THE SHERIFF FALLS.', 'MAID MARIAN WALKS', 'FREE IN THE SUNLIGHT.', '', 'SHERWOOD SINGS.'],

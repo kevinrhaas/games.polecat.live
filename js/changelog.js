@@ -7,6 +7,8 @@
  * Entry shape: { ts: "Jun 28, 2026 · 2:46 PM CT", title: "...", notes: ["..."] }
  * ============================================================================ */
 window.POLECAT_CHANGELOG = [
+  { ts: "Jun 28, 2026 · 6:53 PM CT", title: "Menus reimagined per story",
+    notes: ["Each game's chapter-select is now its own world: Dracula's scattered graveyard tombstones, Sherlock's pinned corkboard, Robin Hood's archery targets in a sunlit clearing, King Arthur's radial Round Table of shields.", "Different layouts, shapes, colors and backgrounds \u2014 no two look alike."] },
   { ts: "Jun 28, 2026 · 6:39 PM CT", title: "Each game looks its own way now",
     notes: ["Bold, property-specific chapter menus: Dracula's blood-red stone tablets, Sherlock's manila case files, Robin Hood's wooden Sherwood signs, King Arthur's royal banners.", "Robin Hood and King Arthur also shipped automatically from the new hourly builder."] },
   { ts: "Jun 28, 2026 · 5:55 PM CT", title: "New game: King Arthur — The Legend of Camelot",
