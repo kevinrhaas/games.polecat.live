@@ -139,6 +139,22 @@ img { max-width: 100%; display: block; }
 .ad-slot.billboard { min-height: 160px; }
 .ad-slot.rail { min-height: 320px; }
 
+/* self-promo variant: cross-promotes games instead of paid ads */
+.ad-slot.promo { border-style: solid; border-color: var(--magenta);
+  background: linear-gradient(120deg, rgba(255,46,151,.12), rgba(33,230,255,.10));
+  padding: 10px; }
+.ad-slot.promo::before { content: "FEATURED"; color: var(--magenta); }
+.promo-row { display: flex; gap: 12px; width: 100%; justify-content: center; flex-wrap: wrap; }
+.promo-card { display: flex; align-items: center; gap: 12px; text-decoration: none;
+  background: rgba(6,1,15,.45); border: 2px solid var(--panel-br); border-radius: 12px;
+  padding: 8px 14px 8px 8px; transition: transform .12s ease, border-color .12s ease; min-width: 220px; }
+.promo-card:hover { transform: translateY(-3px); border-color: var(--cyan); }
+.promo-card canvas { width: 86px; height: 54px; image-rendering: pixelated; border-radius: 8px; flex: none; }
+.promo-card .pc-txt { display: flex; flex-direction: column; gap: 3px; }
+.promo-card .pc-eyebrow { font-family: var(--font-pixel); font-size: 7px; color: var(--yellow); }
+.promo-card .pc-title { font-family: var(--font-pixel); font-size: 10px; color: #fff; line-height: 1.4; }
+.promo-card .pc-play { font-family: var(--font-pixel); font-size: 8px; color: var(--green); }
+
 /* ----------------------------- Filters ----------------------------- */
 .toolbar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin: 8px 0 18px; }
 .toolbar .search {

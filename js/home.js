@@ -200,6 +200,47 @@
       '★ ' + titles.join('  ★  ') + '  ★  NEW LEGENDS EVERY HOUR  ★  ';
   }
 
+  /* ----------- self-promo ad slots (cross-promote our own games) ----------- */
+  function promoCard(game) {
+    const a = document.createElement('a');
+    a.className = 'promo-card';
+    a.href = 'games/' + game.id + '/';
+    const cv = document.createElement('canvas');
+    drawThumb(cv, game);
+    const txt = document.createElement('div');
+    txt.className = 'pc-txt';
+    txt.innerHTML =
+      `<span class="pc-eyebrow">▶ FEATURED GAME</span>` +
+      `<span class="pc-title">${game.title}</span>` +
+      `<span class="pc-play">PLAY NOW →</span>`;
+    a.appendChild(cv);
+    a.appendChild(txt);
+    return a;
+  }
+  function buildPromos() {
+    const live = catalog.filter((g) => g.status === 'live');
+    if (!live.length) return;
+    // deterministic-but-rotating pick based on the hour, so it changes over time
+    const hour = new Date().getHours();
+    const pick = (n, offset) => {
+      const out = [];
+      for (let i = 0; i < n && i < live.length; i++) out.push(live[(hour + offset + i) % live.length]);
+      return out;
+    };
+    document.querySelectorAll('.ad-slot[data-ad]').forEach((slot) => {
+      const n = slot.classList.contains('billboard') ? 3 : (slot.classList.contains('rail') ? 2 : 2);
+      const offset = slot.dataset.ad === 'home-billboard' ? 2 : 0;
+      const games = pick(n, offset);
+      if (!games.length) return;
+      slot.classList.add('promo');
+      slot.innerHTML = '';
+      const row = document.createElement('div');
+      row.className = 'promo-row';
+      games.forEach((gm) => row.appendChild(promoCard(gm)));
+      slot.appendChild(row);
+    });
+  }
+
   /* ----------- wire up ----------- */
   search.addEventListener('input', () => { state.q = search.value.trim().toLowerCase(); render(); });
   const randBtn = document.getElementById('randomBtn');
@@ -212,4 +253,5 @@
   buildChips();
   meta();
   render();
+  buildPromos();
 })();

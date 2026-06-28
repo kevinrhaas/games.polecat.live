@@ -1,8 +1,8 @@
 # games.polecat.live
 
-An ever-growing browser arcade of **instantly-playable 8-bit games built from
-the world's greatest public-domain stories** — Sherlock Holmes, Dracula, Alice
-in Wonderland, the Wizard of Oz, and dozens more on the way.
+An ever-growing browser arcade of **instantly-playable 8-bit games starring the
+world's most legendary stories and characters** — Sherlock Holmes, Dracula,
+Alice in Wonderland, the Wizard of Oz, and dozens more on the way.
 
 - 🕹️ Pure HTML / CSS / JavaScript — no build step, no dependencies, no backend
 - 📱 Plays great on desktop (keyboard) and mobile (on-screen touch controls)
@@ -28,4 +28,4 @@ added each hour.
 
 ## License
 Code is licensed under the GPL-3.0 (see `LICENSE`). All games are original works
-inspired by stories in the public domain.
+inspired by classic stories and characters.

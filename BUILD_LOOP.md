@@ -3,6 +3,30 @@
 This file is the standing instruction set for each hourly iteration that builds
 out games.polecat.live. Follow it top to bottom, then stop.
 
+## Calibration (set by the site owner — honor every iteration)
+- **Audience: adults.** This is an adult-targeted arcade. Horror titles can be
+  genuinely dark, atmospheric and **bloody** (blood, gore, dread, death) where
+  the source supports it — Dracula, Cthulhu, Nosferatu, Frankenstein, Sleepy
+  Hollow, Jekyll & Hyde, etc. Stay tasteful-but-visceral; no real-world hate or
+  sexual content. 8-bit gore reads as stylized, not gratuitous.
+- **Difficulty: pick-up-and-play casual.** Forgiving, immediately fun, generous
+  checkpoints/lives, clear feedback. Great on mobile. Skill ceiling is fine, but
+  never punishing or obscure. Players should smile in the first 10 seconds.
+- **Priority: most-famous-first AND maximize genre variety.** Each hour, prefer
+  the bigger household names (Robin Hood, Peter Pan, Tarzan, King Arthur,
+  Cinderella, Snow White, Treasure Island, Zorro, Sherlock's other tales...)
+  while still NOT repeating the previous game's genre. Fame breaks ties; variety
+  is the constraint.
+- **Don't brand the site "public domain."** On the *website*, present games as
+  popular, legendary, beloved, classic stories and characters — never lead with
+  "public domain." (Public-domain status still governs WHICH properties we may
+  build — it's an internal selection rule, not marketing copy.) Keep author/
+  source attribution on cards; just don't frame the site around the legal term.
+- **Ad slots = self-promo for now.** The `.ad-slot` elements on the home page
+  cross-promote games on the site (rotating "Featured" picks), not paid ads.
+  Keep the slot structure intact so a real network can drop in later. When you
+  add games, the promo rotation picks them up automatically from the catalog.
+
 ## Each hour, do ONE high-quality unit of work:
 
 ### 1. Choose the next game
