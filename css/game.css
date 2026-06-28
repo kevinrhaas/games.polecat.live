@@ -22,6 +22,9 @@
 .game-bar .icon-btn:active { transform: translateY(1px); }
 
 .game-main { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 14px; gap: 10px; }
+/* the mount point must fill the column width so the stage can use the full
+   available width (otherwise it shrinks to the canvas's native size) */
+.game-main > #game { width: 100%; display: flex; flex-direction: column; align-items: center; }
 
 /* engine wrapper (stage + controls as one unit so fullscreen can take both) */
 .re-root { display: flex; flex-direction: column; align-items: center; width: 100%; gap: 10px; }

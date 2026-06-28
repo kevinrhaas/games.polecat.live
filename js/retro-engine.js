@@ -359,8 +359,12 @@
         maxW = global.innerWidth - 12;
         maxH = global.innerHeight - ctrlH - 18;
       } else {
+        // Fill the available width; cap height to a fraction of the viewport so
+        // there's room for the on-screen controls. (Don't use stage.clientHeight
+        // here — it's derived from the canvas, which makes scaling circular and
+        // pins it at 1x.)
         maxW = this.stage.clientWidth || this.parent.clientWidth || this.W;
-        maxH = this.stage.clientHeight || (global.innerHeight * 0.7);
+        maxH = global.innerHeight * 0.62;
       }
       const scale = Math.max(1, Math.min(maxW / this.W, maxH / this.H));
       this.canvas.style.width = Math.floor(this.W * scale) + 'px';
