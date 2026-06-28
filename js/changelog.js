@@ -7,6 +7,8 @@
  * Entry shape: { ts: "Jun 28, 2026 · 2:46 PM CT", title: "...", notes: ["..."] }
  * ============================================================================ */
 window.POLECAT_CHANGELOG = [
+  { ts: "Jun 28, 2026 · 5:55 PM CT", title: "New game: King Arthur — The Legend of Camelot",
+    notes: ["Five chapters of Arthurian legend: pull Excalibur from the stone, fly as Merlin's hawk dodging rocks and arrows, joust at the grand tournament, tap-defend Camelot's gates against the Saxon siege, and seek the Holy Grail while dark knights patrol.", "Unique scenery: rolling hills, a Camelot silhouette against a starlit sky, misty lake, and a glowing sacred chapel for the Grail quest."] },
   { ts: "Jun 28, 2026 · 5:21 PM CT", title: "New game: Robin Hood — The Sherwood Saga",
     notes: ["Five chapters of Sherwood legends: aim at the tournament, ride through the forest ambush, duel Little John on the log bridge, rob the tax carriage, and face the Sheriff to free Maid Marian.", "Unique forest scenery with dappled sunlight, animated falling leaves, and a longbow-and-arrow emblem."] },
   { ts: "Jun 28, 2026 · 3:53 PM CT", title: "Update history & automatic builds",
