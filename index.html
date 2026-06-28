@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>games.polecat.live — Play the Classics, 8-Bit Style</title>
+  <meta name="description" content="Free, instantly-playable 8-bit games built from the world's greatest public-domain stories — Sherlock Holmes, Dracula, Alice in Wonderland, Oz and more. Play in your browser on desktop or mobile." />
+  <meta name="theme-color" content="#0b0420" />
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml" />
+  <meta property="og:title" content="games.polecat.live" />
+  <meta property="og:description" content="Instantly-playable 8-bit games from the greatest public-domain stories ever told." />
+  <meta property="og:type" content="website" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/site.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="brand" href="/" aria-label="games.polecat.live home">
+        <img src="assets/logo.svg" alt="" width="52" height="52" />
+        <span class="brand-name">games<span class="dot">.</span><b>polecat</b><span class="dot">.</span>live
+          <small>PUBLIC-DOMAIN ARCADE</small>
+        </span>
+      </a>
+      <nav class="nav">
+        <a href="#games">Games</a>
+        <a href="#about">About</a>
+        <a class="btn magenta" href="#games">▶ Play Now</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero wrap">
+      <h1>Play the Classics</h1>
+      <p class="tag">Hand-crafted 8-bit games built from the greatest public-domain stories ever told. No installs, no logins — just press start.</p>
+      <div class="cta">
+        <a class="btn magenta" href="#games">▶ Browse Games</a>
+        <a class="btn ghost" href="#random" id="randomBtn">🎲 Surprise Me</a>
+      </div>
+      <div class="stats">
+        <div><b id="statLive">0</b><span>Playable Now</span></div>
+        <div><b id="statTotal">0</b><span>Legends Incoming</span></div>
+        <div><b>8-bit</b><span>& growing</span></div>
+      </div>
+    </section>
+
+    <div class="wrap">
+      <div class="marquee"><span id="marquee">★ Now playing the classics ★</span></div>
+      <!-- Ad slot: top leaderboard -->
+      <div class="ad-slot leaderboard" data-ad="home-leaderboard">
+        <div class="ad-inner">Your banner here · 728×90 · advertise@polecat.live</div>
+      </div>
+    </div>
+
+    <section class="wrap" id="games">
+      <h2 class="section-title">The Arcade</h2>
+      <div class="toolbar">
+        <label class="search">
+          <span aria-hidden="true">🔎</span>
+          <input id="search" type="search" placeholder="Search a story, hero, or genre…" aria-label="Search games" />
+        </label>
+        <div class="chips" id="genreChips" role="group" aria-label="Filter by genre"></div>
+      </div>
+      <div class="chips" id="styleChips" role="group" aria-label="Filter by style" style="margin-bottom:14px"></div>
+
+      <div class="grid" id="grid" aria-live="polite"></div>
+      <div class="empty" id="empty" hidden>No games match — try another search.</div>
+
+      <!-- Ad slot: in-grid billboard -->
+      <div class="ad-slot billboard" data-ad="home-billboard" style="margin-top:22px">
+        <div class="ad-inner">Premium billboard space · 970×250 · reach retro gamers · advertise@polecat.live</div>
+      </div>
+    </section>
+
+    <section class="wrap" id="about">
+      <h2 class="section-title">About the Arcade</h2>
+      <div class="game-help" style="max-width:none">
+        <p><b>games.polecat.live</b> turns the world's beloved public-domain stories into bite-sized, instantly-playable arcade games. Every title is built in pure HTML &amp; JavaScript, runs in any modern browser, and plays great with a keyboard or with touch on your phone.</p>
+        <p>We start in glorious <b>8-bit</b> and add new legends every hour. Sherlock Holmes, Dracula, Alice, Oz — and dozens more on the way. <span class="keys">PRESS START</span></p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer" id="footer">
+    <div class="wrap">
+      <div>
+        <h4>games.polecat.live</h4>
+        <p>An ever-growing arcade of the public domain. Built with love and pixels.</p>
+      </div>
+      <div>
+        <h4>Explore</h4>
+        <p><a href="#games">All Games</a><br /><a href="#about">About</a><br /><a href="https://polecat.live">polecat.live ↗</a></p>
+      </div>
+      <div>
+        <h4>Advertise</h4>
+        <p>Reach players who love the classics.<br /><a href="mailto:advertise@polecat.live">advertise@polecat.live</a></p>
+      </div>
+      <div class="legal">
+        All games are original works inspired by stories in the public domain. Trademarks &amp; characters used remain the property of their respective owners where applicable. © <span id="year"></span> polecat.live
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/catalog.js"></script>
+  <script src="js/home.js"></script>
+</body>
+</html>

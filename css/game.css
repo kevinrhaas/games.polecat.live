@@ -1,0 +1,80 @@
+/* ============================================================
+ * Shared layout for individual game pages + RetroEngine controls
+ * ============================================================ */
+.game-page { min-height: 100vh; display: flex; flex-direction: column; }
+
+.game-bar {
+  position: sticky; top: 0; z-index: 50;
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 16px;
+  background: linear-gradient(180deg, rgba(11,4,32,.95), rgba(11,4,32,.6));
+  border-bottom: 2px solid var(--panel-br); backdrop-filter: blur(6px);
+}
+.game-bar .back { font-family: var(--font-pixel); font-size: 10px; color: var(--cyan); display:flex; align-items:center; gap:8px; }
+.game-bar .title { font-family: var(--font-pixel); font-size: 12px; color: #fff; }
+.game-bar .src { font-size: 12px; color: var(--ink-dim); margin-left: 4px; }
+.game-bar .spacer { flex: 1; }
+.game-bar .icon-btn {
+  font-family: var(--font-pixel); font-size: 10px; cursor: pointer;
+  background: var(--panel); color: var(--ink); border: 2px solid var(--panel-br);
+  border-radius: 8px; padding: 8px 10px;
+}
+.game-bar .icon-btn:active { transform: translateY(1px); }
+
+.game-main { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 14px; gap: 10px; }
+
+/* engine stage */
+.re-stage {
+  width: 100%; max-width: 720px;
+  display: flex; align-items: center; justify-content: center;
+  background: #000; border: 3px solid var(--panel-br); border-radius: 12px;
+  box-shadow: 0 0 0 2px #000, 0 0 40px rgba(123,92,255,.25);
+  overflow: hidden; position: relative;
+}
+.re-canvas { display: block; image-rendering: pixelated; image-rendering: crisp-edges; touch-action: none; }
+
+/* how-to-play strip */
+.game-help {
+  max-width: 720px; width: 100%;
+  background: var(--panel); border: 2px solid var(--panel-br); border-radius: 12px;
+  padding: 12px 16px; color: var(--ink-dim); font-size: 13px; line-height: 1.6;
+}
+.game-help b { color: var(--cyan); }
+.game-help .keys { font-family: var(--font-pixel); font-size: 9px; color: var(--yellow); }
+
+/* ===================== Touch controls ===================== */
+.re-controls { width: 100%; max-width: 720px; }
+.re-touch {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  gap: 16px; margin-top: 6px; user-select: none; touch-action: none;
+}
+.re-touch.re-touch-minimal { justify-content: flex-end; }
+.re-btn {
+  font-family: var(--font-pixel); font-size: 13px;
+  width: 58px; height: 58px; border-radius: 12px; cursor: pointer;
+  color: #0b0420; background: var(--cyan); border: 2px solid #000;
+  box-shadow: 0 4px 0 #0a8ca3; touch-action: none; user-select: none;
+  display: flex; align-items: center; justify-content: center;
+}
+.re-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 #0a8ca3; }
+.re-dir { background: var(--purple); box-shadow: 0 4px 0 #5b2ca8; color: #fff; }
+.re-a { background: var(--magenta); box-shadow: 0 4px 0 #a01060; color:#fff; width: 66px; height: 66px; }
+.re-b { background: var(--yellow); box-shadow: 0 4px 0 #b09700; }
+
+.re-dpad { display: grid; grid-template-columns: repeat(3, 58px); grid-template-rows: repeat(3, 58px); gap: 4px; }
+.re-dpad .re-up    { grid-column: 2; grid-row: 1; background: var(--purple); box-shadow: 0 4px 0 #5b2ca8; color:#fff; }
+.re-dpad .re-left  { grid-column: 1; grid-row: 2; background: var(--purple); box-shadow: 0 4px 0 #5b2ca8; color:#fff; }
+.re-dpad .re-right { grid-column: 3; grid-row: 2; background: var(--purple); box-shadow: 0 4px 0 #5b2ca8; color:#fff; }
+.re-dpad .re-down  { grid-column: 2; grid-row: 3; background: var(--purple); box-shadow: 0 4px 0 #5b2ca8; color:#fff; }
+.re-pad-row { display: flex; gap: 10px; }
+.re-act { display: flex; gap: 12px; align-items: center; }
+
+/* On non-touch wide screens, dim the on-screen pad (keyboard preferred) */
+@media (hover: hover) and (min-width: 760px) {
+  .re-touch { opacity: .85; }
+}
+@media (max-width: 500px) {
+  .re-btn { width: 52px; height: 52px; }
+  .re-dpad { grid-template-columns: repeat(3, 52px); grid-template-rows: repeat(3, 52px); }
+  .re-a { width: 60px; height: 60px; }
+}
