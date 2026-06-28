@@ -71,6 +71,12 @@ capture console errors, screenshot.
 
 ### 4. Ship it
 - Flip the catalog entry `status: "soon"` → `"live"` in the same commit.
+- **Capture the thumbnail** so the card shows the real game, not generic art:
+  `node tools/snap-thumbs.mjs <id>` writes `games/<id>/thumb.png` from an actual
+  gameplay frame. Commit it WITH the game. (The home page uses the screenshot and
+  only falls back to procedural art if the PNG is missing — never ship a live
+  game without its thumbnail.) The tool needs Playwright + Chromium, the same
+  headless setup used for load-testing; run it the same way you run the tests.
 - Commit with a clear message naming the game + genre.
 - Work on and push **`main`**: `git push -u origin main` (retry with backoff on
   network errors). **Pushing to `main` is what publishes the site** — the
@@ -81,7 +87,11 @@ capture console errors, screenshot.
   (workflow `deploy-pages.yml`) — but a green build is expected and you don't
   need to babysit it.
 
-### 5. Every few iterations (not every hour)
+### 5. Website sweep — every few iterations (not every hour)
+- **Keep thumbnails current.** Re-run `node tools/snap-thumbs.mjs` (all games) or
+  `node tools/snap-thumbs.mjs <id>` for any game whose art/start screen changed,
+  and confirm every `status:"live"` game has a `games/<id>/thumb.png`. A stale or
+  missing thumbnail is a bug — the card must look like the game you actually ship.
 - Improve the **home page / navigation**: featured carousel, "new this week"
   row, better empty states, genre landing, share links, SEO/meta polish.
 - Add a **style variant** to an existing strong game (e.g. a 16-bit or

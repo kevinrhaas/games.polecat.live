@@ -15,6 +15,8 @@ js/home.js            Renders the catalog + procedural thumbnails + filtering
 assets/logo.svg       Polecat mascot logo (also favicon)
 games/<id>/index.html Per-game page (loads engine + game.js)
 games/<id>/game.js    The game itself
+games/<id>/thumb.png  Real screenshot used on the home card (see tools/snap-thumbs)
+tools/snap-thumbs.mjs Captures gameplay thumbnails for live games (headless)
 BUILD_LOOP.md         The hourly build-loop playbook (read this when looping)
 ```
 
@@ -30,7 +32,10 @@ BUILD_LOOP.md         The hourly build-loop playbook (read this when looping)
 4. Flip that catalog entry's `status` from `"soon"` to `"live"`.
 5. `node --check` every JS file, then load-test in a headless browser (see
    BUILD_LOOP.md) — assert zero pageerrors and that the canvas renders.
-6. Commit + push to the working branch.
+6. Capture the card thumbnail: `node tools/snap-thumbs.mjs <id>` →
+   `games/<id>/thumb.png`. The home page shows this real screenshot (procedural
+   art is only a fallback), so never ship a live game without it.
+7. Commit + push to the working branch.
 
 ## Design principles
 - **Capture the story.** Analyze the property: setting, characters, key scenes.

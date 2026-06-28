@@ -104,6 +104,28 @@
     ctx.fillStyle = v; ctx.fillRect(0, 0, W, H);
   }
 
+  /* ----------- thumbnail media ----------- */
+  // Live games show a real screenshot (games/<id>/thumb.png); if it's missing
+  // we fall back to the procedural pixel scene. "Soon" games use procedural art.
+  function thumbMedia(game) {
+    if (game.status === 'live') {
+      const img = document.createElement('img');
+      img.className = 'thumb-img';
+      img.loading = 'lazy';
+      img.alt = game.title + ' gameplay';
+      img.src = 'games/' + game.id + '/thumb.png';
+      img.addEventListener('error', () => {
+        const cv = document.createElement('canvas');
+        drawThumb(cv, game);
+        if (img.parentNode) img.replaceWith(cv);
+      });
+      return img;
+    }
+    const cv = document.createElement('canvas');
+    drawThumb(cv, game);
+    return cv;
+  }
+
   /* ----------- card builder ----------- */
   function card(game) {
     const live = game.status === 'live';
@@ -115,9 +137,7 @@
 
     const thumb = document.createElement('div');
     thumb.className = 'thumb';
-    const cv = document.createElement('canvas');
-    drawThumb(cv, game);
-    thumb.appendChild(cv);
+    thumb.appendChild(thumbMedia(game));
 
     const badges = document.createElement('div');
     badges.className = 'badges';
@@ -218,15 +238,13 @@
     const a = document.createElement('a');
     a.className = 'promo-card';
     a.href = 'games/' + game.id + '/';
-    const cv = document.createElement('canvas');
-    drawThumb(cv, game);
     const txt = document.createElement('div');
     txt.className = 'pc-txt';
     txt.innerHTML =
       `<span class="pc-eyebrow">▶ FEATURED GAME</span>` +
       `<span class="pc-title">${game.title}</span>` +
       `<span class="pc-play">PLAY NOW →</span>`;
-    a.appendChild(cv);
+    a.appendChild(thumbMedia(game));
     a.appendChild(txt);
     return a;
   }
