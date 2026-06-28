@@ -281,8 +281,30 @@
     if (live.length) location.href = 'games/' + live[Math.floor(Math.random() * live.length)].id + '/';
   });
 
+  /* ----------- "What's New" updates drawer ----------- */
+  function buildChangelog() {
+    const log = window.POLECAT_CHANGELOG || [];
+    const lu = document.getElementById('lastUpdated');
+    if (lu && log[0]) lu.textContent = log[0].ts;
+    const list = document.getElementById('updatesList');
+    if (list) list.innerHTML = log.map((e) =>
+      `<div class="update"><div class="when">${e.ts}</div><h4>${e.title}</h4>` +
+      ((e.notes && e.notes.length) ? '<ul>' + e.notes.map((n) => `<li>${n}</li>`).join('') + '</ul>' : '') +
+      `</div>`).join('');
+    const drawer = document.getElementById('updatesDrawer');
+    const scrim = document.getElementById('updatesScrim');
+    const open = () => { if (drawer) drawer.hidden = false; if (scrim) scrim.hidden = false; };
+    const close = () => { if (drawer) drawer.hidden = true; if (scrim) scrim.hidden = true; };
+    const fab = document.getElementById('updatesBtn');
+    if (fab) fab.addEventListener('click', open);
+    if (scrim) scrim.addEventListener('click', close);
+    const cb = document.getElementById('updatesClose'); if (cb) cb.addEventListener('click', close);
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+  }
+
   buildChips();
   meta();
   render();
   buildPromos();
+  buildChangelog();
 })();

@@ -100,11 +100,27 @@
       </div>
       <div class="legal">
         All games are original works inspired by classic stories and characters. © <span id="year"></span> polecat.live
+        <br />Last updated <span id="lastUpdated">—</span>
       </div>
     </div>
   </footer>
 
+  <!-- Discreet "What's New" updates drawer -->
+  <button id="updatesBtn" class="updates-fab" aria-haspopup="dialog" aria-controls="updatesDrawer" title="What's new">
+    <span class="dot" aria-hidden="true"></span> WHAT'S NEW
+  </button>
+  <div id="updatesScrim" class="drawer-scrim" hidden></div>
+  <aside id="updatesDrawer" class="drawer" role="dialog" aria-label="Update history" aria-modal="true" hidden>
+    <header>
+      <h3>What's New</h3>
+      <button id="updatesClose" class="drawer-close" aria-label="Close updates">✕</button>
+    </header>
+    <p class="drawer-sub">New games &amp; improvements, newest first · times in CT</p>
+    <div id="updatesList" class="updates-list"></div>
+  </aside>
+
   <script src="js/catalog.js"></script>
+  <script src="js/changelog.js"></script>
   <script src="js/home.js"></script>
 </body>
 </html>

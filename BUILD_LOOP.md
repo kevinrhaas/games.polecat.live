@@ -120,6 +120,11 @@ capture console errors, screenshot.
   only falls back to procedural art if the PNG is missing — never ship a live
   game without its thumbnail.) The tool needs Playwright + Chromium, the same
   headless setup used for load-testing; run it the same way you run the tests.
+- **Log it for users.** PREPEND one friendly entry to `js/changelog.js` (newest
+  first) with the current CT time — get it via
+  `TZ=America/Chicago date "+%b %-d, %Y · %-I:%M %p CT"` — a short title plus 1-2
+  plain-language notes about what shipped. This drives the home page's "Last
+  updated" stamp and the "What's New" drawer, so the owner can see each run.
 - Commit with a clear message naming the game + genre.
 - Work on and push **`main`**: `git push -u origin main` (retry with backoff on
   network errors). **Pushing to `main` is what publishes the site** — the
