@@ -1,5 +1,7 @@
 # This is a pure static site — no build step. Keep stray local tooling out of git.
+# (CI installs Playwright to capture thumbnails; none of this should be committed.)
 node_modules/
+package.json
 package-lock.json
 .DS_Store
 *.log

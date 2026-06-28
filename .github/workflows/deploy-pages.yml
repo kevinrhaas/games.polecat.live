@@ -2,11 +2,16 @@ name: Deploy to GitHub Pages
 
 # Publishes the static arcade to GitHub Pages.
 #  - on every push to main (so each new game the build-loop lands goes live)
+#  - after the "Hourly Game Build" workflow finishes (its bot push uses
+#    GITHUB_TOKEN, which does NOT trigger on:push — workflow_run does)
 #  - hourly on a schedule as a backstop
 #  - manually via the Actions tab
 on:
   push:
     branches: [main]
+  workflow_run:
+    workflows: ["Hourly Game Build"]
+    types: [completed]
   schedule:
     - cron: '0 * * * *'   # top of every hour (UTC)
   workflow_dispatch:

@@ -1,0 +1,91 @@
+name: Hourly Game Build
+
+# Self-driving build loop: every hour, Claude builds the next game (or improves
+# the site), commits it, and the workflow pushes to main — which triggers the
+# Pages deploy. Needs a repo secret with Claude credentials (see below).
+#
+#   Settings → Secrets and variables → Actions → New repository secret
+#   Add ONE of:
+#     CLAUDE_CODE_OAUTH_TOKEN   (from `claude setup-token` — a Claude subscription)
+#     ANTHROPIC_API_KEY         (an Anthropic API key)
+#
+# Dial the cadence with the cron below, or the model/turns under claude_args.
+
+on:
+  schedule:
+    - cron: '23 * * * *'   # hourly, off the :00 mark
+  workflow_dispatch:        # run on demand from the Actions tab
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-game
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Playwright + Chromium (for tests & thumbnails)
+        run: |
+          npm install playwright
+          npx playwright install --with-deps chromium
+
+      - name: Configure git
+        run: |
+          git config user.name "polecat-bot"
+          git config user.email "bot@users.noreply.github.com"
+
+      - name: Build one game with Claude
+        uses: anthropics/claude-code-action@v1
+        with:
+          # Provide either secret; the empty one is ignored.
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          prompt: |
+            You are the autonomous hourly builder for the games.polecat.live arcade.
+            Read CLAUDE.md and BUILD_LOOP.md first, then do ONE high-quality unit of work:
+
+            Build the next status:"soon" property in js/catalog.js (most-famous-first;
+            vary the genre from recent builds) as a full multi-chapter game using
+            RetroSaga (js/saga.js) — FIVE varied, easy, faithful mini-games that hit the
+            property's iconic scenes, PLUS a UNIQUE on-property title/menu/chapter look
+            (supply scenery, per-chapter icon, emblem, and custom currency/subtitle/
+            bootCta/menuLabel/menuHint/menuDone/finale). Stay faithful to the source's
+            era and mood; reserve CRT/terminal styling for genuinely sci-fi works only.
+            Mobile-first; must work fullscreen. Use games/dracula-castle as the reference.
+
+            Then: run `node --check` on every JS file; load-test headless with Playwright
+            (zero pageerrors; the menu and each chapter must render); capture the
+            thumbnail with `node tools/snap-thumbs.mjs <id>` (Playwright + Chromium are
+            already installed in this runner, so it works without any symlink); flip that
+            catalog entry's status to "live"; and PREPEND one short, friendly entry to
+            js/changelog.js with the current CT time from
+            `TZ=America/Chicago date "+%b %-d, %Y · %-I:%M %p CT"`.
+
+            Finally, commit everything with a clear message. DO NOT run `git push` —
+            the workflow pushes for you.
+          claude_args: |
+            --max-turns 120
+            --model claude-sonnet-4-6
+            --dangerously-skip-permissions
+
+      - name: Push changes
+        if: success()
+        run: |
+          git add -A
+          git commit -m "Hourly build — $(TZ=America/Chicago date '+%b %-d %-I:%M %p CT')" || echo "Nothing new to commit"
+          git push origin main || echo "Nothing to push"
