@@ -17,6 +17,15 @@ out games.polecat.live. Follow it top to bottom, then stop.
   Cinderella, Snow White, Treasure Island, Zorro, Sherlock's other tales...)
   while still NOT repeating the previous game's genre. Fame breaks ties; variety
   is the constraint.
+- **Mobile + touch play is a hard requirement (owner request).** Every game —
+  past and future — must be genuinely great on a phone: fully playable with the
+  on-screen touch controls (assume NO keyboard), big thumb-friendly buttons, a
+  playfield that's readable at 390×780, and working fullscreen. The engine gives
+  every game a fullscreen toggle (`#fullscreenBtn` in the bar + a floating exit
+  button) and an immersive "fill the screen" mode that works on iOS. When you
+  build a new game, test it at 390×780 AND in fullscreen before shipping. Each
+  loop, also spend part of the "every few iterations" budget retro-fitting an
+  existing game's mobile feel (control size, readability, fullscreen scaling).
 - **Don't brand the site "public domain."** On the *website*, present games as
   popular, legendary, beloved, classic stories and characters — never lead with
   "public domain." (Public-domain status still governs WHICH properties we may
@@ -77,7 +86,8 @@ capture console errors, screenshot.
   row, better empty states, genre landing, share links, SEO/meta polish.
 - Add a **style variant** to an existing strong game (e.g. a 16-bit or
   monochrome "Game Boy" palette) and surface it through the style filter.
-- Audit older games for bugs, mobile feel, and difficulty curve.
+- Audit older games for bugs, **mobile feel & touch play**, fullscreen scaling,
+  and difficulty curve. Treat mobile regressions as bugs to fix, not polish.
 - Consider an **ad-slot** refinement or a small site-wide feature.
 
 ## Quality bar (hold the line)

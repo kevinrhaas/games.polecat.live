@@ -298,6 +298,10 @@
     _buildDom(opts) {
       const parent = typeof opts.parent === 'string' ? document.querySelector(opts.parent) : opts.parent || document.body;
       this.parent = parent;
+      // root wraps stage + controls so we can take the whole screen as one unit
+      const root = document.createElement('div');
+      root.className = 're-root';
+      this.root = root;
       const stage = document.createElement('div');
       stage.className = 're-stage';
       const canvas = document.createElement('canvas');
@@ -313,19 +317,76 @@
       this.stage = stage;
       this.controls = document.createElement('div');
       this.controls.className = 're-controls';
-      parent.appendChild(stage);
-      parent.appendChild(this.controls);
+      root.appendChild(stage);
+      root.appendChild(this.controls);
+      parent.appendChild(root);
+
+      // Fullscreen ("immersive") toggle. Prefer a page-provided #fullscreenBtn in
+      // the game bar; otherwise drop a floating button on the stage so EVERY game
+      // gets fullscreen with no per-page wiring.
+      this._immersive = false;
+      // Floating exit affordance — CSS keeps it hidden until immersive mode, so it
+      // never covers the HUD in windowed play but is always reachable to exit
+      // (the game bar gets covered by the fullscreen layer).
+      const fb = document.createElement('button');
+      fb.type = 'button';
+      fb.className = 're-fs-btn';
+      fb.setAttribute('aria-label', 'Exit full screen');
+      fb.innerHTML = '✕';
+      fb.addEventListener('click', () => this.toggleImmersive());
+      stage.appendChild(fb);
+      this.fsBtn = fb;
+      // Optional in-bar button (provided by the game page) to ENTER fullscreen.
+      const barBtn = document.getElementById('fullscreenBtn');
+      if (barBtn) barBtn.addEventListener('click', () => this.toggleImmersive());
+
       this._resize();
       global.addEventListener('resize', () => this._resize());
+      global.addEventListener('orientationchange', () => setTimeout(() => this._resize(), 120));
+      // If the user leaves real fullscreen via a system gesture / Esc, drop immersive too.
+      document.addEventListener('fullscreenchange', () => {
+        if (!document.fullscreenElement && this._immersive) this._setImmersive(false);
+        else this._resize();
+      });
+      document.addEventListener('webkitfullscreenchange', () => this._resize());
     }
 
     _resize() {
       // Fit canvas to its container while preserving aspect ratio & crispness.
-      const maxW = this.stage.clientWidth || this.parent.clientWidth || this.W;
-      const maxH = this.stage.clientHeight || (global.innerHeight * 0.7);
+      let maxW, maxH;
+      if (this._immersive) {
+        const ctrlH = this.controls ? this.controls.offsetHeight : 0;
+        maxW = global.innerWidth - 12;
+        maxH = global.innerHeight - ctrlH - 18;
+      } else {
+        maxW = this.stage.clientWidth || this.parent.clientWidth || this.W;
+        maxH = this.stage.clientHeight || (global.innerHeight * 0.7);
+      }
       const scale = Math.max(1, Math.min(maxW / this.W, maxH / this.H));
       this.canvas.style.width = Math.floor(this.W * scale) + 'px';
       this.canvas.style.height = Math.floor(this.H * scale) + 'px';
+    }
+
+    // Toggle an immersive "fill the screen" mode. Driven by a CSS class so it
+    // works everywhere (including iOS Safari, where the Fullscreen API can't
+    // fullscreen a <div>); also calls the real Fullscreen API where supported
+    // (Android/desktop) to hide the browser chrome.
+    toggleImmersive() { this._setImmersive(!this._immersive); }
+    _setImmersive(on) {
+      this._immersive = on;
+      this.root.classList.toggle('re-immersive', on);
+      document.body.classList.toggle('re-immersive-lock', on);
+      try {
+        if (on && this.root.requestFullscreen && !document.fullscreenElement) {
+          this.root.requestFullscreen().catch(() => {});
+        } else if (!on && document.fullscreenElement && document.exitFullscreen) {
+          document.exitFullscreen().catch(() => {});
+        }
+      } catch (e) { /* fullscreen API not available — CSS mode still applies */ }
+      this.audio.resume();
+      // recompute after the layout settles
+      setTimeout(() => this._resize(), 60);
+      requestAnimationFrame(() => this._resize());
     }
 
     _maybeTouch(opts) {

@@ -161,7 +161,10 @@
 
   /* ----------- chips ----------- */
   function buildChips() {
-    const genres = ['All', ...Array.from(new Set(catalog.map((g) => g.genre))).sort()];
+    // Only list genres that actually have a playable game, so the filter stays a
+    // short, swipeable row instead of a 40-chip wall. It grows as games ship.
+    const liveGenres = Array.from(new Set(catalog.filter((g) => g.status === 'live').map((g) => g.genre))).sort();
+    const genres = ['All', ...liveGenres];
     genres.forEach((gname) => {
       const c = document.createElement('button');
       c.className = 'chip';
@@ -174,7 +177,10 @@
       });
       genreChips.appendChild(c);
     });
-    const styles = ['All', ...Array.from(new Set(catalog.map((g) => g.style))).sort()];
+    // Hide the style filter entirely until there's more than one style to pick.
+    const distinctStyles = Array.from(new Set(catalog.map((g) => g.style)));
+    if (distinctStyles.length <= 1) { styleChips.style.display = 'none'; return; }
+    const styles = ['All', ...distinctStyles.sort()];
     styles.forEach((sname) => {
       const c = document.createElement('button');
       c.className = 'chip style';
@@ -196,8 +202,15 @@
     document.getElementById('statTotal').textContent = catalog.length;
     const yEl = document.getElementById('year'); if (yEl) yEl.textContent = '2026';
     const titles = catalog.map((g) => g.title);
-    document.getElementById('marquee').textContent =
-      '★ ' + titles.join('  ★  ') + '  ★  NEW LEGENDS EVERY HOUR  ★  ';
+    const marquee = document.getElementById('marquee');
+    marquee.textContent = '★ ' + titles.join('  ★  ') + '  ★  NEW LEGENDS EVERY HOUR  ★  ';
+    // The crawl distance grows with the catalog, so derive the duration from the
+    // actual width for a calm, constant ~40px/sec speed regardless of how many
+    // titles there are.
+    requestAnimationFrame(() => {
+      const travel = marquee.scrollWidth || 2000;
+      marquee.style.animationDuration = Math.max(40, Math.round(travel / 40)) + 's';
+    });
   }
 
   /* ----------- self-promo ad slots (cross-promote our own games) ----------- */

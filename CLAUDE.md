@@ -22,7 +22,8 @@ BUILD_LOOP.md         The hourly build-loop playbook (read this when looping)
 1. Pick the next `status:"soon"` entry in `js/catalog.js` (or add one). Use the
    `id` as the folder name: `games/<id>/`.
 2. Copy an existing game's `index.html` as a template; change the title,
-   `<title>`, source label, help text, and the `buttonLabels`.
+   `<title>`, source label, help text, and the `buttonLabels`. Keep the
+   `#fullscreenBtn`, `#muteBtn`, `#restartBtn` bar buttons.
 3. Write `games/<id>/game.js` using the RetroEngine API. **Vary the genre** —
    do not ship two of the same kind in a row. The `genre` field in the catalog
    is the intended mechanic; honor it.
@@ -37,8 +38,12 @@ BUILD_LOOP.md         The hourly build-loop playbook (read this when looping)
   Alice's hole, following Oz's road), not a reskin.
 - **8-bit first.** Chunky pixels, limited palette, chiptune SFX. Later styles
   (16-bit, vector, mono) can be added via the catalog `style` field + a filter.
-- **Mobile + desktop.** Always pass a `touch` layout to the engine and make the
-  game fully playable with on-screen buttons. Test at 390×780 and desktop.
+- **Mobile + desktop (first-class).** Always pass a `touch` layout to the engine
+  and make the game FULLY playable with on-screen buttons — no keyboard assumed.
+  Test at 390×780 and desktop. Controls must be big enough for thumbs, the
+  playfield must be readable on a small screen, and the game must work in
+  fullscreen (the engine adds a fullscreen toggle to every game automatically —
+  see below). Mobile feel is a release gate, not a nice-to-have.
 - **Instant fun.** Playable in <5 seconds, clear goal, restart on any key.
   Include a high-score via `Retro.Store`.
 - **Self-contained.** Each game is one folder. No shared state between games.
@@ -64,6 +69,10 @@ space = transparent, any other char maps through `palette` (e.g. `{k:'#000'}`).
 
 Standard per-game page wires two buttons in the top bar:
 `#muteBtn` (toggles `audio.toggleMute()`), `#restartBtn` (calls the game's reset).
+Add a `#fullscreenBtn` to the bar too — the engine auto-wires it to
+`engine.toggleImmersive()` (fullscreen "fill the screen" mode that works on iOS
+Safari too). The engine also drops a floating ✕ exit button that only appears in
+fullscreen, so fullscreen works even if you forget the bar button.
 
 ## Conventions
 - Keep each game in a single `game.js` IIFE. No globals leak except via Retro.

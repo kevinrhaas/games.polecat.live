@@ -23,6 +23,9 @@
 
 .game-main { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 14px; gap: 10px; }
 
+/* engine wrapper (stage + controls as one unit so fullscreen can take both) */
+.re-root { display: flex; flex-direction: column; align-items: center; width: 100%; gap: 10px; }
+
 /* engine stage */
 .re-stage {
   width: 100%; max-width: 720px;
@@ -32,6 +35,34 @@
   overflow: hidden; position: relative;
 }
 .re-canvas { display: block; image-rendering: pixelated; image-rendering: crisp-edges; touch-action: none; }
+
+/* floating "exit full screen" button — hidden until immersive so it never
+   covers the in-game HUD during normal windowed play */
+.re-fs-btn {
+  display: none;
+  position: absolute; top: calc(6px + env(safe-area-inset-top, 0px)); right: 8px; z-index: 6;
+  width: 38px; height: 38px; border-radius: 9px;
+  align-items: center; justify-content: center;
+  background: rgba(11,4,32,.6); color: #fff;
+  border: 1px solid var(--panel-br); font-size: 16px; line-height: 1; cursor: pointer;
+  backdrop-filter: blur(2px);
+}
+.re-fs-btn:active { transform: translateY(1px); }
+
+/* immersive "fill the screen" mode (works everywhere, incl. iOS Safari) */
+body.re-immersive-lock { overflow: hidden; }
+.re-root.re-immersive {
+  position: fixed; inset: 0; z-index: 9998; margin: 0;
+  background: #000; gap: 8px;
+  padding: max(6px, env(safe-area-inset-top, 0px)) 6px max(6px, env(safe-area-inset-bottom, 0px));
+  justify-content: center;
+}
+.re-root.re-immersive .re-stage {
+  max-width: none; border: none; border-radius: 0; box-shadow: none;
+  flex: 0 0 auto; background: #000;
+}
+.re-root.re-immersive .re-controls { max-width: 760px; width: 100%; }
+.re-root.re-immersive .re-fs-btn { display: flex; }
 
 /* how-to-play strip */
 .game-help {

@@ -120,7 +120,7 @@ img { max-width: 100%; display: block; }
   border-top: 1px solid var(--panel-br); border-bottom: 1px solid var(--panel-br);
   padding: 8px 0; margin: 26px 0; white-space: nowrap; overflow: hidden;
 }
-.marquee span { display: inline-block; padding-left: 100%; animation: marq 26s linear infinite; }
+.marquee span { display: inline-block; padding-left: 100%; animation: marq 90s linear infinite; }
 @keyframes marq { to { transform: translateX(-100%); } }
 
 /* ----------------------------- Ad slots ----------------------------- */
@@ -164,8 +164,20 @@ img { max-width: 100%; display: block; }
 }
 .toolbar .search input { flex: 1; background: transparent; border: 0; color: var(--ink); font-family: var(--font-body); font-size: 15px; outline: none; }
 .chips { display: flex; gap: 8px; flex-wrap: wrap; }
+/* Filter rows scroll horizontally on one line instead of stacking into a tall
+   wall of chips — swipe left/right to browse genres. */
+#genreChips, #styleChips {
+  flex-wrap: nowrap; overflow-x: auto; overflow-y: hidden;
+  -webkit-overflow-scrolling: touch; scrollbar-width: thin; padding-bottom: 4px;
+  flex: 1 1 100%; min-width: 0;
+  -webkit-mask-image: linear-gradient(90deg, #000 90%, transparent);
+  mask-image: linear-gradient(90deg, #000 90%, transparent);
+}
+#genreChips::-webkit-scrollbar, #styleChips::-webkit-scrollbar { height: 4px; }
+#genreChips::-webkit-scrollbar-thumb, #styleChips::-webkit-scrollbar-thumb { background: var(--panel-br); border-radius: 4px; }
+#genreChips .chip, #styleChips .chip { flex: 0 0 auto; }
 .chip {
-  font-family: var(--font-pixel); font-size: 9px;
+  font-family: var(--font-pixel); font-size: 9px; white-space: nowrap;
   padding: 9px 12px; border-radius: 999px; cursor: pointer;
   border: 2px solid var(--panel-br); background: var(--panel); color: var(--ink-dim);
   transition: all .12s ease;
@@ -223,4 +235,22 @@ img { max-width: 100%; display: block; }
 @media (max-width: 720px) {
   .site-footer .wrap { grid-template-columns: 1fr; }
   .nav a:not(.btn) { display: none; }
+}
+
+/* ---- keep the header from overflowing on phones ---- */
+.brand { min-width: 0; }
+.brand-name { white-space: nowrap; }
+.nav { flex: none; }
+@media (max-width: 620px) {
+  .site-header .wrap { gap: 10px; }
+  .brand img, .brand svg { width: 40px; height: 40px; }
+  .brand-name { font-size: 10px; }
+  .brand-name small { font-size: 6px; letter-spacing: 1px; margin-top: 3px; }
+  .nav .btn { padding: 9px 11px; font-size: 9px; }
+}
+@media (max-width: 384px) {
+  .brand img, .brand svg { width: 34px; height: 34px; }
+  .brand-name { font-size: 8.5px; }
+  .brand-name small { display: none; }
+  .nav .btn { padding: 8px 9px; }
 }
