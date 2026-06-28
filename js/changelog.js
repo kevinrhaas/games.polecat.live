@@ -7,6 +7,8 @@
  * Entry shape: { ts: "Jun 28, 2026 · 2:46 PM CT", title: "...", notes: ["..."] }
  * ============================================================================ */
 window.POLECAT_CHANGELOG = [
+  { ts: "Jun 28, 2026 · 5:21 PM CT", title: "New game: Robin Hood — The Sherwood Saga",
+    notes: ["Five chapters of Sherwood legends: aim at the tournament, ride through the forest ambush, duel Little John on the log bridge, rob the tax carriage, and face the Sheriff to free Maid Marian.", "Unique forest scenery with dappled sunlight, animated falling leaves, and a longbow-and-arrow emblem."] },
   { ts: "Jun 28, 2026 · 3:53 PM CT", title: "Update history & automatic builds",
     notes: ["Added this \"What's New\" drawer and a \"last updated\" stamp so you can see every change.", "Switched on the automated build loop that ships new games and improvements on a schedule."] },
   { ts: "Jun 28, 2026 · 2:46 PM CT", title: "Every game gets its own look",
