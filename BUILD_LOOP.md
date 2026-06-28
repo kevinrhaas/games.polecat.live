@@ -44,6 +44,36 @@ out games.polecat.live. Follow it top to bottom, then stop.
   Keep the slot structure intact so a real network can drop in later. When you
   add games, the promo rotation picks them up automatically from the catalog.
 
+## Mechanic & theming toolbox (be clever — this is the fun part)
+Each property is a multi-chapter game; the **5 mini-games must use distinct
+mechanics** and hit the property's most iconic scenes. Don't reach for the same
+few — pull widely from this palette and invent new ones:
+- **Action/timing:** dodge/steer, timing-meter (grip/strike), precision-ring,
+  rhythm/lead, aim & shoot, chase, swing/momentum, balance.
+- **Tap/touch:** catch falling/​moving things (Renfield's flies), tap-to-intercept
+  over a map, whack/defend threatened spots (the Demeter), tap-clues observation
+  & deduction (the walking stick).
+- **Thinky-but-easy:** fog-of-war maze/explore, stealth past sweeping lights,
+  sequence/assembly (the cut-out warning), memory/match, sorting, resource
+  **deploy/distribute** across fronts/regions, simple route-planning.
+Keep every mini **easy and juicy**: clear goal readable in 5 seconds, forgiving,
+big feedback (shake/flash/particles). Variety across the five is the whole point.
+
+**Theming & framing devices** (inspired by the Corleone & W.O.P.R. references —
+borrow the *ideas*, never copy them):
+- Give the game a **voice/host with personality** — narrate the interstitials and
+  win/lose lines in-character (a storyteller, a machine, a villain).
+- A short **boot / terminal / "establishing" intro** before the title fits techy
+  or eerie properties (War of the Worlds, The Time Machine, Metropolis,
+  Frankenstein's lab, Cthulhu) — type-on text, CRT scanlines.
+- **Witty locked entries:** a chapter or bonus module can be gated with an
+  in-character message; sequential unlocks give a sense of progress (optional —
+  default is free chapter choice for accessibility).
+- **Style variants via the catalog `style` field** + the home style filter: pick
+  a look that *fits* — green-phosphor "mono/terminal" for sci-fi, sepia for
+  period drama, stark vector for myth. 8-bit is the default; introduce others
+  deliberately, not at random.
+
 ## Each hour, do ONE high-quality unit of work:
 
 ### 1. Choose the next game
