@@ -44,6 +44,15 @@ t, score, addScore(n), win(), lose(), shake(a,t), flash(c,t), burst(x,y,c,n),
 confirm(), keyDown(b), keyPressed(b), clear/txt/txtC/lines/panel/topBar/
 vignette/scanlines, colors`.
 
+**Make the framed screens unique & on-property** (not the default gold-on-black).
+Every game MUST supply: `emblem(api,cx,cy)`, `scenery(api,scene,t)` (an animated
+backdrop for boot/menu/intro/result/finale — paint the story's world, e.g.
+gothic castle for Dracula, foggy moor for Sherlock), a per-chapter `icon(api,x,y)`
+(themed glyph in the menu), and custom `currency`, `subtitle`, `bootCta`,
+`menuLabel`, `menuHint`, `menuDone`, `bootLine`, `finale`. Stay FAITHFUL to the
+source — match its era/mood. Reserve CRT/terminal looks for genuinely techy or
+sci-fi works (War of the Worlds, Time Machine, Metropolis); never as a default.
+
 The five existing single-mechanic games (sherlock, alice, oz, frankenstein) are
 legacy — upgrade them to sagas as the loop comes around to them.
 

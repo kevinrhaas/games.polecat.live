@@ -63,9 +63,14 @@ big feedback (shake/flash/particles). Variety across the five is the whole point
 borrow the *ideas*, never copy them):
 - Give the game a **voice/host with personality** — narrate the interstitials and
   win/lose lines in-character (a storyteller, a machine, a villain).
-- A short **boot / terminal / "establishing" intro** before the title fits techy
-  or eerie properties (War of the Worlds, The Time Machine, Metropolis,
-  Frankenstein's lab, Cthulhu) — type-on text, CRT scanlines.
+- **Unique, on-property title/menu screens are required**, not the default
+  gold-on-black. Give each game its own `scenery(api,scene,t)` animated backdrop
+  (paint the story's world), per-chapter menu `icon`s, and custom labels
+  (`menuLabel`, `bootCta`, `currency`, etc.). Stay FAITHFUL to the source's era
+  and mood — Dracula is gothic, Sherlock is a foggy Victorian moor.
+- A CRT / terminal / type-on "establishing" intro is great BUT only where the
+  source actually supports it — genuinely techy/sci-fi works (War of the Worlds,
+  The Time Machine, Metropolis). Never use CRT as a default; faithfulness first.
 - **Witty locked entries:** a chapter or bonus module can be gated with an
   in-character message; sequential unlocks give a sense of progress (optional —
   default is free chapter choice for accessibility).

@@ -195,17 +195,19 @@
       if (flashObj) { ctx.globalAlpha = Math.max(0, flashObj.t / flashObj.max) * 0.8; clear(flashObj.col); ctx.globalAlpha = 1; }
     }
 
+    // Per-game animated background for the framed screens. A game supplies
+    // cfg.scenery(api, scene, t) to make its title/menu/etc unique & on-theme.
+    function backdrop(scene) {
+      if (cfg.scenery) cfg.scenery(api, scene, sceneT);
+      else clear(scene === 'menu' ? PAL.dark : PAL.ink);
+    }
     function drawBoot() {
-      clear(PAL.ink);
-      // emblem
-      const cx = W / 2, cy = H * 0.32;
-      ctx.globalAlpha = 0.5 + Math.sin(sceneT * 2) * 0.1;
-      gfx.circle(cx, cy, 30, 'rgba(0,0,0,0)');
-      ctx.globalAlpha = 1;
+      backdrop('boot');
+      const cx = W / 2, cy = H * 0.30;
       if (cfg.emblem) cfg.emblem(api, cx, cy);
       txtC((cfg.title || '').toUpperCase(), cx, H * 0.46, 22, PAL.gold, true);
-      txtC(cfg.subtitle || (chapters.length + ' CHAPTERS'), cx, H * 0.46 + 30, 10, PAL.dim, true);
-      if (Math.floor(sceneT * 1.5) % 2 === 0) txtC('TAP TO BEGIN', cx, H * 0.66, 12, PAL.cream);
+      txtC(cfg.subtitle || (chapters.length + ' CHAPTERS'), cx, H * 0.46 + 30, 10, PAL.cream, true);
+      if (Math.floor(sceneT * 1.5) % 2 === 0) txtC(cfg.bootCta || 'TAP TO BEGIN', cx, H * 0.66, 12, PAL.cream);
       txtC(cfg.credit || 'AN ORIGINAL PIXEL TRIBUTE', cx, H - 40, 8, PAL.dim);
       txtC(cfg.bootLine || (chapters.length + ' CHAPTERS · ONE STORY'), cx, H - 26, 8, PAL.dim);
       vignette(); scanlines();
@@ -217,27 +219,29 @@
       return (i >= 0 && i < chapters.length) ? i : -1;
     }
     function drawMenu() {
-      clear(PAL.dark);
-      txtC((cfg.title || '').toUpperCase(), W / 2, 24, 16, PAL.gold, true);
-      txtC('CHOOSE YOUR CHAPTER', W / 2, 52, 9, PAL.dim);
-      txtC(CUR + '  ' + respect(), W / 2, 70, 9, PAL.cream);
+      backdrop('menu');
+      txtC((cfg.title || '').toUpperCase(), W / 2, 22, 16, PAL.gold, true);
+      txtC(cfg.menuLabel || 'CHOOSE YOUR CHAPTER', W / 2, 50, 9, PAL.dim);
+      txtC(CUR + '  ' + respect(), W / 2, 68, 9, PAL.cream);
       for (let i = 0; i < chapters.length; i++) {
-        const c = chapters[i], y = MENU_TOP + i * ROW_H;
+        const ch = chapters[i], y = MENU_TOP + i * ROW_H;
         const selp = (i === menuSel);
-        panel(14, y, W - 28, ROW_H - 8, selp ? 'rgba(40,26,14,.92)' : 'rgba(10,7,4,.82)');
-        const done = save.done[c.id];
-        txt((i + 1) + '. ' + c.name, 24, y + 8, 10, done ? PAL.gold : PAL.cream);
-        txt(c.sub || '', 24, y + 24, 9, PAL.dim);
-        if (done) txt('✓ ' + (save.best[c.id] || 0), W - 70, y + 14, 9, PAL.gold);
-        else txt('▶', W - 34, y + 14, 11, selp ? PAL.cream : PAL.dim);
+        panel(14, y, W - 28, ROW_H - 8, selp ? 'rgba(30,22,14,.9)' : 'rgba(8,6,4,.7)');
+        let tx = 24;
+        if (ch.icon) { ch.icon(api, 32, y + (ROW_H - 8) / 2); tx = 50; }
+        const done = save.done[ch.id];
+        txt((i + 1) + '. ' + ch.name, tx, y + 8, 10, done ? PAL.gold : PAL.cream);
+        txt(ch.sub || '', tx, y + 24, 9, PAL.dim);
+        if (done) txt('✓ ' + (save.best[ch.id] || 0), W - 72, y + 14, 9, PAL.gold);
+        else txt('▶', W - 32, y + 14, 11, selp ? PAL.cream : PAL.dim);
       }
-      if (allDone()) txtC('★ ALL CHAPTERS CLEARED ★', W / 2, H - 24, 9, PAL.gold);
-      else txtC('TAP A CHAPTER TO PLAY', W / 2, H - 22, 8, PAL.dim);
+      if (allDone()) txtC('★ ' + (cfg.menuDone || 'ALL CHAPTERS CLEARED') + ' ★', W / 2, H - 22, 9, PAL.gold);
+      else txtC(cfg.menuHint || 'TAP A CHAPTER TO PLAY', W / 2, H - 20, 8, PAL.dim);
       vignette(); scanlines();
     }
 
     function drawIntro() {
-      clear(PAL.ink);
+      backdrop('intro');
       txtC('CHAPTER ' + (curIndex + 1), W / 2, 54, 9, PAL.dim);
       txtC(cur.name, W / 2, 74, 15, PAL.gold, true);
       txtC(cur.sub || '', W / 2, 100, 9, PAL.blood);
@@ -267,7 +271,7 @@
     }
 
     function drawFinale() {
-      clear(PAL.ink);
+      backdrop('finale');
       if (cfg.emblem) cfg.emblem(api, W / 2, H * 0.3);
       lines(cfg.finale || ['THE LEGEND IS COMPLETE.'], W / 2, H * 0.46, 11, PAL.gold, 18);
       txtC('FINAL ' + CUR + '  ' + respect(), W / 2, H * 0.66, 11, PAL.cream);

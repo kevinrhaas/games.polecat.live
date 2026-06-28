@@ -36,6 +36,22 @@
     return m;
   }
 
+  // foggy Victorian moor backdrop for the title / menu / story screens
+  function scenery(api, scene, t) {
+    const g = api.gfx, c = api.ctx, W = api.W, H = api.H;
+    const sky = c.createLinearGradient(0, 0, 0, H);
+    sky.addColorStop(0, '#0c1418'); sky.addColorStop(0.6, '#0e1612'); sky.addColorStop(1, '#080c0a');
+    c.fillStyle = sky; c.fillRect(0, 0, W, H);
+    g.circle(56, 70, 18, '#cdd6c8'); g.circle(63, 64, 15, '#0e1612');
+    const hills = [['#101a14', H - 70, 26], ['#0c150f', H - 40, 18]];
+    for (const hh of hills) { c.fillStyle = hh[0]; c.beginPath(); c.moveTo(0, H); for (let x = 0; x <= W; x += 10) c.lineTo(x, hh[1] - Math.sin(x * 0.04 + hh[2]) * hh[2] * 0.4 - hh[2] * 0.4); c.lineTo(W, H); c.closePath(); c.fill(); }
+    g.rect(W - 50, H - 96, 3, 40, '#1a2018'); g.rect(W - 54, H - 100, 11, 8, '#243024');
+    c.globalAlpha = 0.14; g.circle(W - 48, H - 95, 16, '#e8d27a'); c.globalAlpha = 1; g.circle(W - 48, H - 95, 4, '#e8d27a');
+    for (let i = 0; i < 5; i++) { c.globalAlpha = 0.06; const fy = 110 + i * 60 + Math.sin(t * 0.6 + i) * 8, fx = (t * (8 + i * 3)) % (W + 80) - 40; g.rect(fx, fy, 90, 16, '#9fb8a4'); g.rect(fx - 60, fy + 6, 70, 12, '#9fb8a4'); c.globalAlpha = 1; }
+    if (scene === 'intro' || scene === 'finale' || scene === 'result') { c.fillStyle = 'rgba(6,10,8,.6)'; c.fillRect(0, 0, W, H); }
+    else if (scene === 'menu') { c.fillStyle = 'rgba(6,10,8,.4)'; c.fillRect(0, 0, W, H); }
+  }
+
   RetroSaga.create({
     id: 'baskervilles',
     title: 'Baskervilles',
@@ -46,6 +62,11 @@
     bootLine: 'FIVE CHAPTERS · ONE MYSTERY',
     tagline: 'A POLECAT MYSTERY',
     emblem,
+    scenery,
+    bootCta: 'TAP TO INVESTIGATE',
+    menuLabel: 'THE CASE FILES',
+    menuHint: 'OPEN A CHAPTER TO INVESTIGATE',
+    menuDone: 'THE CASE IS CLOSED',
     finale: ['THE HOUND IS NO PHANTOM —', 'ONLY PHOSPHOR AND MALICE.', 'STAPLETON SINKS INTO', 'THE MIRE. CASE CLOSED.'],
     width: 270, height: 480, parent: '#game',
     palette: { gold: '#cde8b0', blood: '#c8102e' },
@@ -54,6 +75,7 @@
       /* ===================== 1. THE WALKING STICK ====================== */
       {
         id: 'stick', name: 'THE WALKING STICK', sub: '221B BAKER STREET',
+        icon(api, x, y) { const g = api.gfx; g.rect(x - 1, y - 7, 2, 13, '#7a5a2a'); g.circle(x, y - 7, 3, '#caa15a'); },
         intro: ['A VISITOR LEFT HIS CANE', 'AT BAKER STREET. READ THE', 'MAN FROM HIS STICK', 'as Holmes would.'],
         quote: 'You are a conductor of light. Some people without possessing genius have a remarkable power of stimulating it.',
         help: 'TAP the four clues on the cane',
@@ -105,6 +127,7 @@
       /* ====================== 2. THE GRIMPEN MIRE ===================== */
       {
         id: 'mire', name: 'THE GRIMPEN MIRE', sub: 'ONE FALSE STEP',
+        icon(api, x, y) { const g = api.gfx; g.sprite(['.ggg.', 'ggggg', '.bbb.'], x - 5, y - 4, { g: '#5a7a3a', b: '#3a2a1a' }, 2); },
         intro: ['ONLY TUFTS OF GRASS GIVE', 'SAFE FOOTING ON THE GREAT', 'GRIMPEN MIRE. TIME EACH HOP', 'or be sucked under.'],
         quote: 'A false step yonder means death to man or beast.',
         help: 'TAP to hop when a tuft reaches the line',
@@ -145,6 +168,7 @@
       /* ========================== 3. THE MOOR ======================== */
       {
         id: 'moor', name: 'THE MOOR', sub: 'THE TRACKS OF A HOUND',
+        icon(api, x, y) { const g = api.gfx; g.circle(x, y + 3, 3, '#9aa89a'); g.circle(x - 4, y - 2, 1.6, '#9aa89a'); g.circle(x, y - 4, 1.6, '#9aa89a'); g.circle(x + 4, y - 2, 1.6, '#9aa89a'); },
         intro: ['MILES OF FOG-BOUND MOOR.', 'SOMEWHERE OUT THERE THE', 'BEAST LEFT ITS TRACKS.', 'Gather the clues, find the cairn.'],
         quote: 'Mr. Holmes, they were the footprints of a gigantic hound!',
         help: 'DRAG / arrows to explore · gather clues, reach the cairn',
@@ -208,6 +232,7 @@
       /* ========================= 4. THE WARNING ====================== */
       {
         id: 'warning', name: 'THE WARNING', sub: 'CUT FROM THE TIMES',
+        icon(api, x, y) { const g = api.gfx; g.rect(x - 6, y - 7, 12, 14, '#d8c89a'); g.rect(x - 3, y - 4, 8, 1, '#5a4a2a'); g.rect(x - 3, y - 1, 8, 1, '#5a4a2a'); g.rect(x - 3, y + 2, 5, 1, '#5a4a2a'); },
         intro: ['A NOTE OF PASTED WORDS', 'WARNS SIR HENRY OFF.', 'PIECE THE MESSAGE BACK', 'together, word by word.'],
         quote: 'As you value your life or your reason, keep away from the moor.',
         help: 'TAP the words in the right order',
@@ -259,6 +284,7 @@
       /* ========================== 5. THE HOUND ======================= */
       {
         id: 'hound', name: 'THE HOUND', sub: 'A CREATURE OF FIRE',
+        icon(api, x, y) { const g = api.gfx; api.ctx.globalAlpha = 0.6; g.circle(x, y, 8, '#1aff6a'); api.ctx.globalAlpha = 1; g.circle(x, y + 3, 3, '#0a1a0e'); g.circle(x - 4, y - 2, 1.6, '#0a1a0e'); g.circle(x, y - 4, 1.6, '#0a1a0e'); g.circle(x + 4, y - 2, 1.6, '#0a1a0e'); },
         intro: ['FROM THE FOG IT COMES —', 'A GIANT HOUND, ITS JAWS', 'AND EYES AFLAME WITH', 'phosphorus. Fire!'],
         quote: 'A hound it was, an enormous coal-black hound, but not such a hound as mortal eyes have ever seen.',
         help: 'TAP the hound to fire · keep it off Sir Henry',

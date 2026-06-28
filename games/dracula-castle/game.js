@@ -25,6 +25,24 @@
     ], cx - 36, cy - 18, { r: '#c8102e' }, 6);
   }
 
+  // gothic night backdrop for the title / menu / story screens
+  function scenery(api, scene, t) {
+    const g = api.gfx, c = api.ctx, W = api.W, H = api.H;
+    const sky = c.createLinearGradient(0, 0, 0, H);
+    sky.addColorStop(0, '#0a0612'); sky.addColorStop(0.55, '#160a16'); sky.addColorStop(1, '#070409');
+    c.fillStyle = sky; c.fillRect(0, 0, W, H);
+    for (let i = 0; i < 44; i++) { const x = (i * 53 + 11) % W, y = (i * 97 + 7) % Math.floor(H * 0.55); c.globalAlpha = 0.25 + 0.3 * Math.sin(t * 2 + i); g.rect(x, y, 1, 1, '#cdbfe0'); } c.globalAlpha = 1;
+    if (scene !== 'menu') { g.circle(W - 56, 66, 22, '#b03038'); g.circle(W - 49, 60, 19, '#160a14'); }
+    const baseY = H - 84; c.fillStyle = '#0a0610';
+    c.beginPath(); c.moveTo(0, baseY);
+    for (let x = 0; x <= W; x += 18) c.lineTo(x, baseY - 6 - ((x * 7) % 14)); c.lineTo(W, H); c.lineTo(0, H); c.closePath(); c.fill();
+    const towers = [[40, 44], [92, 66], [150, 52], [206, 72]];
+    for (const tw of towers) { c.fillStyle = '#0a0610'; c.fillRect(tw[0], baseY - tw[1], 20, tw[1]); for (let bx = 0; bx < 20; bx += 8) c.fillRect(tw[0] + bx, baseY - tw[1] - 5, 5, 5); g.rect(tw[0] + 7, baseY - tw[1] + 12, 6, 9, '#e3a030'); }
+    for (let i = 0; i < 5; i++) { const bx = (t * 26 + i * 64) % (W + 40) - 20, by = 116 + Math.sin(t * 2 + i) * 16 + i * 10; const flap = Math.sin(t * 12 + i) > 0; g.sprite(flap ? ['k.kk.k', '.kkkk.'] : ['.k..k.', 'kkkkkk'], bx, by, { k: '#120814' }, 2); }
+    if (scene === 'intro' || scene === 'finale' || scene === 'result') { c.fillStyle = 'rgba(6,3,9,.62)'; c.fillRect(0, 0, W, H); }
+    else if (scene === 'menu') { c.fillStyle = 'rgba(6,3,9,.42)'; c.fillRect(0, 0, W, H); }
+  }
+
   RetroSaga.create({
     id: 'dracula',
     title: 'Dracula',
@@ -33,6 +51,11 @@
     accent: '#e3c567',
     credit: 'AN ORIGINAL 8-BIT TRIBUTE · B. STOKER, 1897',
     emblem,
+    scenery,
+    bootCta: 'TAP TO ENTER',
+    menuLabel: 'CHRONICLE OF THE COUNT',
+    menuHint: 'CHOOSE A CHAPTER TO BEGIN',
+    menuDone: 'THE COUNT IS UNDONE',
     finale: ['THE COUNT IS DUST.', 'THE CRIMSON DAWN', 'BREAKS CLEAN.', '', 'HARKER GOES HOME.'],
     width: 270, height: 480, parent: '#game',
     palette: { gold: '#e3c567', blood: '#c8102e' },
@@ -41,6 +64,7 @@
       /* ============================ 2. THE WALL ======================== */
       {
         id: 'wall', name: 'THE CASTLE WALL', sub: 'A THING OF DARKNESS',
+        icon(api, x, y) { const g = api.gfx; g.rect(x - 7, y - 6, 14, 12, '#4a3f5a'); g.rect(x - 7, y - 2, 14, 1, '#1b1726'); g.rect(x - 1, y - 6, 1, 12, '#1b1726'); g.rect(x - 7, y - 6, 7, 1, '#1b1726'); },
         intro: ['HARKER SEES THE COUNT', 'CRAWL DOWN THE SHEER', 'WALL LIKE A LIZARD.', 'He must climb it too.'],
         quote: 'I saw the whole man slowly emerge and begin to crawl down the castle wall.',
         help: 'TAP when the grip lines up with the green',
@@ -85,6 +109,7 @@
       /* ============================ 3. THE DEMETER ===================== */
       {
         id: 'demeter', name: 'THE DEMETER', sub: 'A SHIP OF THE DEAD',
+        icon(api, x, y) { const g = api.gfx; g.rect(x - 1, y - 7, 2, 9, '#5a3f28'); g.sprite(['w..', 'ww.', 'www'], x + 1, y - 6, { w: '#cabfa0' }, 2); g.rect(x - 8, y + 2, 16, 3, '#3a2a1a'); },
         intro: ['DRACULA SAILS TO ENGLAND', 'IN THE HOLD OF THE DEMETER.', 'ONE BY ONE THE CREW', 'vanish in the dark.'],
         quote: 'God seems to have deserted us... the men are gone, all gone.',
         help: 'TAP the glowing hatch before the shadow takes the crew',
@@ -135,6 +160,7 @@
       /* ========================= 3b. RENFIELD ======================== */
       {
         id: 'renfield', name: 'RENFIELD', sub: "DR SEWARD'S ASYLUM",
+        icon(api, x, y) { const g = api.gfx; g.rect(x - 2, y - 1, 4, 3, '#101010'); g.rect(x - 5, y - 2, 3, 1, '#cfe0d0'); g.rect(x + 2, y - 2, 3, 1, '#cfe0d0'); },
         intro: ['IN THE ASYLUM, RENFIELD', 'DEVOURS FLIES AND SPIDERS', 'TO DRINK THEIR LIVES —', 'his Master draws near.'],
         quote: 'The blood is the life! The blood is the life!',
         help: 'TAP the flies & spiders to fill the jar',
@@ -182,6 +208,7 @@
       /* ============================ 4. LUCY'S TOMB ===================== */
       {
         id: 'lucy', name: "LUCY'S TOMB", sub: 'RELEASE HER SOUL',
+        icon(api, x, y) { const g = api.gfx; g.rect(x - 1, y - 7, 2, 14, '#caa15a'); g.rect(x - 5, y - 3, 10, 2, '#caa15a'); },
         intro: ['LUCY WALKS AS THE', 'BLOOFER LADY. VAN HELSING', 'GIVES ARTHUR THE STAKE.', 'Strike true. Strike clean.'],
         quote: 'The thing in the coffin writhed... but Arthur never faltered.',
         help: 'TAP when the ring meets the heart',
@@ -223,6 +250,7 @@
       /* ============================ 5. THE RECKONING =================== */
       {
         id: 'reckoning', name: 'THE RECKONING', sub: 'RACE THE SUNSET',
+        icon(api, x, y) { const g = api.gfx; g.circle(x, y, 5, '#ff8a3d'); for (let a = 0; a < 8; a++) { const ang = a / 8 * Math.PI * 2; g.rect(x + Math.cos(ang) * 8 - 1, y + Math.sin(ang) * 8 - 1, 2, 2, '#ff8a3d'); } },
         intro: ['THE BOX IS HAULED TO', 'CASTLE DRACULA. IF THE SUN', 'SETS, THE COUNT WAKES.', 'Catch the cart. End it.'],
         quote: 'If we are not in time, he will wake — and never sleep again.',
         help: 'Steer to catch the cart · TAP to strike at the heart',
