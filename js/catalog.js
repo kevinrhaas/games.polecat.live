@@ -28,7 +28,7 @@ window.POLECAT_CATALOG = [
     blurb: "Skip toward the Emerald City, gather the Scarecrow, Tin Man & Lion, and hop the hazards.", tags: ["runner","collect","jump"] },
 
   // ---------------------------- SOON (planned) ----------------------------
-  { id: "frankenstein-spark", title: "It's Alive!", source: "Frankenstein — Mary Shelley", genre: "Rhythm / Timing", style: "8-bit", accent: "#5dff8f", status: "soon",
+  { id: "frankenstein-spark", title: "It's Alive!", source: "Frankenstein — Mary Shelley", genre: "Rhythm / Timing", style: "8-bit", accent: "#5dff8f", status: "live",
     blurb: "Channel the lightning down the rods in rhythm to spark the Creature to life.", tags: ["rhythm","puzzle"] },
   { id: "pooh-hunny", title: "Hunny Hunt", source: "Winnie-the-Pooh — A. A. Milne (1926)", genre: "Puzzle Collect", style: "8-bit", accent: "#ffe14d", status: "soon",
     blurb: "Float by balloon and bounce the bees to reach the topmost pot of hunny.", tags: ["cozy","puzzle"] },
