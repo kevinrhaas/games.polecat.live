@@ -20,8 +20,8 @@ window.POLECAT_CATALOG = [
   // ---------------------------- LIVE (built) ----------------------------
   { id: "sherlock-hound", title: "The Hound of the Baskervilles", source: "Sherlock Holmes — A. Conan Doyle", genre: "Mystery Maze", style: "8-bit", accent: "#5dff8f", status: "live",
     blurb: "Stalk the foggy moor, gather clues, and outwit the spectral hound before it finds you.", tags: ["detective","stealth","maze"] },
-  { id: "dracula-castle", title: "Escape Castle Dracula", source: "Dracula — Bram Stoker", genre: "Platformer", style: "8-bit", accent: "#ff2e97", status: "live",
-    blurb: "Climb the crumbling tower as Jonathan Harker — leap the gaps, dodge bats, reach the dawn.", tags: ["horror","climb","action"] },
+  { id: "dracula-castle", title: "Dracula — A Pixel Saga", source: "Dracula — Bram Stoker", genre: "Saga", style: "8-bit", accent: "#c8102e", status: "live",
+    blurb: "Five chapters through Stoker's novel: the night road, the castle wall, the doomed Demeter, Lucy's tomb, and the final reckoning at sunset.", tags: ["horror","saga","multi","epic"] },
   { id: "alice-rabbithole", title: "Down the Rabbit Hole", source: "Alice in Wonderland — Lewis Carroll", genre: "Endless Faller", style: "8-bit", accent: "#21e6ff", status: "live",
     blurb: "Tumble forever past clocks and teacups — sip and nibble to change size and slip through.", tags: ["arcade","reflex","dodge"] },
   { id: "oz-yellowbrick", title: "The Yellow Brick Road", source: "The Wizard of Oz — L. Frank Baum", genre: "Auto-Runner", style: "8-bit", accent: "#ffe14d", status: "live",

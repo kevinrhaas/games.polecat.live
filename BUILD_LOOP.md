@@ -17,6 +17,14 @@ out games.polecat.live. Follow it top to bottom, then stop.
   Cinderella, Snow White, Treasure Island, Zorro, Sherlock's other tales...)
   while still NOT repeating the previous game's genre. Fame breaks ties; variety
   is the constraint.
+- **Every game is a multi-chapter SAGA (owner request).** Not a single mechanic
+  — an epic, full-screen experience of **~5 mini-games** that together tell the
+  property's story, like the Godfather "Corleone Saga": title screen → chapter
+  select → story interstitial (narrative + a real quote) → mini-game → result/
+  RESPECT → finale. Build on `RetroSaga` (`js/saga.js`); the reference is
+  `games/dracula-castle/`. The five chapters must use **distinct** mechanics and
+  hit the property's most iconic scenes. Treat the older single-mechanic games
+  (sherlock, alice, oz, frankenstein) as a backlog to upgrade into sagas.
 - **Mobile + touch play is a hard requirement (owner request).** Every game —
   past and future — must be genuinely great on a phone: fully playable with the
   on-screen touch controls (assume NO keyboard), big thumb-friendly buttons, a

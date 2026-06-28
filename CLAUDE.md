@@ -10,6 +10,7 @@ index.html            Home page (hero, filters, game grid, ad slots)
 css/site.css          Global design system (synthwave/neon arcade)
 css/game.css          Shared per-game page layout + touch-control styles
 js/retro-engine.js    The shared 8-bit game engine (see API below)
+js/saga.js            RetroSaga — the multi-chapter "epic saga" shell (preferred)
 js/catalog.js         window.POLECAT_CATALOG — single source of truth for every game
 js/home.js            Renders the catalog + procedural thumbnails + filtering
 assets/logo.svg       Polecat mascot logo (also favicon)
@@ -20,15 +21,43 @@ tools/snap-thumbs.mjs Captures gameplay thumbnails for live games (headless)
 BUILD_LOOP.md         The hourly build-loop playbook (read this when looping)
 ```
 
+## The format: every property is a multi-chapter SAGA (the house style)
+Each game is **not** a single mechanic — it's an epic, full-screen **saga of
+~5 mini-games** that together tell the story, in the spirit of the Godfather
+"Corleone Saga". Built on `RetroSaga` (`js/saga.js`), which gives you:
+- a tap-to-begin **title screen**, a **chapter-select menu**, a **story
+  interstitial** (narrative lines + a real quote) before each chapter, a
+  **result screen** that banks **RESPECT**, and a **finale** when all are cleared;
+- save/progress in localStorage, camera shake / flash / particles / vignette,
+  pointer (tap & drag) + arrow keys, and auto-fullscreen on begin.
+
+You write an `id`, theme, and a `chapters` array. Each chapter is one mini-game
+object: `{ id, name, sub, intro:[lines], quote, help, winText, loseText,
+init(api), update(api,dt), draw(api) }`. The mini-game calls `api.win()` /
+`api.lose()` to end. **Vary the 5 mechanics** (dodge, timing, defend, precision,
+chase, aim, stealth, rhythm…) — they should feel like five different games that
+share one story. See `games/dracula-castle/game.js` as the reference saga.
+RetroSaga is portrait (270×480) and meant to be played fullscreen.
+
+`api` gives: `gfx, ctx, input, audio, util, pointer{x,y,down,justDown}, W, H,
+t, score, addScore(n), win(), lose(), shake(a,t), flash(c,t), burst(x,y,c,n),
+confirm(), keyDown(b), keyPressed(b), clear/txt/txtC/lines/panel/topBar/
+vignette/scanlines, colors`.
+
+The five existing single-mechanic games (sherlock, alice, oz, frankenstein) are
+legacy — upgrade them to sagas as the loop comes around to them.
+
 ## Adding a new game (the core repeatable task)
 1. Pick the next `status:"soon"` entry in `js/catalog.js` (or add one). Use the
    `id` as the folder name: `games/<id>/`.
-2. Copy an existing game's `index.html` as a template; change the title,
-   `<title>`, source label, help text, and the `buttonLabels`. Keep the
-   `#fullscreenBtn`, `#muteBtn`, `#restartBtn` bar buttons.
-3. Write `games/<id>/game.js` using the RetroEngine API. **Vary the genre** —
-   do not ship two of the same kind in a row. The `genre` field in the catalog
-   is the intended mechanic; honor it.
+2. Copy `games/dracula-castle/index.html` as the template (it loads
+   `retro-engine.js` + `saga.js` + `game.js`); change the title, `<title>`,
+   source label, and help text. Keep the `#fullscreenBtn`, `#muteBtn`,
+   `#restartBtn` bar buttons.
+3. Write `games/<id>/game.js` as a `RetroSaga.create({...})` with **5 chapters**
+   (see the saga section above). Capture the property's key scenes; vary the five
+   mechanics. (Legacy single-mechanic games may still use the bare RetroEngine,
+   but new work should be a saga.)
 4. Flip that catalog entry's `status` from `"soon"` to `"live"`.
 5. `node --check` every JS file, then load-test in a headless browser (see
    BUILD_LOOP.md) — assert zero pageerrors and that the canvas renders.

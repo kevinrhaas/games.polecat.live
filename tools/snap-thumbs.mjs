@@ -77,8 +77,15 @@ async function main() {
     await page.waitForTimeout(500);
     const canvas = page.locator('.re-canvas');
     await canvas.scrollIntoViewIfNeeded();
-    await canvas.click({ position: { x: 10, y: 10 } }).catch(() => {});
-    await kickoff(page);
+    // Saga games: capture the epic title screen (no input). Single-mechanic
+    // games: kick off and grab a live gameplay frame.
+    const isSaga = await page.evaluate(() => typeof window.__sagaScene !== 'undefined');
+    if (isSaga) {
+      await page.waitForTimeout(900);
+    } else {
+      await canvas.click({ position: { x: 10, y: 10 } }).catch(() => {});
+      await kickoff(page);
+    }
     // read the canvas at its native resolution → crisp pixels
     const dataUrl = await page.evaluate(() => {
       const c = document.querySelector('.re-canvas');
