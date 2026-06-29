@@ -1,22 +1,45 @@
 /* ============================================================
  * Shared layout for individual game pages + RetroEngine controls
  * ============================================================ */
-.game-page { min-height: 100vh; display: flex; flex-direction: column; }
+/* Per-game page theme — each game's index.html overrides these in an inline
+   <style> so the chrome (bar, help, background, buttons) matches its menu.
+   Defaults reproduce the original neon look for any unthemed page. */
+:root {
+  --g-bg1: #1b0d44; --g-bg2: #06010f;
+  --g-bar: rgba(11,4,32,.95);
+  --g-accent: var(--cyan);
+  --g-title: #ffffff;
+  --g-panel: var(--panel);
+  --g-border: var(--panel-br);
+  --g-text: var(--ink-dim);
+  --g-key: var(--yellow);
+  --g-stage: var(--panel-br);
+  --g-glow: rgba(123,92,255,.25);
+}
+/* drop the global purple grid overlay on game pages so each theme reads clean */
+.game-page::before { display: none; }
+.game-page {
+  min-height: 100vh; display: flex; flex-direction: column;
+  background:
+    radial-gradient(900px 520px at 50% -8%, var(--g-bg1) 0%, transparent 60%),
+    linear-gradient(180deg, var(--g-bg1) 0%, var(--g-bg2) 75%) !important;
+  background-attachment: fixed;
+}
 
 .game-bar {
   position: sticky; top: 0; z-index: 50;
   display: flex; align-items: center; gap: 12px;
   padding: 10px 16px;
-  background: linear-gradient(180deg, rgba(11,4,32,.95), rgba(11,4,32,.6));
-  border-bottom: 2px solid var(--panel-br); backdrop-filter: blur(6px);
+  background: var(--g-bar);
+  border-bottom: 2px solid var(--g-border); backdrop-filter: blur(6px);
 }
-.game-bar .back { font-family: var(--font-pixel); font-size: 10px; color: var(--cyan); display:flex; align-items:center; gap:8px; }
-.game-bar .title { font-family: var(--font-pixel); font-size: 12px; color: #fff; }
-.game-bar .src { font-size: 12px; color: var(--ink-dim); margin-left: 4px; }
+.game-bar .back { font-family: var(--font-pixel); font-size: 10px; color: var(--g-accent); display:flex; align-items:center; gap:8px; }
+.game-bar .title { font-family: var(--font-pixel); font-size: 12px; color: var(--g-title); }
+.game-bar .src { font-size: 12px; color: var(--g-text); margin-left: 4px; }
 .game-bar .spacer { flex: 1; }
 .game-bar .icon-btn {
   font-family: var(--font-pixel); font-size: 10px; cursor: pointer;
-  background: var(--panel); color: var(--ink); border: 2px solid var(--panel-br);
+  background: var(--g-panel); color: var(--g-title); border: 2px solid var(--g-border);
   border-radius: 8px; padding: 8px 10px;
 }
 .game-bar .icon-btn:active { transform: translateY(1px); }
@@ -33,8 +56,8 @@
 .re-stage {
   width: 100%; max-width: 720px;
   display: flex; align-items: center; justify-content: center;
-  background: #000; border: 3px solid var(--panel-br); border-radius: 12px;
-  box-shadow: 0 0 0 2px #000, 0 0 40px rgba(123,92,255,.25);
+  background: #000; border: 3px solid var(--g-stage); border-radius: 12px;
+  box-shadow: 0 0 0 2px #000, 0 0 40px var(--g-glow);
   overflow: hidden; position: relative;
 }
 .re-canvas { display: block; image-rendering: pixelated; image-rendering: crisp-edges; touch-action: none; }
@@ -70,11 +93,11 @@ body.re-immersive-lock { overflow: hidden; }
 /* how-to-play strip */
 .game-help {
   max-width: 720px; width: 100%;
-  background: var(--panel); border: 2px solid var(--panel-br); border-radius: 12px;
-  padding: 12px 16px; color: var(--ink-dim); font-size: 13px; line-height: 1.6;
+  background: var(--g-panel); border: 2px solid var(--g-border); border-radius: 12px;
+  padding: 12px 16px; color: var(--g-text); font-size: 13px; line-height: 1.6;
 }
-.game-help b { color: var(--cyan); }
-.game-help .keys { font-family: var(--font-pixel); font-size: 9px; color: var(--yellow); }
+.game-help b { color: var(--g-accent); }
+.game-help .keys { font-family: var(--font-pixel); font-size: 9px; color: var(--g-key); }
 
 /* ===================== Touch controls ===================== */
 .re-controls { width: 100%; max-width: 720px; }

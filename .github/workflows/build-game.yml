@@ -82,6 +82,11 @@ jobs:
             source's era and mood; reserve CRT/terminal styling for genuinely sci-fi
             works only; never use the word "saga" in user-facing text. Mobile-first; must
             work fullscreen. Use games/dracula-castle and games/sherlock-hound as menu refs.
+            ALSO theme the PAGE chrome: in the new index.html head add
+            <style id="game-theme">:root{...}</style> overriding the page theme vars
+            (--g-bg1,--g-bg2,--g-bar,--g-accent,--g-title,--g-panel,--g-border,--g-text,
+            --g-key,--g-stage,--g-glow, defined in css/game.css) so the top bar, help
+            strip and page background match the game's palette — not the default neon.
 
             Then: run `node --check` on every JS file; load-test headless with Playwright
             (zero pageerrors; the menu and each chapter must render); capture the

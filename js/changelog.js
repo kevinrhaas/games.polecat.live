@@ -7,6 +7,8 @@
  * Entry shape: { ts: "Jun 28, 2026 · 2:46 PM CT", title: "...", notes: ["..."] }
  * ============================================================================ */
 window.POLECAT_CHANGELOG = [
+  { ts: "Jun 28, 2026 · 8:19 PM CT", title: "Every game page wears its own colors",
+    notes: ["The page around each game \u2014 top bar, help strip, background and borders \u2014 now matches that game's world instead of the same neon: crimson for Dracula, sepia for Sherlock, forest for Robin Hood, royal blue for King Arthur, and more.", "Leaving a game and entering another now feels like a real change of place."] },
   { ts: "Jun 28, 2026 · 6:53 PM CT", title: "Menus reimagined per story",
     notes: ["Each game's chapter-select is now its own world: Dracula's scattered graveyard tombstones, Sherlock's pinned corkboard, Robin Hood's archery targets in a sunlit clearing, King Arthur's radial Round Table of shields.", "Different layouts, shapes, colors and backgrounds \u2014 no two look alike."] },
   { ts: "Jun 28, 2026 · 6:39 PM CT", title: "Each game looks its own way now",

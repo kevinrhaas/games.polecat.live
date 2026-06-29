@@ -76,6 +76,14 @@ legacy — upgrade them to sagas as the loop comes around to them.
    `retro-engine.js` + `saga.js` + `game.js`); change the title, `<title>`,
    source label, and help text. Keep the `#fullscreenBtn`, `#muteBtn`,
    `#restartBtn` bar buttons.
+2b. **Theme the page chrome to match the game.** In the new `index.html` head,
+   add `<style id="game-theme">:root{ … }</style>` overriding the page theme
+   variables so the top bar, help strip, page background and borders match the
+   property (not the default neon). The vars (defined in `css/game.css`):
+   `--g-bg1 --g-bg2` (page background), `--g-bar`, `--g-accent`, `--g-title`,
+   `--g-panel`, `--g-border`, `--g-text`, `--g-key`, `--g-stage`, `--g-glow`.
+   See the saga games for examples (Dracula crimson, Sherlock sepia, Robin Hood
+   forest, Arthur royal blue). The page should feel like the game, not the hub.
 3. Write `games/<id>/game.js` as a `RetroSaga.create({...})` with **5 chapters**
    (see the saga section above). Capture the property's key scenes; vary the five
    mechanics. (Legacy single-mechanic games may still use the bare RetroEngine,
