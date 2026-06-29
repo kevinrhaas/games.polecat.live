@@ -29,8 +29,8 @@ window.POLECAT_CATALOG = [
     blurb: "Five Wonderland tales — tumble down the rabbit hole, swim the pool of tears, time the Mad Hatter's cups, swing a flamingo at the Queen's croquet, and dodge flying cards at the trial!", tags: ["arcade","adventure","multi-chapter"] },
   { id: "oz-yellowbrick", title: "The Yellow Brick Road", source: "The Wizard of Oz — L. Frank Baum", genre: "Auto-Runner", style: "8-bit", accent: "#ffe14d", status: "live", legacy: true,
     blurb: "Skip toward the Emerald City, gather the Scarecrow, Tin Man & Lion, and hop the hazards.", tags: ["runner","collect","jump"] },
-  { id: "frankenstein-spark", title: "It's Alive!", source: "Frankenstein — Mary Shelley", genre: "Rhythm / Timing", style: "8-bit", accent: "#5dff8f", status: "live", legacy: true,
-    blurb: "Channel the lightning down the rods in rhythm to spark the Creature to life.", tags: ["rhythm","puzzle"] },
+  { id: "frankenstein-spark", title: "Frankenstein", source: "Frankenstein — Mary Shelley", genre: "Horror Adventure", style: "8-bit", accent: "#5dff8f", status: "live",
+    blurb: "Five gothic chapters: channel lightning to birth the Creature, flee the frightened village, spy on the De Laceys, chase across Arctic ice, and make the final leap into darkness.", tags: ["horror","multi-chapter","gothic"] },
 
   // ---------------------------- SOON (planned) ----------------------------
   { id: "pooh-hunny", title: "Hunny Hunt", source: "Winnie-the-Pooh — A. A. Milne (1926)", genre: "Puzzle Collect", style: "8-bit", accent: "#ffe14d", status: "live",

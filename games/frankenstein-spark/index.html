@@ -3,19 +3,31 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
-  <title>It's Alive! — games.polecat.live</title>
-  <meta name="theme-color" content="#0b0420" />
+  <title>Frankenstein — games.polecat.live</title>
+  <meta name="theme-color" content="#0c0718" />
   <link rel="icon" href="../../assets/logo.svg" type="image/svg+xml" />
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../../css/site.css" />
   <link rel="stylesheet" href="../../css/game.css" />
-  <style id="game-theme">:root{--g-bg1:#0c1f16;--g-bg2:#040c08;--g-bar:rgba(8,18,14,.95);--g-accent:#5dff8f;--g-title:#d8ffe6;--g-panel:rgba(12,30,22,.82);--g-border:#2a5a3e;--g-text:#7fc0a0;--g-key:#9affc0;--g-stage:#2a5a3e;--g-glow:rgba(93,255,143,.3)}</style>
+  <style id="game-theme">:root{
+    --g-bg1:#0c0718;
+    --g-bg2:#060310;
+    --g-bar:rgba(8,4,20,.96);
+    --g-accent:#5dff8f;
+    --g-title:#c0f0d0;
+    --g-panel:rgba(12,6,28,.85);
+    --g-border:#2a1a4a;
+    --g-text:#8a70b0;
+    --g-key:#c0f0d0;
+    --g-stage:#1a0d30;
+    --g-glow:rgba(93,255,143,.28);
+  }</style>
 </head>
 <body class="game-page">
   <div class="game-bar">
     <a class="back" href="../../index.html">◀ ARCADE</a>
-    <span class="title">It's Alive!</span>
-    <span class="src">· Frankenstein</span>
+    <span class="title">Frankenstein</span>
+    <span class="src">· Mary Shelley</span>
     <span class="spacer"></span>
     <button class="icon-btn" id="fullscreenBtn" title="Full screen">⛶</button>
     <button class="icon-btn" id="muteBtn" title="Mute">🔊</button>
@@ -24,11 +36,12 @@
   <div class="game-main">
     <div id="game"></div>
     <div class="game-help">
-      <b>Victor Frankenstein</b> channels the storm into the Creature. Strike each lightning bolt the instant it hits the glowing rod to charge the life-meter — fill it to spark the Creature to life!
-      <span class="keys">HIT THE LANE: ◀ ▲ ▼ ▶ / arrow keys · time it perfectly</span>
+      <b>Frankenstein</b> — Five chapters through Mary Shelley's gothic novel: channel lightning to birth the Creature, flee the frightened village, learn in secret from the De Laceys, chase across Arctic ice, and make the final leap into darkness.
+      <span class="keys">TAP to play · Arrow keys or touch controls</span>
     </div>
   </div>
   <script src="../../js/retro-engine.js"></script>
+  <script src="../../js/saga.js"></script>
   <script src="game.js"></script>
 </body>
 </html>
