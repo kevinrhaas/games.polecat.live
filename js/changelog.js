@@ -7,6 +7,8 @@
  * Entry shape: { ts: "Jun 28, 2026 · 2:46 PM CT", title: "...", notes: ["..."] }
  * ============================================================================ */
 window.POLECAT_CHANGELOG = [
+  { ts: "Jun 28, 2026 · 8:45 PM CT", title: "New game: Winnie-the-Pooh — Hunny Hunt",
+    notes: ["Five cozy adventures through the Hundred Acre Wood: float on a balloon to steal honey from the bees, follow the mysterious Woozle tracks in the snow, gather gifts for Eeyore's birthday, steer Piglet through the Blustery Day, and wiggle Pooh free from Rabbit's door.", "Unique look: warm sunny sky palette, a hand-drawn parchment map of the Hundred Acre Wood for the chapter menu, wooden sign-post chapter cards, and the Sanders tree on the title screen."] },
   { ts: "Jun 28, 2026 · 8:19 PM CT", title: "Every game page wears its own colors",
     notes: ["The page around each game \u2014 top bar, help strip, background and borders \u2014 now matches that game's world instead of the same neon: crimson for Dracula, sepia for Sherlock, forest for Robin Hood, royal blue for King Arthur, and more.", "Leaving a game and entering another now feels like a real change of place."] },
   { ts: "Jun 28, 2026 · 6:53 PM CT", title: "Menus reimagined per story",

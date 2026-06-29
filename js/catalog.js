@@ -30,8 +30,8 @@ window.POLECAT_CATALOG = [
   // ---------------------------- SOON (planned) ----------------------------
   { id: "frankenstein-spark", title: "It's Alive!", source: "Frankenstein — Mary Shelley", genre: "Rhythm / Timing", style: "8-bit", accent: "#5dff8f", status: "live",
     blurb: "Channel the lightning down the rods in rhythm to spark the Creature to life.", tags: ["rhythm","puzzle"] },
-  { id: "pooh-hunny", title: "Hunny Hunt", source: "Winnie-the-Pooh — A. A. Milne (1926)", genre: "Puzzle Collect", style: "8-bit", accent: "#ffe14d", status: "soon",
-    blurb: "Float by balloon and bounce the bees to reach the topmost pot of hunny.", tags: ["cozy","puzzle"] },
+  { id: "pooh-hunny", title: "Hunny Hunt", source: "Winnie-the-Pooh — A. A. Milne (1926)", genre: "Puzzle Collect", style: "8-bit", accent: "#ffe14d", status: "live",
+    blurb: "Float by balloon to the bees' hive, follow the Woozle tracks, gather gifts for Eeyore's party, steer Piglet through the Blustery Day, and wiggle Pooh free from Rabbit's door.", tags: ["cozy","puzzle","multi-chapter"] },
   { id: "mickey-steamboat", title: "Steamboat Willie", source: "Mickey Mouse (1928 — Steamboat Willie)", genre: "Rhythm Action", style: "8-bit", accent: "#21e6ff", status: "soon",
     blurb: "Pilot the riverboat and toot the whistle in time down the winding Mississippi.", tags: ["rhythm","classic"] },
   { id: "robinhood-archer", title: "Sherwood Sharpshooter", source: "Robin Hood — English folklore", genre: "Aim / Archery", style: "8-bit", accent: "#5dff8f", status: "live",

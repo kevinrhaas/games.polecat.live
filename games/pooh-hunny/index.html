@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <title>Hunny Hunt — games.polecat.live</title>
+  <meta name="theme-color" content="#7ab8e8" />
+  <link rel="icon" href="../../assets/logo.svg" type="image/svg+xml" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/site.css" />
+  <link rel="stylesheet" href="../../css/game.css" />
+  <style id="game-theme">:root{
+    --g-bg1:#cce8f8;
+    --g-bg2:#90c8f0;
+    --g-bar:rgba(90,52,8,.94);
+    --g-accent:#e8a820;
+    --g-title:#3a2008;
+    --g-panel:rgba(248,238,195,.84);
+    --g-border:#c07810;
+    --g-text:#5a3a10;
+    --g-key:#3a2008;
+    --g-stage:#c07810;
+    --g-glow:rgba(232,168,32,.38)
+  }</style>
+</head>
+<body class="game-page">
+  <div class="game-bar">
+    <a class="back" href="../../index.html">◀ ARCADE</a>
+    <span class="title">Winnie-the-Pooh</span>
+    <span class="src">· A. A. Milne</span>
+    <span class="spacer"></span>
+    <button class="icon-btn" id="fullscreenBtn" title="Full screen">⛶</button>
+    <button class="icon-btn" id="muteBtn" title="Mute">🔊</button>
+    <button class="icon-btn" id="restartBtn" title="Restart">↻</button>
+  </div>
+  <div class="game-main">
+    <div id="game"></div>
+    <div class="game-help">
+      <b>Hunny Hunt.</b> Five adventures through the Hundred Acre Wood — float by balloon to the bees' hive, follow the Woozle tracks in the snow, gather birthday gifts for Eeyore, steer Piglet through the Blustery Day, and wiggle Pooh free from Rabbit's door. Tap <b>⛶ Full screen</b> for the full experience.
+      <span class="keys">TAP / DRAG · ARROW KEYS · collect HUNNY across five chapters</span>
+    </div>
+  </div>
+  <script src="../../js/retro-engine.js"></script>
+  <script src="../../js/saga.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
