@@ -170,6 +170,13 @@
     title: 'Winnie-the-Pooh',
     subtitle: 'ADVENTURES IN THE HUNDRED ACRE WOOD',
     currency: 'HUNNY',
+    // framed-screen palette + wording (warm, sunny storybook — not the default gold)
+    screens: { win: '#e87820', lose: '#9a6a3a', chapterLabel: '#8a6a2a', name: '#5a3c10',
+      sub: '#3a7a3a', intro: '#5a4420', quote: '#7a6030', help: '#e87820',
+      score: '#5a3c10', cur: '#e87820', cta: '#6a4a10', overlay: 'rgba(244,224,168,.88)' },
+    labels: { chapter: 'ADVENTURE', score: 'HUNNY FOUND', win: 'WHAT A HAPPY DAY',
+      lose: 'OH, BOTHER', cont: 'TAP TO WANDER ON', finale: 'TAP FOR THE LAST ADVENTURE',
+      toMenu: 'TAP TO RETURN', play: 'TAP TO EXPLORE' },
     accent: '#f0c820',
     credit: 'A PIXEL TRIBUTE · A. A. MILNE, 1926',
     emblem,
