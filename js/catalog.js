@@ -25,8 +25,8 @@ window.POLECAT_CATALOG = [
   // ----------- LEGACY single-mechanic games (hidden from the home grid &
   // search via legacy:true until they're rebuilt in the multi-chapter story
   // mode). Still playable by direct URL; drop the flag once upgraded. -----------
-  { id: "alice-rabbithole", title: "Down the Rabbit Hole", source: "Alice in Wonderland — Lewis Carroll", genre: "Endless Faller", style: "8-bit", accent: "#21e6ff", status: "live", legacy: true,
-    blurb: "Tumble forever past clocks and teacups — sip and nibble to change size and slip through.", tags: ["arcade","reflex","dodge"] },
+  { id: "alice-rabbithole", title: "Alice in Wonderland", source: "Alice in Wonderland — Lewis Carroll", genre: "Story Arcade", style: "8-bit", accent: "#21e6ff", status: "live",
+    blurb: "Five Wonderland tales — tumble down the rabbit hole, swim the pool of tears, time the Mad Hatter's cups, swing a flamingo at the Queen's croquet, and dodge flying cards at the trial!", tags: ["arcade","adventure","multi-chapter"] },
   { id: "oz-yellowbrick", title: "The Yellow Brick Road", source: "The Wizard of Oz — L. Frank Baum", genre: "Auto-Runner", style: "8-bit", accent: "#ffe14d", status: "live", legacy: true,
     blurb: "Skip toward the Emerald City, gather the Scarecrow, Tin Man & Lion, and hop the hazards.", tags: ["runner","collect","jump"] },
   { id: "frankenstein-spark", title: "It's Alive!", source: "Frankenstein — Mary Shelley", genre: "Rhythm / Timing", style: "8-bit", accent: "#5dff8f", status: "live", legacy: true,

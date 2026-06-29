@@ -7,6 +7,8 @@
  * Entry shape: { ts: "Jun 28, 2026 · 2:46 PM CT", title: "...", notes: ["..."] }
  * ============================================================================ */
 window.POLECAT_CHANGELOG = [
+  { ts: "Jun 29, 2026 · 9:08 AM CT", title: "Alice in Wonderland — rebuilt as a full five-chapter game",
+    notes: ["Alice returns as a proper multi-chapter story: steer through the rabbit hole (the original falling mechanic, kept and polished), swim the pool of tears collecting golden keys, time cups at the Mad Hatter's long table, swing a flamingo mallet at the Queen's croquet wickets, then dodge flying cards at the trial.", "Bright Wonderland palette — sky blue, flamingo pink, golden yellow — with a playing-card chapter menu on a green felt card table, five cards fanned out at different angles. The game is back on the home grid with all five tales to clear."] },
   { ts: "Jun 29, 2026 · 8:22 AM CT", title: "The arcade now shows only the full story-mode games",
     notes: ["The home grid and search are curated to the finished, multi-chapter story games. The older single-screen versions (Alice, the Wizard of Oz, Frankenstein) and not-yet-built titles are tucked away until they're rebuilt in the richer format.", "Those classics are coming back as full multi-chapter games — keeping the bits that worked, like Alice's endless fall — and will reappear automatically once they ship."] },
   { ts: "Jun 29, 2026 · 5:23 AM CT", title: "New game: Cinderella — Before Midnight",
