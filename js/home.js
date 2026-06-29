@@ -13,6 +13,13 @@
 
   const state = { q: '', genre: 'All', style: 'All' };
 
+  // The home grid & search only surface finished, multi-chapter STORY-MODE games.
+  // That means: built (status:"live") AND not a legacy single-mechanic game.
+  // Unfinished ("soon") and legacy games are hidden until they ship in story
+  // mode — new story games then appear automatically (no per-game flag needed).
+  const shown = (g) => g.status === 'live' && !g.legacy;
+  const shownGames = () => catalog.filter(shown);
+
   /* ----------- tiny seeded RNG so each thumbnail is stable ----------- */
   function seedFrom(str) {
     let h = 2166136261;
@@ -162,6 +169,7 @@
 
   /* ----------- filtering ----------- */
   function visible(game) {
+    if (!shown(game)) return false;
     if (state.genre !== 'All' && game.genre !== state.genre) return false;
     if (state.style !== 'All' && game.style !== state.style) return false;
     if (state.q) {
@@ -173,8 +181,7 @@
 
   function render() {
     grid.innerHTML = '';
-    // live first, then soon
-    const items = catalog.filter(visible).sort((a, b) => (a.status === 'live' ? 0 : 1) - (b.status === 'live' ? 0 : 1));
+    const items = catalog.filter(visible);
     items.forEach((g) => grid.appendChild(card(g)));
     empty.hidden = items.length > 0;
   }
@@ -183,7 +190,7 @@
   function buildChips() {
     // Only list genres that actually have a playable game, so the filter stays a
     // short, swipeable row instead of a 40-chip wall. It grows as games ship.
-    const liveGenres = Array.from(new Set(catalog.filter((g) => g.status === 'live').map((g) => g.genre))).sort();
+    const liveGenres = Array.from(new Set(shownGames().map((g) => g.genre))).sort();
     const genres = ['All', ...liveGenres];
     genres.forEach((gname) => {
       const c = document.createElement('button');
@@ -217,11 +224,12 @@
 
   /* ----------- stats + marquee ----------- */
   function meta() {
-    const liveCount = catalog.filter((g) => g.status === 'live').length;
+    const liveCount = shownGames().length;
     document.getElementById('statLive').textContent = liveCount;
     document.getElementById('statTotal').textContent = catalog.length;
     const yEl = document.getElementById('year'); if (yEl) yEl.textContent = '2026';
-    const titles = catalog.map((g) => g.title);
+    // marquee teases the playable story-mode games (leads), then the roadmap
+    const titles = [...shownGames(), ...catalog.filter((g) => !shown(g))].map((g) => g.title);
     const marquee = document.getElementById('marquee');
     marquee.textContent = '★ ' + titles.join('  ★  ') + '  ★  NEW LEGENDS EVERY HOUR  ★  ';
     // The crawl distance grows with the catalog, so derive the duration from the
@@ -249,7 +257,7 @@
     return a;
   }
   function buildPromos() {
-    const live = catalog.filter((g) => g.status === 'live');
+    const live = shownGames();
     if (!live.length) return;
     // deterministic-but-rotating pick based on the hour, so it changes over time
     const hour = new Date().getHours();
@@ -277,7 +285,7 @@
   const randBtn = document.getElementById('randomBtn');
   if (randBtn) randBtn.addEventListener('click', (e) => {
     e.preventDefault();
-    const live = catalog.filter((g) => g.status === 'live');
+    const live = shownGames();
     if (live.length) location.href = 'games/' + live[Math.floor(Math.random() * live.length)].id + '/';
   });
 

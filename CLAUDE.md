@@ -75,8 +75,14 @@ Stay FAITHFUL to the source's era/mood. Reserve CRT/terminal looks for genuinely
 techy/sci-fi works (War of the Worlds, Time Machine, Metropolis) — never a
 default. Do NOT use the word "saga" in any user-facing text.
 
-The five existing single-mechanic games (sherlock, alice, oz, frankenstein) are
-legacy — upgrade them to sagas as the loop comes around to them.
+The original single-mechanic games **alice, oz, frankenstein** are legacy
+(sherlock is already a story-mode game). They carry `legacy:true` in the catalog,
+which **hides them from the home grid & search** — the home page only surfaces
+finished, multi-chapter story-mode games (`status:"live"` AND not `legacy`).
+"soon" games are hidden too. Prioritize upgrading these legacy games to full
+multi-chapter story games (keep their good bits — e.g. Alice's falling
+mechanic), and **drop the `legacy:true` flag** in the same commit so the rebuilt
+game appears on the home page. New story-mode games show automatically (no flag).
 
 ## Adding a new game (the core repeatable task)
 1. Pick the next `status:"soon"` entry in `js/catalog.js` (or add one). Use the

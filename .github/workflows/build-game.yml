@@ -63,7 +63,12 @@ jobs:
             You are the autonomous hourly builder for the games.polecat.live arcade.
             Read CLAUDE.md and BUILD_LOOP.md first, then do ONE high-quality unit of work:
 
-            Build the next status:"soon" property in js/catalog.js (most-famous-first;
+            FIRST PRIORITY: if any legacy single-mechanic game remains (catalog
+            entries with legacy:true — alice, oz, frankenstein), upgrade ONE of
+            them to a full multi-chapter story game (keep its good bits, e.g.
+            Alice's falling mechanic) and DROP its legacy:true flag in the catalog
+            so it appears on the home page. Otherwise build the next status:"soon"
+            property in js/catalog.js (most-famous-first;
             vary the genre from recent builds) as a full multi-chapter game using
             RetroSaga (js/saga.js) — FIVE varied, easy, faithful mini-games that hit the
             property's iconic scenes, PLUS a WILDLY UNIQUE on-property look — two games

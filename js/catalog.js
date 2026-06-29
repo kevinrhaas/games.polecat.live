@@ -22,14 +22,17 @@ window.POLECAT_CATALOG = [
     blurb: "Five chapters of detection — deduce the cane, cross the Grimpen Mire, search the foggy moor, piece the warning, and face the Hound.", tags: ["detective","multi-chapter","mystery"] },
   { id: "dracula-castle", title: "Dracula", source: "Dracula — Bram Stoker", genre: "Horror", style: "8-bit", accent: "#c8102e", status: "live",
     blurb: "Five chapters through Stoker's novel — the castle wall, the doomed Demeter, Renfield's flies, Lucy's tomb, and the final reckoning at sunset.", tags: ["horror","multi-chapter","vampire"] },
-  { id: "alice-rabbithole", title: "Down the Rabbit Hole", source: "Alice in Wonderland — Lewis Carroll", genre: "Endless Faller", style: "8-bit", accent: "#21e6ff", status: "live",
+  // ----------- LEGACY single-mechanic games (hidden from the home grid &
+  // search via legacy:true until they're rebuilt in the multi-chapter story
+  // mode). Still playable by direct URL; drop the flag once upgraded. -----------
+  { id: "alice-rabbithole", title: "Down the Rabbit Hole", source: "Alice in Wonderland — Lewis Carroll", genre: "Endless Faller", style: "8-bit", accent: "#21e6ff", status: "live", legacy: true,
     blurb: "Tumble forever past clocks and teacups — sip and nibble to change size and slip through.", tags: ["arcade","reflex","dodge"] },
-  { id: "oz-yellowbrick", title: "The Yellow Brick Road", source: "The Wizard of Oz — L. Frank Baum", genre: "Auto-Runner", style: "8-bit", accent: "#ffe14d", status: "live",
+  { id: "oz-yellowbrick", title: "The Yellow Brick Road", source: "The Wizard of Oz — L. Frank Baum", genre: "Auto-Runner", style: "8-bit", accent: "#ffe14d", status: "live", legacy: true,
     blurb: "Skip toward the Emerald City, gather the Scarecrow, Tin Man & Lion, and hop the hazards.", tags: ["runner","collect","jump"] },
+  { id: "frankenstein-spark", title: "It's Alive!", source: "Frankenstein — Mary Shelley", genre: "Rhythm / Timing", style: "8-bit", accent: "#5dff8f", status: "live", legacy: true,
+    blurb: "Channel the lightning down the rods in rhythm to spark the Creature to life.", tags: ["rhythm","puzzle"] },
 
   // ---------------------------- SOON (planned) ----------------------------
-  { id: "frankenstein-spark", title: "It's Alive!", source: "Frankenstein — Mary Shelley", genre: "Rhythm / Timing", style: "8-bit", accent: "#5dff8f", status: "live",
-    blurb: "Channel the lightning down the rods in rhythm to spark the Creature to life.", tags: ["rhythm","puzzle"] },
   { id: "pooh-hunny", title: "Hunny Hunt", source: "Winnie-the-Pooh — A. A. Milne (1926)", genre: "Puzzle Collect", style: "8-bit", accent: "#ffe14d", status: "live",
     blurb: "Float by balloon to the bees' hive, follow the Woozle tracks, gather gifts for Eeyore's party, steer Piglet through the Blustery Day, and wiggle Pooh free from Rabbit's door.", tags: ["cozy","puzzle","multi-chapter"] },
   { id: "mickey-steamboat", title: "Steamboat Willie", source: "Mickey Mouse (1928 — Steamboat Willie)", genre: "Rhythm Action", style: "8-bit", accent: "#21e6ff", status: "soon",

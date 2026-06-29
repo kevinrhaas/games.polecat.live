@@ -7,6 +7,8 @@
  * Entry shape: { ts: "Jun 28, 2026 · 2:46 PM CT", title: "...", notes: ["..."] }
  * ============================================================================ */
 window.POLECAT_CHANGELOG = [
+  { ts: "Jun 29, 2026 · 8:22 AM CT", title: "The arcade now shows only the full story-mode games",
+    notes: ["The home grid and search are curated to the finished, multi-chapter story games. The older single-screen versions (Alice, the Wizard of Oz, Frankenstein) and not-yet-built titles are tucked away until they're rebuilt in the richer format.", "Those classics are coming back as full multi-chapter games — keeping the bits that worked, like Alice's endless fall — and will reappear automatically once they ship."] },
   { ts: "Jun 29, 2026 · 5:23 AM CT", title: "New game: Cinderella — Before Midnight",
     notes: ["Five fairy-tale acts through Perrault's Cinderella: tap away chores before the step-sisters wake, catch the Fairy Godmother's falling sparkles with a basket, time a waltz on a spinning golden dial, dodge palace guards across three lanes as the midnight bells count to twelve, and drag the glass slipper to Cinderella's glowing foot while shooing away grasping step-sisters.", "Unique look: deep midnight-violet and rose-pink palette with a sparkling ballroom chandelier; the chapter menu is scattered dance invitation cards tilted at different angles on a marble checkerboard ballroom floor."] },
   { ts: "Jun 29, 2026 · 1:24 AM CT", title: "New game: Peter Pan — Second Star to the Right",
