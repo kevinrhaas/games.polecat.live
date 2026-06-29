@@ -7,6 +7,8 @@
  * Entry shape: { ts: "Jun 28, 2026 · 2:46 PM CT", title: "...", notes: ["..."] }
  * ============================================================================ */
 window.POLECAT_CHANGELOG = [
+  { ts: "Jun 29, 2026 · 1:24 AM CT", title: "New game: Peter Pan — Second Star to the Right",
+    notes: ["Five Neverland adventures: hold to rise and dodge London chimneys at night, drag Pan to intercept Hook's pirates at Mermaid Lagoon and rescue Tiger Lily, tap left-right alternately to run Hook away from Tick-Tock the crocodile, defend the Lost Boys' underground hideout from all sides, and duel Captain Hook on the Jolly Roger's deck.", "Unique look: deep midnight-blue starry night palette with gold pixie-dust stars; the chapter menu is a scattered star-map tracing the path from London rooftops to Neverland — five glowing five-pointed stars connected by a pixie-dust trail."] },
   { ts: "Jun 28, 2026 · 8:51 PM CT", title: "Every screen speaks the story's language",
     notes: ["The chapter intros, the score screens and the finale now wear each game's own colors and wording — no more shared gold-on-black. Dracula tallies BLOOD SPILLED in crimson, Sherlock reads CLUES READ in sepia, Robin Hood wins a PURSE in Sherwood green, Arthur earns HONOUR in royal blue.", "Win and lose lines are in-voice too — \"The night is held\" vs \"Dawn finds you fallen\" — so every game feels distinct end to end."] },
   { ts: "Jun 28, 2026 · 8:45 PM CT", title: "New game: Winnie-the-Pooh — Hunny Hunt",

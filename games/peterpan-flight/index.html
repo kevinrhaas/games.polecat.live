@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <title>Peter Pan — games.polecat.live</title>
+  <meta name="theme-color" content="#02050f" />
+  <link rel="icon" href="../../assets/logo.svg" type="image/svg+xml" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/site.css" />
+  <link rel="stylesheet" href="../../css/game.css" />
+  <style id="game-theme">:root{
+    --g-bg1:#04061a;--g-bg2:#01020c;
+    --g-bar:rgba(4,6,22,.96);
+    --g-accent:#ffe14d;
+    --g-title:#c8dcff;
+    --g-panel:rgba(8,12,38,.84);
+    --g-border:#2a3a80;
+    --g-text:#8090b8;
+    --g-key:#c8dcff;
+    --g-stage:#1a2060;
+    --g-glow:rgba(255,225,77,.28)
+  }</style>
+</head>
+<body class="game-page">
+  <div class="game-bar">
+    <a class="back" href="../../index.html">◀ ARCADE</a>
+    <span class="title">Peter Pan</span>
+    <span class="src">· J. M. Barrie</span>
+    <span class="spacer"></span>
+    <button class="icon-btn" id="fullscreenBtn" title="Full screen">⛶</button>
+    <button class="icon-btn" id="muteBtn" title="Mute">🔊</button>
+    <button class="icon-btn" id="restartBtn" title="Restart">↻</button>
+  </div>
+  <div class="game-main">
+    <div id="game"></div>
+    <div class="game-help">
+      <b>Peter Pan.</b> Five tales from Neverland — fly over London rooftops, rescue Tiger Lily at Mermaid Lagoon, race the tick-tocking crocodile, defend the Lost Boys' hideout, and face Captain Hook on the Jolly Roger. Tap <b>⛶ Full screen</b> for the full experience.
+      <span class="keys">TAP · DRAG · ARROW KEYS · follow the second star to the right</span>
+    </div>
+  </div>
+  <script src="../../js/retro-engine.js"></script>
+  <script src="../../js/saga.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
