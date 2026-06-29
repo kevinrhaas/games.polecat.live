@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <title>Cinderella — games.polecat.live</title>
+  <meta name="theme-color" content="#1a083a" />
+  <link rel="icon" href="../../assets/logo.svg" type="image/svg+xml" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/site.css" />
+  <link rel="stylesheet" href="../../css/game.css" />
+  <style id="game-theme">:root{
+    --g-bg1:#1a083a;--g-bg2:#080420;
+    --g-bar:rgba(15,4,35,.95);
+    --g-accent:#ff9ec4;
+    --g-title:#f8e8ff;
+    --g-panel:rgba(20,6,45,.85);
+    --g-border:#7840b8;
+    --g-text:#b898d8;
+    --g-key:#ff9ec4;
+    --g-stage:#2a1050;
+    --g-glow:rgba(200,144,255,.3);
+  }</style>
+</head>
+<body class="game-page">
+  <div class="game-bar">
+    <a class="back" href="../../index.html">◀ ARCADE</a>
+    <span class="title">Cinderella</span>
+    <span class="src">· Perrault / Grimm</span>
+    <span class="spacer"></span>
+    <button class="icon-btn" id="fullscreenBtn" title="Full screen">⛶</button>
+    <button class="icon-btn" id="muteBtn" title="Mute">🔊</button>
+    <button class="icon-btn" id="restartBtn" title="Restart">↻</button>
+  </div>
+  <div class="game-main">
+    <div id="game"></div>
+    <div class="game-help">
+      <b>Cinderella.</b> Five fairy-tale acts — rush the morning chores, catch the Fairy Godmother's sparkles, waltz with the Prince, flee the palace before midnight, and guide the glass slipper home. Tap <b>⛶ Full screen</b> for the full experience.
+      <span class="keys">TAP / DRAG · ARROW KEYS · earn WISHES across all five acts</span>
+    </div>
+  </div>
+  <script src="../../js/retro-engine.js"></script>
+  <script src="../../js/saga.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

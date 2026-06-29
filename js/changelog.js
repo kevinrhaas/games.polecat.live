@@ -7,6 +7,8 @@
  * Entry shape: { ts: "Jun 28, 2026 · 2:46 PM CT", title: "...", notes: ["..."] }
  * ============================================================================ */
 window.POLECAT_CHANGELOG = [
+  { ts: "Jun 29, 2026 · 5:23 AM CT", title: "New game: Cinderella — Before Midnight",
+    notes: ["Five fairy-tale acts through Perrault's Cinderella: tap away chores before the step-sisters wake, catch the Fairy Godmother's falling sparkles with a basket, time a waltz on a spinning golden dial, dodge palace guards across three lanes as the midnight bells count to twelve, and drag the glass slipper to Cinderella's glowing foot while shooing away grasping step-sisters.", "Unique look: deep midnight-violet and rose-pink palette with a sparkling ballroom chandelier; the chapter menu is scattered dance invitation cards tilted at different angles on a marble checkerboard ballroom floor."] },
   { ts: "Jun 29, 2026 · 1:24 AM CT", title: "New game: Peter Pan — Second Star to the Right",
     notes: ["Five Neverland adventures: hold to rise and dodge London chimneys at night, drag Pan to intercept Hook's pirates at Mermaid Lagoon and rescue Tiger Lily, tap left-right alternately to run Hook away from Tick-Tock the crocodile, defend the Lost Boys' underground hideout from all sides, and duel Captain Hook on the Jolly Roger's deck.", "Unique look: deep midnight-blue starry night palette with gold pixie-dust stars; the chapter menu is a scattered star-map tracing the path from London rooftops to Neverland — five glowing five-pointed stars connected by a pixie-dust trail."] },
   { ts: "Jun 28, 2026 · 8:51 PM CT", title: "Every screen speaks the story's language",
