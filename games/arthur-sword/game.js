@@ -132,6 +132,13 @@
     title: 'King Arthur',
     subtitle: 'THE LEGEND OF CAMELOT',
     currency: 'HONOUR',
+    // framed-screen palette + wording (royal blue, heraldic gold)
+    screens: { win: '#ffd966', lose: '#7a8898', chapterLabel: '#9fb4e8', name: '#ffe9a8',
+      sub: '#21e6ff', intro: '#d6e2ff', quote: '#8fa0c8', help: '#ffd966',
+      score: '#d6e2ff', cur: '#ffd966', cta: '#ffe9a8', overlay: 'rgba(8,12,30,.85)' },
+    labels: { chapter: 'CHAPTER', score: 'DEEDS DONE', win: 'HONOUR EARNED',
+      lose: 'THE QUEST FALTERS', cont: 'TAP TO RIDE ON', finale: 'TAP FOR THE LAST BATTLE',
+      toMenu: 'TAP TO RETURN', play: 'TAP TO BEGIN' },
     accent: '#e3c567',
     credit: 'A PIXEL TRIBUTE · ARTHURIAN LEGEND',
     emblem,

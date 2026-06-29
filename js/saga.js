@@ -222,6 +222,23 @@
       title: PAL.gold, label: PAL.dim, cur: PAL.cream, hint: PAL.dim,
     }, (cfg.menu && cfg.menu.colors) || {});
 
+    // Screen theme — the framed chapter-intro, result/score and finale screens
+    // inherit the property's palette (so they match the bespoke menu) and can be
+    // fully overridden per game via cfg.screens (colors) + cfg.labels (wording).
+    // Defaults derive from the menu theme so an unconfigured game still varies.
+    const ST = Object.assign({
+      overlay: 'rgba(8,5,3,.82)',
+      win: MT.title, lose: PAL.blood,
+      chapterLabel: MT.label, name: MT.title, sub: PAL.blood,
+      intro: PAL.cream, quote: MT.sub, help: MT.title,
+      score: PAL.cream, cur: MT.title, cta: PAL.cream,
+    }, cfg.screens || {});
+    const LBL = Object.assign({
+      chapter: 'CHAPTER', score: 'SCORE',
+      win: 'CHAPTER CLEARED', lose: 'YOU FALTERED',
+      cont: 'TAP TO CONTINUE', finale: 'TAP FOR THE FINALE', toMenu: 'TAP TO RETURN',
+    }, cfg.labels || {});
+
     // Chapter hit-rects: a game can fully re-arrange them via cfg.menu.layout
     // (e.g. map nodes, road stops) — default is the vertical list.
     function getMenuRects() {
@@ -264,42 +281,46 @@
     }
 
     function drawIntro() {
+      if (cfg.renderIntro) { cfg.renderIntro(api, { ch: cur, i: curIndex, sceneT }); return; }
       backdrop('intro');
-      txtC('CHAPTER ' + (curIndex + 1), W / 2, 54, 9, PAL.dim);
-      txtC(cur.name, W / 2, 74, 15, PAL.gold, true);
-      txtC(cur.sub || '', W / 2, 100, 9, PAL.blood);
-      lines(cur.intro || [], W / 2, 150, 11, PAL.cream, 18);
+      txtC((LBL.chapter + ' ' + (curIndex + 1)).trim(), W / 2, 54, 9, ST.chapterLabel);
+      txtC(cur.name, W / 2, 74, 15, ST.name, true);
+      txtC(cur.sub || '', W / 2, 100, 9, ST.sub);
+      lines(cur.intro || [], W / 2, 150, 11, ST.intro, 18);
       if (cur.quote) {
         const wrapped = wrapText('“' + cur.quote + '”', 30);
-        lines(wrapped, W / 2, 270, 10, PAL.dim, 16);
+        lines(wrapped, W / 2, 270, 10, ST.quote, 16);
       }
-      if (cur.help) txtC(cur.help, W / 2, H - 70, 9, PAL.gold);
-      if (Math.floor(sceneT * 1.5) % 2 === 0 && sceneT > 0.35) txtC('TAP TO PLAY', W / 2, H - 44, 12, PAL.cream);
+      if (cur.help) txtC(cur.help, W / 2, H - 70, 9, ST.help);
+      if (Math.floor(sceneT * 1.5) % 2 === 0 && sceneT > 0.35) txtC(LBL.play || 'TAP TO PLAY', W / 2, H - 44, 12, ST.cta);
       vignette(); scanlines();
     }
 
     function drawResult() {
-      // let the chapter's last frame sit underneath, dimmed
+      if (cfg.renderResult) { cfg.renderResult(api, { ch: cur, result, respect: respect(), sceneT }); return; }
+      // the chapter's last frame sits underneath, dimmed, so the score screen
+      // still wears the world it was just played in
       if (cur.draw) { ctx.globalAlpha = 0.5; cur.draw.call(cur, api); ctx.globalAlpha = 1; }
-      gfx.rect(0, 0, W, H, 'rgba(8,5,3,.8)');
+      gfx.rect(0, 0, W, H, ST.overlay);
       const won = result.won;
-      txtC(won ? 'CHAPTER CLEARED' : 'YOU FALTERED', W / 2, H * 0.3, 14, won ? PAL.gold : PAL.blood, true);
+      txtC(won ? LBL.win : LBL.lose, W / 2, H * 0.3, 14, won ? ST.win : ST.lose, true);
       const outcome = won ? (cur.winText || '') : (cur.loseText || '');
-      if (outcome) lines(wrapText(outcome, 26), W / 2, H * 0.3 + 34, 10, PAL.cream, 15);
-      txtC('SCORE  ' + result.score, W / 2, H * 0.56, 11, PAL.cream);
-      txtC(CUR + '  ' + respect(), W / 2, H * 0.56 + 20, 10, PAL.gold);
+      if (outcome) lines(wrapText(outcome, 26), W / 2, H * 0.3 + 34, 10, ST.intro, 15);
+      txtC(LBL.score + '  ' + result.score, W / 2, H * 0.56, 11, ST.score);
+      txtC(CUR + '  ' + respect(), W / 2, H * 0.56 + 20, 10, ST.cur);
       if (Math.floor(sceneT * 1.5) % 2 === 0 && sceneT > 0.4)
-        txtC(result.finale ? 'TAP FOR THE FINALE' : 'TAP TO CONTINUE', W / 2, H * 0.74, 11, PAL.cream);
+        txtC(result.finale ? LBL.finale : LBL.cont, W / 2, H * 0.74, 11, ST.cta);
       vignette(); scanlines();
     }
 
     function drawFinale() {
+      if (cfg.renderFinale) { cfg.renderFinale(api, { respect: respect(), sceneT }); return; }
       backdrop('finale');
       if (cfg.emblem) cfg.emblem(api, W / 2, H * 0.3);
-      lines(cfg.finale || ['THE LEGEND IS COMPLETE.'], W / 2, H * 0.46, 11, PAL.gold, 18);
-      txtC('FINAL ' + CUR + '  ' + respect(), W / 2, H * 0.66, 11, PAL.cream);
-      txtC(cfg.tagline || 'A POLECAT GAME', W / 2, H * 0.74, 8, PAL.dim);
-      if (Math.floor(sceneT * 1.5) % 2 === 0 && sceneT > 0.6) txtC('TAP TO RETURN', W / 2, H - 40, 11, PAL.cream);
+      lines(cfg.finale || ['THE LEGEND IS COMPLETE.'], W / 2, H * 0.46, 11, ST.win, 18);
+      txtC('FINAL ' + CUR + '  ' + respect(), W / 2, H * 0.66, 11, ST.score);
+      txtC(cfg.tagline || 'A POLECAT GAME', W / 2, H * 0.74, 8, ST.chapterLabel);
+      if (Math.floor(sceneT * 1.5) % 2 === 0 && sceneT > 0.6) txtC(LBL.toMenu, W / 2, H - 40, 11, ST.cta);
       vignette(); scanlines();
     }
 

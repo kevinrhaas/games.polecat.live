@@ -54,6 +54,13 @@
     title: 'Dracula',
     subtitle: 'A TALE IN FIVE CHAPTERS',
     currency: 'RESOLVE',
+    // framed-screen palette + wording (crimson & funereal — not the default gold)
+    screens: { win: '#e23b4a', lose: '#7a1018', chapterLabel: '#8a6a6a', name: '#e8c0c0',
+      sub: '#c8102e', intro: '#d8b0b0', quote: '#8a6a6a', help: '#e23b4a',
+      score: '#e8c0c0', cur: '#e23b4a', cta: '#e8c0c0', overlay: 'rgba(10,3,6,.84)' },
+    labels: { chapter: 'CHAPTER', score: 'BLOOD SPILLED', win: 'THE NIGHT IS HELD',
+      lose: 'DAWN FINDS YOU FALLEN', cont: 'TAP TO PRESS ON', finale: 'TAP FOR THE RECKONING',
+      toMenu: 'TAP TO RETURN', play: 'TAP TO BEGIN' },
     accent: '#e3c567',
     credit: 'AN ORIGINAL 8-BIT TRIBUTE · B. STOKER, 1897',
     emblem,

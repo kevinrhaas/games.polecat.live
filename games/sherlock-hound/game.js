@@ -64,6 +64,13 @@
     title: 'Baskervilles',
     subtitle: 'A CASE IN FIVE CHAPTERS',
     currency: 'INSIGHT',
+    // framed-screen palette + wording (sepia case-file, detective ink)
+    screens: { win: '#c9a14a', lose: '#9a3a2a', chapterLabel: '#9a8a60', name: '#e8dcc0',
+      sub: '#b8742a', intro: '#cabb95', quote: '#8f8060', help: '#c9a14a',
+      score: '#e8dcc0', cur: '#c9a14a', cta: '#e8dcc0', overlay: 'rgba(20,14,7,.86)' },
+    labels: { chapter: 'CHAPTER', score: 'CLUES READ', win: 'CASE ADVANCED',
+      lose: 'THE TRAIL GOES COLD', cont: 'TAP FOR THE NEXT CLUE', finale: 'TAP TO NAME THE KILLER',
+      toMenu: 'TAP TO RETURN', play: 'TAP TO INVESTIGATE' },
     accent: '#5dff8f',
     credit: 'THE HOUND OF THE BASKERVILLES · A. C. DOYLE',
     bootLine: 'FIVE CHAPTERS · ONE MYSTERY',

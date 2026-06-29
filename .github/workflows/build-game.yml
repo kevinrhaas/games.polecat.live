@@ -78,7 +78,14 @@ jobs:
             vertical list (see the references: Dracula = scattered graveyard tombstones,
             Sherlock = a pinned corkboard with red string, Robin Hood = zigzag archery
             targets in a bright clearing, Arthur = a radial Round Table of shields). Set custom currency/
-            subtitle/bootCta/menuLabel/menuHint/menuDone/finale. Stay faithful to the
+            subtitle/bootCta/menuLabel/menuHint/menuDone/finale. ALSO theme the framed
+            chapter-intro, score/result and finale screens via a `screens` color block
+            (keys: win,lose,chapterLabel,name,sub,intro,quote,help,score,cur,cta,overlay)
+            and a `labels` wording block (chapter,score,win,lose,cont,finale,toMenu,play)
+            so they read in the property's voice and palette — NOT the default
+            gold-on-black (e.g. Dracula tallies "BLOOD SPILLED" in crimson, Robin Hood a
+            "PURSE WON" in Sherwood green; win/lose headers in-voice like "The night is
+            held" / "Dawn finds you fallen"). Stay faithful to the
             source's era and mood; reserve CRT/terminal styling for genuinely sci-fi
             works only; never use the word "saga" in user-facing text. Mobile-first; must
             work fullscreen. Use games/dracula-castle and games/sherlock-hound as menu refs.

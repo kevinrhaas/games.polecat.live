@@ -7,6 +7,8 @@
  * Entry shape: { ts: "Jun 28, 2026 · 2:46 PM CT", title: "...", notes: ["..."] }
  * ============================================================================ */
 window.POLECAT_CHANGELOG = [
+  { ts: "Jun 28, 2026 · 8:51 PM CT", title: "Every screen speaks the story's language",
+    notes: ["The chapter intros, the score screens and the finale now wear each game's own colors and wording — no more shared gold-on-black. Dracula tallies BLOOD SPILLED in crimson, Sherlock reads CLUES READ in sepia, Robin Hood wins a PURSE in Sherwood green, Arthur earns HONOUR in royal blue.", "Win and lose lines are in-voice too — \"The night is held\" vs \"Dawn finds you fallen\" — so every game feels distinct end to end."] },
   { ts: "Jun 28, 2026 · 8:45 PM CT", title: "New game: Winnie-the-Pooh — Hunny Hunt",
     notes: ["Five cozy adventures through the Hundred Acre Wood: float on a balloon to steal honey from the bees, follow the mysterious Woozle tracks in the snow, gather gifts for Eeyore's birthday, steer Piglet through the Blustery Day, and wiggle Pooh free from Rabbit's door.", "Unique look: warm sunny sky palette, a hand-drawn parchment map of the Hundred Acre Wood for the chapter menu, wooden sign-post chapter cards, and the Sanders tree on the title screen."] },
   { ts: "Jun 28, 2026 · 8:19 PM CT", title: "Every game page wears its own colors",

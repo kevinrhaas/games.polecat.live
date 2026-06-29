@@ -61,6 +61,15 @@ gold-on-black list. Two games should look nothing alike. Every game MUST supply:
   returning custom rects for non-list arrangements (map nodes, a winding road).
 - custom `currency`, `subtitle`, `bootCta`, `menuLabel`, `menuHint`, `menuDone`,
   `bootLine`, `finale`.
+- a **`screens` color block** + a **`labels` wording block** so the chapter
+  intro, the score/result screen and the finale read in-property — NOT the
+  default gold-on-black (they'd otherwise all look identical even with unique
+  menus). `screens` keys: `win, lose, chapterLabel, name, sub, intro, quote,
+  help, score, cur, cta, overlay`. `labels` keys: `chapter` (e.g. "TALE"/"CASE"),
+  `score` (e.g. "BLOOD SPILLED"/"PURSE WON"), `win`/`lose` (in-voice outcome
+  headers like "The night is held" / "Dawn finds you fallen"), `cont, finale,
+  toMenu, play`. For a fully bespoke screen, supply `renderIntro(api,info)`,
+  `renderResult(api,info)` or `renderFinale(api,info)`.
 
 Stay FAITHFUL to the source's era/mood. Reserve CRT/terminal looks for genuinely
 techy/sci-fi works (War of the Worlds, Time Machine, Metropolis) — never a

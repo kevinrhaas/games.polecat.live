@@ -91,6 +91,13 @@
     title: 'Robin Hood',
     subtitle: 'FIVE TALES OF SHERWOOD',
     currency: 'GLORY',
+    // framed-screen palette + wording (Sherwood green, archer's gold)
+    screens: { win: '#9be84a', lose: '#8b3a1a', chapterLabel: '#b8a86a', name: '#e3c567',
+      sub: '#5dff8f', intro: '#d8e8b0', quote: '#8b9e5a', help: '#9be84a',
+      score: '#e8e0c0', cur: '#9be84a', cta: '#e3c567', overlay: 'rgba(10,20,8,.84)' },
+    labels: { chapter: 'TALE', score: 'PURSE WON', win: 'A CLEAN SHOT',
+      lose: 'WIDE OF THE MARK', cont: 'TAP TO RIDE ON', finale: 'TAP FOR THE GRAND CONTEST',
+      toMenu: 'TAP TO RETURN', play: 'TAP TO LOOSE' },
     accent: '#5dff8f',
     credit: 'AN 8-BIT TRIBUTE · ENGLISH FOLKLORE',
     emblem,
