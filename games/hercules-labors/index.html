@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <title>Hercules — games.polecat.live</title>
+  <meta name="theme-color" content="#0d0806" />
+  <link rel="icon" href="../../assets/logo.svg" type="image/svg+xml" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/site.css" />
+  <link rel="stylesheet" href="../../css/game.css" />
+  <style id="game-theme">:root{
+    --g-bg1:#1a1000;--g-bg2:#050818;
+    --g-bar:rgba(15,10,4,.96);
+    --g-accent:#CD7F32;
+    --g-title:#F0E0A0;
+    --g-panel:rgba(20,14,4,.88);
+    --g-border:#6B4E20;
+    --g-text:#C8B070;
+    --g-key:#FFD700;
+    --g-stage:#3A2810;
+    --g-glow:rgba(205,127,50,.32)
+  }</style>
+</head>
+<body class="game-page">
+  <div class="game-bar">
+    <a class="back" href="../../index.html">◀ ARCADE</a>
+    <span class="title">Hercules</span>
+    <span class="src">· Greek Mythology</span>
+    <span class="spacer"></span>
+    <button class="icon-btn" id="fullscreenBtn" title="Full screen">⛶</button>
+    <button class="icon-btn" id="muteBtn" title="Mute">🔊</button>
+    <button class="icon-btn" id="restartBtn" title="Restart">↻</button>
+  </div>
+  <div class="game-main">
+    <div id="game"></div>
+    <div class="game-help">
+      <b>Hercules.</b> Five legendary labors — strike the Nemean Lion at the right moment, sever the Hydra's heads before they multiply, dodge bronze feathers from the Stymphalian Birds, steer the river through the Augean Stables, and face three-headed Cerberus at the gates of Hades. Tap <b>⛶ Full screen</b> for the full experience.
+      <span class="keys">TAP / SWIPE · ARROW KEYS · earn GLORY across all five trials</span>
+    </div>
+  </div>
+  <script src="../../js/retro-engine.js"></script>
+  <script src="../../js/saga.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
