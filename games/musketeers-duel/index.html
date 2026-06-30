@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <title>The Three Musketeers — games.polecat.live</title>
+  <meta name="theme-color" content="#0e0828" />
+  <link rel="icon" href="../../assets/logo.svg" type="image/svg+xml" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/site.css" />
+  <link rel="stylesheet" href="../../css/game.css" />
+  <style id="game-theme">:root{
+    --g-bg1:#1a0a30;--g-bg2:#0a0618;
+    --g-bar:rgba(14,8,32,.96);
+    --g-accent:#c8961e;
+    --g-title:#e8dff8;
+    --g-panel:rgba(20,10,40,.84);
+    --g-border:#3a2660;
+    --g-text:#9090c0;
+    --g-key:#e8d8a0;
+    --g-stage:#221448;
+    --g-glow:rgba(200,150,30,.28)
+  }</style>
+</head>
+<body class="game-page">
+  <div class="game-bar">
+    <a class="back" href="../../index.html">◀ ARCADE</a>
+    <span class="title">The Three Musketeers</span>
+    <span class="src">· A. Dumas</span>
+    <span class="spacer"></span>
+    <button class="icon-btn" id="fullscreenBtn" title="Full screen">⛶</button>
+    <button class="icon-btn" id="muteBtn" title="Mute">🔊</button>
+    <button class="icon-btn" id="restartBtn" title="Restart">↻</button>
+  </div>
+  <div class="game-main">
+    <div id="game"></div>
+    <div class="game-help">
+      <b>All for One.</b> Five acts through Dumas' classic — ride to Paris, duel the Musketeers at dawn, steal back the Queen's diamonds, hold the bastion at La Rochelle, and face the Cardinal's champion in a final clash of steel. Tap <b>⛶ Full screen</b> for the full experience.
+      <span class="keys">TAP · ←/→ ARROWS · SPACE — earn HONOR across all five acts</span>
+    </div>
+  </div>
+  <script src="../../js/retro-engine.js"></script>
+  <script src="../../js/saga.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
