@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <title>Scrooge's Long Night — games.polecat.live</title>
+  <meta name="theme-color" content="#050810" />
+  <link rel="icon" href="../../assets/logo.svg" type="image/svg+xml" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/site.css" />
+  <link rel="stylesheet" href="../../css/game.css" />
+  <style id="game-theme">:root{
+    --g-bg1:#0a1020;--g-bg2:#050810;
+    --g-bar:rgba(8,12,24,.95);
+    --g-accent:#d4a020;
+    --g-title:#f0e8cc;
+    --g-panel:rgba(10,14,28,.85);
+    --g-border:#3a4858;
+    --g-text:#8aa0b0;
+    --g-key:#e8d8a0;
+    --g-stage:#111828;
+    --g-glow:rgba(212,160,32,.22)
+  }</style>
+</head>
+<body class="game-page">
+  <div class="game-bar">
+    <a class="back" href="../../index.html">◀ ARCADE</a>
+    <span class="title">A Christmas Carol</span>
+    <span class="src">· Charles Dickens</span>
+    <span class="spacer"></span>
+    <button class="icon-btn" id="fullscreenBtn" title="Full screen">⛶</button>
+    <button class="icon-btn" id="muteBtn" title="Mute">🔊</button>
+    <button class="icon-btn" id="restartBtn" title="Restart">↻</button>
+  </div>
+  <div class="game-main">
+    <div id="game"></div>
+    <div class="game-help">
+      <b>A Christmas Carol.</b> Five chapters through Dickens' 1843 classic — dodge Marley's chains, gather glowing memories with the Ghost of Christmas Past, catch the Cratchit feast, evade the Shadow's pointing finger, then race through London on Christmas morning. Tap <b>⛶ Full screen</b> for the full experience.
+      <span class="keys">TAP / DRAG · ARROW KEYS · earn GOODWILL across all five chapters</span>
+    </div>
+  </div>
+  <script src="../../js/retro-engine.js"></script>
+  <script src="../../js/saga.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
