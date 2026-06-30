@@ -320,9 +320,9 @@
         c.stroke();
         // text
         c.restore();
-        api.txtC((i + 1) + '. ' + ch.name, x + w / 2, y + 16, 6,   done ? '#7a3010' : '#2e1204');
-        if (ch.sub) api.txtC(ch.sub, x + w / 2, y + 30, 5.5, '#7a5028');
-        if (done) api.txtC('★ CLEARED', x + w / 2, y + h - 13, 5.5, PIRATE);
+        api.txtCFit((i + 1) + '. ' + ch.name, x + w / 2, y + 16, 6,   done ? '#7a3010' : '#2e1204', false, w - 8);
+        if (ch.sub) api.txtCFit(ch.sub, x + w / 2, y + 30, 5.5, '#7a5028', false, w - 8);
+        if (done) api.txtCFit('★ CLEARED', x + w / 2, y + h - 13, 5.5, PIRATE, false, w - 8);
       },
     },
 
@@ -1128,13 +1128,13 @@
             }
             api.topBar('X MARKS THE SPOT');
             api.txt('DIGS ' + this.digs + '/' + this.needDigs, 6, 20, 9, GOLD);
-            api.txtC('DIG WHERE X MARKS!', W / 2, H - 22, 7, DPARCH);
+            api.txtCFit('DIG WHERE X MARKS!', W / 2, H - 22, 7, DPARCH);
 
           } else if (this.phase === 'reveal') {
             api.clear('#100404');
-            api.txtC('THE PIT IS EMPTY!',      W / 2, H / 2 - 30, 10, PIRATE);
-            api.txtC('Ben Gunn moved the gold.', W / 2, H / 2 + 6,  7,  '#d4a830');
-            api.txtC("SILVER'S FURY!",           W / 2, H / 2 + 28, 8,  '#ff4020');
+            api.txtCFit('THE PIT IS EMPTY!',      W / 2, H / 2 - 30, 10, PIRATE);
+            api.txtCFit('Ben Gunn moved the gold.', W / 2, H / 2 + 6,  7,  '#d4a830');
+            api.txtCFit("SILVER'S FURY!",           W / 2, H / 2 + 28, 8,  '#ff4020');
             api.topBar('X MARKS THE SPOT');
 
           } else { // escape
@@ -1154,7 +1154,7 @@
             const beaconA = 0.5 + 0.5 * Math.sin(api.t * 4);
             c.globalAlpha = beaconA * 0.55; c.fillStyle = GOLD;
             c.beginPath(); c.arc(W / 2, 52, 26, 0, Math.PI * 2); c.fill(); c.globalAlpha = 1;
-            api.txtC('REACH THE SHIP!', W / 2, 24, 7, GOLD);
+            api.txtCFit('REACH THE SHIP!', W / 2, 24, 7, GOLD);
 
             // pirates
             for (const p of this.pirates) {

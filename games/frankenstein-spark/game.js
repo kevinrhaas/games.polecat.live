@@ -268,7 +268,7 @@
         // label strip
         c.fillStyle = sel ? 'rgba(93,255,143,0.25)' : 'rgba(10,6,20,0.85)';
         c.fillRect(x + 4, y + h - 22, w - 8, 18);
-        api.txtC((i + 1) + '. ' + ch.name, cx, y + h - 17, 6, done ? '#5dff8f' : '#a090c0');
+        api.txtCFit((i + 1) + '. ' + ch.name, cx, y + h - 17, 6, done ? '#5dff8f' : '#a090c0', false, w - 10);
 
         if (done) {
           api.txtC('✦', cx, y + 6, 8, '#5dff8f');
@@ -683,7 +683,7 @@
           // timer bar
           g.rect(6, H - 12, W - 12, 5, '#1a1028');
           g.rect(6, H - 12, Math.round((W - 12) * (this.timer / 28)), 5, '#5dff8f');
-          if (this.msgT > 0) api.txtC(this.msg, W / 2, 50, 9, '#5dff8f');
+          if (this.msgT > 0) api.txtCFit(this.msg, W / 2, 50, 9, '#5dff8f');
           api.topBar('INTO THE WORLD');
           api.vignette();
         },
@@ -861,7 +861,7 @@
           // floating words
           for (const w of this.floatWords) {
             c.globalAlpha = w.life;
-            api.txtC('"' + w.word + '"', W - 50, w.y, 9, '#c8a050');
+            api.txtCFit('"' + w.word + '"', W - 50, w.y, 9, '#c8a050', false, 92);
             c.globalAlpha = 1;
           }
 

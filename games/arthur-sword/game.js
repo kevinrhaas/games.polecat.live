@@ -169,9 +169,10 @@
         c.strokeStyle = (done || sel) ? '#ffd966' : '#5a6aa8'; c.lineWidth = sel ? 2 : 1; c.stroke();
         if (ch.icon) ch.icon(api, cx, cy - 2);
         api.txtC('' + (i + 1), cx, cy + 11, 8, '#cfe0ff', true);
-        const tw = ch.name.length * 5 + 6;
+        const labelMaxW = 58;
+        const tw = Math.min(labelMaxW, ch.name.length * 5 + 6);
         g.rect(cx - tw / 2, cy + 34, tw, 12, 'rgba(8,10,24,.88)');
-        api.txtC(ch.name, cx, cy + 36, 7, done ? '#ffd966' : '#cfe0ff');
+        api.txtCFit(ch.name, cx, cy + 36, 7, done ? '#ffd966' : '#cfe0ff', false, labelMaxW - 4);
       },
     },
     finale: ['EXCALIBUR GLEAMS.', 'CAMELOT STANDS.', 'THE GRAIL IS FOUND.', '', 'THE LEGEND LIVES ON.'],

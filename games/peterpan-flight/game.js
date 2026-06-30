@@ -246,7 +246,7 @@
         api.txtC(String(i + 1), cx, cy - 20, 12, sel ? '#ffe14d' : (done ? '#90aaf0' : '#3858b0'));
         // Short label
         const shortLabels = ['NURSERY', 'LAGOON', 'TICK-TOCK', 'HIDEOUT', 'JOLLY ROGER'];
-        api.txtC(shortLabels[i] || '', cx, cy - 5, 5, done ? '#c8dcff' : '#5070a8');
+        api.txtCFit(shortLabels[i] || '', cx, cy - 5, 5, done ? '#c8dcff' : '#5070a8', false, w - 8);
         if (done) api.txtC('★', cx, cy + 14, 11, '#ffe14d');
       },
     },

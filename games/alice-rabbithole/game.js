@@ -261,8 +261,8 @@
         // felt header strip with gold text
         g.rect(22, 22, W - 44, 52, 'rgba(10,40,10,.82)');
         g.rectO(22, 22, W - 44, 52, '#3dde5a', 1);
-        api.txtC('ALICE IN WONDERLAND', W / 2, 32, 10, '#ffe14d');
-        api.txtC('CURIOSITY  ' + curiosity, W / 2, 52, 9, '#21e6ff');
+        api.txtCFit('ALICE IN WONDERLAND', W / 2, 32, 10, '#ffe14d', false, W - 52);
+        api.txtCFit('CURIOSITY  ' + curiosity, W / 2, 52, 9, '#21e6ff', false, W - 52);
         // red string connecting the cards
         c.strokeStyle = 'rgba(204,32,32,.7)'; c.lineWidth = 1.5; c.setLineDash([4, 4]);
         c.beginPath();
@@ -428,7 +428,7 @@
           api.txt(hearts, W - 8 - this.lives * 10, 20, 9, '#ff6eb4');
           if (this.sizeState !== 'normal') api.txtC(this.sizeState === 'small' ? 'TINY!' : 'HUGE!', W/2, 20, 9, this.sizeState === 'small' ? '#21e6ff' : '#ff2e97');
           if (this.flashT > 0) { c.globalAlpha = this.flashT * 0.8; g.rect(0, 0, W, H, '#ff2e97'); c.globalAlpha = 1; }
-          if (this.msgT > 0 && this.msg) api.txtC(this.msg, W/2, aliceY - 38, 9, '#ffe14d');
+          if (this.msgT > 0 && this.msg) api.txtCFit(this.msg, W/2, aliceY - 38, 9, '#ffe14d');
           api.vignette(); api.scanlines();
         },
       },

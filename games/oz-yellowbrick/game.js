@@ -1070,9 +1070,8 @@
         c.fillStyle = RED; c.font = "13px 'Press Start 2P'";
         c.textAlign = 'center'; c.textBaseline = 'middle';
         c.fillText('MISS!', W / 2, H / 2 - 10);
-        c.fillStyle = CRM; c.font = "7px 'Press Start 2P'";
-        c.fillText('Try again! (' + (3 - this.fails) + ' left)', W / 2, H / 2 + 14);
         c.textAlign = 'left';
+        api.txtCFit('Try again! (' + (3 - this.fails) + ' left)', W / 2, H / 2 + 14, 7, CRM);
       }
 
       // HUD
@@ -1149,9 +1148,9 @@
       layout: menuLayout,
       card:   menuCard,
       title(api, respect) {
-        api.txtC('WIZARD OF OZ', api.W / 2, 20, 13, YEL, true);
-        api.txtC('THE LAND OF OZ', api.W / 2, 46, 8, GRN);
-        api.txtC('EMERALDS  ' + respect, api.W / 2, 64, 8, CRM);
+        api.txtCFit('WIZARD OF OZ', api.W / 2, 20, 13, YEL, true);
+        api.txtCFit('THE LAND OF OZ', api.W / 2, 46, 8, GRN);
+        api.txtCFit('EMERALDS  ' + respect, api.W / 2, 64, 8, CRM);
       },
     },
 

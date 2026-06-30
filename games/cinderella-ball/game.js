@@ -223,8 +223,8 @@
         // chapter icon
         if (ch.icon) ch.icon(api, x + 14, my + 4);
         // chapter name
-        api.txtC(ch.name, mx, y + 27, 6, done ? '#ff9ec4' : '#e8d8ff', true);
-        if (ch.sub) api.txtC(ch.sub, mx, y + 45, 5, '#9070b0', true);
+        api.txtCFit(ch.name, mx, y + 27, 6, done ? '#ff9ec4' : '#e8d8ff', true, w - 10);
+        if (ch.sub) api.txtCFit(ch.sub, mx, y + 45, 5, '#9070b0', true, w - 10);
         if (done) api.txtC('✦', mx, y + h - 13, 9, '#ff9ec4', true);
         else if (sel) api.txtC('▶', x + w - 13, y + 13, 8, '#ff9ec4', true);
         c.restore();

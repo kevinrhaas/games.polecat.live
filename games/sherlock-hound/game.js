@@ -155,7 +155,7 @@
           const found = this.clues.filter((cl) => cl.found).length;
           api.txt('CLUES ' + found + '/4', 6, 20, 9, api.colors.gold);
           g.rect(W - 70, 21, 64, 6, '#2a2620'); g.rect(W - 70, 21, 64 * clamp(this.timer / 34, 0, 1), 6, api.colors.gold);
-          if (this.msgT > 0) { api.panel(14, H - 40, W - 28, 28); api.txtC(this.msg, W / 2, H - 32, 9, api.colors.cream); }
+          if (this.msgT > 0) { api.panel(14, H - 40, W - 28, 28); api.txtCFit(this.msg, W / 2, H - 32, 9, api.colors.cream, false, W - 36); }
           else api.txtC('TAP THE GLOWING DETAILS', W / 2, H - 30, 8, api.colors.dim);
           api.vignette(); api.scanlines();
         },

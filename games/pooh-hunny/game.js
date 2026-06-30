@@ -194,8 +194,8 @@
         api.gfx.rect(0, 0, api.W, 74, 'rgba(240,223,160,.95)');
         api.gfx.rect(0, 72, api.W, 2, '#8a6808');
         api.gfx.rect(0, 75, api.W, 1, '#c09828');
-        api.txtC('THE HUNDRED ACRE WOOD', api.W / 2, 14, 8, '#6a4a10', true);
-        api.txtC('HUNNY  ' + hunny, api.W / 2, 46, 9, '#e87820');
+        api.txtCFit('THE HUNDRED ACRE WOOD', api.W / 2, 14, 8, '#6a4a10', true);
+        api.txtCFit('HUNNY  ' + hunny, api.W / 2, 46, 9, '#e87820');
       },
       layout() {
         return [
@@ -227,7 +227,7 @@
         // chapter icon
         if (ch.icon) ch.icon(api, cx, cy - 5);
         // name
-        api.txtC((i + 1) + '. ' + ch.name, cx, cy + 13, 7, done ? '#fff460' : '#f8e8b0');
+        api.txtCFit((i + 1) + '. ' + ch.name, cx, cy + 13, 7, done ? '#fff460' : '#f8e8b0', false, w - 14);
         // done star
         if (done) g.circle(x + w - 16, y + 14, 5, '#f0c820');
       },

@@ -83,8 +83,8 @@
         c.strokeStyle = sel ? '#e23b4a' : '#3a2f44'; c.lineWidth = sel ? 2 : 1; c.stroke();
         g.rect(x + 10, y + 28, w - 20, 1, '#0a0610');
         api.txtC('† R.I.P. †', x + w / 2, y + 9, 6, '#6a5a7a');
-        api.txtC((i + 1) + '. ' + ch.name, x + w / 2, y + 34, 7, done ? '#e23b4a' : '#cdbfe0');
-        if (ch.sub) api.txtC(ch.sub, x + w / 2, y + 50, 6, '#7a6a8a');
+        api.txtCFit((i + 1) + '. ' + ch.name, x + w / 2, y + 34, 7, done ? '#e23b4a' : '#cdbfe0', false, w - 8);
+        if (ch.sub) api.txtCFit(ch.sub, x + w / 2, y + 50, 6, '#7a6a8a', false, w - 8);
         if (done) api.txtC('✦', x + w / 2, y + h - 13, 9, '#e23b4a');
       },
     },

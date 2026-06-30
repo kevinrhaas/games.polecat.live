@@ -112,8 +112,8 @@
         const g = api.gfx, W = api.W;
         g.rect(40, 22, W - 80, 4, '#3e2c18');                      // hang rope
         g.rect(54, 26, W - 108, 34, '#5a3f22'); g.rectO(54, 26, W - 108, 34, '#e8c84a', 2); // wooden banner
-        api.txtC('LEGENDS OF SHERWOOD', W / 2, 32, 9, '#f0e6c0');
-        api.txtC('GLORY  ' + glory, W / 2, 48, 9, '#ffe14d');
+        api.txtCFit('LEGENDS OF SHERWOOD', W / 2, 32, 9, '#f0e6c0', false, W - 116);
+        api.txtCFit('GLORY  ' + glory, W / 2, 48, 9, '#ffe14d', false, W - 116);
       },
       layout(api) {
         const C = [[58, 152], [206, 214], [70, 280], [198, 346], [84, 414]];
@@ -473,11 +473,11 @@
           if (this.windowOpen) {
             const urgency = this.windowT / (0.5 - this.hits * 0.04);
             const wc = urgency > 0.4 ? '#5dff8f' : '#e3c567';
-            api.txtC('STRIKE!', W / 2, H - 50, 14, wc, true);
+            api.txtCFit('STRIKE!', W / 2, H - 50, 14, wc, true);
             c.strokeStyle = wc; c.lineWidth = 2;
             c.strokeRect(mx - 2, my - 2, mw + 4, 18);
           } else if (this.phase === 'watch') {
-            api.txtC('WATCH...', W / 2, H - 50, 9, api.colors.dim);
+            api.txtCFit('WATCH...', W / 2, H - 50, 9, api.colors.dim);
           }
           api.topBar('THE LOG BRIDGE');
           api.txt('PUSH ' + this.hits + '/' + this.need, 6, 20, 9, api.colors.gold);
@@ -697,7 +697,7 @@
             g.rect(sv - 4, sy - 14, 40, 7, '#1a0a06');
             const bc = reloadProg > 0.65 ? '#5dff8f' : '#e3c567';
             g.rect(sv - 4, sy - 14, 40 * reloadProg, 7, bc);
-            if (reloadProg > 0.65) api.txtC('TAP!', sv + 18, sy - 26, 10, '#5dff8f', true);
+            if (reloadProg > 0.65) api.txtCFit('TAP!', sv + 18, sy - 26, 10, '#5dff8f', true);
           }
           // Arrows
           for (const a of this.arrows) {
