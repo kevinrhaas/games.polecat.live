@@ -79,6 +79,44 @@
     function lines(arr, x, y, size, color, lh, align) {
       arr.forEach((l, i) => txt(l, x, y + i * (lh || size + 4), size, color, align || 'center'));
     }
+    // measure a string at a given font (for fit/wrap helpers below)
+    function measure(str, size, pixel) {
+      ctx.font = (pixel ? size + "px 'Press Start 2P'" : 'bold ' + size + "px 'Courier New',monospace");
+      return ctx.measureText(str).width;
+    }
+    // largest size <= `size` whose width fits maxW (down to a floor)
+    function fitSize(str, size, maxW, pixel) {
+      let s = size;
+      while (s > 6 && measure(str, s, pixel) > maxW) s--;
+      return s;
+    }
+    // word-wrap by MEASURED width so a line never overflows maxW at `size`
+    function wrapFit(str, size, maxW, pixel) {
+      const words = String(str).split(' '), out = []; let line = '';
+      for (const w of words) {
+        const test = line ? line + ' ' + w : w;
+        if (line && measure(test, size, pixel) > maxW) { out.push(line); line = w; }
+        else line = test;
+      }
+      if (line) out.push(line);
+      return out;
+    }
+    // centered single line that auto-shrinks to fit the screen width
+    function txtCFit(str, x, y, size, color, pixel, maxW) {
+      txtC(str, x, y, fitSize(str, size, maxW == null ? W - 16 : maxW, pixel), color, pixel);
+    }
+    // centered headline: keep `size` if it fits, else wrap to fit, shrinking
+    // only if a single word is still too wide. Returns the number of lines drawn.
+    function txtCHead(str, x, yTop, size, color, pixel, lh, maxW) {
+      const mw = maxW == null ? W - 16 : maxW;
+      let s = size;
+      // shrink until the longest single word fits, so wrapping can't overflow
+      const longest = String(str).split(' ').reduce((a, b) => (measure(b, s, pixel) > measure(a, s, pixel) ? b : a), '');
+      while (s > 6 && measure(longest, s, pixel) > mw) s--;
+      const ls = wrapFit(str, s, mw, pixel);
+      lines(ls, x, yTop, s, color, lh || s + 4, 'center');
+      return ls.length;
+    }
     function vignette() {
       const g = ctx.createRadialGradient(W / 2, H / 2, H * 0.22, W / 2, H / 2, H * 0.62);
       g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, PAL.shadow);
@@ -114,7 +152,7 @@
       win() { endChapter(true); },
       lose() { endChapter(false); },
       shake, flash, burst,
-      clear, txt, txtC, lines, vignette, scanlines, panel, topBar,
+      clear, txt, txtC, lines, txtCFit, txtCHead, wrapFit, fitSize, vignette, scanlines, panel, topBar,
       rnd: U.rand, rint: U.randInt, chance: (p) => Math.random() < p, choice: U.choice,
       confirm: confirmPressed,
       // expose key helpers
@@ -205,11 +243,11 @@
       backdrop('boot');
       const cx = W / 2, cy = H * 0.30;
       if (cfg.emblem) cfg.emblem(api, cx, cy);
-      txtC((cfg.title || '').toUpperCase(), cx, H * 0.46, 22, PAL.gold, true);
-      txtC(cfg.subtitle || (chapters.length + ' CHAPTERS'), cx, H * 0.46 + 30, 10, PAL.cream, true);
-      if (Math.floor(sceneT * 1.5) % 2 === 0) txtC(cfg.bootCta || 'TAP TO BEGIN', cx, H * 0.66, 12, PAL.cream);
-      txtC(cfg.credit || 'AN ORIGINAL PIXEL TRIBUTE', cx, H - 40, 8, PAL.dim);
-      txtC(cfg.bootLine || (chapters.length + ' CHAPTERS · ONE STORY'), cx, H - 26, 8, PAL.dim);
+      txtCFit((cfg.title || '').toUpperCase(), cx, H * 0.46, 22, PAL.gold, true);
+      txtCFit(cfg.subtitle || (chapters.length + ' CHAPTERS'), cx, H * 0.46 + 30, 10, PAL.cream, true);
+      if (Math.floor(sceneT * 1.5) % 2 === 0) txtCFit(cfg.bootCta || 'TAP TO BEGIN', cx, H * 0.66, 12, PAL.cream);
+      txtCFit(cfg.credit || 'AN ORIGINAL PIXEL TRIBUTE', cx, H - 40, 8, PAL.dim);
+      txtCFit(cfg.bootLine || (chapters.length + ' CHAPTERS · ONE STORY'), cx, H - 26, 8, PAL.dim);
       vignette(); scanlines();
     }
 
@@ -264,8 +302,8 @@
       backdrop('menu');
       if (cfg.menu && cfg.menu.title) cfg.menu.title(api, respect());
       else {
-        txtC((cfg.title || '').toUpperCase(), W / 2, 22, 16, MT.title, true);
-        txtC(cfg.menuLabel || 'CHOOSE YOUR CHAPTER', W / 2, 50, 9, MT.label);
+        txtCFit((cfg.title || '').toUpperCase(), W / 2, 22, 16, MT.title, true);
+        txtCFit(cfg.menuLabel || 'CHOOSE YOUR CHAPTER', W / 2, 50, 9, MT.label);
         txtC(CUR + '  ' + respect(), W / 2, 68, 9, MT.cur);
       }
       const rects = getMenuRects();
@@ -275,23 +313,25 @@
         if (cfg.menu && cfg.menu.card) cfg.menu.card(api, info);
         else defaultCard(info);
       }
-      if (allDone()) txtC('★ ' + (cfg.menuDone || 'ALL CHAPTERS CLEARED') + ' ★', W / 2, H - 22, 9, MT.title);
-      else txtC(cfg.menuHint || 'TAP A CHAPTER TO PLAY', W / 2, H - 20, 8, MT.hint);
+      if (allDone()) txtCFit('★ ' + (cfg.menuDone || 'ALL CHAPTERS CLEARED') + ' ★', W / 2, H - 22, 9, MT.title);
+      else txtCFit(cfg.menuHint || 'TAP A CHAPTER TO PLAY', W / 2, H - 20, 8, MT.hint);
       vignette(); scanlines();
     }
 
     function drawIntro() {
       if (cfg.renderIntro) { cfg.renderIntro(api, { ch: cur, i: curIndex, sceneT }); return; }
       backdrop('intro');
-      txtC((LBL.chapter + ' ' + (curIndex + 1)).trim(), W / 2, 54, 9, ST.chapterLabel);
-      txtC(cur.name, W / 2, 74, 15, ST.name, true);
-      txtC(cur.sub || '', W / 2, 100, 9, ST.sub);
-      lines(cur.intro || [], W / 2, 150, 11, ST.intro, 18);
+      txtCFit((LBL.chapter + ' ' + (curIndex + 1)).trim(), W / 2, 54, 9, ST.chapterLabel);
+      txtCFit(cur.name, W / 2, 74, 15, ST.name, true);
+      txtCFit(cur.sub || '', W / 2, 100, 9, ST.sub);
+      // wrap every narrative line to the screen width so nothing clips
+      const introLines = (cur.intro || []).flatMap((l) => wrapFit(l, 11, W - 24, false));
+      lines(introLines, W / 2, 150, 11, ST.intro, 18);
       if (cur.quote) {
-        const wrapped = wrapText('“' + cur.quote + '”', 30);
+        const wrapped = wrapFit('“' + cur.quote + '”', 10, W - 24, false);
         lines(wrapped, W / 2, 270, 10, ST.quote, 16);
       }
-      if (cur.help) txtC(cur.help, W / 2, H - 70, 9, ST.help);
+      if (cur.help) txtCHead(cur.help, W / 2, H - 78, 9, ST.help, false, 12);
       if (Math.floor(sceneT * 1.5) % 2 === 0 && sceneT > 0.35) txtC(LBL.play || 'TAP TO PLAY', W / 2, H - 44, 12, ST.cta);
       vignette(); scanlines();
     }
@@ -303,9 +343,11 @@
       if (cur.draw) { ctx.globalAlpha = 0.5; cur.draw.call(cur, api); ctx.globalAlpha = 1; }
       gfx.rect(0, 0, W, H, ST.overlay);
       const won = result.won;
-      txtC(won ? LBL.win : LBL.lose, W / 2, H * 0.3, 14, won ? ST.win : ST.lose, true);
+      // headline wraps to fit the screen; push the outcome text below it
+      const headTop = H * 0.3;
+      const headLines = txtCHead(won ? LBL.win : LBL.lose, W / 2, headTop, 14, won ? ST.win : ST.lose, true, 18);
       const outcome = won ? (cur.winText || '') : (cur.loseText || '');
-      if (outcome) lines(wrapText(outcome, 26), W / 2, H * 0.3 + 34, 10, ST.intro, 15);
+      if (outcome) lines(wrapText(outcome, 26), W / 2, headTop + headLines * 18 + 10, 10, ST.intro, 15);
       txtC(LBL.score + '  ' + result.score, W / 2, H * 0.56, 11, ST.score);
       txtC(CUR + '  ' + respect(), W / 2, H * 0.56 + 20, 10, ST.cur);
       if (Math.floor(sceneT * 1.5) % 2 === 0 && sceneT > 0.4)

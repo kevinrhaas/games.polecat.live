@@ -42,7 +42,12 @@ RetroSaga is portrait (270×480) and meant to be played fullscreen.
 `api` gives: `gfx, ctx, input, audio, util, pointer{x,y,down,justDown}, W, H,
 t, score, addScore(n), win(), lose(), shake(a,t), flash(c,t), burst(x,y,c,n),
 confirm(), keyDown(b), keyPressed(b), clear/txt/txtC/lines/panel/topBar/
-vignette/scanlines, colors`.
+vignette/scanlines, colors`. The framed screens auto-fit their text to the
+270px width (titles/headers shrink, the result header + intro/help wrap), so
+keep labels readable but don't sweat length. For your own in-game text, prefer
+`api.txtCFit(str,x,y,size,color,pixel)` (centered, shrink-to-fit) or
+`api.txtCHead(str,x,yTop,size,color,pixel,lh)` (centered, wraps) / `api.wrapFit(
+str,size,maxW,pixel)` over raw `txtC` whenever a string could run long.
 
 **Make the framed screens WILDLY unique & on-property** — never the default
 gold-on-black list. Two games should look nothing alike. Every game MUST supply:
