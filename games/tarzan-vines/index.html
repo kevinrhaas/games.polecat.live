@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <title>Tarzan — Lord of the Vines · games.polecat.live</title>
+  <meta name="theme-color" content="#0d2a0d" />
+  <link rel="icon" href="../../assets/logo.svg" type="image/svg+xml" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/site.css" />
+  <link rel="stylesheet" href="../../css/game.css" />
+  <style id="game-theme">:root{
+    --g-bg1:#0d2a0d;--g-bg2:#050f05;
+    --g-bar:rgba(8,22,8,.96);
+    --g-accent:#5dff8f;
+    --g-title:#d0f0a0;
+    --g-panel:rgba(12,30,10,.84);
+    --g-border:#2d5a1a;
+    --g-text:#7aaa60;
+    --g-key:#c0e890;
+    --g-stage:#1a3a10;
+    --g-glow:rgba(93,255,143,.22)
+  }</style>
+</head>
+<body class="game-page">
+  <div class="game-bar">
+    <a class="back" href="../../index.html">◀ ARCADE</a>
+    <span class="title">Tarzan</span>
+    <span class="src">· E. R. Burroughs</span>
+    <span class="spacer"></span>
+    <button class="icon-btn" id="fullscreenBtn" title="Full screen">⛶</button>
+    <button class="icon-btn" id="muteBtn" title="Mute">🔊</button>
+    <button class="icon-btn" id="restartBtn" title="Restart">↻</button>
+  </div>
+  <div class="game-main">
+    <div id="game"></div>
+    <div class="game-help">
+      <b>Tarzan — Lord of the Vines.</b> Five jungle tales through Burroughs' 1912 novel — dodge the wild as a jungle cradle infant, swing the canopy vines, duel mighty Kerchak for the throne of the apes, slip past ape patrols to rescue Jane, and drive ivory hunters from Tarzan's domain. Tap <b>⛶ Full screen</b> for the full experience.
+      <span class="keys">TAP / DRAG · ARROW KEYS · clear all five to claim the jungle</span>
+    </div>
+  </div>
+  <script src="../../js/retro-engine.js"></script>
+  <script src="../../js/saga.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
