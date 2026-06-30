@@ -529,7 +529,7 @@
         init(api) {
           this.x = api.W / 2; this.lives = 3; this.immune = 0;
           this.dist = 0; this.need = 320;
-          this.speed = 2.2;
+          this.speed = 0.2;
           this.obs = []; this.spawnT = 0.8;
           this.shots = []; this.shotT = 5;
         },
@@ -537,7 +537,9 @@
         update(api, dt) {
           const f = dt * 60;
           this.dist += this.speed * f;
-          this.speed = Math.min(3.8, 2.2 + this.dist / 500);
+          // slow forward voyage so there's real time to dodge (~22s crossing);
+          // obstacle fall-speed & spawn cadence are real-time and unaffected
+          this.speed = Math.min(0.34, 0.2 + this.dist / 1500);
           this.immune = Math.max(0, this.immune - dt);
 
           // steering
