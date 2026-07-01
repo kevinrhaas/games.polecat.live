@@ -4,7 +4,7 @@ name: Deploy to GitHub Pages
 #  - on every push to main (so each new game the build-loop lands goes live)
 #  - after the "Hourly Game Build" workflow finishes (its bot push uses
 #    GITHUB_TOKEN, which does NOT trigger on:push — workflow_run does)
-#  - every 2 hours on a schedule as a backstop
+#  - hourly on a schedule as a backstop
 #  - manually via the Actions tab
 on:
   push:
@@ -13,7 +13,7 @@ on:
     workflows: ["Hourly Game Build"]
     types: [completed]
   schedule:
-    - cron: '0 */2 * * *'   # every 2 hours (UTC)
+    - cron: '0 * * * *'   # top of every hour (UTC)
   workflow_dispatch:
 
 # Least-privilege token + the scopes Pages deployment needs.

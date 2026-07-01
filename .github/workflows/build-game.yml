@@ -1,6 +1,6 @@
 name: Hourly Game Build
 
-# Self-driving build loop: every 2 hours, Claude builds the next game (or improves
+# Self-driving build loop: every hour, Claude builds the next game (or improves
 # the site), commits it, and the workflow pushes to main — which triggers the
 # Pages deploy. Needs a repo secret with Claude credentials (see below).
 #
@@ -13,7 +13,7 @@ name: Hourly Game Build
 
 on:
   schedule:
-    - cron: '23 */2 * * *'   # every 2 hours, off the :00 mark
+    - cron: '23 * * * *'   # hourly, off the :00 mark
   workflow_dispatch:        # run on demand from the Actions tab
 
 permissions:
