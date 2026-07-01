@@ -35,8 +35,8 @@ window.POLECAT_CATALOG = [
   // ---------------------------- SOON (planned) ----------------------------
   { id: "pooh-hunny", title: "Hunny Hunt", source: "Winnie-the-Pooh — A. A. Milne (1926)", genre: "Puzzle Collect", style: "8-bit", accent: "#ffe14d", status: "live",
     blurb: "Float by balloon to the bees' hive, follow the Woozle tracks, gather gifts for Eeyore's party, steer Piglet through the Blustery Day, and wiggle Pooh free from Rabbit's door.", tags: ["cozy","puzzle","multi-chapter"] },
-  { id: "mickey-steamboat", title: "Steamboat Willie", source: "Mickey Mouse (1928 — Steamboat Willie)", genre: "Rhythm Action", style: "8-bit", accent: "#21e6ff", status: "soon",
-    blurb: "Pilot the riverboat and toot the whistle in time down the winding Mississippi.", tags: ["rhythm","classic"] },
+  { id: "mickey-steamboat", title: "Steamboat Willie", source: "Mickey Mouse (1928 — Steamboat Willie)", genre: "Rhythm Action", style: "8-bit", accent: "#e8c050", status: "live",
+    blurb: "Steer the steamboat past river debris, tap the whistle in time, play the animal band, catch Minnie's parcels, and dodge Captain Pete's furious swings to escape!", tags: ["rhythm","action","multi-chapter"] },
   { id: "robinhood-archer", title: "Sherwood Sharpshooter", source: "Robin Hood — English folklore", genre: "Aim / Archery", style: "8-bit", accent: "#5dff8f", status: "live",
     blurb: "Split the shaft at the tournament, ride through Sherwood, duel Little John, rob the rich, and face the Sheriff to free Maid Marian.", tags: ["aim","skill","multi-chapter"] },
   { id: "arthur-sword", title: "The Sword in the Stone", source: "King Arthur — Arthurian legend", genre: "Action Adventure", style: "8-bit", accent: "#21e6ff", status: "live",

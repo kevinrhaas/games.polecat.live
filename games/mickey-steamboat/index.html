@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <title>Steamboat Willie — games.polecat.live</title>
+  <meta name="theme-color" content="#0d0b06" />
+  <link rel="icon" href="../../assets/logo.svg" type="image/svg+xml" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/site.css" />
+  <link rel="stylesheet" href="../../css/game.css" />
+  <style id="game-theme">:root{--g-bg1:#1a1408;--g-bg2:#0d0b06;--g-bar:rgba(20,18,10,.96);--g-accent:#e8c050;--g-title:#f0e0b0;--g-panel:rgba(20,16,8,.82);--g-border:#5a4820;--g-text:#c0a870;--g-key:#e8d090;--g-stage:#3a2a10;--g-glow:rgba(232,192,80,.22)}</style>
+</head>
+<body class="game-page">
+  <div class="game-bar">
+    <a class="back" href="../../index.html">◀ ARCADE</a>
+    <span class="title">Steamboat Willie</span>
+    <span class="src">· 1928 cartoon</span>
+    <span class="spacer"></span>
+    <button class="icon-btn" id="fullscreenBtn" title="Full screen">⛶</button>
+    <button class="icon-btn" id="muteBtn" title="Mute">🔊</button>
+    <button class="icon-btn" id="restartBtn" title="Restart">↻</button>
+  </div>
+  <div class="game-main">
+    <div id="game"></div>
+    <div class="game-help">
+      <b>Steamboat Willie.</b> Five scenes from the 1928 Mickey Mouse short — steer the steamboat past river debris, tap the whistle in time, play the animal band, catch Minnie's falling parcels, then dodge Captain Pete's furious swings to escape. Tap <b>⛶ Full screen</b> for the full experience.
+      <span class="keys">TAP / DRAG · ARROW KEYS · earn NOTES across all five scenes</span>
+    </div>
+  </div>
+  <script src="../../js/retro-engine.js"></script>
+  <script src="../../js/saga.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
