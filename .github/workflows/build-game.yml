@@ -100,6 +100,24 @@ jobs:
             --g-key,--g-stage,--g-glow, defined in css/game.css) so the top bar, help
             strip and page background match the game's palette — not the default neon.
 
+            PACING (critical — every chapter must be PLAYABLE): no chapter may end
+            (win OR lose) before the player has had real time to actually play it.
+            A survive/dodge/distance/defend chapter should last ~15-30 seconds of
+            play; a timing/precision beat should still give several attempts. Audit
+            the win AND lose conditions of every chapter you write: a distance or
+            timer that completes in 2-5 seconds is a BUG (e.g. the old Hispaniola
+            crossed its distance in ~2.4s). When a chapter advances by accumulating
+            a value each frame (dist += speed*f) toward a target, remember that runs
+            at ~60fps, so tune the accrual so the target is reached in ~15-25s — and
+            note that obstacle fall-speed and spawn cadence are REAL-TIME (keyed off
+            dt), so slowing the forward accrual gives dodging time WITHOUT changing
+            difficulty. Verify in the headless test by advancing sim time and
+            asserting no chapter auto-resolves in under ~8s of play.
+            ALSO, as a rolling quality pass, if you have turns to spare after
+            shipping the new game, quickly audit ONE previously-built game's chapter
+            pacing the same way and fix any too-fast chapter you find (commit it with
+            the build).
+
             Then: run `node --check` on every JS file; load-test headless with Playwright
             (zero pageerrors; the menu and each chapter must render); capture the
             thumbnail with `node tools/snap-thumbs.mjs <id>` (Playwright + Chromium are

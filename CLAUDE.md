@@ -117,6 +117,15 @@ game appears on the home page. New story-mode games show automatically (no flag)
 7. Commit + push to the working branch.
 
 ## Design principles
+- **Pacing — every chapter must be playable.** No chapter may end (win OR lose)
+  before the player has had real time to play it: aim for ~15-30s of play for a
+  survive/dodge/distance/defend chapter, several attempts for a timing beat.
+  When a chapter advances by accumulating a value per frame (`dist += speed*f`)
+  toward a target, that runs at ~60fps — tune the accrual so the target is hit
+  in ~15-25s, not 2-5s (the old Hispaniola crossed its distance in ~2.4s — a
+  bug). Obstacle fall-speed and spawn cadence are REAL-TIME (keyed off `dt`), so
+  slowing the forward accrual buys dodging time WITHOUT changing difficulty.
+  Audit both the win and lose conditions of each chapter before shipping.
 - **Capture the story.** Analyze the property: setting, characters, key scenes.
   The mechanic should *be* the story (climbing Dracula's tower, falling down
   Alice's hole, following Oz's road), not a reskin.
