@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <title>Tom Sawyer — games.polecat.live</title>
+  <meta name="theme-color" content="#2a1408" />
+  <link rel="icon" href="../../assets/logo.svg" type="image/svg+xml" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/site.css" />
+  <link rel="stylesheet" href="../../css/game.css" />
+  <style id="game-theme">:root{
+    --g-bg1:#f2e07a;
+    --g-bg2:#c8a025;
+    --g-bar:rgba(38,16,4,.97);
+    --g-accent:#c87a10;
+    --g-title:#2a1408;
+    --g-panel:rgba(242,220,130,.88);
+    --g-border:#c8a018;
+    --g-text:#5a3810;
+    --g-key:#c8a018;
+    --g-stage:#2a6a0a;
+    --g-glow:rgba(200,122,16,.35)
+  }</style>
+</head>
+<body class="game-page">
+  <div class="game-bar">
+    <a class="back" href="../../index.html">◀ ARCADE</a>
+    <span class="title">Tom Sawyer</span>
+    <span class="src">· Mark Twain</span>
+    <span class="spacer"></span>
+    <button class="icon-btn" id="fullscreenBtn" title="Full screen">⛶</button>
+    <button class="icon-btn" id="muteBtn" title="Mute">🔊</button>
+    <button class="icon-btn" id="restartBtn" title="Restart">↻</button>
+  </div>
+  <div class="game-main">
+    <div id="game"></div>
+    <div class="game-help">
+      <b>Tom Sawyer.</b> Five chapters through Mark Twain's classic — trick the whole town into whitewashing Aunt Polly's fence, dodge Injun Joe's lantern in the midnight graveyard, raft down the Mississippi to Jackson's Island, escape McDougal's Cave with Becky, and dig up the buried gold. Tap <b>⛶ Full screen</b> for the full experience.
+      <span class="keys">TAP / DRAG · ARROW KEYS · earn MISCHIEF across all five tales</span>
+    </div>
+  </div>
+  <script src="../../js/retro-engine.js"></script>
+  <script src="../../js/saga.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
