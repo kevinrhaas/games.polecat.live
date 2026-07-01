@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <title>Pride &amp; Prejudice — games.polecat.live</title>
+  <meta name="theme-color" content="#1a1228" />
+  <link rel="icon" href="../../assets/logo.svg" type="image/svg+xml" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/site.css" />
+  <link rel="stylesheet" href="../../css/game.css" />
+  <style id="game-theme">:root{
+    --g-bg1:#1a1228;--g-bg2:#0e0a1a;
+    --g-bar:rgba(20,12,32,.96);
+    --g-accent:#c85a7a;
+    --g-title:#f0e8d8;
+    --g-panel:rgba(26,18,40,.84);
+    --g-border:#6a3a5a;
+    --g-text:#b8a0b0;
+    --g-key:#f0c8d8;
+    --g-stage:#3a2848;
+    --g-glow:rgba(200,90,122,.28);
+  }</style>
+</head>
+<body class="game-page">
+  <div class="game-bar">
+    <a class="back" href="../../index.html">◀ ARCADE</a>
+    <span class="title">Pride &amp; Prejudice</span>
+    <span class="src">· Jane Austen</span>
+    <span class="spacer"></span>
+    <button class="icon-btn" id="fullscreenBtn" title="Full screen">⛶</button>
+    <button class="icon-btn" id="muteBtn" title="Mute">🔊</button>
+    <button class="icon-btn" id="restartBtn" title="Restart">↻</button>
+  </div>
+  <div class="game-main">
+    <div id="game"></div>
+    <div class="game-help">
+      <b>Pride &amp; Prejudice.</b> Five scenes from Jane Austen's novel — dodge Mr. Collins at the Meryton Ball, sort Wickham's flattery from truth, decline Collins' absurd proposal, ride to London on Darcy's errand, and meet him at dawn in the fields of Longbourn. Tap <b>⛶ Full screen</b> for the full experience.
+      <span class="keys">TAP / DRAG · ARROW KEYS · clear all five to earn HEARTS</span>
+    </div>
+  </div>
+  <script src="../../js/retro-engine.js"></script>
+  <script src="../../js/saga.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
