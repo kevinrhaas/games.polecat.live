@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <title>The Headless Horseman — games.polecat.live</title>
+  <meta name="theme-color" content="#1a0800" />
+  <link rel="icon" href="../../assets/logo.svg" type="image/svg+xml" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/site.css" />
+  <link rel="stylesheet" href="../../css/game.css" />
+  <style id="game-theme">:root{
+    --g-bg1:#2a1000;
+    --g-bg2:#0a0400;
+    --g-bar:rgba(18,7,0,.96);
+    --g-accent:#ff6600;
+    --g-title:#ffd080;
+    --g-panel:rgba(28,10,0,.85);
+    --g-border:#7a3800;
+    --g-text:#c89050;
+    --g-key:#ffd080;
+    --g-stage:#7a3800;
+    --g-glow:rgba(255,102,0,.28)
+  }</style>
+</head>
+<body class="game-page">
+  <div class="game-bar">
+    <a class="back" href="../../index.html">◀ ARCADE</a>
+    <span class="title">Sleepy Hollow</span>
+    <span class="src">· Washington Irving</span>
+    <span class="spacer"></span>
+    <button class="icon-btn" id="fullscreenBtn" title="Full screen">⛶</button>
+    <button class="icon-btn" id="muteBtn" title="Mute">🔊</button>
+    <button class="icon-btn" id="restartBtn" title="Restart">↻</button>
+  </div>
+  <div class="game-main">
+    <div id="game"></div>
+    <div class="game-help">
+      <b>The Headless Horseman.</b> Five moonlit chapters through Irving's tale — arrive in the haunted hollow, teach school by candlelight, feast at Van Tassel's harvest party, flee the Horseman through the dark forest, and survive the midnight crossing of the covered bridge. Tap <b>⛶ Full screen</b> for the full experience.
+      <span class="keys">TAP / DRAG · ARROW KEYS · outwit the Horseman to earn your NERVE</span>
+    </div>
+  </div>
+  <script src="../../js/retro-engine.js"></script>
+  <script src="../../js/saga.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
