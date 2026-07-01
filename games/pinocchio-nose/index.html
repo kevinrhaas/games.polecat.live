@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <title>No Strings — games.polecat.live</title>
+  <meta name="theme-color" content="#100820" />
+  <link rel="icon" href="../../assets/logo.svg" type="image/svg+xml" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/site.css" />
+  <link rel="stylesheet" href="../../css/game.css" />
+  <style id="game-theme">:root{
+    --g-bg1:#1a0e28;--g-bg2:#090514;
+    --g-bar:rgba(22,10,8,.96);--g-accent:#4ab8e8;
+    --g-title:#fff5dc;--g-panel:rgba(22,10,8,.85);
+    --g-border:#7a4a1a;--g-text:#c8a870;
+    --g-key:#f5c060;--g-stage:#4a2a0a;--g-glow:rgba(74,184,232,.22)
+  }</style>
+</head>
+<body class="game-page">
+  <div class="game-bar">
+    <a class="back" href="../../index.html">◀ ARCADE</a>
+    <span class="title">No Strings</span>
+    <span class="src">· Carlo Collodi</span>
+    <span class="spacer"></span>
+    <button class="icon-btn" id="fullscreenBtn" title="Full screen">⛶</button>
+    <button class="icon-btn" id="muteBtn" title="Mute">🔊</button>
+    <button class="icon-btn" id="restartBtn" title="Restart">↻</button>
+  </div>
+  <div class="game-main">
+    <div id="game"></div>
+    <div class="game-help">
+      <b>No Strings.</b> Five scenes from Collodi's 1883 tale — catch the Blue Fairy's sparkles to bring Pinocchio to life, dodge bandits on the road to ruin, escape Stromboli's cage, flee Pleasure Island before you're turned into a donkey, and light a fire inside Monstro to make the whale sneeze. Tap <b>⛶ Full screen</b> for the full experience.
+      <span class="keys">TAP / DRAG · ARROW KEYS · clear all five scenes to earn your WISHES</span>
+    </div>
+  </div>
+  <script src="../../js/retro-engine.js"></script>
+  <script src="../../js/saga.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
