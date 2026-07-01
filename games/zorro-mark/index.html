@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <title>Zorro — games.polecat.live</title>
+  <meta name="theme-color" content="#1a0808" />
+  <link rel="icon" href="../../assets/logo.svg" type="image/svg+xml" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/site.css" />
+  <link rel="stylesheet" href="../../css/game.css" />
+  <style id="game-theme">:root{--g-bg1:#1e0a06;--g-bg2:#0a0303;--g-bar:rgba(20,6,4,.96);--g-accent:#c8102e;--g-title:#f0d890;--g-panel:rgba(28,10,6,.84);--g-border:#7a2810;--g-text:#b07840;--g-key:#f0d890;--g-stage:#7a2810;--g-glow:rgba(200,16,46,.32)}</style>
+</head>
+<body class="game-page">
+  <div class="game-bar">
+    <a class="back" href="../../index.html">◀ ARCADE</a>
+    <span class="title">Zorro</span>
+    <span class="src">· Johnston McCulley</span>
+    <span class="spacer"></span>
+    <button class="icon-btn" id="fullscreenBtn" title="Full screen">⛶</button>
+    <button class="icon-btn" id="muteBtn" title="Mute">🔊</button>
+    <button class="icon-btn" id="restartBtn" title="Restart">↻</button>
+  </div>
+  <div class="game-main">
+    <div id="game"></div>
+    <div class="game-help">
+      <b>The Mark of Zorro.</b> Five chapters through the legend of El Zorro — carve his blazing mark, ride Tornado through the canyon, duel the Commandante, free the peons, and face the Alcalde in a final clash of blades. Tap <b>⛶ Full screen</b> for the full experience.
+      <span class="keys">TAP / DRAG · ARROW KEYS · five chapters, one legend</span>
+    </div>
+  </div>
+  <script src="../../js/retro-engine.js"></script>
+  <script src="../../js/saga.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
