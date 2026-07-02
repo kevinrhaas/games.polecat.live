@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <title>Grimm's Path — games.polecat.live</title>
+  <meta name="theme-color" content="#080c08" />
+  <link rel="icon" href="../../assets/logo.svg" type="image/svg+xml" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/site.css" />
+  <link rel="stylesheet" href="../../css/game.css" />
+  <style id="game-theme">:root{
+    --g-bg1:#080c08;
+    --g-bg2:#040604;
+    --g-bar:rgba(6,10,6,.96);
+    --g-accent:#d4a020;
+    --g-title:#e4f0dc;
+    --g-panel:rgba(8,14,8,.84);
+    --g-border:#2a3e20;
+    --g-text:#8a9880;
+    --g-key:#c8dcc0;
+    --g-stage:#1a2c16;
+    --g-glow:rgba(212,160,32,.28);
+  }</style>
+</head>
+<body class="game-page">
+  <div class="game-bar">
+    <a class="back" href="../../index.html">◀ ARCADE</a>
+    <span class="title">Grimm's Path</span>
+    <span class="src">· Brothers Grimm</span>
+    <span class="spacer"></span>
+    <button class="icon-btn" id="fullscreenBtn" title="Full screen">⛶</button>
+    <button class="icon-btn" id="muteBtn" title="Mute">🔊</button>
+    <button class="icon-btn" id="restartBtn" title="Restart">↻</button>
+  </div>
+  <div class="game-main">
+    <div id="game"></div>
+    <div class="game-help">
+      <b>Grimm's Path.</b> Five dark fairy tales from the Brothers Grimm — dodge the wolf, climb the tower, push the witch, spin straw to gold, and wake the sleeping princess. Tap <b>⛶ Full screen</b> for the best experience.
+      <span class="keys">TAP / DRAG · ARROW KEYS · follow the golden path</span>
+    </div>
+  </div>
+  <script src="../../js/retro-engine.js"></script>
+  <script src="../../js/saga.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

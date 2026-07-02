@@ -12,6 +12,8 @@
  * The build-loop PREPENDS a new entry with v = <next>, an empty ts, and items[].
  * ============================================================================ */
 window.POLECAT_CHANGELOG = [
+  { v: 62, title: "New game: Grimm's Path — Grimm's Fairy Tales (Story Arcade, 5 chapters)", ts: "",
+    items: ["Five dark fairy tales from Jacob & Wilhelm Grimm: dodge the Big Bad Wolf through the moonlit forest for 22 seconds (Little Red Riding Hood); tap the pendulum timing zone to climb Rapunzel's golden braid 8 levels up to the tower window; whack the witch 12 times before she catches Hansel in the gingerbread house kitchen; steer a basket to catch 12 golden coins flying off Rumpelstiltskin's spinning wheel while avoiding plain straw bundles; and finally tap when the enchantment ring closes at its tightest around Sleeping Beauty — 5 kisses to break the spell.", "Deep enchanted forest palette: near-black forest (#080c08), moonlit silver-green (#c8dcc0), bark brown (#7a5a2a), fairy-tale gold (#d4a020), witch purple (#6a1888). Chapter-select is an ENCHANTED FOREST CLEARING — five weathered wooden signpost boards at scattered positions connected by dotted bark-trail paths and animated firefly sparkles, with a moonlit canopy header on aged dark parchment. In-voice labels: 'THE TALE IS TOLD.' / 'THE FOREST CLAIMS YOU.'; currency TOKENS; finale 'Fairy tales are more than true.' Page chrome in deep forest night green and gold."] },
   { v: 61, title: "What's New, upgraded", ts: "2026-07-02T19:00:21.378Z",
     items: ["The update feed now follows the shared polecat 'relay' convention: each entry is versioned with a precise timestamp, shown in your local Central time.", "A little dot on the ✨ What's New button now lights up when there's something you haven't seen yet, and clears once you open it."] },
   { v: 60, title: "New game: The Portrait — The Picture of Dorian Gray (Decay Puzzle, 5 chapters)", ts: "2026-07-02T18:18:00.000Z",
@@ -135,4 +137,4 @@ window.POLECAT_CHANGELOG = [
   { v: 1, title: "Arcade launch", ts: "2026-06-28T16:36:00.000Z",
     items: ["The home page, the game engine, and the first games: Sherlock, Dracula, Alice, Oz, and Frankenstein."] },
 ];
-window.POLECAT_LATEST_VERSION = 61;
+window.POLECAT_LATEST_VERSION = 62;
