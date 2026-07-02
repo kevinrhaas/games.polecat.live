@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <title>Poop-Poop! — The Wind in the Willows — games.polecat.live</title>
+  <meta name="theme-color" content="#0d2a08" />
+  <link rel="icon" href="../../assets/logo.svg" type="image/svg+xml" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/site.css" />
+  <link rel="stylesheet" href="../../css/game.css" />
+  <style id="game-theme">:root{
+    --g-bg1:#0d2a08;
+    --g-bg2:#061404;
+    --g-bar:rgba(10,32,6,.96);
+    --g-accent:#d8a020;
+    --g-title:#f4e8cc;
+    --g-panel:rgba(16,44,10,.88);
+    --g-border:#4a8a28;
+    --g-text:#b0cc80;
+    --g-key:#d8a020;
+    --g-stage:#2a5a18;
+    --g-glow:rgba(90,170,40,.22);
+  }</style>
+</head>
+<body class="game-page">
+  <div class="game-bar">
+    <a class="back" href="../../index.html">◀ ARCADE</a>
+    <span class="title">Poop-Poop!</span>
+    <span class="src">· The Wind in the Willows</span>
+    <span class="spacer"></span>
+    <button class="icon-btn" id="fullscreenBtn" title="Full screen">⛶</button>
+    <button class="icon-btn" id="muteBtn" title="Mute">🔊</button>
+    <button class="icon-btn" id="restartBtn" title="Restart">↻</button>
+  </div>
+  <div class="game-main">
+    <div id="game"></div>
+    <div class="game-help">
+      <b>The Wind in the Willows.</b> Five tales from Grahame's riverside classic — steer Toad's motorcar down the open road, dodge weasels in the Wild Wood, pick the prison lock, catch Ratty's picnic hamper treats on the river, and retake Toad Hall! Tap <b>⛶ Full screen</b> for the full experience.
+      <span class="keys">DRAG / TAP · ARROW KEYS · earn CHEERS across all five adventures</span>
+    </div>
+  </div>
+  <script src="../../js/retro-engine.js"></script>
+  <script src="../../js/saga.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
