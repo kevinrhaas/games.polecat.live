@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <title>The Portrait — The Picture of Dorian Gray — games.polecat.live</title>
+  <meta name="theme-color" content="#0e0212" />
+  <link rel="icon" href="../../assets/logo.svg" type="image/svg+xml" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/site.css" />
+  <link rel="stylesheet" href="../../css/game.css" />
+  <style id="game-theme">:root{
+    --g-bg1:#180416;
+    --g-bg2:#0e0212;
+    --g-bar:rgba(14,2,8,.96);
+    --g-accent:#cc9830;
+    --g-title:#e0c89a;
+    --g-panel:rgba(20,6,14,.88);
+    --g-border:#4a1828;
+    --g-text:#9a7888;
+    --g-key:#e0c898;
+    --g-stage:#1a0818;
+    --g-glow:rgba(188,30,62,.20);
+  }</style>
+</head>
+<body class="game-page">
+  <div class="game-bar">
+    <a class="back" href="../../index.html">◀ ARCADE</a>
+    <span class="title">The Portrait</span>
+    <span class="src">· Dorian Gray — Oscar Wilde</span>
+    <span class="spacer"></span>
+    <button class="icon-btn" id="fullscreenBtn" title="Full screen">⛶</button>
+    <button class="icon-btn" id="muteBtn" title="Mute">🔊</button>
+    <button class="icon-btn" id="restartBtn" title="Restart">↻</button>
+  </div>
+  <div class="game-main">
+    <div id="game"></div>
+    <div class="game-help">
+      <b>The Portrait — after Oscar Wilde's 1890 masterpiece.</b> Five Victorian chapters — dodge Lord Henry's poisonous platitudes in Basil's studio, catch roses at the Lyceum Theatre, sort the pages of the yellow book, hide from James Vane's lantern in the East End fog, and finally strike the corrupted portrait in the locked room. Tap <b>⛶ Full screen</b> for the full experience.
+      <span class="keys">DRAG / TAP · ARROW KEYS · five sins, one portrait</span>
+    </div>
+  </div>
+  <script src="../../js/retro-engine.js"></script>
+  <script src="../../js/saga.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
