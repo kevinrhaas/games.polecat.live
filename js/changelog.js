@@ -14,7 +14,7 @@ export const CHANGELOG = [
     v: 63,
     title: 'New game: A Thousand Nights — One Thousand and One Nights (Adventure, 5 tales)',
     kind: 'game',
-    ts: '',
+    ts: "2026-07-02T21:05:26.596Z",
     items: [
       'Five tales from One Thousand and One Nights: tap the golden ink zone as Scheherazade\'s quill swings to keep the Sultan enchanted (10 strikes); steer Sinbad\'s ship through Roc feathers and falling rocks for 22 seconds; catch Ali Baba\'s gold bags while dodging daggers in the treasure cave; tap falling soldiers out of the sky to protect the palace with Aladdin\'s Genie; and race the magic carpet through narrowing palace spires to deliver the final tale.',
       'Arabian Nights palette: midnight indigo (#06040e), gold (#e8b020), turquoise (#00b8a0), ruby (#cc1844), silk pink (#e85898). Chapter-select is a BAZAAR OF HANGING LANTERNS — five hexagonal lanterns suspended on copper chains at scattered heights above a starry midnight sky, each glowing gold or teal when done. In-voice labels: SCHEHERAZADE WEAVES THE NIGHT. / DAWN BREAKS THE SPELL.; currency COINS; finale \'He who does not know his past is lost in the desert without a star to follow.\' Page chrome in deep midnight indigo and gold.',
