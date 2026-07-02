@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <title>Ballad of Honor — games.polecat.live</title>
+  <meta name="theme-color" content="#1a0800" />
+  <link rel="icon" href="../../assets/logo.svg" type="image/svg+xml" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/site.css" />
+  <link rel="stylesheet" href="../../css/game.css" />
+  <style id="game-theme">:root{
+    --g-bg1:#1a0800;
+    --g-bg2:#080300;
+    --g-bar:rgba(16,5,0,.96);
+    --g-accent:#cc2200;
+    --g-title:#ffd700;
+    --g-panel:rgba(24,8,0,.85);
+    --g-border:#8a2000;
+    --g-text:#d4a060;
+    --g-key:#ffd700;
+    --g-stage:#8a2000;
+    --g-glow:rgba(204,34,0,.28)
+  }</style>
+</head>
+<body class="game-page">
+  <div class="game-bar">
+    <a class="back" href="../../index.html">◀ ARCADE</a>
+    <span class="title">Ballad of Honor</span>
+    <span class="src">· Hua Mulan</span>
+    <span class="spacer"></span>
+    <button class="icon-btn" id="fullscreenBtn" title="Full screen">⛶</button>
+    <button class="icon-btn" id="muteBtn" title="Mute">🔊</button>
+    <button class="icon-btn" id="restartBtn" title="Restart">↻</button>
+  </div>
+  <div class="game-main">
+    <div id="game"></div>
+    <div class="game-help">
+      <b>Ballad of Honor.</b> Five chapters from the legend of Hua Mulan — don the warrior's disguise before inspection, survive army training under arrow fire, aim the mountain cannon at Shan-Yu's advancing horde, slip through the imperial palace past torchlit guards, and face the warlord blade-to-blade on the rooftop. Tap <b>⛶ Full screen</b> for the full experience.
+      <span class="keys">TAP / DRAG · ARROW KEYS · earn HONOR for China</span>
+    </div>
+  </div>
+  <script src="../../js/retro-engine.js"></script>
+  <script src="../../js/saga.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
