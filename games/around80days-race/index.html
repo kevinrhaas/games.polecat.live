@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <title>Around the World in 80 Days — games.polecat.live</title>
+  <meta name="theme-color" content="#1a0e06" />
+  <link rel="icon" href="../../assets/logo.svg" type="image/svg+xml" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/site.css" />
+  <link rel="stylesheet" href="../../css/game.css" />
+  <style id="game-theme">:root{
+    --g-bg1:#1a0e06;--g-bg2:#0d0903;
+    --g-bar:rgba(20,12,4,.95);
+    --g-accent:#d4a017;--g-title:#f0e8d0;
+    --g-panel:rgba(26,16,6,.82);--g-border:#6b4a14;
+    --g-text:#c0a870;--g-key:#e8c870;
+    --g-stage:#2a1a06;--g-glow:rgba(212,160,23,.3)
+  }</style>
+</head>
+<body class="game-page">
+  <div class="game-bar">
+    <a class="back" href="../../index.html">◀ ARCADE</a>
+    <span class="title">Around the World in 80 Days</span>
+    <span class="src">· Jules Verne</span>
+    <span class="spacer"></span>
+    <button class="icon-btn" id="fullscreenBtn" title="Full screen">⛶</button>
+    <button class="icon-btn" id="muteBtn" title="Mute">🔊</button>
+    <button class="icon-btn" id="restartBtn" title="Restart">↻</button>
+  </div>
+  <div class="game-main">
+    <div id="game"></div>
+    <div class="game-help">
+      <b>Around the World in 80 Days.</b> Five legs of Phileas Fogg's legendary race — seal the wager at the Reform Club, steer the Mongolia to Suez, ride Kiouni the elephant across India, stoke the Henrietta's boiler across the Pacific, and sprint through London to the finish. Tap <b>⛶ Full screen</b> for the full experience.
+      <span class="keys">TAP / DRAG · ARROW KEYS · complete all five legs to win the wager</span>
+    </div>
+  </div>
+  <script src="../../js/retro-engine.js"></script>
+  <script src="../../js/saga.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
