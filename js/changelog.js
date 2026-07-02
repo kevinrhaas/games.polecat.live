@@ -14,7 +14,7 @@ export const CHANGELOG = [
     v: 64,
     title: 'New game: To the Center — Journey to the Center of the Earth (Descent Platformer, 5 chapters)',
     kind: 'game',
-    ts: '',
+    ts: "2026-07-02T22:06:39.467Z",
     items: [
       'Five chapters into Jules Verne\'s 1864 classic: dodge falling rocks descending Snæfellsjökull\'s volcanic shaft for 24 seconds (3 lives, lantern-lit explorer, deepening amber ore crystal collectibles); steer the raft left/right across the underground Lidenbrock Sea dodging rocks, tentacles, and floating logs for 26 seconds; survive 22 seconds of the battling Ichthyosaurus and Plesiosaurus in free-movement — two enormous prehistoric beasts sweeping the water with their bodies; dodge warning-telegraphed lightning columns in the electromagnetic storm for 26 seconds as St. Elmo\'s fire crackles on the mast; and ride the Stromboli volcanic eruption upward, dodging magma jets from the walls while collecting 8 glowing ore crystals to escape.',
       'Deep geological palette: volcanic earth-black (#0a0602), rock amber (#c87a20), molten lava (#ff5000), underground sea teal (#20a0b8), bone fossil (#d8c8a0). Chapter-select is a GEOLOGICAL CROSS-SECTION — five depth-station cards staggered left and right at increasing depths (2km, 20km, 160km, 200km, 6400km), each a rock-layer panel with a colored stratum bar on the left edge; lava glow at the bottom. Animated strata bands, rising ember sparks, and glowing ore veins in the boot/menu backdrop. In-voice labels: FATHOMS currency; DESCENDED FURTHER / RETREAT TO THE SURFACE win/lose. Page chrome in deep volcanic amber and earth-black.',
