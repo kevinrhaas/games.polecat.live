@@ -67,7 +67,22 @@ jobs:
             entries with legacy:true — alice, oz, frankenstein), upgrade ONE of
             them to a full multi-chapter story game (keep its good bits, e.g.
             Alice's falling mechanic) and DROP its legacy:true flag in the catalog
-            so it appears on the home page. Otherwise build the next status:"soon"
+            so it appears on the home page.
+
+            GENERATIONS: games can ascend from Gen 1 (8-bit) to Gen 2 (16-bit).
+            Roughly one run in five (when no legacy game is left), PROMOTE a marquee
+            Gen-1 game to Gen 2 instead of building a new one: rebuild its game.js
+            on RetroSaga2 (js/saga2.js) + RetroGfx2 (js/retro-gfx2.js, api.g2),
+            keeping its best mechanics but making it richer than 5 flat chapters —
+            a hub map (nodes unlock via needs:[ids], an optional side-node), each
+            node escalating phases ending in a mini-boss, persistent upgrades +
+            banked currency, a branching choice, and multiple endings. Use 16-bit
+            visuals (parallax, mode7, glow, big sprites), switch its index.html to
+            the Gen-2 script order, set the catalog entry gen:2 / style:"16-bit"
+            with a fresh blurb, and re-shoot the thumbnail. Reference:
+            games/dracula-castle. Read the "Generations" section of CLAUDE.md first.
+            This is high-care work — test the whole scene walk headless (zero
+            pageerrors, every phase pacing-audited) before shipping. Otherwise build the next status:"soon"
             property in js/catalog.js (most-famous-first;
             vary the genre from recent builds) as a full multi-chapter game using
             RetroSaga (js/saga.js) — FIVE varied, easy, faithful mini-games that hit the

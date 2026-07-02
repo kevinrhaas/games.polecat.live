@@ -89,6 +89,30 @@ multi-chapter story games (keep their good bits — e.g. Alice's falling
 mechanic), and **drop the `legacy:true` flag** in the same commit so the rebuilt
 game appears on the home page. New story-mode games show automatically (no flag).
 
+## Generations — games level up over time (Gen 1 → Gen 2 → …)
+Every catalog entry has a `gen` (default 1). Games don't just accumulate; they
+**ascend a generation**, getting richer tech + deeper structure while keeping
+their story. The home card shows a `GEN n` badge and the `style` filter.
+- **Gen 1 — 8-bit (NES):** `RetroSaga` (`js/saga.js`), 5 chapters, chunky pixels.
+- **Gen 2 — 16-bit (SNES/Genesis):** `RetroSaga2` (`js/saga2.js`) + the 16-bit
+  graphics layer `RetroGfx2` (`js/retro-gfx2.js`, exposed as `api.g2`). A Gen-2
+  game is **richer & more dynamic than 5 flat chapters**: a navigable **hub map**
+  (nodes unlock via `needs:[ids]` → branching + `optional` side-nodes; the hub
+  IS the menu, themed via `map.layout/node/title`), each node a run of escalating
+  **phases** ending in a **mini-boss** (`boss:true`), **persistent upgrades**
+  (`upgrades{}` + node `grant`, read with `api.has(key)`) and banked `currency`,
+  a per-node `choice` that sets `flags`, and multiple `endings` chosen by those
+  flags. `api.g2` gives `skyGradient/dither/parallax/mode7/glow/roundRect/
+  bigSprite`. **Reference: `games/dracula-castle/` (Dracula — Nights of Blood).**
+  Load order in index.html: retro-engine.js → retro-gfx2.js → saga2.js → game.js.
+
+**Promoting a game to Gen 2** (an occasional, high-care task — do NOT rush it):
+pick a marquee Gen-1 game, rebuild `game.js` on `RetroSaga2` keeping its best
+mechanics but expanding to a hub + phased nodes + mini-bosses + upgrades +
+branching + endings, switch its index.html to the Gen-2 scripts, set the catalog
+entry `gen:2, style:"16-bit"` with a fresh blurb, re-shoot the thumbnail, and
+headless-test the whole scene walk (zero pageerrors, every phase pacing-audited).
+
 ## Adding a new game (the core repeatable task)
 1. Pick the next `status:"soon"` entry in `js/catalog.js` (or add one). Use the
    `id` as the folder name: `games/<id>/`.
