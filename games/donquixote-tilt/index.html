@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <title>Don Quixote — games.polecat.live</title>
+  <meta name="theme-color" content="#5898d8" />
+  <link rel="icon" href="../../assets/logo.svg" type="image/svg+xml" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/site.css" />
+  <link rel="stylesheet" href="../../css/game.css" />
+  <style id="game-theme">:root{--g-bg1:#c87820;--g-bg2:#5898d8;--g-bar:rgba(42,20,8,.95);--g-accent:#e0b040;--g-title:#f0e8c0;--g-panel:rgba(42,20,8,.85);--g-border:#8b6010;--g-text:#d4a030;--g-key:#f0e8c0;--g-stage:#8b6010;--g-glow:rgba(224,176,64,.3)}</style>
+</head>
+<body class="game-page">
+  <div class="game-bar">
+    <a class="back" href="../../index.html">◀ ARCADE</a>
+    <span class="title">Don Quixote</span>
+    <span class="src">· Cervantes</span>
+    <span class="spacer"></span>
+    <button class="icon-btn" id="fullscreenBtn" title="Full screen">⛶</button>
+    <button class="icon-btn" id="muteBtn" title="Mute">🔊</button>
+    <button class="icon-btn" id="restartBtn" title="Restart">↻</button>
+  </div>
+  <div class="game-main">
+    <div id="game"></div>
+    <div class="game-help">
+      <b>Don Quixote — Tilting at Windmills.</b> Five adventures through Cervantes' classic: thread the lance through rotating windmill arms, stab wineskin "monsters" at the inn, dodge rocks hurled by freed galley slaves, navigate the dark Cave of Montesinos by torchlight, and face the Knight of the White Moon in a final joust. Tap <b>⛶ Full screen</b> for the full experience.
+      <span class="keys">TAP / DRAG · ARROW KEYS · win GLORY across all five chapters</span>
+    </div>
+  </div>
+  <script src="../../js/retro-engine.js"></script>
+  <script src="../../js/saga.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
