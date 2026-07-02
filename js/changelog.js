@@ -14,7 +14,7 @@ export const CHANGELOG = [
     v: 65,
     title: 'New game: Wrath of Achilles — The Iliad (Battle Tactics, 5 books)',
     kind: 'game',
-    ts: "",
+    ts: "2026-07-02T23:00:41.465Z",
     items: [
       'Five books of Homer\'s Iliad: tap Greek ships sailing into Aulis bay to muster the fleet (collect 15 in 26s); steer a bronze-armored hoplite left/right past Trojan spears across the dusty plain (22s); lane-switch to block Trojan warriors at the three-arched gate (block 14); tap to intercept Apollo\'s arrows flying at Patroclus in golden armor (protect for 22s, 3 lives); chase Hector around Troy\'s oval walls by holding to sprint (stamina bar), then time the strike in the oscillating gold-zone gauge — 3 perfect strikes to end the duel.',
       'Bronze-age Aegean palette: midnight navy (#060a1e), burnished bronze (#c87a20), Aegean blue (#4ab8e8), ivory (#f0e8d0), shield-blue (#1a3060), crimson (#cc1a10). Chapter-select is a PHALANX OF HOPLITE SHIELDS — five round Argive shields with Argive concentric rings and cross-band armature arranged 2+2+1 on a dark Aegean backdrop of Troy\'s battlements at dawn. In-voice labels: GLORY currency; GLORY TO OLYMPUS / THE FATES HAVE SPOKEN win/lose; TAKE UP YOUR SHIELD boot call.',
