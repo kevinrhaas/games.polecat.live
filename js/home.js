@@ -149,6 +149,7 @@
     const badges = document.createElement('div');
     badges.className = 'badges';
     badges.innerHTML =
+      ((game.gen || 1) >= 2 ? `<span class="badge gen2">GEN ${game.gen}</span>` : '') +
       `<span class="badge">${game.style}</span>` +
       `<span class="badge genre">${game.genre}</span>` +
       (live ? '' : '<span class="badge">SOON</span>');
