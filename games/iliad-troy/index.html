@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <title>Wrath of Achilles — games.polecat.live</title>
+  <meta name="theme-color" content="#060a1e" />
+  <link rel="icon" href="../../assets/logo.svg" type="image/svg+xml" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/site.css" />
+  <link rel="stylesheet" href="../../css/game.css" />
+  <style id="game-theme">:root{
+    --g-bg1:#0a1030;
+    --g-bg2:#060a1e;
+    --g-bar:rgba(6,10,28,.96);
+    --g-accent:#c87a20;
+    --g-title:#f0e8d0;
+    --g-panel:rgba(10,16,40,.88);
+    --g-border:#2a3a70;
+    --g-text:#8090b8;
+    --g-key:#c87a20;
+    --g-stage:#1a2448;
+    --g-glow:rgba(200,122,32,.26)
+  }</style>
+</head>
+<body class="game-page">
+  <div class="game-bar">
+    <a class="back" href="../../index.html">◀ ARCADE</a>
+    <span class="title">Wrath of Achilles</span>
+    <span class="src">· Homer</span>
+    <span class="spacer"></span>
+    <button class="icon-btn" id="fullscreenBtn" title="Full screen">⛶</button>
+    <button class="icon-btn" id="muteBtn" title="Mute">🔊</button>
+    <button class="icon-btn" id="restartBtn" title="Restart">↻</button>
+  </div>
+  <div class="game-main">
+    <div id="game"></div>
+    <div class="game-help">
+      <b>Wrath of Achilles.</b> Five books of Homer's Iliad — muster the fleet at Aulis, advance across the Trojan plain, hold the phalanx at the gates, shield Patroclus from Apollo's arrows, then chase Hector to his fate. Tap <b>⛶ Full screen</b> for the full experience.
+      <span class="keys">TAP / DRAG · ARROW KEYS · earn GLORY across all five books</span>
+    </div>
+  </div>
+  <script src="../../js/retro-engine.js"></script>
+  <script src="../../js/saga.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
