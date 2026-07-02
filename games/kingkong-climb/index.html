@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <title>King Kong — games.polecat.live</title>
+  <meta name="theme-color" content="#060402" />
+  <link rel="icon" href="../../assets/logo.svg" type="image/svg+xml" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/site.css" />
+  <link rel="stylesheet" href="../../css/game.css" />
+  <style id="game-theme">:root{
+    --g-bg1:#090604;--g-bg2:#040200;
+    --g-bar:rgba(8,5,2,.97);
+    --g-accent:#c87820;
+    --g-title:#f0e8d0;
+    --g-panel:rgba(12,8,4,.88);
+    --g-border:#4a3010;
+    --g-text:#8a6a30;
+    --g-key:#e8c080;
+    --g-stage:#0a0602;
+    --g-glow:rgba(200,120,32,.24)
+  }</style>
+</head>
+<body class="game-page">
+  <div class="game-bar">
+    <a class="back" href="../../index.html">◀ ARCADE</a>
+    <span class="title">King Kong</span>
+    <span class="src">· 1932 novelization</span>
+    <span class="spacer"></span>
+    <button class="icon-btn" id="fullscreenBtn" title="Full screen">⛶</button>
+    <button class="icon-btn" id="muteBtn" title="Mute">🔊</button>
+    <button class="icon-btn" id="restartBtn" title="Restart">↻</button>
+  </div>
+  <div class="game-main">
+    <div id="game"></div>
+    <div class="game-help">
+      <b>King Kong.</b> Five scenes from the legendary tale — survive Skull Island's jungle dangers, dodge prehistoric jaws on the great log, break free from Broadway chains, rampage through New York dodging biplane bombs, and swat the attacking planes from the top of the Empire State Building. Tap <b>⛶ Full screen</b> for the full experience.
+      <span class="keys">TAP · DRAG · ARROW KEYS · T'WAS BEAUTY KILLED THE BEAST</span>
+    </div>
+  </div>
+  <script src="../../js/retro-engine.js"></script>
+  <script src="../../js/saga.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
