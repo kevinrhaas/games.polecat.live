@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <title>Down the Mississippi — Huckleberry Finn — games.polecat.live</title>
+  <meta name="theme-color" content="#1a2e10" />
+  <link rel="icon" href="../../assets/logo.svg" type="image/svg+xml" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/site.css" />
+  <link rel="stylesheet" href="../../css/game.css" />
+  <style id="game-theme">:root{
+    --g-bg1:#0e1c08;
+    --g-bg2:#060e04;
+    --g-bar:rgba(10,20,6,.96);
+    --g-accent:#f0c020;
+    --g-title:#f4e8cc;
+    --g-panel:rgba(14,28,8,.88);
+    --g-border:#6a8840;
+    --g-text:#c0d890;
+    --g-key:#f0c020;
+    --g-stage:#2a4a18;
+    --g-glow:rgba(80,140,30,.22);
+  }</style>
+</head>
+<body class="game-page">
+  <div class="game-bar">
+    <a class="back" href="../../index.html">◀ ARCADE</a>
+    <span class="title">Down the Mississippi</span>
+    <span class="src">· Huckleberry Finn</span>
+    <span class="spacer"></span>
+    <button class="icon-btn" id="fullscreenBtn" title="Full screen">⛶</button>
+    <button class="icon-btn" id="muteBtn" title="Mute">🔊</button>
+    <button class="icon-btn" id="restartBtn" title="Restart">↻</button>
+  </div>
+  <div class="game-main">
+    <div id="game"></div>
+    <div class="game-help">
+      <b>Huckleberry Finn.</b> Five tales from Twain's classic — sneak out of Pap's shack, steer the raft down the mighty Mississippi, grab gold at the Royal Nonesuch con, dig a tunnel to rescue Jim, and ride out the great river storm! Tap <b>⛶ Full screen</b> for the full experience.
+      <span class="keys">DRAG / TAP · ARROW KEYS · earn MILES across all five tales</span>
+    </div>
+  </div>
+  <script src="../../js/retro-engine.js"></script>
+  <script src="../../js/saga.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
