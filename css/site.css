@@ -246,7 +246,10 @@ img { max-width: 100%; display: block; }
   transition: opacity .15s ease, transform .15s ease, border-color .15s ease, color .15s ease;
 }
 .updates-fab:hover { opacity: 1; transform: translateY(-2px); color: var(--ink); border-color: var(--cyan); }
-.updates-fab .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); box-shadow: 0 0 6px var(--green); }
+/* the dot only lights when there are unseen updates (home.js adds .has-unseen) */
+.updates-fab .dot { display: none; width: 7px; height: 7px; border-radius: 50%; background: var(--green); box-shadow: 0 0 6px var(--green); }
+.updates-fab.has-unseen .dot { display: block; animation: pulseDot 1.4s ease-in-out infinite; }
+@keyframes pulseDot { 0%, 100% { opacity: .4; transform: scale(.85); } 50% { opacity: 1; transform: scale(1.15); } }
 .drawer-scrim { position: fixed; inset: 0; z-index: 70; background: rgba(2,1,8,.5); backdrop-filter: blur(2px); }
 .drawer {
   position: fixed; top: 0; right: 0; height: 100%; width: min(360px, 88vw); z-index: 71;

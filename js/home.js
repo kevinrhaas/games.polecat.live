@@ -291,21 +291,39 @@
   });
 
   /* ----------- "What's New" updates drawer ----------- */
+  // Timestamps are stored as ISO-8601 UTC (relay convention) and formatted into
+  // the reader-facing US Central time here. Tolerates an empty ts (a just-added
+  // entry the workflow hasn't stamped yet) and legacy pre-formatted CT strings.
+  function fmtCT(ts) {
+    if (!ts) return 'Just now';
+    if (/CT$/.test(ts)) return ts; // legacy pre-formatted string
+    const d = new Date(ts);
+    if (isNaN(d.getTime())) return ts;
+    return d.toLocaleString('en-US', { timeZone: 'America/Chicago', month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' }) + ' CT';
+  }
   function buildChangelog() {
     const log = window.POLECAT_CHANGELOG || [];
     const lu = document.getElementById('lastUpdated');
-    if (lu && log[0]) lu.textContent = log[0].ts;
+    if (lu && log[0]) lu.textContent = fmtCT(log[0].ts);
     const list = document.getElementById('updatesList');
-    if (list) list.innerHTML = log.map((e) =>
-      `<div class="update"><div class="when">${e.ts}</div><h4>${e.title}</h4>` +
-      ((e.notes && e.notes.length) ? '<ul>' + e.notes.map((n) => `<li>${n}</li>`).join('') + '</ul>' : '') +
-      `</div>`).join('');
+    if (list) list.innerHTML = log.map((e) => {
+      const items = e.items || e.notes || [];
+      return `<div class="update"><div class="when">${fmtCT(e.ts)}</div><h4>${e.title}</h4>` +
+        (items.length ? '<ul>' + items.map((n) => `<li>${n}</li>`).join('') + '</ul>' : '') + `</div>`;
+    }).join('');
     const drawer = document.getElementById('updatesDrawer');
     const scrim = document.getElementById('updatesScrim');
     const open = () => { if (drawer) drawer.hidden = false; if (scrim) scrim.hidden = false; };
     const close = () => { if (drawer) drawer.hidden = true; if (scrim) scrim.hidden = true; };
+    // "unseen updates" dot: light the ✨ button when the latest version is newer
+    // than what this visitor has already opened (stored locally).
+    const latest = window.POLECAT_LATEST_VERSION || (log[0] && log[0].v) || 0;
+    const SEEN_KEY = 'polecat.updates.seen';
+    let seen = parseInt(localStorage.getItem(SEEN_KEY) || '0', 10) || 0;
     const fab = document.getElementById('updatesBtn');
-    if (fab) fab.addEventListener('click', open);
+    if (fab && latest > seen) fab.classList.add('has-unseen');
+    const markSeen = () => { try { localStorage.setItem(SEEN_KEY, String(latest)); } catch (e) {} if (fab) fab.classList.remove('has-unseen'); };
+    if (fab) fab.addEventListener('click', () => { open(); markSeen(); });
     if (scrim) scrim.addEventListener('click', close);
     const cb = document.getElementById('updatesClose'); if (cb) cb.addEventListener('click', close);
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
