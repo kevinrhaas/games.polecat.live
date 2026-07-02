@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <title>The Call of the Wild — games.polecat.live</title>
+  <meta name="theme-color" content="#080c14" />
+  <link rel="icon" href="../../assets/logo.svg" type="image/svg+xml" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/site.css" />
+  <link rel="stylesheet" href="../../css/game.css" />
+  <style id="game-theme">:root{
+    --g-bg1:#080c14;
+    --g-bg2:#04060c;
+    --g-bar:rgba(6,10,20,.96);
+    --g-accent:#d4a030;
+    --g-title:#d8e8f0;
+    --g-panel:rgba(8,16,32,.88);
+    --g-border:#1e3a58;
+    --g-text:#6888a8;
+    --g-key:#d4a030;
+    --g-stage:#102030;
+    --g-glow:rgba(74,184,232,.20);
+  }</style>
+</head>
+<body class="game-page">
+  <div class="game-bar">
+    <a class="back" href="../../index.html">◀ ARCADE</a>
+    <span class="title">The Call of the Wild</span>
+    <span class="src">· Jack London</span>
+    <span class="spacer"></span>
+    <button class="icon-btn" id="fullscreenBtn" title="Full screen">⛶</button>
+    <button class="icon-btn" id="muteBtn" title="Mute">🔊</button>
+    <button class="icon-btn" id="restartBtn" title="Restart">↻</button>
+  </div>
+  <div class="game-main">
+    <div id="game"></div>
+    <div class="game-help">
+      <b>The Call of the Wild.</b> Five stretches of Buck's Yukon journey — dodge the lasso in the California night, steer the sled team through the snow, duel lead dog Spitz on the ice, pull Thornton's impossible wager, and answer the howl of the wild wolf pack. Tap <b>⛶ Full screen</b> for the full experience.
+      <span class="keys">TAP · ARROW KEYS · complete all five stretches to earn MILES</span>
+    </div>
+  </div>
+  <script src="../../js/retro-engine.js"></script>
+  <script src="../../js/saga.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

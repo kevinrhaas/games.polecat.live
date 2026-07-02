@@ -11,6 +11,16 @@
 // visitor has seen.
 export const CHANGELOG = [
   {
+    v: 66,
+    title: 'New game: The Call of the Wild — Jack London (Sled Runner, 5 chapters)',
+    kind: 'game',
+    ts: '',
+    items: [
+      'Five stretches of Buck\'s Yukon journey: dodge falling lasso loops at Judge Miller\'s California ranch (survive 22s, 3 lives); steer the sled team down the snow trail collecting 10 frozen fish while dodging drifts; duel lead dog Spitz in a counter-strike timing fight on the ice floe (land 5 counters, 4 hit points); tap rapidly in rhythm to pull John Thornton\'s thousand-pound sled across the finish line before 32 seconds; then follow howling wolf silhouettes through the dark spruce forest while dodging trapper\'s steel jaw-traps to cover the final stretch.',
+      'Yukon winter palette: midnight navy (#080c14), Klondike gold (#d4a030), arctic ice (#4ab8e8), aurora green (#20c870), spruce black (#0c2010). Chapter-select is a ZIGZAG SLED TRAIL — five wooden trail markers staggered left-right down a bright daytime Yukon snow map, connected by dashed trail lines; each post displays a mile number and themed chapter name. Framed screens in-voice: MILES currency, "THE TRAIL HOLDS" / "THE SNOW CLAIMS YOU" win/lose headers.',
+    ],
+  },
+  {
     v: 65,
     title: 'New game: Wrath of Achilles — The Iliad (Battle Tactics, 5 books)',
     kind: 'game',
