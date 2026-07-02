@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <title>A Thousand Nights — games.polecat.live</title>
+  <meta name="theme-color" content="#06040e" />
+  <link rel="icon" href="../../assets/logo.svg" type="image/svg+xml" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/site.css" />
+  <link rel="stylesheet" href="../../css/game.css" />
+  <style id="game-theme">:root{
+    --g-bg1:#06040e;
+    --g-bg2:#040210;
+    --g-bar:rgba(4,2,14,.97);
+    --g-accent:#d4900a;
+    --g-title:#f8f0d8;
+    --g-panel:rgba(6,4,14,.86);
+    --g-border:#2a1a50;
+    --g-text:#9a8060;
+    --g-key:#e8b020;
+    --g-stage:#100c28;
+    --g-glow:rgba(212,144,10,.28);
+  }</style>
+</head>
+<body class="game-page">
+  <div class="game-bar">
+    <a class="back" href="../../index.html">◀ ARCADE</a>
+    <span class="title">A Thousand Nights</span>
+    <span class="src">· One Thousand and One Nights</span>
+    <span class="spacer"></span>
+    <button class="icon-btn" id="fullscreenBtn" title="Full screen">⛶</button>
+    <button class="icon-btn" id="muteBtn" title="Mute">🔊</button>
+    <button class="icon-btn" id="restartBtn" title="Restart">↻</button>
+  </div>
+  <div class="game-main">
+    <div id="game"></div>
+    <div class="game-help">
+      <b>A Thousand Nights.</b> Five tales from One Thousand and One Nights — spin Scheherazade's tale for the Sultan, steer Sinbad through the Roc's shadow, grab Ali Baba's treasure, command Aladdin's Genie, and race the flying carpet to the palace. Tap <b>⛶ Full screen</b> for the best experience.
+      <span class="keys">TAP / DRAG · ARROW KEYS · follow the golden star</span>
+    </div>
+  </div>
+  <script src="../../js/retro-engine.js"></script>
+  <script src="../../js/saga.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
