@@ -109,7 +109,7 @@ window.POLECAT_CATALOG = [
     blurb: "Lead the Greeks across the plains of Troy and storm the walls.", tags: ["tactics","war"] },
   { id: "beowulf-grendel", title: "Beowulf", source: "Beowulf — Old English epic", genre: "Boss Brawler", style: "8-bit", accent: "#c8962a", status: "live",
     blurb: "Five deeds from the Old English epic — sail the whale-road, wrestle Grendel, dive the blood-dark mere, face the fire drake, and hold the final shield wall.", tags: ["boss","brawler","multi-chapter"] },
-  { id: "hunchback-bells", title: "The Bells of Notre-Dame", source: "The Hunchback of Notre-Dame — Hugo", genre: "Climb Rescue", style: "8-bit", accent: "#9b5cff", status: "soon",
+  { id: "hunchback-bells", title: "The Bells of Notre-Dame", source: "The Hunchback of Notre-Dame — Hugo", genre: "Climb Rescue", style: "8-bit", accent: "#9b5cff", status: "live",
     blurb: "Swing the great bells and scale the cathedral to claim sanctuary.", tags: ["climb","story"] },
   { id: "nosferatu-1922", title: "Shadow of the Vampyr", source: "Nosferatu (1922 film)", genre: "Stealth Horror", style: "8-bit", accent: "#9b5cff", status: "soon",
     blurb: "Keep Count Orlok in shadow and survive until the cock crows at dawn.", tags: ["horror","stealth"] },
