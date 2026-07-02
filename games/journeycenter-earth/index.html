@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <title>Journey to the Center of the Earth — games.polecat.live</title>
+  <meta name="theme-color" content="#1a0c04" />
+  <link rel="icon" href="../../assets/logo.svg" type="image/svg+xml" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/site.css" />
+  <link rel="stylesheet" href="../../css/game.css" />
+  <style id="game-theme">:root{
+    --g-bg1:#1a0c04;
+    --g-bg2:#0a0602;
+    --g-bar:rgba(18,10,4,.96);
+    --g-accent:#c87a20;
+    --g-title:#f0d890;
+    --g-panel:rgba(28,16,4,.85);
+    --g-border:#7a4a14;
+    --g-text:#c8a060;
+    --g-key:#f0d080;
+    --g-stage:#5a3010;
+    --g-glow:rgba(200,120,32,.28)
+  }</style>
+</head>
+<body class="game-page">
+  <div class="game-bar">
+    <a class="back" href="../../index.html">◀ ARCADE</a>
+    <span class="title">To the Center</span>
+    <span class="src">· Jules Verne</span>
+    <span class="spacer"></span>
+    <button class="icon-btn" id="fullscreenBtn" title="Full screen">⛶</button>
+    <button class="icon-btn" id="muteBtn" title="Mute">🔊</button>
+    <button class="icon-btn" id="restartBtn" title="Restart">↻</button>
+  </div>
+  <div class="game-main">
+    <div id="game"></div>
+    <div class="game-help">
+      <b>Journey to the Center of the Earth.</b> Five chapters deep into the Earth — descend the crater, cross the underground sea, survive prehistoric monsters, ride the electric storm, and escape through a volcanic vent. Tap <b>⛶ Full screen</b> for the best experience.
+      <span class="keys">TAP / DRAG · ARROW KEYS · descend deeper · COURAGE is your compass</span>
+    </div>
+  </div>
+  <script src="../../js/retro-engine.js"></script>
+  <script src="../../js/saga.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
