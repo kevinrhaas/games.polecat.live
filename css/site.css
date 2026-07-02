@@ -250,6 +250,11 @@ img { max-width: 100%; display: block; }
 .updates-fab .dot { display: none; width: 7px; height: 7px; border-radius: 50%; background: var(--green); box-shadow: 0 0 6px var(--green); }
 .updates-fab.has-unseen .dot { display: block; animation: pulseDot 1.4s ease-in-out infinite; }
 @keyframes pulseDot { 0%, 100% { opacity: .4; transform: scale(.85); } 50% { opacity: 1; transform: scale(1.15); } }
+/* per-entry "kind" tag in the What's New drawer */
+.update .kind { font-family: var(--font-pixel); font-size: 6px; padding: 3px 5px; border-radius: 5px; margin-left: 8px; vertical-align: middle; text-transform: uppercase; border: 1px solid var(--panel-br); color: var(--ink-dim); }
+.update .kind-game { color: #0b0420; background: var(--green); border-color: #000; }
+.update .kind-fix { color: #0b0420; background: var(--yellow); border-color: #000; }
+.update .kind-feature { color: var(--cyan); }
 .drawer-scrim { position: fixed; inset: 0; z-index: 70; background: rgba(2,1,8,.5); backdrop-filter: blur(2px); }
 .drawer {
   position: fixed; top: 0; right: 0; height: 100%; width: min(360px, 88vw); z-index: 71;

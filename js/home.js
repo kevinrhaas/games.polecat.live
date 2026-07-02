@@ -1,7 +1,11 @@
 /* ============================================================================
  * Home page controller — renders the catalog, draws procedural pixel
  * thumbnails, and powers search / genre / style filtering.
+ * ES module: the changelog is an ES module too (shared polecat convention),
+ * so we import it directly. The catalog stays a classic global.
  * ============================================================================ */
+import { CHANGELOG, LATEST_VERSION } from './changelog.js';
+
 (function () {
   'use strict';
   const catalog = window.POLECAT_CATALOG || [];
@@ -302,13 +306,15 @@
     return d.toLocaleString('en-US', { timeZone: 'America/Chicago', month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' }) + ' CT';
   }
   function buildChangelog() {
-    const log = window.POLECAT_CHANGELOG || [];
+    const log = CHANGELOG || [];
     const lu = document.getElementById('lastUpdated');
     if (lu && log[0]) lu.textContent = fmtCT(log[0].ts);
     const list = document.getElementById('updatesList');
     if (list) list.innerHTML = log.map((e) => {
       const items = e.items || e.notes || [];
-      return `<div class="update"><div class="when">${fmtCT(e.ts)}</div><h4>${e.title}</h4>` +
+      const kind = e.kind || 'feature';
+      return `<div class="update"><div class="when">${fmtCT(e.ts)}` +
+        `<span class="kind kind-${kind}">${kind}</span></div><h4>${e.title}</h4>` +
         (items.length ? '<ul>' + items.map((n) => `<li>${n}</li>`).join('') + '</ul>' : '') + `</div>`;
     }).join('');
     const drawer = document.getElementById('updatesDrawer');
@@ -317,7 +323,7 @@
     const close = () => { if (drawer) drawer.hidden = true; if (scrim) scrim.hidden = true; };
     // "unseen updates" dot: light the ✨ button when the latest version is newer
     // than what this visitor has already opened (stored locally).
-    const latest = window.POLECAT_LATEST_VERSION || (log[0] && log[0].v) || 0;
+    const latest = LATEST_VERSION || (log[0] && log[0].v) || 0;
     const SEEN_KEY = 'polecat.updates.seen';
     let seen = parseInt(localStorage.getItem(SEEN_KEY) || '0', 10) || 0;
     const fab = document.getElementById('updatesBtn');

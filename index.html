@@ -116,7 +116,7 @@
   </aside>
 
   <script src="js/catalog.js"></script>
-  <script src="js/changelog.js"></script>
-  <script src="js/home.js"></script>
+  <!-- changelog.js is an ES module imported by home.js (shared polecat convention) -->
+  <script type="module" src="js/home.js"></script>
 </body>
 </html>

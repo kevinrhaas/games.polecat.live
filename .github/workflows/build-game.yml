@@ -138,11 +138,13 @@ jobs:
             thumbnail with `node tools/snap-thumbs.mjs <id>` (Playwright + Chromium are
             already installed in this runner, so it works without any symlink); flip that
             catalog entry's status to "live"; and PREPEND one short, friendly entry
-            to the js/changelog.js window.POLECAT_CHANGELOG array in the relay
-            format: { v: <one more than the current top entry's v>, title: "...",
-            ts: "", items: ["...", "..."] }. LEAVE ts EMPTY ("") — the workflow
-            stamps the commit time. Do NOT hand-write a date. Keep 1-3 friendly
-            `items` strings (not "notes").
+            to the CHANGELOG array in js/changelog.js (an ES module) in the shared
+            polecat format: { v: <one more than the current top entry's v>, title:
+            "...", kind: "game", ts: "", items: ["...", "..."] }. Use kind "game"
+            for a new/promoted game, "feature" for enhancements, "fix" for bug
+            fixes. LEAVE ts EMPTY ("") — the workflow stamps the commit time
+            (LATEST_VERSION is derived). Do NOT hand-write a date. Keep 1-3
+            friendly `items` strings.
 
             Finally, commit everything with a clear message. DO NOT run `git push` —
             the workflow pushes for you.
