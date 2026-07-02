@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <title>The War of the Worlds — games.polecat.live</title>
+  <meta name="theme-color" content="#060c04" />
+  <link rel="icon" href="../../assets/logo.svg" type="image/svg+xml" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/site.css" />
+  <link rel="stylesheet" href="../../css/game.css" />
+  <style id="game-theme">:root{
+    --g-bg1:#060c04;--g-bg2:#020802;
+    --g-bar:rgba(4,12,4,.96);
+    --g-accent:#44ee44;
+    --g-title:#88dd88;
+    --g-panel:rgba(6,18,6,.84);
+    --g-border:#226622;
+    --g-text:#668855;
+    --g-key:#aaddaa;
+    --g-stage:#226622;
+    --g-glow:rgba(68,238,68,.28)
+  }</style>
+</head>
+<body class="game-page">
+  <div class="game-bar">
+    <a class="back" href="../../index.html">◀ ARCADE</a>
+    <span class="title">War of the Worlds</span>
+    <span class="src">· H. G. Wells</span>
+    <span class="spacer"></span>
+    <button class="icon-btn" id="fullscreenBtn" title="Full screen">⛶</button>
+    <button class="icon-btn" id="muteBtn" title="Mute">🔊</button>
+    <button class="icon-btn" id="restartBtn" title="Restart">↻</button>
+  </div>
+  <div class="game-main">
+    <div id="game"></div>
+    <div class="game-help">
+      <b>The War of the Worlds.</b> Five dispatches from the Martian invasion — dodge the heat-ray on Horsell Common, flee burning London, man the guns of the Thunder Child, slip through the black smoke, and guide the last survivors past the falling tripods. Tap <b>⛶ Full screen</b> for the full experience.
+      <span class="keys">TAP / DRAG · ARROW KEYS · five dispatches, one invasion</span>
+    </div>
+  </div>
+  <script src="../../js/retro-engine.js"></script>
+  <script src="../../js/saga.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
