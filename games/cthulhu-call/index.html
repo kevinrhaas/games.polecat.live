@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <title>The Call — games.polecat.live</title>
+  <meta name="theme-color" content="#050810" />
+  <link rel="icon" href="../../assets/logo.svg" type="image/svg+xml" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/site.css" />
+  <link rel="stylesheet" href="../../css/game.css" />
+  <style id="game-theme">:root{
+    --g-bg1:#050810;--g-bg2:#02040a;
+    --g-bar:rgba(4,6,14,.97);
+    --g-accent:#00cc55;
+    --g-title:#c0d4e0;
+    --g-panel:rgba(6,10,22,.90);
+    --g-border:#004433;
+    --g-text:#4a6a7a;
+    --g-key:#00ff66;
+    --g-stage:#030508;
+    --g-glow:rgba(0,200,80,.22)
+  }</style>
+</head>
+<body class="game-page">
+  <div class="game-bar">
+    <a class="back" href="../../index.html">◀ ARCADE</a>
+    <span class="title">The Call</span>
+    <span class="src">· H.P. Lovecraft</span>
+    <span class="spacer"></span>
+    <button class="icon-btn" id="fullscreenBtn" title="Full screen">⛶</button>
+    <button class="icon-btn" id="muteBtn" title="Mute">🔊</button>
+    <button class="icon-btn" id="restartBtn" title="Restart">↻</button>
+  </div>
+  <div class="game-main">
+    <div id="game"></div>
+    <div class="game-help">
+      <b>The Call.</b> Five accounts from Lovecraft's tale of cosmic dread — decode the idol glyphs before sanity slips; weave through the bayou cult's torch halos; steer the yacht toward the sunken city; collect runes in R'lyeh's impossible geometry; and face the Great Old One himself. Tap <b>⛶ Full screen</b> for the full experience.
+      <span class="keys">TAP · DRAG · ARROW KEYS · IN HIS HOUSE AT R'LYEH, CTHULHU WAITS DREAMING</span>
+    </div>
+  </div>
+  <script src="../../js/retro-engine.js"></script>
+  <script src="../../js/saga.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
