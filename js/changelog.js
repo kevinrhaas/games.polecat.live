@@ -11,6 +11,16 @@
 // visitor has seen.
 export const CHANGELOG = [
   {
+    v: 70,
+    title: 'New game: Merlin — Five Trials of the Enchanter (Spell Puzzle)',
+    kind: 'game',
+    ts: "",
+    items: [
+      'Five trials from Arthurian legend: catch 12 glowing gold runes falling through the ancient oakwood while dodging cursed red glyphs (3 lives, spawn rate ramps up); survive 24 seconds in Vortigern\'s underground tower as the Red Dragon and White Dragon sweep fire-breath across three lanes — dodge between them; steer Merlin\'s merlin falcon through arrow-filled skies collecting 10 golden feathers in free movement (3 lives, arrows spawn from all four edges); tap the correct glowing rune from a circle of standing stones in 10 timed rounds — the gold zone timer shrinks each round, 3 misses lose; and finally guide Merlin through crystal spires that close in from both cave walls for 26 seconds — the corridor narrows steadily and one wrong step shatters a life.',
+      'Deep midnight-indigo palette: void-black (#06040e), mystical purple (#4a1a7a), lavender spell-glow (#b87aff), starlit silver (#c8d0f0), enchanter gold (#d4a820), crystal blue (#88ccff). Chapter-select is a CELESTIAL STAR CHART — five constellation medallions (hawk, twin-dragons, falcon, rune-star, serpent-spiral) scattered on a midnight-blue sky map, each an elliptical disc with RA/Dec grid lines inside, the constellation drawn in connecting star-dots; selected constellations pulse with lavender glow and a golden lead star. Scenery: ancient British hilltop at night with standing stones, rolling hills, a crescent moon, animated wisps, and drifting bat-shaped wisps. In-voice labels: RUNES currency; THE ENCHANTMENT HOLDS / THE SPELL BREAKS win/lose headers. Page chrome in deep indigo and lavender.',
+    ],
+  },
+  {
     v: 69,
     title: 'New game: Sinbad the Sailor (Voyage Adventure, 5 voyages)',
     kind: 'game',

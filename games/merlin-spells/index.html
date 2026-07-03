@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <title>Merlin — games.polecat.live</title>
+  <meta name="theme-color" content="#06040e" />
+  <link rel="icon" href="../../assets/logo.svg" type="image/svg+xml" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/site.css" />
+  <link rel="stylesheet" href="../../css/game.css" />
+  <style id="game-theme">:root{
+    --g-bg1:#100828;--g-bg2:#06040e;--g-bar:rgba(6,4,14,.97);
+    --g-accent:#b87aff;--g-title:#d8c8f0;--g-panel:rgba(16,8,40,.88);
+    --g-border:#3a1a6a;--g-text:#a88ad8;--g-key:#d4a820;
+    --g-stage:#1a0a30;--g-glow:rgba(184,122,255,.22)
+  }</style>
+</head>
+<body class="game-page">
+  <div class="game-bar">
+    <a class="back" href="../../index.html">◀ ARCADE</a>
+    <span class="title">Merlin</span>
+    <span class="src">· Arthurian Legend</span>
+    <span class="spacer"></span>
+    <button class="icon-btn" id="fullscreenBtn" title="Full screen">⛶</button>
+    <button class="icon-btn" id="muteBtn" title="Mute">🔊</button>
+    <button class="icon-btn" id="restartBtn" title="Restart">↻</button>
+  </div>
+  <div class="game-main">
+    <div id="game"></div>
+    <div class="game-help">
+      <b>Merlin.</b> Five trials of the great enchanter — catch wild runes in the ancient forest, survive the Two Dragons of Vortigern's tower, steer Merlin's falcon through arrow-filled skies, solve the living rune puzzle of the standing stones, and escape Nimue's crystal snare before the spell closes.
+      <span class="keys">TAP / DRAG · ARROW KEYS · earn RUNES across all five trials</span>
+    </div>
+  </div>
+  <script src="../../js/retro-engine.js"></script>
+  <script src="../../js/saga.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
