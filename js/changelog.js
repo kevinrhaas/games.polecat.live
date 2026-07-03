@@ -14,7 +14,7 @@ export const CHANGELOG = [
     v: 73,
     title: 'New game: Open Sesame — Ali Baba and the Forty Thieves (Heist Puzzle, 5 tales)',
     kind: 'game',
-    ts: '',
+    ts: "2026-07-03T11:24:45.198Z",
     items: [
       'Five tales from One Thousand and One Nights: hide from the forty thieves\' sweeping lanterns in the dark forest for 24 seconds (drag left/right, 3 lives, lanterns accelerate); rush the treasure cave to collect 12 gold bags before the magic door seals in 26 seconds (dodge falling stalactites, 3 lives); tap 14 marked doors on the cobblestone street before their chalk glow fades and the thieves find the right house (3 misses lose, marks speed up); discover 14 thieves hiding in great oil jars by tapping each pair of glowing eyes before they vanish (3 misses lose); and time Morgiana\'s dagger-dance — tap when the swinging pendulum blade enters the shrinking golden zone for 8 strikes (zone narrows and blade speeds up each hit, 4 misses lose).',
       'Deep Arabian night palette: midnight indigo (#0c0818), cave purple (#1a1030), desert gold (#d4a020), bright gold (#f0c840), amber torch (#e05800), cave teal (#006080). Chapter-select is five ORNATE PALACE ARCHES arranged in a 2-1-2 layout on an indigo backdrop — each a pointed Moorish arch with a brass keystone gem, flanking torch glow, and a tale-number in Arabic-style framing; the palace silhouette with domed towers and lit arched windows fills the menu background. Emblem is a treasure chest overflowing with gold coins. Page chrome in deep indigo and desert gold.',
