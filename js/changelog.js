@@ -13,7 +13,7 @@ export const CHANGELOG = [
     v: 82,
     title: 'New game: The Scarlet Letter — Five Puritan Chapters (Narrative Stealth)',
     kind: 'game',
-    ts: '',
+    ts: '2026-07-03T20:23:54.915Z',
     items: [
       'Five chapters from Hawthorne\'s 1850 novel: tap shame tokens out of the air before they reach Hester on the scaffold (22 s, 3 lives); redirect wild Pearl by tapping her to reverse direction (20 s, speed ramps up); parry Roger Chillingworth\'s eight probing questions by tapping when the spinning pointer enters the calm green arc; steer Hester left/right through the dark forest dodging three sweeping lantern beams; and tap to shore up Dimmesdale\'s oscillating courage until he climbs the full scaffold for his confession.',
       'Dark Puritan palette: scarlet red (#cc1122), charcoal (#1a1510), parchment ivory (#e8dcc0), candlelight amber (#c87820). Chapter-select is THE GRAVEYARD — five weathered arched gravestones scattered in a churchyard with a church silhouette and fence pickets. Emblem: the scarlet letter A in bold pixel blocks. In-voice labels: FAITH currency; ENDURED / CAST DOWN win/lose headers. Page chrome in deep charcoal with scarlet border accents.',
