@@ -103,8 +103,17 @@ their story. The home card shows a `GEN n` badge and the `style` filter.
   (`upgrades{}` + node `grant`, read with `api.has(key)`) and banked `currency`,
   a per-node `choice` that sets `flags`, and multiple `endings` chosen by those
   flags. `api.g2` gives `skyGradient/dither/parallax/mode7/glow/roundRect/
-  bigSprite`. **Reference: `games/dracula-castle/` (Dracula — Nights of Blood).**
-  Load order in index.html: retro-engine.js → retro-gfx2.js → saga2.js → game.js.
+  bigSprite` PLUS animation helpers `stars/embers/fog/flame(torch)/gleamText/
+  lightning/ornateFrame`. **Reference: `games/dracula-castle/` (Dracula — Nights
+  of Blood).** Load order in index.html: retro-engine.js → retro-gfx2.js →
+  saga2.js → game.js.
+  **Gen-2 must look like a real SNES/Genesis game, not "8-bit with gradients":**
+  an ANIMATED title screen (supply `renderBoot(api,info)` — a gleaming logo via
+  `g2.gleamText`, a parallax multi-layer scene, particles, flicker, an animated
+  CTA), and a DETAILED, ANIMATED menu/hub (ornate framed node medallions each
+  with a tiny per-location vignette, a flowing animated connector between nodes,
+  torch flames, a selection glow/cursor — `cfg.map.title/node` receive `sceneT`).
+  Static screens are a fail — every framed screen should move.
 
 **Promoting a game to Gen 2** (an occasional, high-care task — do NOT rush it):
 pick a marquee Gen-1 game, rebuild `game.js` on `RetroSaga2` keeping its best

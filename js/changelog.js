@@ -10,6 +10,17 @@
 // format stays identical to the rest of the fleet.
 export const CHANGELOG = [
   {
+    v: 83,
+    title: 'Dracula in true 16-bit — animated title & menus',
+    kind: 'feature',
+    ts: '2026-07-03T20:48:35.401Z',
+    items: [
+      'The first Gen-2 game got a real SNES/Genesis glow-up: an animated title screen with a gleaming DRACULA logo, a crescent blood moon, a parallax castle with flickering windows, drifting embers and falling blood.',
+      'The chapter map is now illuminated and alive — ornate framed medallions with a little scene inside each location, flickering torches, a flowing blood-trail between nights, and a bat cursor circling your choice.',
+      'New 16-bit effect helpers (starfields, embers, fog, torch flames, gleaming logos, lightning) now raise the bar for every future 16-bit game.',
+    ],
+  },
+  {
     v: 82,
     title: 'New game: The Scarlet Letter — Five Puritan Chapters (Narrative Stealth)',
     kind: 'game',

@@ -17,9 +17,15 @@
     gold: '#e3c567', bone: '#cdbfe0', stone: '#3a2f44', shadow: '#080410',
   };
 
-  /* ─── bat emblem ─── */
+  /* ─── heraldic bat crest (title + finale) ─── */
   function emblem(api, cx, cy) {
-    api.g2.glow(cx, cy, 34, '#5a1020', 0.7);
+    const g2 = api.g2, c = api.ctx;
+    g2.glow(cx, cy, 40, '#7a1020', 0.7);
+    // shield backdrop
+    c.fillStyle = '#160a1a';
+    c.beginPath(); c.moveTo(cx - 26, cy - 18); c.lineTo(cx + 26, cy - 18); c.lineTo(cx + 26, cy + 6);
+    c.quadraticCurveTo(cx + 26, cy + 26, cx, cy + 30); c.quadraticCurveTo(cx - 26, cy + 26, cx - 26, cy + 6); c.closePath(); c.fill();
+    c.strokeStyle = '#e3c567'; c.lineWidth = 2; c.stroke();
     api.gfx.sprite([
       'r..........r',
       'rr...rr...rr',
@@ -27,60 +33,136 @@
       '.rrrrrrrrrr.',
       '..rr.rr.rr..',
       '...r....r...',
-    ], cx - 36, cy - 18, { r: C.blood }, 6);
+    ], cx - 30, cy - 14, { r: C.blood }, 5);
   }
 
-  /* ─── gothic night scenery (parallax castle + blood moon + bats) ─── */
+  /* ─── cinematic animated night: parallax castle, blood moon, bats, fog,
+   *     embers, occasional lightning. Shared by boot/intro/result/finale/hub. ─ */
+  function ridge(c, W, y, step, amp, seed, color) {
+    c.fillStyle = color; c.beginPath(); c.moveTo(0, y);
+    for (let x = 0; x <= W; x += step) c.lineTo(x, y - amp * (0.35 + 0.65 * Math.abs(Math.sin(x * 0.11 + seed))));
+    c.lineTo(W, y + 260); c.lineTo(0, y + 260); c.closePath(); c.fill();
+  }
+  function drawCastle(api, t) {
+    const c = api.ctx, g2 = api.g2, W = api.W, H = api.H, baseY = H - 96;
+    c.fillStyle = '#08040e';
+    c.fillRect(28, baseY - 66, W - 56, 66);
+    for (let x = 30; x < W - 30; x += 13) c.fillRect(x, baseY - 72, 7, 7); // battlements
+    const towers = [[20, 84], [64, 60], [148, 70], [206, 54], [W - 42, 78]];
+    for (const tw of towers) {
+      const tx = tw[0], th = tw[1];
+      c.fillStyle = '#08040e'; c.fillRect(tx, baseY - th, 22, th);
+      c.beginPath(); c.moveTo(tx - 2, baseY - th); c.lineTo(tx + 11, baseY - th - 16); c.lineTo(tx + 24, baseY - th); c.closePath(); c.fill(); // spire
+      const fl = 0.45 + 0.55 * Math.sin(t * (5 + tx * 0.04) + tx);
+      if (fl > 0.45) g2.glow(tx + 11, baseY - th + 18, 7, '#e3a030', 0.5 * fl);
+      c.fillStyle = g2.mix('#2a1a06', '#ffcf5a', Math.max(0, fl)); c.fillRect(tx + 8, baseY - th + 14, 6, 9);
+    }
+    c.fillStyle = '#05030a'; c.fillRect(W / 2 - 13, baseY - 30, 26, 30);
+    g2.glow(W / 2, baseY - 12, 11, '#7a1420', 0.4);
+  }
+  function batSwarm(api, t) {
+    const g = api.gfx, defs = [[10, 108, 2, '#140a16'], [15, 140, 2, '#1a0c1c'], [8, 90, 3, '#0e0712'], [18, 168, 1, '#120814'], [12, 124, 2, '#160a18']];
+    defs.forEach((d, i) => {
+      const bx = ((t * d[0]) + i * 70) % (api.W + 50) - 25, y = d[1] + Math.sin(t * 2 + i) * 18;
+      const flap = Math.sin(t * 12 + i) > 0;
+      g.sprite(flap ? ['k.kk.k', '.kkkk.'] : ['.k..k.', 'kkkkkk'], bx, y, { k: d[3] }, d[2]);
+    });
+  }
+  function nightScene(api, t, dim) {
+    const c = api.ctx, g2 = api.g2, W = api.W, H = api.H;
+    g2.skyGradient([[0, '#0a0612'], [0.45, '#1a0a1c'], [1, '#050308']]);
+    g2.stars(t, 48, H * 0.5, '#d8c8f0');
+    // blood moon with pulse + bloom + crescent shadow
+    const mp = 1 + 0.05 * Math.sin(t * 0.8);
+    g2.glow(W - 56, 60, 46 * mp, '#7a1420', 0.5);
+    c.fillStyle = '#b03038'; c.beginPath(); c.arc(W - 56, 60, 22, 0, 7); c.fill();
+    c.fillStyle = '#8a2028'; [[6, -4, 4], [-5, 5, 3], [3, 8, 2]].forEach((cr) => { c.beginPath(); c.arc(W - 56 + cr[0], 60 + cr[1], cr[2], 0, 7); c.fill(); });
+    c.fillStyle = '#150a12'; c.beginPath(); c.arc(W - 48, 53, 19, 0, 7); c.fill();
+    ridge(c, W, H * 0.54, 12, 22, 1.7, '#0c0814');
+    drawCastle(api, t);
+    g2.fog(t, { y0: H * 0.55, y1: H, bands: 5, color: '#3a2540', alpha: 0.09 });
+    g2.embers(t, 16, { yBottom: H, yTop: H * 0.28, color: '#c85a6a', speed: 0.09, size: 2, alpha: 0.45 });
+    batSwarm(api, t);
+    const L = g2.lightning(t, 7.5);
+    if (L > 0) { c.fillStyle = 'rgba(178,188,255,' + (L * 0.32) + ')'; c.fillRect(0, 0, W, H); }
+    if (dim) { c.fillStyle = 'rgba(6,3,9,' + dim + ')'; c.fillRect(0, 0, W, H); }
+  }
   function scenery(api, scene, t) {
-    const g = api.gfx, c = api.ctx, g2 = api.g2, W = api.W, H = api.H;
-    g2.skyGradient([[0, '#0a0612'], [0.5, '#180a18'], [1, '#050308']]);
-    // stars
-    for (let i = 0; i < 40; i++) { const x = (i * 53 + 11) % W, y = (i * 97 + 7) % Math.floor(H * 0.5); c.globalAlpha = 0.25 + 0.3 * Math.sin(t * 2 + i); g.rect(x, y, 1, 1, C.bone); }
-    c.globalAlpha = 1;
-    // blood moon (not on hub)
-    if (scene !== 'hub') { g2.glow(W - 54, 62, 40, '#7a1420', 0.6); g.circle(W - 54, 62, 22, '#b03038'); g.circle(W - 47, 56, 19, '#180a14'); }
-    // parallax ridgeline + castle towers
-    const baseY = H - 92;
-    c.fillStyle = '#0a0610';
-    c.beginPath(); c.moveTo(0, baseY);
-    for (let x = 0; x <= W; x += 16) c.lineTo(x, baseY - 8 - ((x * 7) % 16));
-    c.lineTo(W, H); c.lineTo(0, H); c.closePath(); c.fill();
-    const towers = [[36, 46], [92, 68], [150, 54], [204, 74]];
-    for (const tw of towers) { g.rect(tw[0], baseY - tw[1], 20, tw[1], '#0a0610'); for (let bx = 0; bx < 20; bx += 8) g.rect(tw[0] + bx, baseY - tw[1] - 5, 5, 5, '#0a0610'); g.rect(tw[0] + 7, baseY - tw[1] + 12, 6, 9, '#e3a030'); }
-    // drifting bats
-    for (let i = 0; i < 5; i++) { const bx = (t * 26 + i * 64) % (W + 40) - 20, by = 108 + Math.sin(t * 2 + i) * 16 + i * 10; const flap = Math.sin(t * 12 + i) > 0; g.sprite(flap ? ['k.kk.k', '.kkkk.'] : ['.k..k.', 'kkkkkk'], bx, by, { k: '#120814' }, 2); }
-    if (scene === 'intro' || scene === 'result' || scene === 'finale') { c.fillStyle = 'rgba(6,3,9,.6)'; c.fillRect(0, 0, W, H); }
-    else if (scene === 'hub') { c.fillStyle = 'rgba(6,3,9,.35)'; c.fillRect(0, 0, W, H); g2.dither(H - 120, H, '#1b0a18', '#0a0612', 3); }
+    if (scene === 'hub') { nightScene(api, t, 0.5); return; }
+    nightScene(api, t, (scene === 'intro' || scene === 'result' || scene === 'finale') ? 0.55 : 0);
   }
 
-  /* ─── HUB: a gothic route-map from Transylvania to England ─── */
-  const NODES_XY = { castle: [46, 96], demeter: [156, 150], renfield: [28, 226], whitby: [158, 288], reckoning: [86, 372] };
-  const ORDER = ['castle', 'demeter', 'whitby', 'reckoning']; // main blood-trail order
+  /* ─── tiny per-location vignettes shown inside each menu medallion ─── */
+  const ART = {
+    castle(api, x, y, w, h, t) { const c = api.ctx, g2 = api.g2; c.fillStyle = '#120a1e'; c.fillRect(x, y, w, h); g2.glow(x + w * 0.7, y + 6, 10, '#7a1420', 0.5); c.fillStyle = '#b03038'; c.beginPath(); c.arc(x + w * 0.7, y + 6, 5, 0, 7); c.fill(); c.fillStyle = '#05030a'; c.fillRect(x + w / 2 - 6, y + 6, 12, h); const fl = 0.5 + 0.5 * Math.sin(t * 6); c.fillStyle = g2.mix('#2a1a06', '#ffcf5a', fl); c.fillRect(x + w / 2 - 2, y + 12, 4, 5); },
+    demeter(api, x, y, w, h, t) { const c = api.ctx; c.fillStyle = '#0a1826'; c.fillRect(x, y, w, h); c.strokeStyle = '#1c3a52'; c.lineWidth = 1; for (let i = 0; i < 3; i++) { c.beginPath(); const yy = y + h - 4 - i * 5; c.moveTo(x, yy); for (let xx = 0; xx <= w; xx += 6) c.lineTo(x + xx, yy + Math.sin(t * 3 + xx * 0.4 + i) * 1.6); c.stroke(); } const sx = x + w / 2 + Math.sin(t) * 6; c.fillStyle = '#3a2410'; c.fillRect(sx - 7, y + h - 12, 14, 5); c.fillStyle = '#d8d0b0'; c.fillRect(sx - 1, y + h - 22, 2, 10); c.beginPath(); c.moveTo(sx + 1, y + h - 21); c.lineTo(sx + 7, y + h - 15); c.lineTo(sx + 1, y + h - 13); c.fill(); },
+    renfield(api, x, y, w, h, t) { const c = api.ctx; c.fillStyle = '#161018'; c.fillRect(x, y, w, h); c.fillStyle = '#0a0810'; c.fillRect(x + w / 2 - 12, y + 3, 24, h - 6); c.strokeStyle = '#3a2a20'; c.lineWidth = 1; for (let i = -1; i < 2; i++) { c.beginPath(); c.moveTo(x + w / 2 + i * 8, y + 3); c.lineTo(x + w / 2 + i * 8, y + h - 3); c.stroke(); } const fx = x + w / 2 + Math.sin(t * 4) * 9, fy = y + h / 2 + Math.cos(t * 5) * 6; c.fillStyle = '#101010'; c.fillRect(fx, fy, 2, 2); },
+    whitby(api, x, y, w, h, t) { const c = api.ctx, g2 = api.g2; c.fillStyle = '#101422'; c.fillRect(x, y, w, h); g2.fog(t, { y0: y + h - 10, y1: y + h, bands: 2, color: '#8a9ac0', alpha: 0.12 }); c.fillStyle = '#2a2f3a'; [10, 26, 44, 62].forEach((dx) => { c.fillRect(x + dx, y + h - 10, 6, 10); }); c.fillStyle = '#4a4f5c'; c.fillRect(x + w / 2 - 1, y + 6, 3, 16); c.fillRect(x + w / 2 - 5, y + 10, 11, 3); },
+    reckoning(api, x, y, w, h, t) { const c = api.ctx, g2 = api.g2; const gr = c.createLinearGradient(0, y, 0, y + h); gr.addColorStop(0, '#e08040'); gr.addColorStop(1, '#3a1a20'); c.fillStyle = gr; c.fillRect(x, y, w, h); g2.glow(x + w / 2, y + h, 22, '#ffb060', 0.5); c.fillStyle = '#1a0e12'; c.beginPath(); c.moveTo(x, y + h); c.lineTo(x + w * 0.4, y + h * 0.5); c.lineTo(x + w * 0.6, y + h * 0.5); c.lineTo(x + w, y + h); c.fill(); const cx = x + w / 2 + Math.sin(t) * 4; c.fillStyle = '#120810'; c.fillRect(cx - 5, y + h - 12, 10, 5); },
+  };
+
+  /* ─── HUB: an illuminated gothic route-map, Transylvania → England ─── */
+  const NODES_XY = { castle: [40, 92], demeter: [150, 150], renfield: [26, 250], whitby: [152, 288], reckoning: [84, 388] };
+  const ORDER = ['castle', 'demeter', 'whitby', 'reckoning'];
   const menu = {
-    title(api, save) {
-      const c = api.ctx;
-      // blood trail between the main stops
-      c.setLineDash([3, 5]); c.strokeStyle = C.blood; c.lineWidth = 2; c.globalAlpha = 0.8;
-      c.beginPath();
-      ORDER.forEach((id, i) => { const p = NODES_XY[id]; const x = p[0] + 46, y = p[1] + 33; if (i === 0) c.moveTo(x, y); else c.lineTo(x, y); });
-      c.stroke(); c.setLineDash([]); c.globalAlpha = 1;
-      api.txtCFit("THE COUNT'S CHRONICLE", api.W / 2, 20, 12, C.bloodL, true);
-      api.txtCFit('BLOOD  ' + (save.cur || 0), api.W / 2, 42, 9, C.rose);
+    title(api, save, t) {
+      const c = api.ctx, g2 = api.g2, W = api.W;
+      // flowing blood trail between the main stops
+      c.save(); c.setLineDash([4, 7]); c.lineDashOffset = -(t * 22) % 1000;
+      c.strokeStyle = C.blood; c.lineWidth = 2.5; c.globalAlpha = 0.55 + 0.2 * Math.sin(t * 3);
+      c.beginPath(); ORDER.forEach((id, i) => { const p = NODES_XY[id], px = p[0] + 46, py = p[1] + 30; i ? c.lineTo(px, py) : c.moveTo(px, py); }); c.stroke(); c.restore();
+      // corner torches
+      g2.flame(16, 74, t, 1.2, { glow: 'rgba(255,140,40,.9)' });
+      g2.flame(W - 16, 74, t, 1.2, { glow: 'rgba(255,140,40,.9)' });
+      // ornate header plaque
+      g2.ornateFrame(24, 12, W - 48, 38, 8, 'rgba(12,4,10,.92)', '#8a1824');
+      g2.gleamText("THE COUNT'S CHRONICLE", W / 2, 18, api.fitSize("THE COUNT'S CHRONICLE", 10, W - 70, true), C.bloodL, t, { shadow: 'rgba(0,0,0,.7)', gleamSpeed: 60 });
+      g2.glow(W / 2 - 34, 40, 6, C.blood, 0.7); c.fillStyle = C.blood; c.beginPath(); c.arc(W / 2 - 34, 40, 3, 0, 7); c.fill();
+      api.txtCFit('BLOOD  ' + (save.cur || 0), W / 2 + 6, 36, 9, C.rose);
     },
     layout() { return ['castle', 'demeter', 'renfield', 'whitby', 'reckoning'].map((id) => ({ x: NODES_XY[id][0], y: NODES_XY[id][1], w: 92, h: 66 })); },
     node(api, info) {
-      const g = api.gfx, c = api.ctx, g2 = api.g2, { node, x, y, w, h, sel, done, locked } = info;
-      // stone plaque headstone
-      c.fillStyle = locked ? '#150f1c' : (sel ? '#33223f' : '#201828');
-      c.beginPath(); c.moveTo(x, y + 20); c.quadraticCurveTo(x, y, x + w / 2, y); c.quadraticCurveTo(x + w, y, x + w, y + 20); c.lineTo(x + w, y + h); c.lineTo(x, y + h); c.closePath(); c.fill();
-      c.strokeStyle = done ? C.gold : (sel ? C.bloodL : C.stone); c.lineWidth = sel ? 2 : 1; c.stroke();
-      if (sel && !locked) g2.glow(x + w / 2, y + h / 2, 40, '#5a1020', 0.4);
-      if (node.icon && !locked) node.icon(api, x + w / 2, y + 20);
-      api.txtCFit((locked ? '🔒 ' : '') + node.name, x + w / 2, y + 30, 8, locked ? C.stone : (done ? C.gold : C.rose), false, w - 10);
-      api.txtCFit(locked ? '' : (node.optional ? '◆ ' + node.sub : node.sub), x + w / 2, y + 46, 6, C.mist === node ? C.rose : '#8a6a8a', false, w - 10);
-      if (done) api.txtC('✝', x + w / 2, y + h - 15, 10, C.gold);
+      const g = api.gfx, c = api.ctx, g2 = api.g2, { node, x, y, w, h, sel, done, locked, t } = info;
+      const cx = x + w / 2;
+      if (sel && !locked) g2.glow(cx, y + (h - 14) / 2, 48, C.blood, 0.35 + 0.2 * Math.sin(t * 4));
+      g2.ornateFrame(x, y, w, h - 14, 7, locked ? 'rgba(14,10,20,.92)' : 'rgba(20,12,26,.95)', done ? C.gold : (sel ? C.bloodL : '#5a3a4a'));
+      // art vignette clipped inside the frame
+      c.save(); g2.roundRect(x + 5, y + 5, w - 10, h - 30, 5, null, null); c.clip();
+      if (!locked && ART[node.id]) ART[node.id](api, x + 5, y + 5, w - 10, h - 30, t); else { c.fillStyle = '#0e0812'; c.fillRect(x + 5, y + 5, w - 10, h - 30); }
+      c.restore();
+      if (locked) { c.fillStyle = 'rgba(8,4,10,.6)'; g2.roundRect(x + 5, y + 5, w - 10, h - 30, 5, 'rgba(8,4,10,.6)', null); api.txtC('🔒', cx, y + (h - 30) / 2 - 3, 12, '#7a6a7a'); }
+      if (done) api.txtC('✝', x + w - 12, y + 9, 10, C.gold);
+      // ribbon nameplate
+      g2.roundRect(x + 6, y + h - 22, w - 12, 16, 4, done ? '#3a2a10' : '#2a0e16', done ? C.gold : '#7a2030', 1);
+      api.txtCFit((node.optional ? '◆ ' : '') + node.name, cx, y + h - 19, 7, locked ? '#5a4a5a' : (done ? '#f0d878' : C.rose), false, w - 16);
+      // hovering bat cursor over the selected node
+      if (sel && !locked) { const by = y - 9 + Math.sin(t * 5) * 2; g.sprite(Math.sin(t * 10) > 0 ? ['k.kk.k', '.kkkk.'] : ['.k..k.', 'kkkkkk'], cx - 6, by, { k: C.bloodL }, 2); }
     },
   };
+
+  /* ─── cinematic animated title screen ─── */
+  function bloodDrips(api, yTop, t) {
+    const c = api.ctx, W = api.W;
+    for (let i = 0; i < 6; i++) {
+      const bx = W / 2 - 70 + i * 28, ph = (t * 0.4 + i * 0.33) % 1;
+      const y = yTop + ph * 26, a = Math.sin(ph * Math.PI);
+      c.globalAlpha = a; c.fillStyle = C.blood;
+      c.beginPath(); c.arc(bx, y, 2.4, 0, 7); c.fill(); c.fillRect(bx - 1, yTop, 2, y - yTop);
+    }
+    c.globalAlpha = 1;
+  }
+  function renderBoot(api, info) {
+    const g2 = api.g2, W = api.W, H = api.H, t = info.sceneT;
+    nightScene(api, t, 0);
+    emblem(api, W / 2, H * 0.22);
+    const ts = api.fitSize('DRACULA', 30, W - 20, true);
+    g2.gleamText('DRACULA', W / 2, H * 0.37, ts, C.bloodL, t, { bevel: '#ff9aa6', shadow: 'rgba(0,0,0,.8)', gleamSpeed: 55 });
+    bloodDrips(api, H * 0.37 + ts, t);
+    api.txtCFit('NIGHTS OF BLOOD', W / 2, H * 0.37 + ts + 16, 11, C.rose, true);
+    if (info.blink) api.txtCFit('▸ TAP TO ENTER ◂', W / 2, H * 0.70, 12, '#f0d6d6');
+    api.txtCFit('A 16-BIT TRIBUTE · B. STOKER, 1897', W / 2, H - 28, 8, '#8a6a8a');
+    api.vignette(); api.scanlines();
+  }
 
   /* ============================ mini-game phases ============================ */
   // Shared: a chunky vampire figure sprite
@@ -347,7 +429,7 @@
     bootCta: 'TAP TO ENTER', bootLine: 'A CHRONICLE IN BLOOD',
     width: 270, height: 480, parent: '#game',
     palette: { gold: C.gold, blood: C.blood, cream: C.rose, dim: '#8a6a8a' },
-    emblem, scenery, menu, map: menu,
+    emblem, scenery, menu, map: menu, renderBoot,
     mapHint: 'CHOOSE THE NEXT NIGHT', mapDone: 'THE COUNT IS DUST',
     screens: {
       overlay: 'rgba(10,3,6,.84)', win: C.bloodL, lose: '#7a1018', chapterLabel: '#8a6a8a',

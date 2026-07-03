@@ -265,11 +265,15 @@
     }
 
     function drawBoot() {
+      if (cfg.renderBoot) { cfg.renderBoot(api, { sceneT, blink: Math.floor(sceneT * 1.5) % 2 === 0 }); return; }
       backdrop('boot');
       const cx = W / 2;
       if (cfg.emblem) cfg.emblem(api, cx, H * 0.30);
-      txtCFit((cfg.title || '').toUpperCase(), cx, H * 0.46, 22, PAL.gold, true);
-      txtCFit(cfg.subtitle || 'A 16-BIT EPIC', cx, H * 0.46 + 30, 10, PAL.cream, true);
+      // animated gleaming logo (16-bit standard) instead of flat pixel text
+      const title = (cfg.title || '').toUpperCase();
+      const tsize = fitSize(title, 24, W - 24, true);
+      g2.gleamText(title, cx, H * 0.44, tsize, PAL.gold, sceneT, { bevel: g2.mix(PAL.gold, '#ffffff', 0.4), shadow: 'rgba(0,0,0,.7)' });
+      txtCFit(cfg.subtitle || 'A 16-BIT EPIC', cx, H * 0.44 + tsize + 10, 10, PAL.cream, true);
       if (Math.floor(sceneT * 1.5) % 2 === 0) txtCFit(cfg.bootCta || 'TAP TO BEGIN', cx, H * 0.66, 12, PAL.cream);
       txtCFit(cfg.credit || 'A 16-BIT TRIBUTE', cx, H - 40, 8, PAL.dim);
       txtCFit(cfg.bootLine || (nodes.length + ' CHAPTERS · ONE LEGEND'), cx, H - 26, 8, PAL.dim);
@@ -291,12 +295,12 @@
     }
     function drawHub() {
       backdrop('hub');
-      if (cfg.map && cfg.map.title) cfg.map.title(api, save);
+      if (cfg.map && cfg.map.title) cfg.map.title(api, save, sceneT);
       else { txtCFit((cfg.title || '').toUpperCase(), W / 2, 20, 16, PAL.gold, true); txtCFit(CUR + '  ' + banked(), W / 2, 46, 9, PAL.cream); }
       const rects = hubRects();
       for (let i = 0; i < nodes.length; i++) {
         const n = nodes[i], r = rects[i];
-        const info = { node: n, i, x: r.x, y: r.y, w: r.w, h: r.h, sel: i === sel, done: !!save.done[n.id], locked: !nodeAvailable(n), available: nodeAvailable(n) };
+        const info = { node: n, i, x: r.x, y: r.y, w: r.w, h: r.h, sel: i === sel, done: !!save.done[n.id], locked: !nodeAvailable(n), available: nodeAvailable(n), t: sceneT };
         if (cfg.map && cfg.map.node) cfg.map.node(api, info); else defaultNode(info);
       }
       if (allDone()) txtCFit('★ ' + (cfg.mapDone || 'THE TALE IS TOLD') + ' ★', W / 2, H - 22, 9, PAL.gold);

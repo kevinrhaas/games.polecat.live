@@ -207,6 +207,111 @@
       }
     }
 
+    /* ===================== animated "16-bit juice" helpers ==================
+     * Cheap, deterministic (time-driven) effects that make title & menu screens
+     * feel alive — the SNES/Genesis standard for Gen-2 games. All take a time
+     * value `t` (seconds) so they animate without per-frame state. */
+
+    // twinkling starfield
+    stars(t, n, h, color) {
+      const c = this.ctx, W = this.W, H = h == null ? this.H * 0.6 : h;
+      for (let i = 0; i < n; i++) {
+        const x = (i * 79 + 13) % W, y = (i * 131 + 7) % Math.floor(H);
+        const a = 0.25 + 0.55 * (0.5 + 0.5 * Math.sin(t * (1 + (i % 5) * 0.3) + i));
+        c.globalAlpha = a; c.fillStyle = color || '#dfe6ff';
+        c.fillRect(x, y, (i % 7 === 0) ? 2 : 1, (i % 7 === 0) ? 2 : 1);
+      }
+      c.globalAlpha = 1;
+    }
+
+    // rising ember / dust motes (great for torches, fires, magic)
+    embers(t, n, opts) {
+      const o = opts || {}, c = this.ctx, W = this.W, H = this.H;
+      const x0 = o.x0 == null ? 0 : o.x0, x1 = o.x1 == null ? W : o.x1;
+      const yb = o.yBottom == null ? H : o.yBottom, yt = o.yTop == null ? 0 : o.yTop;
+      const col = o.color || '#ffae4a', spd = o.speed || 0.14, size = o.size || 2;
+      const span = yb - yt;
+      for (let i = 0; i < n; i++) {
+        const seed = (i * 2654435761) >>> 0;
+        const bx = x0 + ((seed % 1000) / 1000) * (x1 - x0);
+        const ph = (t * spd + (seed % 100) / 100) % 1;
+        const y = yb - ph * span;
+        const x = bx + Math.sin(t * (0.6 + (i % 4) * 0.2) + i) * 6;
+        const a = Math.sin(ph * Math.PI); // fade in/out over its life
+        c.globalAlpha = a * (o.alpha == null ? 0.8 : o.alpha);
+        c.fillStyle = col; c.fillRect(x | 0, y | 0, size, size);
+      }
+      c.globalAlpha = 1;
+    }
+
+    // scrolling translucent fog bands
+    fog(t, opts) {
+      const o = opts || {}, c = this.ctx, W = this.W;
+      const y0 = o.y0 == null ? this.H * 0.5 : o.y0, y1 = o.y1 == null ? this.H : o.y1;
+      const bands = o.bands || 4, col = o.color || '#9b7bbf', al = o.alpha == null ? 0.08 : o.alpha;
+      c.save(); c.fillStyle = col;
+      for (let b = 0; b < bands; b++) {
+        const y = y0 + (y1 - y0) * (b / bands) + Math.sin(t * 0.4 + b) * 5;
+        c.globalAlpha = al * (0.7 + 0.3 * Math.sin(t + b));
+        const off = ((t * (6 + b * 3)) % 60) - 30;
+        c.fillRect(off, y, W + 60, 10 + b * 3);
+      }
+      c.restore();
+    }
+
+    // a flickering torch/candle flame with glow, centered at (x,y) base
+    flame(x, y, t, scale, cols) {
+      const c = this.ctx, s = scale || 1;
+      const co = cols || {};
+      const f = 0.7 + 0.3 * Math.sin(t * 13 + x) + 0.15 * Math.sin(t * 29 + y);
+      this.glow(x, y - 6 * s, 16 * s * f, co.glow || 'rgba(255,150,40,.9)', 0.6);
+      const h = (10 + 4 * f) * s;
+      const flick = Math.sin(t * 17 + x) * 1.5 * s;
+      c.fillStyle = co.outer || '#ff7a1a';
+      c.beginPath(); c.moveTo(x, y - h); c.quadraticCurveTo(x + 4 * s + flick, y - h * 0.4, x, y); c.quadraticCurveTo(x - 4 * s + flick, y - h * 0.4, x, y - h); c.fill();
+      c.fillStyle = co.inner || '#ffd24a';
+      c.beginPath(); c.moveTo(x, y - h * 0.72); c.quadraticCurveTo(x + 2 * s + flick * 0.5, y - h * 0.3, x, y - 1 * s); c.quadraticCurveTo(x - 2 * s + flick * 0.5, y - h * 0.3, x, y - h * 0.72); c.fill();
+    }
+
+    // a moving-gleam pixel-font headline with drop shadow + optional bevel.
+    // Draws centered at (cx, y). Great for animated title logos.
+    gleamText(str, cx, y, size, color, t, opts) {
+      const c = this.ctx, o = opts || {};
+      c.save();
+      c.font = size + "px 'Press Start 2P'";
+      c.textAlign = 'center'; c.textBaseline = 'top';
+      const w = c.measureText(str).width;
+      if (o.shadow !== false) { c.fillStyle = o.shadow || 'rgba(0,0,0,.6)'; c.fillText(str, cx + Math.max(2, size * 0.08), y + Math.max(2, size * 0.08)); }
+      if (o.bevel) { c.fillStyle = o.bevel; c.fillText(str, cx, y - 1); }
+      c.fillStyle = color; c.fillText(str, cx, y);
+      // moving vertical specular gleam
+      const gx = cx - w / 2 + ((t * (o.gleamSpeed || 90)) % (w + 40)) - 20;
+      c.beginPath(); c.rect(gx - 7, y - 4, 14, size + 8); c.clip();
+      c.fillStyle = o.gleam || 'rgba(255,255,255,.85)'; c.fillText(str, cx, y);
+      c.restore();
+    }
+
+    // occasional lightning flash intensity 0..1 (irregular via two frequencies)
+    lightning(t, period) {
+      const p = period || 6.5;
+      const phase = (t % p) / p;
+      const strike = (0.5 + 0.5 * Math.sin(t * 0.7)) > 0.85; // gate windows
+      if (phase < 0.06 && strike) return 1 - phase / 0.06;
+      if (phase > 0.10 && phase < 0.14 && strike) return (0.14 - phase) / 0.04 * 0.7;
+      return 0;
+    }
+
+    // ornate double-bevel frame (for menu medallions / panels)
+    ornateFrame(x, y, w, h, r, fill, gold) {
+      const g = gold || '#e3c567';
+      this.roundRect(x, y, w, h, r, fill || 'rgba(10,7,18,.9)', null);
+      this.roundRect(x + 2, y + 2, w - 4, h - 4, Math.max(1, r - 2), null, g, 2);
+      this.roundRect(x + 5, y + 5, w - 10, h - 10, Math.max(1, r - 4), null, 'rgba(255,255,255,.12)', 1);
+      // corner studs
+      const c = this.ctx; c.fillStyle = g;
+      [[x + 6, y + 6], [x + w - 6, y + 6], [x + 6, y + h - 6], [x + w - 6, y + h - 6]].forEach((p) => { c.beginPath(); c.arc(p[0], p[1], 1.6, 0, 7); c.fill(); });
+    }
+
     // expose the color mixer for games (fog tints, health bars, etc.)
     mix(a, b, t) { return mix(a, b, t); }
   }
