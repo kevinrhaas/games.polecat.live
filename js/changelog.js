@@ -14,7 +14,7 @@ export const CHANGELOG = [
     v: 80,
     title: 'New game: White Fang — Five Yukon Chapters (Survival Sim)',
     kind: 'game',
-    ts: '',
+    ts: "2026-07-03T18:08:24.642Z",
     items: [
       'Five chapters from Jack London\'s 1906 novel: dodge eagle strikes as a lone wolf cub in the frozen Yukon wilderness (survive 24 s, 3 lives); free-move to collect 12 fish scraps before sled dogs drive you off in Gray Beaver\'s camp; dodge and counter-attack in the red-flash timing window of Beauty Smith\'s fight pit (beat 3 opponents of rising HP); tap the trust meter\'s green zone 10 times to earn Weedon Scott\'s trust as it oscillates faster each success; then chase escaped convict Jim Hall through a moonlit house to catch him 3 times before he reaches the sleeping judge.',
       'Icy blue-gray Yukon palette: wolf steel (#8899aa), ice blue (#7ac8ff), snow white (#deeeff), campfire amber (#f0a030), midnight navy (#050b18). Chapter-select is THE YUKON TRAIL — five snow-capped panel cards in a zigzag paw-print trail with aurora borealis above frozen pines. Emblem: a wolf-head silhouette with glowing ice-blue eyes. In-voice labels: HOWLS currency; THE WILD ENDURES / THE COLD CLAIMS YOU win/lose headers. Page chrome in deep midnight navy.',
