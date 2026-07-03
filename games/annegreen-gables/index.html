@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <title>Anne of Green Gables — games.polecat.live</title>
+  <meta name="theme-color" content="#1a4c0a" />
+  <link rel="icon" href="../../assets/logo.svg" type="image/svg+xml" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/site.css" />
+  <link rel="stylesheet" href="../../css/game.css" />
+  <style id="game-theme">:root{
+    --g-bg1:#1a4c0a;
+    --g-bg2:#0c2a06;
+    --g-bar:rgba(16,50,8,.97);
+    --g-accent:#d44878;
+    --g-title:#c8f090;
+    --g-panel:rgba(16,50,8,.92);
+    --g-border:#4a9828;
+    --g-text:#e0f4c0;
+    --g-key:#f8d860;
+    --g-stage:#0c2a06;
+    --g-glow:rgba(212,72,120,.28);
+  }</style>
+</head>
+<body class="game-page">
+  <div class="game-bar">
+    <a class="back" href="../../index.html">◀ ARCADE</a>
+    <span class="title">Anne of Green Gables</span>
+    <span class="src">· L. M. Montgomery</span>
+    <span class="spacer"></span>
+    <button class="icon-btn" id="fullscreenBtn" title="Full screen">⛶</button>
+    <button class="icon-btn" id="muteBtn" title="Mute">🔊</button>
+    <button class="icon-btn" id="restartBtn" title="Restart">↻</button>
+  </div>
+  <div class="game-main">
+    <div id="game"></div>
+    <div class="game-help">
+      <b>Anne of Green Gables.</b> Five tales from Montgomery's 1908 classic — ride Matthew's buggy past the White Way of Delight, bake without the liniment, survive the great hair-dye disaster, brave the Haunted Wood, and win the Avery Scholarship for Charlottetown. Tap <b>⛶ Full screen</b> for the full experience.
+      <span class="keys">TAP · DRAG · ARROW KEYS · collect FANCY across all five tales</span>
+    </div>
+  </div>
+  <script src="../../js/retro-engine.js"></script>
+  <script src="../../js/saga.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
