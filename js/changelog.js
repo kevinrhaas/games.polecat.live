@@ -14,7 +14,7 @@ export const CHANGELOG = [
     v: 75,
     title: 'New game: Heidi — Five Alpine Tales (Adventure, 5 chapters)',
     kind: 'game',
-    ts: "",
+    ts: "2026-07-03T13:18:50.373Z",
     items: [
       'Five Alpine tales from Johanna Spyri\'s beloved 1881 classic: dodge falling boulders as Heidi climbs the steep rocky mountain path to Grandfather\'s alm (survive 24s, 3 lives, rocks spawn faster over time); tap stray goats to startle them back to safety before 3 escape over the cliff edge (herd 14, max 3 escapes); free-move Heidi through gloomy Frankfurt past Miss Rottenmeier\'s 126° vision cone to reach the mailbox in 26 seconds (furniture provides hiding spots, 3 lives); catch 12 golden Alpine memories — wildflowers, goats, stars, pine trees — falling through a dark Frankfurt window while dodging grey city objects (3 bad catches = fail); and tap a contracting ring at the perfect moment to encourage Clara\'s 6 miraculous first steps on the sunny meadow (ring accelerates each step, 4 misses allowed).',
       'Bright sunny Alpine palette: brilliant sky blue (#5bc8f5), mountain green (#4a9c3c), sunshine gold (#f5c842), wildflower pink (#e84090), snow white (#e8f4fc), warm wood (#a0703a). Chapter-select is THE TALES OF HEIDI — five wooden Alpine hiking signs in a zigzag winding trail, connected by dashed paths through a sunny mountain panorama with rolling hills, wildflowers, a grazing goat, and Grandfather\'s log hut silhouetted against the distant peaks. Emblem: an edelweiss flower with six white petals and a golden centre. Page chrome in bright alpine sky blue and forest green.',
