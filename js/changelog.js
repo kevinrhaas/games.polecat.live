@@ -14,7 +14,7 @@ export const CHANGELOG = [
     v: 69,
     title: 'New game: Sinbad the Sailor (Voyage Adventure, 5 voyages)',
     kind: 'game',
-    ts: '',
+    ts: "2026-07-03T03:48:42.059Z",
     items: [
       'Five voyages from One Thousand and One Nights: dodge whale waterspouts and collect crates before the whale island submerges (22s survive); catch diamonds falling from eagles while serpents close in from the sides (collect 10); cling to the Roc\'s leg through a sky full of falling rocks and stormclouds (dodge 20s); wander a desert island collecting grape clusters to brew wine and trick the Old Man of the Sea off your shoulders (fill 8-grape wine jar); then steer a ship and fire cannons at sea serpents and krakens until 10 monsters are slain.',
       'Rich Arabian Nights palette: deep indigo night sky (#060820), ocean teal (#0c3a5a), crescent moon gold (#f0c030), ruby red (#cc2244), emerald serpent (#1a6618), kraken violet (#4a0a4a). Chapter-select is a MARINER\'S CHART — five scattered palm-tree island nodes connected by golden dotted sailing paths on a teal parchment sea map with a double gold border and a compass rose; each island badge shows a voyage number with a scroll name label below. In-voice labels: JEWELS currency, SEAS CONQUERED / THE DEEP CLAIMS YOU win/lose headers, five voyages of growing challenge.',
