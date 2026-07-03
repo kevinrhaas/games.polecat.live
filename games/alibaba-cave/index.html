@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <title>Ali Baba and the Forty Thieves — games.polecat.live</title>
+  <meta name="theme-color" content="#0c0818" />
+  <link rel="icon" href="../../assets/logo.svg" type="image/svg+xml" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/site.css" />
+  <link rel="stylesheet" href="../../css/game.css" />
+  <style id="game-theme">:root{
+    --g-bg1:#1a0e2a;
+    --g-bg2:#0c0818;
+    --g-bar:rgba(16,8,28,.96);
+    --g-accent:#d4a020;
+    --g-title:#f0c840;
+    --g-panel:rgba(20,12,36,.88);
+    --g-border:#4a3060;
+    --g-text:#a090c0;
+    --g-key:#d4a020;
+    --g-stage:#2a1840;
+    --g-glow:rgba(212,160,32,.22);
+  }</style>
+</head>
+<body class="game-page">
+  <div class="game-bar">
+    <a class="back" href="../../index.html">◀ ARCADE</a>
+    <span class="title">Ali Baba and the Forty Thieves</span>
+    <span class="src">· One Thousand and One Nights</span>
+    <span class="spacer"></span>
+    <button class="icon-btn" id="fullscreenBtn" title="Full screen">⛶</button>
+    <button class="icon-btn" id="muteBtn" title="Mute">🔊</button>
+    <button class="icon-btn" id="restartBtn" title="Restart">↻</button>
+  </div>
+  <div class="game-main">
+    <div id="game"></div>
+    <div class="game-help">
+      <b>Ali Baba and the Forty Thieves.</b> Five tales of greed and wit — hide from the bandits in the forest, rush the treasure cave before the door seals, outsmart the door-marking thieves, discover and defeat the jars in the night, and stop the disguised captain's deadly plan. Tap <b>⛶ Full screen</b> for the full experience.
+      <span class="keys">TAP / DRAG · ARROW KEYS · earn GOLD across all five tales</span>
+    </div>
+  </div>
+  <script src="../../js/retro-engine.js"></script>
+  <script src="../../js/saga.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
