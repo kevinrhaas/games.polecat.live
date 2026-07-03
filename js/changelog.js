@@ -14,7 +14,7 @@ export const CHANGELOG = [
     v: 78,
     title: 'New game: Little Women — Five Chapters from Alcott\'s Novel (Story Arcade)',
     kind: 'game',
-    ts: '',
+    ts: "2026-07-03T16:18:33.551Z",
     items: [
       'Five chapters from Louisa May Alcott\'s 1868 classic: catch Christmas gifts and food for the Hummel family (collect 10 in 26 s, 3 lives); hit 7 dramatic beats in Jo\'s Pickwick Club melodrama with a shrinking timing ring (3 misses and the audience sleeps); skate left and right across Amy\'s cracking frozen pond for 22 unbroken seconds; tap glowing medicine vials in Beth\'s dark fever-room before they fade (collect 15, 3 misses lose); then roam freely to catch 15 golden memory tokens while dodging grey shadow clouds as Father walks home through the sunset gate.',
       'Victorian parlor palette: deep mahogany, warm gold, dusty rose and candlelight cream. Chapter-select is THE MARCH PARLOR — five keepsake cards in a diamond arrangement linked by rose ribbons, each framed in ornate Victorian borders with a wax seal on completion. Emblem: an open book with a rose. In-voice labels: GRACE currency; THE MARCH GIRLS TRIUMPH / THE BURDEN GROWS HEAVY headers. Page chrome in dark mahogany and rose.',
