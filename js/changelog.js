@@ -11,6 +11,16 @@
 // visitor has seen.
 export const CHANGELOG = [
   {
+    v: 74,
+    title: 'New game: The Invisible Man — Unseen (Stealth Puzzle, 5 encounters)',
+    kind: 'game',
+    ts: "",
+    items: [
+      'Five encounters from H. G. Wells\' 1897 classic: mix the invisibility compound — tap a pendulum needle into the shrinking blue zone 8 times (3 misses lose, zone narrows and speed ramps each brew); slip through the foggy village of Iping avoiding 4 patrolling townsfolk\'s amber sight cones for 24 seconds (free movement, 3 lives); dodge heavy snow-reveal blobs falling from above for 22 seconds — they make your footprints visible and alert the mob (3 lives, blobs speed up and spawn faster); tap 5 breach points (2 windows, 2 doors, 1 gate) to hold back the soldiers surrounding Kemp\'s house for 28 seconds before 3 doors splinter (HP bars drain faster over time); and survive 26 seconds on the rain-soaked dark commons — move freely to avoid 6 torch-bearers converging from all sides and dodge telegraphed thrown rocks (3 lives, mob tightens over time).',
+      'Deep fog-grey English village palette: ink-black (#04060e), misty night blue (#080e1a), wet cobblestone (#09101e), amber lantern glow (#d8c060), bandage white (#c8c0b0), rain-reveal blue-grey (#a0b0c4). Chapter-select is GRIFFIN\'S TRAIL — five stone-wall cards in a zigzag footprint-trail path on a snow-dusted village backdrop, connected by a dotted grey line; each card has a snow cap on its top edge and a paired-footprint icon. Emblem: Griffin\'s iconic top hat, goggles and bandaged head in dark silhouette. Scenery: gas-lit English village at night with church spire, inn and draper\'s shop, rolling mist layers, animated snowfall, and amber lamp-post glows. In-voice labels: VAPOURS currency; UNSEEN — FOR NOW / THEY HAVE YOU win/lose headers. Page chrome in deep misty blue-black and fog grey.',
+    ],
+  },
+  {
     v: 73,
     title: 'New game: Open Sesame — Ali Baba and the Forty Thieves (Heist Puzzle, 5 tales)',
     kind: 'game',
