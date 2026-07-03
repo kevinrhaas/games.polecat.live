@@ -11,6 +11,16 @@
 // visitor has seen.
 export const CHANGELOG = [
   {
+    v: 77,
+    title: 'New game: The Secret Garden — Five Chapters in the Walled Garden (Garden Puzzle)',
+    kind: 'game',
+    ts: '',
+    items: [
+      'Five chapters from Burnett\'s beloved 1911 classic: follow the red-breasted robin to catch feathers and dodge thorns (collect 12 in 22s, 3 lives); tap glowing soil patches before winter frost seals them (plant 14 seeds in 26s); befriend Dickon\'s wild creatures — crow, fox, rabbit, squirrel — by tapping them before they bolt (20 animals, 3 escapes allowed); give Colin courage with a shrinking timing ring (7 perfectly-timed steps); and catch golden magic blooms while dodging grey stones as the garden bursts into full flower (15 blooms in 30s).',
+      'Lush garden palette of rose pink, ivy green, warm gold and misty sky blue. Chapter-select is a winding stone garden path connecting five flower-bed cards through a walled garden scene — each bed planted with roses and a thematic icon (iron key, seedling, paw print, sunburst, rose bloom). Emblem: a rusted iron key wrapped in ivy. In-voice labels: BLOSSOMS currency; THE GARDEN BLOOMS / THE ROSES WITHER win/lose headers. Page chrome in deep garden green and rose.',
+    ],
+  },
+  {
     v: 76,
     title: 'New game: The Metamorphosis — Die Verwandlung (Survival Puzzle, 5 scenes)',
     kind: 'game',
