@@ -213,8 +213,11 @@ img { max-width: 100%; display: block; }
 }
 .badge.genre { color: var(--yellow); }
 .badge.new   { color: #0b0420; background: var(--green); border-color:#000; }
-/* 16-bit "Gen 2" games wear a bright generation badge so the ladder reads */
-.badge.gen2  { color: #0b0420; background: linear-gradient(90deg,#ffd966,#ff8a3d); border-color:#000; font-weight:700; }
+/* console-history generation badge (Gen 3 = 8-bit, Gen 4 = 16-bit, …) */
+.badge.gen   { color: #0b0420; border-color:#000; font-weight:700; }
+.badge.gen3  { background: linear-gradient(90deg,#aab0c0,#d6dcea); }               /* silvery = 8-bit / NES */
+.badge.gen4  { background: linear-gradient(90deg,#ffd966,#ff8a3d); }               /* gold = 16-bit / SNES  */
+.badge.gen5  { background: linear-gradient(90deg,#7bdcff,#b07bff); }               /* cyan-violet = 3D (future) */
 .card .body { padding: 13px 14px 15px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
 .card .body h3 { font-family: var(--font-pixel); font-size: 12px; margin: 0; line-height: 1.5; color: #fff; }
 .card .body p { margin: 0; font-size: 13px; color: var(--ink-dim); line-height: 1.45; flex: 1; }

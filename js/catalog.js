@@ -10,7 +10,10 @@
  *   title   the game's name (not just the property)
  *   source  the public-domain property it draws from
  *   genre   gameplay category (drives variety + the genre filter)
- *   style   visual style ("8-bit" for now; future: "16-bit","vector","mono")
+ *   style   visual style: "8-bit" | "16-bit" (future: "3d","vector","mono")
+ *   gen     console-history generation: 3 = 8-bit/NES (default), 4 = 16-bit/SNES,
+ *           5 = 32/64-bit 3D (future). Gen 1/2 (Odyssey/Atari) reserved for any
+ *           deliberately primitive throwbacks. Drives the "GEN n" card badge.
  *   accent  hex color used for the procedural thumbnail
  *   blurb   one-line pitch shown on the card
  *   status  "live" (playable) | "soon" (planned)
@@ -20,7 +23,7 @@ window.POLECAT_CATALOG = [
   // ---------------------------- LIVE (built) ----------------------------
   { id: "sherlock-hound", title: "The Hound of the Baskervilles", source: "Sherlock Holmes — A. Conan Doyle", genre: "Mystery", style: "8-bit", accent: "#5dff8f", status: "live",
     blurb: "Five chapters of detection — deduce the cane, cross the Grimpen Mire, search the foggy moor, piece the warning, and face the Hound.", tags: ["detective","multi-chapter","mystery"] },
-  { id: "dracula-castle", title: "Dracula", source: "Dracula — Bram Stoker", genre: "Horror", style: "16-bit", gen: 2, accent: "#c8102e", status: "live",
+  { id: "dracula-castle", title: "Dracula", source: "Dracula — Bram Stoker", genre: "Horror", style: "16-bit", gen: 4, accent: "#c8102e", status: "live",
     blurb: "NIGHTS OF BLOOD — the 16-bit chronicle. Cross a hub map of the novel: each night a run of escalating trials and a mini-boss, relics that carry between them, a branching escape, and the Count hunted to dust before sunrise.", tags: ["horror","multi-chapter","vampire","16-bit","hub"] },
   // ----------- LEGACY single-mechanic games (hidden from the home grid &
   // search via legacy:true until they're rebuilt in the multi-chapter story

@@ -10,6 +10,16 @@
 // format stays identical to the rest of the fleet.
 export const CHANGELOG = [
   {
+    v: 84,
+    title: 'Games now carry their true console generation',
+    kind: 'feature',
+    ts: '2026-07-03T21:42:27.674Z',
+    items: [
+      'Every card now shows its real place in gaming history — the classic 8-bit / NES era is Generation 3 (silver badge), and the new 16-bit / SNES-Genesis games are Generation 4 (gold badge).',
+      'New 8-bit games will also be more period-honest going forward: a true NES color palette, flat pixel fills instead of modern gradients and glows — so they look like they really came off a 1986 cartridge.',
+    ],
+  },
+  {
     v: 83,
     title: 'Dracula in true 16-bit — animated title & menus',
     kind: 'feature',
@@ -352,12 +362,12 @@ export const CHANGELOG = [
   },
   {
     v: 49,
-    title: 'Dracula leaps to 16-bit — the first GEN 2 game',
+    title: 'Dracula leaps to 16-bit — the first Gen 4 game',
     kind: 'game',
     ts: '2026-07-02T05:09:00.000Z',
     items: [
       'Games can now level up a whole generation. Dracula is reborn in 16-bit as \'Nights of Blood\': parallax gothic vistas, Mode-7 pseudo-3D sea and mountain-road chases, glowing blood moons, and bigger animated sprites.',
-      'It\'s also a richer format than the old five chapters — a HUB MAP of the novel you explore (nights unlock as you go, with an optional Renfield side-tale), each night a run of escalating trials ending in a mini-boss, relics (the kukri blade, garlic wreath, sacred wafer) that carry between them, a branching escape route, and two endings. Look for the gold GEN 2 badge on the card; more classics will ascend over time.',
+      'It\'s also a richer format than the old five chapters — a HUB MAP of the novel you explore (nights unlock as you go, with an optional Renfield side-tale), each night a run of escalating trials ending in a mini-boss, relics (the kukri blade, garlic wreath, sacred wafer) that carry between them, a branching escape route, and two endings. Look for the gold GEN 4 badge on the card; more classics will ascend over time.',
     ],
   },
   {

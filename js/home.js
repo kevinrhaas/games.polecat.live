@@ -24,6 +24,10 @@ import { CHANGELOG, LATEST_VERSION } from './changelog.js';
   const shown = (g) => g.status === 'live' && !g.legacy;
   const shownGames = () => catalog.filter(shown);
 
+  // Console-history generation for the card badge: 8-bit = Gen 3 (NES era),
+  // 16-bit = Gen 4 (SNES/Genesis), 3D = Gen 5. Honors an explicit g.gen.
+  const genOf = (g) => g.gen || (g.style === '16-bit' ? 4 : g.style === '3d' ? 5 : 3);
+
   /* ----------- tiny seeded RNG so each thumbnail is stable ----------- */
   function seedFrom(str) {
     let h = 2166136261;
@@ -152,8 +156,9 @@ import { CHANGELOG, LATEST_VERSION } from './changelog.js';
 
     const badges = document.createElement('div');
     badges.className = 'badges';
+    const gen = genOf(game);
     badges.innerHTML =
-      ((game.gen || 1) >= 2 ? `<span class="badge gen2">GEN ${game.gen}</span>` : '') +
+      `<span class="badge gen gen${gen}">GEN ${gen}</span>` +
       `<span class="badge">${game.style}</span>` +
       `<span class="badge genre">${game.genre}</span>` +
       (live ? '' : '<span class="badge">SOON</span>');
