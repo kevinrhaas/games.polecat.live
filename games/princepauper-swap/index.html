@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <title>The Prince and the Pauper — games.polecat.live</title>
+  <meta name="theme-color" content="#120820" />
+  <link rel="icon" href="../../assets/logo.svg" type="image/svg+xml" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/site.css" />
+  <link rel="stylesheet" href="../../css/game.css" />
+  <style id="game-theme">:root{
+    --g-bg1:#1e0c28;--g-bg2:#0a0614;
+    --g-bar:rgba(18,8,32,.97);
+    --g-accent:#d4a820;
+    --g-title:#f0e0c0;
+    --g-panel:rgba(28,14,44,.88);
+    --g-border:#6a3820;
+    --g-text:#b8986a;
+    --g-key:#d4a820;
+    --g-stage:#3a1c10;
+    --g-glow:rgba(212,168,32,.28)
+  }</style>
+</head>
+<body class="game-page">
+  <div class="game-bar">
+    <a class="back" href="../../index.html">◀ ARCADE</a>
+    <span class="title">The Prince and the Pauper</span>
+    <span class="src">· Mark Twain</span>
+    <span class="spacer"></span>
+    <button class="icon-btn" id="fullscreenBtn" title="Full screen">⛶</button>
+    <button class="icon-btn" id="muteBtn" title="Mute">🔊</button>
+    <button class="icon-btn" id="restartBtn" title="Restart">↻</button>
+  </div>
+  <div class="game-main">
+    <div id="game"></div>
+    <div class="game-help">
+      <b>The Prince and the Pauper.</b> Five chapters from Twain's 1882 classic — sneak Tom through the palace gates, survive court ceremony, dodge London's angry streets as Edward, parry Miles Hendon's enemies, and race to Westminster before the wrong boy is crowned. Tap <b>⛶ Full screen</b> for the full experience.
+      <span class="keys">TAP / DRAG · ARROW KEYS · earn your HONOURS</span>
+    </div>
+  </div>
+  <script src="../../js/retro-engine.js"></script>
+  <script src="../../js/saga.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
