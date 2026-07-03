@@ -14,7 +14,7 @@ export const CHANGELOG = [
     v: 81,
     title: "New game: The Prince and the Pauper — Five Tudor Tales (Swap Puzzle)",
     kind: "game",
-    ts: "",
+    ts: "2026-07-03T19:03:21.157Z",
     items: [
       "Five chapters from Mark Twain's 1882 classic: slip past halberd-bearing palace guards by dashing when they turn away (4 gates, 3 lives); copy the herald's courtly gestures in growing sequences across 5 rounds (sequence memory, 3 mistakes allowed); dodge cabbages, dogs and market carts as Prince Edward flees London's angry streets for 22 seconds; parry left/right sword attacks from alley ruffians to beat 10 opponents (Miles Hendon's defense); and race a carriage-dodging, banner-collecting sprint to Westminster Abbey before the coronation begins.",
       "Rich Tudor crimson-and-gold palette: royal crimson (#8b1515), throne gold (#d4a820), parchment ivory (#f0e0c0), cobblestone gray (#706060), midnight purple (#1e0c28). Chapter-select is THE ROYAL PROCLAMATIONS — five parchment scrolls with wax seals arranged in an arc across a deep crimson velvet throne room. Emblem: a Tudor crown with jewels. In-voice labels: HONOURS currency; THE CROWN SHINES / LOST IN THE CROWD win/lose headers. Page chrome in deep midnight purple with gold accents.",
