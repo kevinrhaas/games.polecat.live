@@ -11,6 +11,16 @@
 // visitor has seen.
 export const CHANGELOG = [
   {
+    v: 72,
+    title: 'New game: A Trip to the Moon — Five Chapters Through the 1902 Méliès Masterpiece (Cannon Launch)',
+    kind: 'game',
+    ts: '',
+    items: [
+      'Five chapters inspired by Méliès\' 1902 film: time the gavel at the Grand Congress of Astronomers (6 votes, sweep bar, 3 misses lose); tap a contracting ring to the precision target to load the great cannon 5 times (ring accelerates with each load); steer the capsule freely through 24 seconds of star-dancers and comet showers in deep space; tap-to-defeat 20 Selenites erupting from Moon craters before 3 breach the explorers; and steer left/right as the capsule falls through asteroids, lightning, and ocean waves back to Earth — hit the blue Pacific zone to win.',
+      'Deep-space palette: void-black (#06040e), moon grey-blue (#b8ccd8), brass capsule (#c88020), selenite teal (#30c0a0), golden star (#ffe080), Victorian red (#c83010). Chapter-select is a PARABOLIC VOYAGE ARC — five octagonal magic-lantern slide frames with brass corner rivets arranged on an arc from Paris/Earth (lower-left) through space (apex) to the Moon (upper-right) and back down to the splashdown (lower-right), connected by a dashed brass trajectory line. The iconic Méliès Moon face (eyes, nose, open mouth, capsule stuck in one eye) serves as the emblem. Page chrome in deep indigo and brass-gold.',
+    ],
+  },
+  {
     v: 71,
     title: 'New game: Great Expectations — Rise from the Forge (Drama Adventure, 5 acts)',
     kind: 'game',

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <title>A Trip to the Moon — games.polecat.live</title>
+  <meta name="theme-color" content="#080618" />
+  <link rel="icon" href="../../assets/logo.svg" type="image/svg+xml" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/site.css" />
+  <link rel="stylesheet" href="../../css/game.css" />
+  <style id="game-theme">:root{
+    --g-bg1:#0c0820;
+    --g-bg2:#06040e;
+    --g-bar:rgba(8,6,24,.96);
+    --g-accent:#c88020;
+    --g-title:#ffe080;
+    --g-panel:rgba(12,8,28,.84);
+    --g-border:#3a2c60;
+    --g-text:#8090b0;
+    --g-key:#c88020;
+    --g-stage:#1a1438;
+    --g-glow:rgba(200,128,32,.22);
+  }</style>
+</head>
+<body class="game-page">
+  <div class="game-bar">
+    <a class="back" href="../../index.html">◀ ARCADE</a>
+    <span class="title">A Trip to the Moon</span>
+    <span class="src">· Georges Méliès (1902)</span>
+    <span class="spacer"></span>
+    <button class="icon-btn" id="fullscreenBtn" title="Full screen">⛶</button>
+    <button class="icon-btn" id="muteBtn" title="Mute">🔊</button>
+    <button class="icon-btn" id="restartBtn" title="Restart">↻</button>
+  </div>
+  <div class="game-main">
+    <div id="game"></div>
+    <div class="game-help">
+      <b>A Trip to the Moon.</b> Five chapters through Méliès' 1902 masterpiece — vote for the expedition at the Grand Congress, load the great iron cannon, steer the capsule through star-dancers and comets, battle Selenites on the Moon's surface, and guide the capsule home to the Pacific. Tap <b>⛶ Full screen</b> for the full experience.
+      <span class="keys">TAP / DRAG · ARROW KEYS · earn STARDUST across all five chapters</span>
+    </div>
+  </div>
+  <script src="../../js/retro-engine.js"></script>
+  <script src="../../js/saga.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
