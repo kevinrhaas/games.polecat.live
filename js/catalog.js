@@ -167,8 +167,8 @@ window.POLECAT_CATALOG = [
     blurb: "Walk Puritan Boston under judging eyes and guard a dangerous secret.", tags: ["story","stealth"] },
   { id: "princepauper-swap", title: "The Prince and the Pauper", source: "The Prince and the Pauper — Twain", genre: "Swap Puzzle", style: "8-bit", accent: "#ffe14d", status: "soon",
     blurb: "Switch between palace and gutter to fix two lives that got swapped by mistake.", tags: ["puzzle","story"] },
-  { id: "metamorphosis-bug", title: "Metamorphosis", source: "The Metamorphosis — Franz Kafka", genre: "Crawl Puzzle", style: "8-bit", accent: "#5dff8f", status: "soon",
-    blurb: "Wake as a giant insect and navigate a home that no longer wants you.", tags: ["puzzle","surreal"] },
+  { id: "metamorphosis-bug", title: "The Metamorphosis", source: "The Metamorphosis — Franz Kafka", genre: "Survival Puzzle", style: "8-bit", accent: "#7a9c2a", status: "live",
+    blurb: "Five scenes from Kafka's 1915 novella — dodge falling objects as Gregor wakes transformed, evade the panicking family, collect rotten food scraps, creep past scanning lodgers to hear the violin, and make the final slow crawl to peace before dawn.", tags: ["puzzle","survival","multi-chapter","kafka"] },
   { id: "asilaydying-journey", title: "As I Lay Dying", source: "As I Lay Dying — William Faulkner", genre: "Convoy Survival", style: "8-bit", accent: "#9b5cff", status: "soon",
     blurb: "Haul the family coffin across flood and fire to the burial ground in Jefferson.", tags: ["survival","story"] },
 ];

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <title>The Metamorphosis — games.polecat.live</title>
+  <meta name="theme-color" content="#1a1208" />
+  <link rel="icon" href="../../assets/logo.svg" type="image/svg+xml" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/site.css" />
+  <link rel="stylesheet" href="../../css/game.css" />
+  <style id="game-theme">:root{
+    --g-bg1:#0d0b09;
+    --g-bg2:#1a1208;
+    --g-bar:rgba(16,12,6,.97);
+    --g-accent:#c88a20;
+    --g-title:#d0c8a0;
+    --g-panel:rgba(16,12,6,.92);
+    --g-border:#5a4a1a;
+    --g-text:#c0b890;
+    --g-key:#c88a20;
+    --g-stage:#0d0b09;
+    --g-glow:rgba(200,138,32,.28);
+  }</style>
+</head>
+<body class="game-page">
+  <div class="game-bar">
+    <a class="back" href="../../index.html">◀ ARCADE</a>
+    <span class="title">The Metamorphosis</span>
+    <span class="src">· Franz Kafka</span>
+    <span class="spacer"></span>
+    <button class="icon-btn" id="fullscreenBtn" title="Full screen">⛶</button>
+    <button class="icon-btn" id="muteBtn" title="Mute">🔊</button>
+    <button class="icon-btn" id="restartBtn" title="Restart">↻</button>
+  </div>
+  <div class="game-main">
+    <div id="game"></div>
+    <div class="game-help">
+      <b>The Metamorphosis.</b> Five scenes from Kafka's 1915 novella — dodge falling objects as Gregor wakes transformed, evade panicking family and the chief clerk, collect rotten food scraps, creep past scanning lodgers to hear Grete's violin, and make the final slow crawl toward peace before dawn. Tap <b>⛶ Full screen</b> for the full experience.
+      <span class="keys">TAP · DRAG · ARROW KEYS · endure each impossible scene</span>
+    </div>
+  </div>
+  <script src="../../js/retro-engine.js"></script>
+  <script src="../../js/saga.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
