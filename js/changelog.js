@@ -11,6 +11,16 @@
 // visitor has seen.
 export const CHANGELOG = [
   {
+    v: 68,
+    title: 'New game: The Pied Piper of Hamelin (Rhythm Lead, 5 tales)',
+    kind: 'game',
+    ts: "",
+    items: [
+      'Five tales of the famous German legend — drive scuttling rats from the town square before they reach the food barrels (tap 12, 3 escape = over, 28s); play the magic pipe for the Mayor by tapping the pendulum tip into the gold zone 8 times (speeds up and zone narrows each success, 4-miss limit); steer the Piper left/right through Hamelin\'s cobblestone streets dodging stone walls while a 14-rat swarm trails behind you, racing to the River Weser in 24 seconds; survive 24 seconds of the Mayor\'s guards charging down three lanes when he tries to pay only 50 guilders; and finally tap falling blue notes in three columns (avoid the red dissonant ones) to lead the children with 12 enchanted notes — the mountain door opens and shuts behind them forever.',
+      'Warm medieval palette: near-black (#080408), amber (#c87a18), gold (#f0c030), rat-grey (#8a6850), magic cyan (#44aaff), mountain violet (#2e1e44). Chapter-select is a HAMELIN TOWN MAP — five parchment location cards at scattered positions (Town Square top-left, Mayor\'s Hall top-right, High Street center, River Bank bottom-left, The Mountain bottom-right) connected by dotted paths on a warm amber map background with a tiny compass rose; inner double-border frames and green checkmark stamps. In-voice labels: GUILDERS currency, THE PIPE RINGS TRUE / HAMELIN IS LOST win/lose headers. Page chrome in warm amber and dark amber-brown.',
+    ],
+  },
+  {
     v: 67,
     title: 'New game: Please, Sir — Oliver Twist (Pickpocket Stealth, 5 acts)',
     kind: 'game',
