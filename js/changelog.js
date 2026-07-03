@@ -14,7 +14,7 @@ export const CHANGELOG = [
     v: 76,
     title: 'New game: The Metamorphosis — Die Verwandlung (Survival Puzzle, 5 scenes)',
     kind: 'game',
-    ts: '',
+    ts: "2026-07-03T14:24:55.319Z",
     items: [
       'Five scenes from Kafka\'s 1915 novella: dodge falling alarm clocks, boots, books and bottles as Gregor wakes transformed in his bedroom (survive 22s, 3 lives, spawn rate rises); evade four panicking family members and the chief clerk bouncing chaotically around the room (24s, 4 NPCs, free movement, speed ramps up); crawl to rotten mouldy scraps on the floor while avoiding fresh golden food (collect 10 rot items, 3 fresh touches end the ordeal); creep slowly past three scanning lodgers to reach Grete\'s violin — they sweep their gaze left/right and detection costs a life (30s, 3 lives); make the final exhausted crawl at half-speed across the dark apartment, weaving between patrolling family members, to reach the bedroom door before dawn arrives (28s timer).',
       'Oppressive Kafkaesque palette: near-black warm (#0d0b09), sickly insect green (#3a4a14 / #7a9c2a), dim amber lamp (#c88a20), rotten food green (#7a9c2a), fresh food gold (#d8b050), dark Victorian wallpaper purple-tint (#221c30). Chapter-select is THE SAMSA APARTMENT — a top-down apartment floor plan with five rooms arranged in a 2×2 grid plus a bottom hallway, connected by narrow corridor gaps; each room card has faint wallpaper, an amber lamp glow, and a thematic icon (alarm clock, top hat, food bowl, violin, dawn door). Emblem: a stylised six-legged beetle with amber eyes. In-voice labels: HOURS currency; ANOTHER HOUR SURVIVED / THE BURDEN IS TOO GREAT win/lose headers. Page chrome in deep warm black and amber.',
