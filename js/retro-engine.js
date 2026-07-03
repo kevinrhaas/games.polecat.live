@@ -45,6 +45,30 @@
     resume() {
       this._ensure();
       if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume();
+      this._unlockIOS();
+    }
+    // iOS mutes Web Audio when the hardware ring/silent switch is ON (Web Audio
+    // uses the "ambient" session). Playing a silent looping <audio> element on a
+    // user gesture flips the page's audio session to "playback", which ignores
+    // the silent switch — so game SFX are audible even without headphones. Must
+    // be called from within a user-gesture handler (resume() is).
+    _unlockIOS() {
+      try {
+        if (this._unlockEl) { const p = this._unlockEl.play(); if (p) p.catch(function () {}); return; }
+        const sr = 8000, secs = 0.5, n = sr * secs, buf = new ArrayBuffer(44 + n * 2), v = new DataView(buf);
+        const w = (o, s) => { for (let i = 0; i < s.length; i++) v.setUint8(o + i, s.charCodeAt(i)); };
+        w(0, 'RIFF'); v.setUint32(4, 36 + n * 2, true); w(8, 'WAVE'); w(12, 'fmt ');
+        v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
+        v.setUint32(24, sr, true); v.setUint32(28, sr * 2, true); v.setUint16(32, 2, true);
+        v.setUint16(34, 16, true); w(36, 'data'); v.setUint32(40, n * 2, true); // samples default to 0 = silence
+        const el = document.createElement('audio');
+        el.setAttribute('playsinline', ''); el.playsInline = true; el.loop = true; el.preload = 'auto';
+        el.style.display = 'none';
+        el.src = URL.createObjectURL(new Blob([buf], { type: 'audio/wav' }));
+        document.body.appendChild(el);
+        const p = el.play(); if (p) p.catch(function () {});
+        this._unlockEl = el;
+      } catch (e) { /* not supported — Web Audio still works where the session allows */ }
     }
     setMuted(m) {
       this.muted = m;

@@ -10,6 +10,16 @@
 // format stays identical to the rest of the fleet.
 export const CHANGELOG = [
   {
+    v: 85,
+    title: 'Sound now works on iPhones in silent mode',
+    kind: 'fix',
+    ts: '2026-07-03T21:50:38.561Z',
+    items: [
+      'On iOS, games were silent unless you had headphones in — because iPhone routes web game audio through the ringer switch. Games now unlock full audio on your first tap, so sound plays through the speaker even with the silent switch on.',
+      'Applies to every game. (If it is still quiet, check the side mute switch and turn the volume up — and the in-game 🔊 button toggles mute.)',
+    ],
+  },
+  {
     v: 84,
     title: 'Games now carry their true console generation',
     kind: 'feature',
