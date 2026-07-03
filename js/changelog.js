@@ -13,7 +13,7 @@ export const CHANGELOG = [
     v: 86,
     title: 'New game: Rip Van Winkle — Twenty Years Asleep',
     kind: 'game',
-    ts: '',
+    ts: '2026-07-03T22:53:40.980Z',
     items: [
       'Five Catskill chapters through Washington Irving\'s 1819 classic: hunt the mountain with Wolf, bowl with the ghostly hollow men, dream away twenty enchanted years, catch the memories of your old life, and prove to the changed village who you really are.',
       'Warm colonial autumn palette — amber, rust, Catskill green — with a unique tavern bulletin-board chapter menu. Period-honest 8-bit NES colors throughout.',
