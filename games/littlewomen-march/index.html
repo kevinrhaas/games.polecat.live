@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <title>Little Women — games.polecat.live</title>
+  <meta name="theme-color" content="#3d2010" />
+  <link rel="icon" href="../../assets/logo.svg" type="image/svg+xml" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/site.css" />
+  <link rel="stylesheet" href="../../css/game.css" />
+  <style id="game-theme">:root{
+    --g-bg1:#160c04;
+    --g-bg2:#0c0604;
+    --g-bar:rgba(30,14,6,.97);
+    --g-accent:#c84868;
+    --g-title:#f0cc60;
+    --g-panel:rgba(22,12,4,.92);
+    --g-border:#8a4818;
+    --g-text:#e8d4b0;
+    --g-key:#d4a020;
+    --g-stage:#0c0604;
+    --g-glow:rgba(200,72,104,.28);
+  }</style>
+</head>
+<body class="game-page">
+  <div class="game-bar">
+    <a class="back" href="../../index.html">◀ ARCADE</a>
+    <span class="title">Little Women</span>
+    <span class="src">· L. M. Alcott</span>
+    <span class="spacer"></span>
+    <button class="icon-btn" id="fullscreenBtn" title="Full screen">⛶</button>
+    <button class="icon-btn" id="muteBtn" title="Mute">🔊</button>
+    <button class="icon-btn" id="restartBtn" title="Restart">↻</button>
+  </div>
+  <div class="game-main">
+    <div id="game"></div>
+    <div class="game-help">
+      <b>Little Women.</b> Five chapters from Alcott's 1868 classic — catch gifts for the Hummels on Christmas morning, perform Jo's Pickwick Club melodrama, dodge cracks on Amy's frozen pond, tend Beth through the long fever nights, and welcome Father home from the war. Tap <b>⛶ Full screen</b> for the full experience.
+      <span class="keys">TAP · DRAG · ARROW KEYS · earn GRACE across all five chapters</span>
+    </div>
+  </div>
+  <script src="../../js/retro-engine.js"></script>
+  <script src="../../js/saga.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
