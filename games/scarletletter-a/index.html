@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <title>The Scarlet Letter — games.polecat.live</title>
+  <meta name="theme-color" content="#100c08" />
+  <link rel="icon" href="../../assets/logo.svg" type="image/svg+xml" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/site.css" />
+  <link rel="stylesheet" href="../../css/game.css" />
+  <style id="game-theme">:root{
+    --g-bg1:#100c08;--g-bg2:#0c0806;
+    --g-bar:rgba(16,10,6,.96);
+    --g-accent:#cc1122;
+    --g-title:#e8dcc0;
+    --g-panel:rgba(18,12,8,.88);
+    --g-border:#4a1018;
+    --g-text:#8a7a60;
+    --g-key:#cc1122;
+    --g-stage:#3a1010;
+    --g-glow:rgba(180,10,20,.22)
+  }</style>
+</head>
+<body class="game-page">
+  <div class="game-bar">
+    <a class="back" href="../../index.html">◀ ARCADE</a>
+    <span class="title">The Scarlet Letter</span>
+    <span class="src">· Nathaniel Hawthorne</span>
+    <span class="spacer"></span>
+    <button class="icon-btn" id="fullscreenBtn" title="Full screen">⛶</button>
+    <button class="icon-btn" id="muteBtn" title="Mute">🔊</button>
+    <button class="icon-btn" id="restartBtn" title="Restart">↻</button>
+  </div>
+  <div class="game-main">
+    <div id="game"></div>
+    <div class="game-help">
+      <b>The Scarlet Letter.</b> Five Puritan chapters from Hawthorne's 1850 novel — deflect shame on the scaffold, keep wild Pearl safe, parry Chillingworth's probing questions, navigate the dark forest to find Dimmesdale, and hold his courage steady for the final confession. Tap <b>⛶ Full screen</b> for the full experience.
+      <span class="keys">TAP · ARROW KEYS · earn FAITH across all five chapters</span>
+    </div>
+  </div>
+  <script src="../../js/retro-engine.js"></script>
+  <script src="../../js/saga.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
