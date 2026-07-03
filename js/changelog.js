@@ -4,27 +4,26 @@
 //
 // The hourly build loop appends a new entry at the TOP for each user-visible
 // change (bump `v`, short `title`, a `kind` of 'game' | 'feature' | 'fix', and
-// 1-4 `items`). Leave `ts` as an EMPTY string on the new entry — the push step
-// (tools/stamp-changelog.mjs) stamps it with the real commit time, so
-// timestamps are never fabricated. The home page formats `ts` to Central Time
-// (CT) and lights a dot on the ✨ button when LATEST_VERSION exceeds what the
-// visitor has seen.
+// 1-4 `items`). Leave `ts` as an EMPTY string on the new entry — this script
+// (run by the push step) stamps it with the real commit time and rewrites the
+// whole file in this canonical style, so timestamps are never fabricated and the
+// format stays identical to the rest of the fleet.
 export const CHANGELOG = [
   {
     v: 81,
-    title: "New game: The Prince and the Pauper — Five Tudor Tales (Swap Puzzle)",
-    kind: "game",
-    ts: "2026-07-03T19:03:21.157Z",
+    title: 'New game: The Prince and the Pauper — Five Tudor Tales (Swap Puzzle)',
+    kind: 'game',
+    ts: '2026-07-03T19:03:21.157Z',
     items: [
-      "Five chapters from Mark Twain's 1882 classic: slip past halberd-bearing palace guards by dashing when they turn away (4 gates, 3 lives); copy the herald's courtly gestures in growing sequences across 5 rounds (sequence memory, 3 mistakes allowed); dodge cabbages, dogs and market carts as Prince Edward flees London's angry streets for 22 seconds; parry left/right sword attacks from alley ruffians to beat 10 opponents (Miles Hendon's defense); and race a carriage-dodging, banner-collecting sprint to Westminster Abbey before the coronation begins.",
-      "Rich Tudor crimson-and-gold palette: royal crimson (#8b1515), throne gold (#d4a820), parchment ivory (#f0e0c0), cobblestone gray (#706060), midnight purple (#1e0c28). Chapter-select is THE ROYAL PROCLAMATIONS — five parchment scrolls with wax seals arranged in an arc across a deep crimson velvet throne room. Emblem: a Tudor crown with jewels. In-voice labels: HONOURS currency; THE CROWN SHINES / LOST IN THE CROWD win/lose headers. Page chrome in deep midnight purple with gold accents.",
+      'Five chapters from Mark Twain\'s 1882 classic: slip past halberd-bearing palace guards by dashing when they turn away (4 gates, 3 lives); copy the herald\'s courtly gestures in growing sequences across 5 rounds (sequence memory, 3 mistakes allowed); dodge cabbages, dogs and market carts as Prince Edward flees London\'s angry streets for 22 seconds; parry left/right sword attacks from alley ruffians to beat 10 opponents (Miles Hendon\'s defense); and race a carriage-dodging, banner-collecting sprint to Westminster Abbey before the coronation begins.',
+      'Rich Tudor crimson-and-gold palette: royal crimson (#8b1515), throne gold (#d4a820), parchment ivory (#f0e0c0), cobblestone gray (#706060), midnight purple (#1e0c28). Chapter-select is THE ROYAL PROCLAMATIONS — five parchment scrolls with wax seals arranged in an arc across a deep crimson velvet throne room. Emblem: a Tudor crown with jewels. In-voice labels: HONOURS currency; THE CROWN SHINES / LOST IN THE CROWD win/lose headers. Page chrome in deep midnight purple with gold accents.',
     ],
   },
   {
     v: 80,
     title: 'New game: White Fang — Five Yukon Chapters (Survival Sim)',
     kind: 'game',
-    ts: "2026-07-03T18:08:24.642Z",
+    ts: '2026-07-03T18:08:24.642Z',
     items: [
       'Five chapters from Jack London\'s 1906 novel: dodge eagle strikes as a lone wolf cub in the frozen Yukon wilderness (survive 24 s, 3 lives); free-move to collect 12 fish scraps before sled dogs drive you off in Gray Beaver\'s camp; dodge and counter-attack in the red-flash timing window of Beauty Smith\'s fight pit (beat 3 opponents of rising HP); tap the trust meter\'s green zone 10 times to earn Weedon Scott\'s trust as it oscillates faster each success; then chase escaped convict Jim Hall through a moonlit house to catch him 3 times before he reaches the sleeping judge.',
       'Icy blue-gray Yukon palette: wolf steel (#8899aa), ice blue (#7ac8ff), snow white (#deeeff), campfire amber (#f0a030), midnight navy (#050b18). Chapter-select is THE YUKON TRAIL — five snow-capped panel cards in a zigzag paw-print trail with aurora borealis above frozen pines. Emblem: a wolf-head silhouette with glowing ice-blue eyes. In-voice labels: HOWLS currency; THE WILD ENDURES / THE COLD CLAIMS YOU win/lose headers. Page chrome in deep midnight navy.',
@@ -34,7 +33,7 @@ export const CHANGELOG = [
     v: 79,
     title: 'New game: Anne of Green Gables — Five Tales from Montgomery\'s Novel (Story Arcade)',
     kind: 'game',
-    ts: "2026-07-03T17:04:27.494Z",
+    ts: '2026-07-03T17:04:27.494Z',
     items: [
       'Five tales from L. M. Montgomery\'s 1908 classic: steer Matthew\'s buggy down the White Way of Delight, catching apple blossoms Anne spots and dodging rocks in 22 seconds (collect 10, 3 lives); bake a cake for the Ladies\' Aid Society — catch flour, eggs, butter and vanilla falling from above while dodging the liniment bottles (12 good items, 26s, 3 misses); tap the shrinking dye ring in the dark zone before it turns green in 8 rounds (Anne\'s hair-dye disaster — 3 misses and it\'s green forever); free-move past glowing-eyed shadow shapes through the Haunted Wood to reach the gate in 26 seconds; and catch 15 golden books and letters to win the Avery Scholarship before time runs out (24s, 3 misses lose).',
       'Bright PEI pastoral palette: sky blue, rolling hill green, warm gold, red clay road, apple-blossom pink. Chapter-select is THE ISLAND OF ANNE — five postcard-style cards in a diamond map scatter, linked by winding red clay roads through a PEI countryside with Green Gables farmhouse, Lake of Shining Waters glimmer, and fireflies at dusk. Emblem: a spray of apple blossoms. In-voice labels: FANCY currency; KINDRED SPIRITS REJOICE / SUCH A DREADFUL SCRAPE win/lose headers. Page chrome in deep forest green and rose.',
@@ -44,7 +43,7 @@ export const CHANGELOG = [
     v: 78,
     title: 'New game: Little Women — Five Chapters from Alcott\'s Novel (Story Arcade)',
     kind: 'game',
-    ts: "2026-07-03T16:18:33.551Z",
+    ts: '2026-07-03T16:18:33.551Z',
     items: [
       'Five chapters from Louisa May Alcott\'s 1868 classic: catch Christmas gifts and food for the Hummel family (collect 10 in 26 s, 3 lives); hit 7 dramatic beats in Jo\'s Pickwick Club melodrama with a shrinking timing ring (3 misses and the audience sleeps); skate left and right across Amy\'s cracking frozen pond for 22 unbroken seconds; tap glowing medicine vials in Beth\'s dark fever-room before they fade (collect 15, 3 misses lose); then roam freely to catch 15 golden memory tokens while dodging grey shadow clouds as Father walks home through the sunset gate.',
       'Victorian parlor palette: deep mahogany, warm gold, dusty rose and candlelight cream. Chapter-select is THE MARCH PARLOR — five keepsake cards in a diamond arrangement linked by rose ribbons, each framed in ornate Victorian borders with a wax seal on completion. Emblem: an open book with a rose. In-voice labels: GRACE currency; THE MARCH GIRLS TRIUMPH / THE BURDEN GROWS HEAVY headers. Page chrome in dark mahogany and rose.',
@@ -54,7 +53,7 @@ export const CHANGELOG = [
     v: 77,
     title: 'New game: The Secret Garden — Five Chapters in the Walled Garden (Garden Puzzle)',
     kind: 'game',
-    ts: "2026-07-03T15:16:01.891Z",
+    ts: '2026-07-03T15:16:01.891Z',
     items: [
       'Five chapters from Burnett\'s beloved 1911 classic: follow the red-breasted robin to catch feathers and dodge thorns (collect 12 in 22s, 3 lives); tap glowing soil patches before winter frost seals them (plant 14 seeds in 26s); befriend Dickon\'s wild creatures — crow, fox, rabbit, squirrel — by tapping them before they bolt (20 animals, 3 escapes allowed); give Colin courage with a shrinking timing ring (7 perfectly-timed steps); and catch golden magic blooms while dodging grey stones as the garden bursts into full flower (15 blooms in 30s).',
       'Lush garden palette of rose pink, ivy green, warm gold and misty sky blue. Chapter-select is a winding stone garden path connecting five flower-bed cards through a walled garden scene — each bed planted with roses and a thematic icon (iron key, seedling, paw print, sunburst, rose bloom). Emblem: a rusted iron key wrapped in ivy. In-voice labels: BLOSSOMS currency; THE GARDEN BLOOMS / THE ROSES WITHER win/lose headers. Page chrome in deep garden green and rose.',
@@ -64,7 +63,7 @@ export const CHANGELOG = [
     v: 76,
     title: 'New game: The Metamorphosis — Die Verwandlung (Survival Puzzle, 5 scenes)',
     kind: 'game',
-    ts: "2026-07-03T14:24:55.319Z",
+    ts: '2026-07-03T14:24:55.319Z',
     items: [
       'Five scenes from Kafka\'s 1915 novella: dodge falling alarm clocks, boots, books and bottles as Gregor wakes transformed in his bedroom (survive 22s, 3 lives, spawn rate rises); evade four panicking family members and the chief clerk bouncing chaotically around the room (24s, 4 NPCs, free movement, speed ramps up); crawl to rotten mouldy scraps on the floor while avoiding fresh golden food (collect 10 rot items, 3 fresh touches end the ordeal); creep slowly past three scanning lodgers to reach Grete\'s violin — they sweep their gaze left/right and detection costs a life (30s, 3 lives); make the final exhausted crawl at half-speed across the dark apartment, weaving between patrolling family members, to reach the bedroom door before dawn arrives (28s timer).',
       'Oppressive Kafkaesque palette: near-black warm (#0d0b09), sickly insect green (#3a4a14 / #7a9c2a), dim amber lamp (#c88a20), rotten food green (#7a9c2a), fresh food gold (#d8b050), dark Victorian wallpaper purple-tint (#221c30). Chapter-select is THE SAMSA APARTMENT — a top-down apartment floor plan with five rooms arranged in a 2×2 grid plus a bottom hallway, connected by narrow corridor gaps; each room card has faint wallpaper, an amber lamp glow, and a thematic icon (alarm clock, top hat, food bowl, violin, dawn door). Emblem: a stylised six-legged beetle with amber eyes. In-voice labels: HOURS currency; ANOTHER HOUR SURVIVED / THE BURDEN IS TOO GREAT win/lose headers. Page chrome in deep warm black and amber.',
@@ -74,7 +73,7 @@ export const CHANGELOG = [
     v: 75,
     title: 'New game: Heidi — Five Alpine Tales (Adventure, 5 chapters)',
     kind: 'game',
-    ts: "2026-07-03T13:18:50.373Z",
+    ts: '2026-07-03T13:18:50.373Z',
     items: [
       'Five Alpine tales from Johanna Spyri\'s beloved 1881 classic: dodge falling boulders as Heidi climbs the steep rocky mountain path to Grandfather\'s alm (survive 24s, 3 lives, rocks spawn faster over time); tap stray goats to startle them back to safety before 3 escape over the cliff edge (herd 14, max 3 escapes); free-move Heidi through gloomy Frankfurt past Miss Rottenmeier\'s 126° vision cone to reach the mailbox in 26 seconds (furniture provides hiding spots, 3 lives); catch 12 golden Alpine memories — wildflowers, goats, stars, pine trees — falling through a dark Frankfurt window while dodging grey city objects (3 bad catches = fail); and tap a contracting ring at the perfect moment to encourage Clara\'s 6 miraculous first steps on the sunny meadow (ring accelerates each step, 4 misses allowed).',
       'Bright sunny Alpine palette: brilliant sky blue (#5bc8f5), mountain green (#4a9c3c), sunshine gold (#f5c842), wildflower pink (#e84090), snow white (#e8f4fc), warm wood (#a0703a). Chapter-select is THE TALES OF HEIDI — five wooden Alpine hiking signs in a zigzag winding trail, connected by dashed paths through a sunny mountain panorama with rolling hills, wildflowers, a grazing goat, and Grandfather\'s log hut silhouetted against the distant peaks. Emblem: an edelweiss flower with six white petals and a golden centre. Page chrome in bright alpine sky blue and forest green.',
@@ -84,7 +83,7 @@ export const CHANGELOG = [
     v: 74,
     title: 'New game: The Invisible Man — Unseen (Stealth Puzzle, 5 encounters)',
     kind: 'game',
-    ts: "2026-07-03T12:24:11.872Z",
+    ts: '2026-07-03T12:24:11.872Z',
     items: [
       'Five encounters from H. G. Wells\' 1897 classic: mix the invisibility compound — tap a pendulum needle into the shrinking blue zone 8 times (3 misses lose, zone narrows and speed ramps each brew); slip through the foggy village of Iping avoiding 4 patrolling townsfolk\'s amber sight cones for 24 seconds (free movement, 3 lives); dodge heavy snow-reveal blobs falling from above for 22 seconds — they make your footprints visible and alert the mob (3 lives, blobs speed up and spawn faster); tap 5 breach points (2 windows, 2 doors, 1 gate) to hold back the soldiers surrounding Kemp\'s house for 28 seconds before 3 doors splinter (HP bars drain faster over time); and survive 26 seconds on the rain-soaked dark commons — move freely to avoid 6 torch-bearers converging from all sides and dodge telegraphed thrown rocks (3 lives, mob tightens over time).',
       'Deep fog-grey English village palette: ink-black (#04060e), misty night blue (#080e1a), wet cobblestone (#09101e), amber lantern glow (#d8c060), bandage white (#c8c0b0), rain-reveal blue-grey (#a0b0c4). Chapter-select is GRIFFIN\'S TRAIL — five stone-wall cards in a zigzag footprint-trail path on a snow-dusted village backdrop, connected by a dotted grey line; each card has a snow cap on its top edge and a paired-footprint icon. Emblem: Griffin\'s iconic top hat, goggles and bandaged head in dark silhouette. Scenery: gas-lit English village at night with church spire, inn and draper\'s shop, rolling mist layers, animated snowfall, and amber lamp-post glows. In-voice labels: VAPOURS currency; UNSEEN — FOR NOW / THEY HAVE YOU win/lose headers. Page chrome in deep misty blue-black and fog grey.',
@@ -94,7 +93,7 @@ export const CHANGELOG = [
     v: 73,
     title: 'New game: Open Sesame — Ali Baba and the Forty Thieves (Heist Puzzle, 5 tales)',
     kind: 'game',
-    ts: "2026-07-03T11:24:45.198Z",
+    ts: '2026-07-03T11:24:45.198Z',
     items: [
       'Five tales from One Thousand and One Nights: hide from the forty thieves\' sweeping lanterns in the dark forest for 24 seconds (drag left/right, 3 lives, lanterns accelerate); rush the treasure cave to collect 12 gold bags before the magic door seals in 26 seconds (dodge falling stalactites, 3 lives); tap 14 marked doors on the cobblestone street before their chalk glow fades and the thieves find the right house (3 misses lose, marks speed up); discover 14 thieves hiding in great oil jars by tapping each pair of glowing eyes before they vanish (3 misses lose); and time Morgiana\'s dagger-dance — tap when the swinging pendulum blade enters the shrinking golden zone for 8 strikes (zone narrows and blade speeds up each hit, 4 misses lose).',
       'Deep Arabian night palette: midnight indigo (#0c0818), cave purple (#1a1030), desert gold (#d4a020), bright gold (#f0c840), amber torch (#e05800), cave teal (#006080). Chapter-select is five ORNATE PALACE ARCHES arranged in a 2-1-2 layout on an indigo backdrop — each a pointed Moorish arch with a brass keystone gem, flanking torch glow, and a tale-number in Arabic-style framing; the palace silhouette with domed towers and lit arched windows fills the menu background. Emblem is a treasure chest overflowing with gold coins. Page chrome in deep indigo and desert gold.',
@@ -104,7 +103,7 @@ export const CHANGELOG = [
     v: 72,
     title: 'New game: A Trip to the Moon — Five Chapters Through the 1902 Méliès Masterpiece (Cannon Launch)',
     kind: 'game',
-    ts: "2026-07-03T09:46:30.304Z",
+    ts: '2026-07-03T09:46:30.304Z',
     items: [
       'Five chapters inspired by Méliès\' 1902 film: time the gavel at the Grand Congress of Astronomers (6 votes, sweep bar, 3 misses lose); tap a contracting ring to the precision target to load the great cannon 5 times (ring accelerates with each load); steer the capsule freely through 24 seconds of star-dancers and comet showers in deep space; tap-to-defeat 20 Selenites erupting from Moon craters before 3 breach the explorers; and steer left/right as the capsule falls through asteroids, lightning, and ocean waves back to Earth — hit the blue Pacific zone to win.',
       'Deep-space palette: void-black (#06040e), moon grey-blue (#b8ccd8), brass capsule (#c88020), selenite teal (#30c0a0), golden star (#ffe080), Victorian red (#c83010). Chapter-select is a PARABOLIC VOYAGE ARC — five octagonal magic-lantern slide frames with brass corner rivets arranged on an arc from Paris/Earth (lower-left) through space (apex) to the Moon (upper-right) and back down to the splashdown (lower-right), connected by a dashed brass trajectory line. The iconic Méliès Moon face (eyes, nose, open mouth, capsule stuck in one eye) serves as the emblem. Page chrome in deep indigo and brass-gold.',
@@ -114,7 +113,7 @@ export const CHANGELOG = [
     v: 71,
     title: 'New game: Great Expectations — Rise from the Forge (Drama Adventure, 5 acts)',
     kind: 'game',
-    ts: "2026-07-03T07:45:31.080Z",
+    ts: '2026-07-03T07:45:31.080Z',
     items: [
       'Five acts from Dickens\' 1861 classic: free-move stealth across the Kent marshes — drag Pip to collect 6 provisions for escaped convict Magwitch while dodging three soldiers\' sweeping lantern cones (3 lives, ~26s); move left/right to catch golden wedding cake slices falling at Satis House while avoiding rotten dark pieces that cost a life (collect 12 to win); tap a swinging gavel into the shrinking golden zone 8 times at Mr. Jaggers\' London office (zone narrows and pendulum speeds up each hit, 4 misses lose); steer a rowboat past police galleys, floating logs and fog banks down the dark Thames for 26 seconds (3 lives, obstacle speed ramps up); and face villain Compeyson on the wharf — read his telegraphed left/right/center attacks, dodge to safety, then tap when he staggers golden to strike him down (5 hits to win, 3 lives).',
       'Dark Victorian England palette: near-black (#080608), marsh green (#192810), Thames navy (#1a3040), gaslight amber (#c88820), aged parchment (#d4c080), red wax seal (#cc2211). Chapter-select is five LEGAL INDENTURE PAPERS scattered on a dark mahogany barrister\'s desk with law books in the shelves, an inkwell and quill at right, a candle at left, and red string connecting the papers center-to-corners; each document has a brass eyelet pin, folded corner crease, and "INDENTURE NO. X" header on aged cream. Boot/menu/result scenery: the Kent marshes at night — prison hulks on the river, a churchyard with cross and arched headstones, marsh reed tufts, rolling mist, and a crescent moon. In-voice labels: EXPECTATIONS currency; THE PATH RISES / GREAT EXPECTATIONS FALL win/lose headers. Page chrome in dark Victorian mahogany and amber.',
@@ -124,7 +123,7 @@ export const CHANGELOG = [
     v: 70,
     title: 'New game: Merlin — Five Trials of the Enchanter (Spell Puzzle)',
     kind: 'game',
-    ts: "2026-07-03T05:48:56.222Z",
+    ts: '2026-07-03T05:48:56.222Z',
     items: [
       'Five trials from Arthurian legend: catch 12 glowing gold runes falling through the ancient oakwood while dodging cursed red glyphs (3 lives, spawn rate ramps up); survive 24 seconds in Vortigern\'s underground tower as the Red Dragon and White Dragon sweep fire-breath across three lanes — dodge between them; steer Merlin\'s merlin falcon through arrow-filled skies collecting 10 golden feathers in free movement (3 lives, arrows spawn from all four edges); tap the correct glowing rune from a circle of standing stones in 10 timed rounds — the gold zone timer shrinks each round, 3 misses lose; and finally guide Merlin through crystal spires that close in from both cave walls for 26 seconds — the corridor narrows steadily and one wrong step shatters a life.',
       'Deep midnight-indigo palette: void-black (#06040e), mystical purple (#4a1a7a), lavender spell-glow (#b87aff), starlit silver (#c8d0f0), enchanter gold (#d4a820), crystal blue (#88ccff). Chapter-select is a CELESTIAL STAR CHART — five constellation medallions (hawk, twin-dragons, falcon, rune-star, serpent-spiral) scattered on a midnight-blue sky map, each an elliptical disc with RA/Dec grid lines inside, the constellation drawn in connecting star-dots; selected constellations pulse with lavender glow and a golden lead star. Scenery: ancient British hilltop at night with standing stones, rolling hills, a crescent moon, animated wisps, and drifting bat-shaped wisps. In-voice labels: RUNES currency; THE ENCHANTMENT HOLDS / THE SPELL BREAKS win/lose headers. Page chrome in deep indigo and lavender.',
@@ -134,7 +133,7 @@ export const CHANGELOG = [
     v: 69,
     title: 'New game: Sinbad the Sailor (Voyage Adventure, 5 voyages)',
     kind: 'game',
-    ts: "2026-07-03T03:48:42.059Z",
+    ts: '2026-07-03T03:48:42.059Z',
     items: [
       'Five voyages from One Thousand and One Nights: dodge whale waterspouts and collect crates before the whale island submerges (22s survive); catch diamonds falling from eagles while serpents close in from the sides (collect 10); cling to the Roc\'s leg through a sky full of falling rocks and stormclouds (dodge 20s); wander a desert island collecting grape clusters to brew wine and trick the Old Man of the Sea off your shoulders (fill 8-grape wine jar); then steer a ship and fire cannons at sea serpents and krakens until 10 monsters are slain.',
       'Rich Arabian Nights palette: deep indigo night sky (#060820), ocean teal (#0c3a5a), crescent moon gold (#f0c030), ruby red (#cc2244), emerald serpent (#1a6618), kraken violet (#4a0a4a). Chapter-select is a MARINER\'S CHART — five scattered palm-tree island nodes connected by golden dotted sailing paths on a teal parchment sea map with a double gold border and a compass rose; each island badge shows a voyage number with a scroll name label below. In-voice labels: JEWELS currency, SEAS CONQUERED / THE DEEP CLAIMS YOU win/lose headers, five voyages of growing challenge.',
@@ -144,7 +143,7 @@ export const CHANGELOG = [
     v: 68,
     title: 'New game: The Pied Piper of Hamelin (Rhythm Lead, 5 tales)',
     kind: 'game',
-    ts: "2026-07-03T02:24:08.752Z",
+    ts: '2026-07-03T02:24:08.752Z',
     items: [
       'Five tales of the famous German legend — drive scuttling rats from the town square before they reach the food barrels (tap 12, 3 escape = over, 28s); play the magic pipe for the Mayor by tapping the pendulum tip into the gold zone 8 times (speeds up and zone narrows each success, 4-miss limit); steer the Piper left/right through Hamelin\'s cobblestone streets dodging stone walls while a 14-rat swarm trails behind you, racing to the River Weser in 24 seconds; survive 24 seconds of the Mayor\'s guards charging down three lanes when he tries to pay only 50 guilders; and finally tap falling blue notes in three columns (avoid the red dissonant ones) to lead the children with 12 enchanted notes — the mountain door opens and shuts behind them forever.',
       'Warm medieval palette: near-black (#080408), amber (#c87a18), gold (#f0c030), rat-grey (#8a6850), magic cyan (#44aaff), mountain violet (#2e1e44). Chapter-select is a HAMELIN TOWN MAP — five parchment location cards at scattered positions (Town Square top-left, Mayor\'s Hall top-right, High Street center, River Bank bottom-left, The Mountain bottom-right) connected by dotted paths on a warm amber map background with a tiny compass rose; inner double-border frames and green checkmark stamps. In-voice labels: GUILDERS currency, THE PIPE RINGS TRUE / HAMELIN IS LOST win/lose headers. Page chrome in warm amber and dark amber-brown.',
@@ -154,7 +153,7 @@ export const CHANGELOG = [
     v: 67,
     title: 'New game: Please, Sir — Oliver Twist (Pickpocket Stealth, 5 acts)',
     kind: 'game',
-    ts: "2026-07-03T01:21:02.467Z",
+    ts: '2026-07-03T01:21:02.467Z',
     items: [
       'Five acts of Dickensian survival: dodge the beadle\'s swinging cane in the workhouse gruel hall while catching falling bowls for bonus shillings (3 lives, 22s); tap Fagin\'s pendulum-swung handkerchief into the golden zone 8 times to graduate as a pickpocket (misses speed the pendulum up); tap lying wigged witnesses at their benches before their time bars drain and they testify against Oliver before Magistrate Fang (10 silenced, 3 testify = over); drag Oliver through the dark Chertsey house past two patrolling guards whose lantern cones sweep in their direction of travel (3 lives, 26s); and survive 28 seconds on the London rooftops dodging Bill Sikes\' stone throws — each one telegraphed by a red warning triangle before it falls.',
       'Coal-black Victorian London palette: soot-black (#100c0a), gaslight amber (#c88820), London fog (#b0a898), poverty red (#cc3822), cream parchment (#e8d8b8). Chapter-select is a DARK CORK NOTICE BOARD with five weathered parchment broadsheet clippings pinned at different heights in a 2-upper / 1-center / 2-lower arrangement, connected by red investigator\'s string; thumbtack pins and folded corner creases on every card. In-voice labels: SHILLINGS currency; THE BOY SURVIVES / THE STREETS CLAIM YOU win/lose headers.',
@@ -164,7 +163,7 @@ export const CHANGELOG = [
     v: 66,
     title: 'New game: The Call of the Wild — Jack London (Sled Runner, 5 chapters)',
     kind: 'game',
-    ts: "2026-07-02T23:59:58.309Z",
+    ts: '2026-07-02T23:59:58.309Z',
     items: [
       'Five stretches of Buck\'s Yukon journey: dodge falling lasso loops at Judge Miller\'s California ranch (survive 22s, 3 lives); steer the sled team down the snow trail collecting 10 frozen fish while dodging drifts; duel lead dog Spitz in a counter-strike timing fight on the ice floe (land 5 counters, 4 hit points); tap rapidly in rhythm to pull John Thornton\'s thousand-pound sled across the finish line before 32 seconds; then follow howling wolf silhouettes through the dark spruce forest while dodging trapper\'s steel jaw-traps to cover the final stretch.',
       'Yukon winter palette: midnight navy (#080c14), Klondike gold (#d4a030), arctic ice (#4ab8e8), aurora green (#20c870), spruce black (#0c2010). Chapter-select is a ZIGZAG SLED TRAIL — five wooden trail markers staggered left-right down a bright daytime Yukon snow map, connected by dashed trail lines; each post displays a mile number and themed chapter name. Framed screens in-voice: MILES currency, "THE TRAIL HOLDS" / "THE SNOW CLAIMS YOU" win/lose headers.',
@@ -174,7 +173,7 @@ export const CHANGELOG = [
     v: 65,
     title: 'New game: Wrath of Achilles — The Iliad (Battle Tactics, 5 books)',
     kind: 'game',
-    ts: "2026-07-02T23:00:41.465Z",
+    ts: '2026-07-02T23:00:41.465Z',
     items: [
       'Five books of Homer\'s Iliad: tap Greek ships sailing into Aulis bay to muster the fleet (collect 15 in 26s); steer a bronze-armored hoplite left/right past Trojan spears across the dusty plain (22s); lane-switch to block Trojan warriors at the three-arched gate (block 14); tap to intercept Apollo\'s arrows flying at Patroclus in golden armor (protect for 22s, 3 lives); chase Hector around Troy\'s oval walls by holding to sprint (stamina bar), then time the strike in the oscillating gold-zone gauge — 3 perfect strikes to end the duel.',
       'Bronze-age Aegean palette: midnight navy (#060a1e), burnished bronze (#c87a20), Aegean blue (#4ab8e8), ivory (#f0e8d0), shield-blue (#1a3060), crimson (#cc1a10). Chapter-select is a PHALANX OF HOPLITE SHIELDS — five round Argive shields with Argive concentric rings and cross-band armature arranged 2+2+1 on a dark Aegean backdrop of Troy\'s battlements at dawn. In-voice labels: GLORY currency; GLORY TO OLYMPUS / THE FATES HAVE SPOKEN win/lose; TAKE UP YOUR SHIELD boot call.',
@@ -184,7 +183,7 @@ export const CHANGELOG = [
     v: 64,
     title: 'New game: To the Center — Journey to the Center of the Earth (Descent Platformer, 5 chapters)',
     kind: 'game',
-    ts: "2026-07-02T22:06:39.467Z",
+    ts: '2026-07-02T22:06:39.467Z',
     items: [
       'Five chapters into Jules Verne\'s 1864 classic: dodge falling rocks descending Snæfellsjökull\'s volcanic shaft for 24 seconds (3 lives, lantern-lit explorer, deepening amber ore crystal collectibles); steer the raft left/right across the underground Lidenbrock Sea dodging rocks, tentacles, and floating logs for 26 seconds; survive 22 seconds of the battling Ichthyosaurus and Plesiosaurus in free-movement — two enormous prehistoric beasts sweeping the water with their bodies; dodge warning-telegraphed lightning columns in the electromagnetic storm for 26 seconds as St. Elmo\'s fire crackles on the mast; and ride the Stromboli volcanic eruption upward, dodging magma jets from the walls while collecting 8 glowing ore crystals to escape.',
       'Deep geological palette: volcanic earth-black (#0a0602), rock amber (#c87a20), molten lava (#ff5000), underground sea teal (#20a0b8), bone fossil (#d8c8a0). Chapter-select is a GEOLOGICAL CROSS-SECTION — five depth-station cards staggered left and right at increasing depths (2km, 20km, 160km, 200km, 6400km), each a rock-layer panel with a colored stratum bar on the left edge; lava glow at the bottom. Animated strata bands, rising ember sparks, and glowing ore veins in the boot/menu backdrop. In-voice labels: FATHOMS currency; DESCENDED FURTHER / RETREAT TO THE SURFACE win/lose. Page chrome in deep volcanic amber and earth-black.',
@@ -194,7 +193,7 @@ export const CHANGELOG = [
     v: 63,
     title: 'New game: A Thousand Nights — One Thousand and One Nights (Adventure, 5 tales)',
     kind: 'game',
-    ts: "2026-07-02T21:05:26.596Z",
+    ts: '2026-07-02T21:05:26.596Z',
     items: [
       'Five tales from One Thousand and One Nights: tap the golden ink zone as Scheherazade\'s quill swings to keep the Sultan enchanted (10 strikes); steer Sinbad\'s ship through Roc feathers and falling rocks for 22 seconds; catch Ali Baba\'s gold bags while dodging daggers in the treasure cave; tap falling soldiers out of the sky to protect the palace with Aladdin\'s Genie; and race the magic carpet through narrowing palace spires to deliver the final tale.',
       'Arabian Nights palette: midnight indigo (#06040e), gold (#e8b020), turquoise (#00b8a0), ruby (#cc1844), silk pink (#e85898). Chapter-select is a BAZAAR OF HANGING LANTERNS — five hexagonal lanterns suspended on copper chains at scattered heights above a starry midnight sky, each glowing gold or teal when done. In-voice labels: SCHEHERAZADE WEAVES THE NIGHT. / DAWN BREAKS THE SPELL.; currency COINS; finale \'He who does not know his past is lost in the desert without a star to follow.\' Page chrome in deep midnight indigo and gold.',
