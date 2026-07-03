@@ -14,7 +14,7 @@ export const CHANGELOG = [
     v: 67,
     title: 'New game: Please, Sir — Oliver Twist (Pickpocket Stealth, 5 acts)',
     kind: 'game',
-    ts: '',
+    ts: "2026-07-03T01:21:02.467Z",
     items: [
       'Five acts of Dickensian survival: dodge the beadle\'s swinging cane in the workhouse gruel hall while catching falling bowls for bonus shillings (3 lives, 22s); tap Fagin\'s pendulum-swung handkerchief into the golden zone 8 times to graduate as a pickpocket (misses speed the pendulum up); tap lying wigged witnesses at their benches before their time bars drain and they testify against Oliver before Magistrate Fang (10 silenced, 3 testify = over); drag Oliver through the dark Chertsey house past two patrolling guards whose lantern cones sweep in their direction of travel (3 lives, 26s); and survive 28 seconds on the London rooftops dodging Bill Sikes\' stone throws — each one telegraphed by a red warning triangle before it falls.',
       'Coal-black Victorian London palette: soot-black (#100c0a), gaslight amber (#c88820), London fog (#b0a898), poverty red (#cc3822), cream parchment (#e8d8b8). Chapter-select is a DARK CORK NOTICE BOARD with five weathered parchment broadsheet clippings pinned at different heights in a 2-upper / 1-center / 2-lower arrangement, connected by red investigator\'s string; thumbtack pins and folded corner creases on every card. In-voice labels: SHILLINGS currency; THE BOY SURVIVES / THE STREETS CLAIM YOU win/lose headers.',
