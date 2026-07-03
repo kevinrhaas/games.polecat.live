@@ -14,7 +14,7 @@ export const CHANGELOG = [
     v: 79,
     title: 'New game: Anne of Green Gables — Five Tales from Montgomery\'s Novel (Story Arcade)',
     kind: 'game',
-    ts: '',
+    ts: "2026-07-03T17:04:27.494Z",
     items: [
       'Five tales from L. M. Montgomery\'s 1908 classic: steer Matthew\'s buggy down the White Way of Delight, catching apple blossoms Anne spots and dodging rocks in 22 seconds (collect 10, 3 lives); bake a cake for the Ladies\' Aid Society — catch flour, eggs, butter and vanilla falling from above while dodging the liniment bottles (12 good items, 26s, 3 misses); tap the shrinking dye ring in the dark zone before it turns green in 8 rounds (Anne\'s hair-dye disaster — 3 misses and it\'s green forever); free-move past glowing-eyed shadow shapes through the Haunted Wood to reach the gate in 26 seconds; and catch 15 golden books and letters to win the Avery Scholarship before time runs out (24s, 3 misses lose).',
       'Bright PEI pastoral palette: sky blue, rolling hill green, warm gold, red clay road, apple-blossom pink. Chapter-select is THE ISLAND OF ANNE — five postcard-style cards in a diamond map scatter, linked by winding red clay roads through a PEI countryside with Green Gables farmhouse, Lake of Shining Waters glimmer, and fireflies at dusk. Emblem: a spray of apple blossoms. In-voice labels: FANCY currency; KINDRED SPIRITS REJOICE / SUCH A DREADFUL SCRAPE win/lose headers. Page chrome in deep forest green and rose.',
