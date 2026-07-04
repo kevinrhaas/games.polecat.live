@@ -10,6 +10,16 @@
 // format stays identical to the rest of the fleet.
 export const CHANGELOG = [
   {
+    v: 91,
+    title: 'New game: Robinson Crusoe — Island of Fate (Island Survival)',
+    kind: 'game',
+    ts: '',
+    items: [
+      'Five trials of survival on the Island of Despair — steer through the shipwreck storm dodging falling mast debris (22 s, 3 lives); swim to salvage 12 supply crates from the wreck while dodging patrolling sharks (28 s); sneak through dense jungle past three cannibal torch-bearers and their light cones (25 s, 3 lives); tap 10 attackers before they reach Friday on the beach; and time a pendulum bellows to pump the signal fire bright enough (8 hits, zone narrows, 4 misses lose).',
+      'Warm tropical castaway palette — deep ocean navy, sandy gold, jungle green — with a hand-drawn parchment island-map chapter menu of five X-marked locations connected by dotted paths. Emblem: a flag planted on a sandy island peak with a palm tree. In-voice labels: DAYS currency; PROVIDENCE SMILES / THE ISLAND CLAIMS YOU win/lose headers. Page chrome in deep ocean blue and sandy gold.',
+    ],
+  },
+  {
     v: 90,
     title: 'New game: Bah, Humbug! — A Christmas Carol (Story Arcade)',
     kind: 'game',

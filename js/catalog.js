@@ -174,4 +174,6 @@ window.POLECAT_CATALOG = [
     blurb: "Five scenes from Kafka's 1915 novella — dodge falling objects as Gregor wakes transformed, evade the panicking family, collect rotten food scraps, creep past scanning lodgers to hear the violin, and make the final slow crawl to peace before dawn.", tags: ["puzzle","survival","multi-chapter","kafka"] },
   { id: "asilaydying-journey", title: "As I Lay Dying", source: "As I Lay Dying — William Faulkner", genre: "Convoy Survival", style: "8-bit", accent: "#D4A020", status: "live",
     blurb: "Five chapters of the Bundren family's journey — steer a raft through the flooding river, haul the wagon through Mississippi dust, swat buzzards off the coffin, escape a burning barn, and navigate Jefferson to lay Addie to rest.", tags: ["survival","story","multi-chapter","faulkner"] },
+  { id: "crusoe-island", title: "Robinson Crusoe", source: "Robinson Crusoe — Daniel Defoe (1719)", genre: "Island Survival", style: "8-bit", accent: "#d4b860", status: "live",
+    blurb: "Five trials of the castaway — steer through the shipwreck storm, salvage supplies from the wreck, hide from cannibal scouts in the jungle, rescue Friday from the attackers, and signal a passing ship to earn your rescue after twenty-eight years.", tags: ["survival","adventure","multi-chapter"] },
 ];

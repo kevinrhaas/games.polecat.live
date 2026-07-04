@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <title>Robinson Crusoe — games.polecat.live</title>
+  <meta name="theme-color" content="#060e18" />
+  <link rel="icon" href="../../assets/logo.svg" type="image/svg+xml" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/site.css" />
+  <link rel="stylesheet" href="../../css/game.css" />
+  <style id="game-theme">:root{
+    --g-bg1:#0a1e34;
+    --g-bg2:#040c14;
+    --g-bar:rgba(4,12,20,.95);
+    --g-accent:#d4b860;
+    --g-title:#f0d890;
+    --g-panel:rgba(8,18,30,.88);
+    --g-border:#2a4a6a;
+    --g-text:#7a9ab0;
+    --g-key:#d4b860;
+    --g-stage:#1a3a5a;
+    --g-glow:rgba(30,100,180,.28);
+  }</style>
+</head>
+<body class="game-page">
+  <div class="game-bar">
+    <a class="back" href="../../index.html">◀ ARCADE</a>
+    <span class="title">Robinson Crusoe</span>
+    <span class="src">· Daniel Defoe, 1719</span>
+    <span class="spacer"></span>
+    <button class="icon-btn" id="fullscreenBtn" title="Full screen">⛶</button>
+    <button class="icon-btn" id="muteBtn" title="Mute">🔊</button>
+    <button class="icon-btn" id="restartBtn" title="Restart">↻</button>
+  </div>
+  <div class="game-main">
+    <div id="game"></div>
+    <div class="game-help">
+      <b>Robinson Crusoe.</b> Five trials of survival — steer through the shipwreck storm, salvage supplies from the wreck, hide from cannibal scouts in the jungle, rescue Friday from the attackers, and signal a passing ship to earn rescue. Tap <b>⛶ Full screen</b> for the full experience.
+      <span class="keys">TAP / DRAG · ARROW KEYS · earn DAYS across all five trials</span>
+    </div>
+  </div>
+  <script src="../../js/retro-engine.js"></script>
+  <script src="../../js/saga.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
