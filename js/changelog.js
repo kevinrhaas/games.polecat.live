@@ -13,7 +13,7 @@ export const CHANGELOG = [
     v: 87,
     title: 'New game: The Masque — Phantom of the Opera (1925)',
     kind: 'game',
-    ts: '',
+    ts: '2026-07-04T00:07:03.660Z',
     items: [
       'Five scenes from Rupert Julian\'s 1925 silent film: stalk the masquerade as the Red Death, entrance Christine at the organ, drop the great chandelier on the mob, steer the gondola through torch-lit catacombs, and outrun the raging Paris crowd.',
       'Silent-film aesthetic: sepia/monochrome NES palette, film-strip chapter menu with sprocket holes, and dramatic crimson accents — every screen looks nothing like any other game on the arcade.',
