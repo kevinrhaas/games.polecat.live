@@ -125,13 +125,20 @@ structure while keeping their story.
   torch flames, a selection glow/cursor — `cfg.map.title/node` receive `sceneT`).
   Static screens are a fail — every framed screen should move.
 
-**Promoting a game from Gen 3 to Gen 4** (an occasional, high-care task — do NOT
-rush it): pick a marquee 8-bit game, rebuild `game.js` on `RetroSaga2` keeping
-its best mechanics but expanding to a hub + phased nodes + mini-bosses +
-upgrades + branching + endings, switch its index.html to the Gen-4 scripts, set
-the catalog entry `gen:4, style:"16-bit"` with a fresh blurb, re-shoot the
-thumbnail, and headless-test the whole scene walk (zero pageerrors, every phase
-pacing-audited).
+**NORTH STAR: every property gets BOTH a Gen-3 (8-bit) and a Gen-4 (16-bit)
+version.** They coexist — a Gen-4 is **ADDITIVE, never a replacement** for the
+8-bit game. The home page groups them into one card (shared catalog `property`
+key) with an 8-bit/16-bit play switch. `games/dracula-8bit` (Gen 3) +
+`games/dracula-castle` (Gen 4) are the reference pair.
+
+**Adding a property's Gen-4 version** (an occasional, high-care task — do NOT
+rush it): create a NEW folder `games/<id>-16/` (leave the 8-bit folder intact)
+with its own `game.js` on `RetroSaga2` (keep the property's best mechanics but
+expand to a hub + phased nodes + mini-bosses + upgrades + branching + endings),
+an `index.html` on the Gen-4 scripts, and a fresh thumbnail. Add a NEW catalog
+entry `{ id:"<id>-16", …, style:"16-bit", gen:4, property:"<Property>" }` and set
+that SAME `property` on the existing 8-bit entry so they share one card.
+Headless-test the whole scene walk (zero pageerrors, every phase pacing-audited).
 
 ## Adding a new game (the core repeatable task)
 1. Pick the next `status:"soon"` entry in `js/catalog.js` (or add one). Use the

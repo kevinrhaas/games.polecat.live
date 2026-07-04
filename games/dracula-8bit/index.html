@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <title>Dracula — games.polecat.live</title>
+  <meta name="theme-color" content="#0b0420" />
+  <link rel="icon" href="../../assets/logo.svg" type="image/svg+xml" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/site.css" />
+  <link rel="stylesheet" href="../../css/game.css" />
+  <style id="game-theme">:root{--g-bg1:#2a0a14;--g-bg2:#0a0308;--g-bar:rgba(20,6,10,.95);--g-accent:#e23b4a;--g-title:#f0d6d6;--g-panel:rgba(30,10,14,.82);--g-border:#5a1822;--g-text:#b58a8a;--g-key:#e8b0b0;--g-stage:#5a1822;--g-glow:rgba(200,16,46,.3)}</style>
+</head>
+<body class="game-page">
+  <div class="game-bar">
+    <a class="back" href="../../index.html">◀ ARCADE</a>
+    <span class="title">Dracula</span>
+    <span class="src">· Bram Stoker</span>
+    <span class="spacer"></span>
+    <button class="icon-btn" id="fullscreenBtn" title="Full screen">⛶</button>
+    <button class="icon-btn" id="muteBtn" title="Mute">🔊</button>
+    <button class="icon-btn" id="restartBtn" title="Restart">↻</button>
+  </div>
+  <div class="game-main">
+    <div id="game"></div>
+    <div class="game-help">
+      <b>Dracula.</b> Five chapters through Bram Stoker's novel — escape the castle wall, hold the doomed ship Demeter, feed Renfield's flies, free Lucy's soul, and run down the Count before sunset. Tap <b>⛶ Full screen</b> for the full experience.
+      <span class="keys">TAP / DRAG · ARROW KEYS · clear all five to build your RESOLVE</span>
+    </div>
+  </div>
+  <script src="../../js/retro-engine.js"></script>
+  <script src="../../js/saga.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

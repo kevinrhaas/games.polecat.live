@@ -10,6 +10,16 @@
 // format stays identical to the rest of the fleet.
 export const CHANGELOG = [
   {
+    v: 100,
+    title: 'Play every story in both 8-bit and 16-bit',
+    kind: 'feature',
+    ts: '2026-07-04T14:05:02.040Z',
+    items: [
+      'Games are heading toward a full set: each story will have BOTH an 8-bit (Gen 3 / NES-era) version and a richer 16-bit (Gen 4 / SNES-era) version, and one card now holds both with a play switch.',
+      'Dracula is the first pair — tap 8-BIT for the original five-chapter tale or 16-BIT for the cinematic Nights of Blood. The rest will fill in over time.',
+    ],
+  },
+  {
     v: 99,
     title: 'More variety coming — new games will break the mould',
     kind: 'feature',

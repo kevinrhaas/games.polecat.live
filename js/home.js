@@ -141,36 +141,44 @@ import { CHANGELOG, LATEST_VERSION } from './changelog.js';
     return cv;
   }
 
-  /* ----------- card builder ----------- */
-  function card(game) {
-    const live = game.status === 'live';
-    const el = document.createElement(live ? 'a' : 'div');
-    el.className = 'card' + (live ? '' : ' soon');
-    if (live) { el.href = 'games/' + game.id + '/'; }
-    el.dataset.genre = game.genre;
-    el.dataset.style = game.style;
+  /* ----------- card builder -----------
+   * Takes an array of variants for one property (usually 1; 2+ when a property
+   * exists in multiple generations, e.g. Dracula in 8-bit + 16-bit). A single
+   * variant is a whole-card link; multiple variants render a card with a
+   * per-generation play switch (Gen 4 first). */
+  function card(variants) {
+    const list = variants.slice().sort((a, b) => genOf(b) - genOf(a));
+    const g = list[0]; // primary = highest generation
+    const multi = list.length > 1;
 
-    const thumb = document.createElement('div');
+    const el = document.createElement(multi ? 'div' : 'a');
+    el.className = 'card' + (multi ? ' multi' : '');
+    if (!multi) el.href = 'games/' + g.id + '/';
+    el.dataset.genre = g.genre;
+    el.dataset.style = g.style;
+
+    // thumb links to the primary (Gen 4) version on multi cards
+    const thumb = document.createElement(multi ? 'a' : 'div');
     thumb.className = 'thumb';
-    thumb.appendChild(thumbMedia(game));
+    if (multi) thumb.href = 'games/' + g.id + '/';
+    thumb.appendChild(thumbMedia(g));
 
     const badges = document.createElement('div');
     badges.className = 'badges';
-    const gen = genOf(game);
-    badges.innerHTML =
-      `<span class="badge gen gen${gen}">GEN ${gen}</span>` +
-      `<span class="badge">${game.style}</span>` +
-      `<span class="badge genre">${game.genre}</span>` +
-      (live ? '' : '<span class="badge">SOON</span>');
+    const genBadges = list.map((v) => `<span class="badge gen gen${genOf(v)}">GEN ${genOf(v)}</span>`).join('');
+    badges.innerHTML = genBadges + (multi ? '' : `<span class="badge">${g.style}</span>`) +
+      `<span class="badge genre">${g.genre}</span>`;
     thumb.appendChild(badges);
 
     const body = document.createElement('div');
     body.className = 'body';
-    body.innerHTML =
-      `<h3>${game.title}</h3>` +
-      `<p>${game.blurb}</p>` +
-      `<div class="meta"><span class="src">${game.source.split('—')[0].trim()}</span>` +
-      `<span class="play">${live ? '▶ PLAY' : '🔒 SOON'}</span></div>`;
+    const meta = multi
+      ? `<div class="meta"><span class="src">${g.source.split('—')[0].trim()}</span>` +
+        `<span class="gen-switch">` +
+        list.map((v) => `<a class="gen-play gen${genOf(v)}" href="games/${v.id}/">▶ ${v.style}</a>`).join('') +
+        `</span></div>`
+      : `<div class="meta"><span class="src">${g.source.split('—')[0].trim()}</span><span class="play">▶ PLAY</span></div>`;
+    body.innerHTML = `<h3>${g.title}</h3><p>${g.blurb}</p>` + meta;
 
     el.appendChild(thumb);
     el.appendChild(body);
@@ -192,8 +200,13 @@ import { CHANGELOG, LATEST_VERSION } from './changelog.js';
   function render() {
     grid.innerHTML = '';
     const items = catalog.filter(visible);
-    items.forEach((g) => grid.appendChild(card(g)));
-    empty.hidden = items.length > 0;
+    // group variants of the same property into ONE card (keyed by `property`),
+    // preserving first-appearance order
+    const groups = new Map();
+    items.forEach((g) => { const k = g.property || g.id; if (!groups.has(k)) groups.set(k, []); groups.get(k).push(g); });
+    const cards = [...groups.values()];
+    cards.forEach((variants) => grid.appendChild(card(variants)));
+    empty.hidden = cards.length > 0;
   }
 
   /* ----------- chips ----------- */
@@ -239,7 +252,8 @@ import { CHANGELOG, LATEST_VERSION } from './changelog.js';
     document.getElementById('statTotal').textContent = catalog.length;
     const yEl = document.getElementById('year'); if (yEl) yEl.textContent = '2026';
     // marquee teases the playable story-mode games (leads), then the roadmap
-    const titles = [...shownGames(), ...catalog.filter((g) => !shown(g))].map((g) => g.title);
+    // (unique titles — a property in two generations shouldn't list twice)
+    const titles = [...new Set([...shownGames(), ...catalog.filter((g) => !shown(g))].map((g) => g.title))];
     const marquee = document.getElementById('marquee');
     marquee.textContent = '★ ' + titles.join('  ★  ') + '  ★  NEW LEGENDS EVERY HOUR  ★  ';
     // The crawl distance grows with the catalog, so derive the duration from the

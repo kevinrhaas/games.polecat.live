@@ -79,8 +79,14 @@ jobs:
 
             GENERATIONS follow real console history: 8-bit = Gen 3 (NES), 16-bit =
             Gen 4 (SNES/Genesis), 3D = Gen 5 (future). New 8-bit games are Gen 3.
-            Roughly one run in five (when no legacy game is left), PROMOTE a marquee
-            8-bit (Gen 3) game to Gen 4 instead of building a new one: rebuild its game.js
+            NORTH STAR: every property should have BOTH a Gen-3 (8-bit) and a
+            Gen-4 (16-bit) version — coexisting, grouped into one home card via a
+            shared catalog `property` key. A Gen-4 is ADDITIVE, never a
+            replacement. Roughly one run in five (when no legacy game is left),
+            ADD a marquee property's Gen-4 version: create a NEW folder
+            games/<id>-16/ (leave the 8-bit folder intact), a NEW catalog entry
+            { id:"<id>-16", style:"16-bit", gen:4, property:"<Property>" }, and set
+            that SAME property key on the existing 8-bit entry. Build its game.js
             on RetroSaga2 (js/saga2.js) + RetroGfx2 (js/retro-gfx2.js, api.g2),
             keeping its best mechanics but making it richer than 5 flat chapters —
             a hub map (nodes unlock via needs:[ids], an optional side-node), each
@@ -95,10 +101,12 @@ jobs:
             connector between nodes, torch flames via g2.flame, and a selection
             glow/cursor; map.title/node receive sceneT for animation). Every framed
             screen should MOVE — static screens are a fail. Also use mode7/glow/big
-            sprites in gameplay. Switch its index.html to the Gen-2 script order,
-            set the catalog entry gen:4 / style:"16-bit" with a fresh blurb, and
-            re-shoot the thumbnail. Reference: games/dracula-castle (study its
-            renderBoot + menu). Read the "Generations" section of CLAUDE.md first.
+            sprites in gameplay. The new games/<id>-16/index.html loads the Gen-4
+            script order (retro-engine -> retro-gfx2 -> saga2 -> game.js); give the
+            new catalog entry a fresh 16-bit blurb; shoot its thumbnail. Do NOT
+            touch the 8-bit folder. Reference pair: games/dracula-8bit (Gen 3) +
+            games/dracula-castle (Gen 4) — study the latter's renderBoot + menu.
+            Read the "Generations" section of CLAUDE.md first.
             This is high-care work — test the whole scene walk headless (zero
             pageerrors, every phase pacing-audited) before shipping. Otherwise build the next status:"soon"
             property in js/catalog.js (most-famous-first) as a story game.

@@ -213,6 +213,12 @@ img { max-width: 100%; display: block; }
 }
 .badge.genre { color: var(--yellow); }
 .badge.new   { color: #0b0420; background: var(--green); border-color:#000; }
+/* per-generation play switch on a multi-generation property card */
+.gen-switch { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+.gen-play { font-family: var(--font-pixel); font-size: 9px; padding: 6px 8px; border-radius: 7px; color: #0b0420; border: 1px solid #000; cursor: pointer; }
+.gen-play.gen4 { background: linear-gradient(90deg,#ffd966,#ff8a3d); }
+.gen-play.gen3 { background: linear-gradient(90deg,#aab0c0,#d6dcea); }
+.gen-play:active { transform: translateY(1px); }
 /* console-history generation badge (Gen 3 = 8-bit, Gen 4 = 16-bit, …) */
 .badge.gen   { color: #0b0420; border-color:#000; font-weight:700; }
 .badge.gen3  { background: linear-gradient(90deg,#aab0c0,#d6dcea); }               /* silvery = 8-bit / NES */
