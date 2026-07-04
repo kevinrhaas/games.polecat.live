@@ -172,6 +172,6 @@ window.POLECAT_CATALOG = [
     blurb: "Five Tudor tales from Twain's 1882 classic — sneak past the palace guards, survive a royal banquet, flee London's angry streets, parry Miles Hendon's enemies, and race to Westminster before the wrong boy is crowned.", tags: ["puzzle","adventure","multi-chapter"] },
   { id: "metamorphosis-bug", title: "The Metamorphosis", source: "The Metamorphosis — Franz Kafka", genre: "Survival Puzzle", style: "8-bit", accent: "#7a9c2a", status: "live",
     blurb: "Five scenes from Kafka's 1915 novella — dodge falling objects as Gregor wakes transformed, evade the panicking family, collect rotten food scraps, creep past scanning lodgers to hear the violin, and make the final slow crawl to peace before dawn.", tags: ["puzzle","survival","multi-chapter","kafka"] },
-  { id: "asilaydying-journey", title: "As I Lay Dying", source: "As I Lay Dying — William Faulkner", genre: "Convoy Survival", style: "8-bit", accent: "#9b5cff", status: "soon",
-    blurb: "Haul the family coffin across flood and fire to the burial ground in Jefferson.", tags: ["survival","story"] },
+  { id: "asilaydying-journey", title: "As I Lay Dying", source: "As I Lay Dying — William Faulkner", genre: "Convoy Survival", style: "8-bit", accent: "#D4A020", status: "live",
+    blurb: "Five chapters of the Bundren family's journey — steer a raft through the flooding river, haul the wagon through Mississippi dust, swat buzzards off the coffin, escape a burning barn, and navigate Jefferson to lay Addie to rest.", tags: ["survival","story","multi-chapter","faulkner"] },
 ];

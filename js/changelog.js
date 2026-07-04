@@ -10,6 +10,16 @@
 // format stays identical to the rest of the fleet.
 export const CHANGELOG = [
   {
+    v: 88,
+    title: 'New game: As I Lay Dying — The Bundren Journey',
+    kind: 'game',
+    ts: '',
+    items: [
+      'Five Mississippi chapters from Faulkner\'s 1930 masterpiece — steer a makeshift raft across the flooding Yoknapatawpha, dodge potholes on the nine-day road, swat buzzards off the coffin, escape Gillespie\'s burning barn, and navigate Jefferson streets to lay Addie to rest.',
+      'Dusty Southern Gothic palette: earth ochre, river blue, and fire red — with a zigzag highway-sign chapter menu and Faulkner voices in every screen.',
+    ],
+  },
+  {
     v: 87,
     title: 'New game: The Masque — Phantom of the Opera (1925)',
     kind: 'game',

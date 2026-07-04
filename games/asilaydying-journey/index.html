@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <title>As I Lay Dying — games.polecat.live</title>
+  <meta name="theme-color" content="#201408" />
+  <link rel="icon" href="../../assets/logo.svg" type="image/svg+xml" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/site.css" />
+  <link rel="stylesheet" href="../../css/game.css" />
+  <style id="game-theme">:root{
+    --g-bg1:#201408;--g-bg2:#140c04;
+    --g-bar:rgba(32,20,8,.96);
+    --g-accent:#D4A020;
+    --g-title:#F0C878;
+    --g-panel:rgba(20,12,4,.88);
+    --g-border:#7C5820;
+    --g-text:#A07830;
+    --g-key:#D4A020;
+    --g-stage:#3A2010;
+    --g-glow:rgba(212,160,32,.22);
+  }</style>
+</head>
+<body class="game-page">
+  <div class="game-bar">
+    <a class="back" href="../../index.html">◀ ARCADE</a>
+    <span class="title">As I Lay Dying</span>
+    <span class="src">· William Faulkner</span>
+    <span class="spacer"></span>
+    <button class="icon-btn" id="fullscreenBtn" title="Full screen">⛶</button>
+    <button class="icon-btn" id="muteBtn" title="Mute">🔊</button>
+    <button class="icon-btn" id="restartBtn" title="Restart">↻</button>
+  </div>
+  <div class="game-main">
+    <div id="game"></div>
+    <div class="game-help">
+      <b>As I Lay Dying.</b> Five chapters of the Bundren family's journey — steer a raft through the flooding Yoknapatawpha, haul the wagon down Mississippi roads, swat buzzards off the coffin, escape Gillespie's burning barn, and navigate Jefferson to find the cemetery. Tap <b>⛶ Full screen</b> for the best experience.
+      <span class="keys">TAP / DRAG · ARROW KEYS · earn MILES across all five chapters</span>
+    </div>
+  </div>
+  <script src="../../js/retro-engine.js"></script>
+  <script src="../../js/saga.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
