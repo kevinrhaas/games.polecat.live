@@ -176,4 +176,6 @@ window.POLECAT_CATALOG = [
     blurb: "Five chapters of the Bundren family's journey — steer a raft through the flooding river, haul the wagon through Mississippi dust, swat buzzards off the coffin, escape a burning barn, and navigate Jefferson to lay Addie to rest.", tags: ["survival","story","multi-chapter","faulkner"] },
   { id: "crusoe-island", title: "Robinson Crusoe", source: "Robinson Crusoe — Daniel Defoe (1719)", genre: "Island Survival", style: "8-bit", accent: "#d4b860", status: "live",
     blurb: "Five trials of the castaway — steer through the shipwreck storm, salvage supplies from the wreck, hide from cannibal scouts in the jungle, rescue Friday from the attackers, and signal a passing ship to earn your rescue after twenty-eight years.", tags: ["survival","adventure","multi-chapter"] },
+  { id: "gulliver-travels", title: "Gulliver's Travels", source: "Gulliver's Travels — Jonathan Swift (1726)", genre: "Scale Adventure", style: "8-bit", accent: "#F8B800", status: "live",
+    blurb: "Five voyages into several remote nations — survive the shipwreck storm, shoo the swarming Lilliputians, dodge giant boots in Brobdingnag, catch lodestones from the flying island of Laputa, and prove your reason to the noble Houyhnhnms.", tags: ["adventure","multi-chapter","satire"] },
 ];
