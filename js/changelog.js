@@ -13,7 +13,7 @@ export const CHANGELOG = [
     v: 89,
     title: 'New game: Song of the Sirens — The Odyssey',
     kind: 'game',
-    ts: '',
+    ts: '2026-07-04T02:25:58.318Z',
     items: [
       'Five crossings through Homer\'s Odyssey — balance the storm-tossed ship when the bag of winds opens, summon the right shades at the underworld\'s edge, resist the Sirens\' golden song while lashed to the mast, dodge Scylla\'s snapping heads in the straits, and steer a desperate raft through Poseidon\'s fury.',
       'Aegean night palette — deep navy, siren gold, seafoam silver — with a unique constellation star-map chapter menu and Homeric voices on every screen.',
