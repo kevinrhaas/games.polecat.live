@@ -188,8 +188,8 @@ window.POLECAT_CATALOG = [
   // ---------------------------- SOON (planned) ----------------------------
   { id: "hamlet-revenge", title: "The Prince of Denmark", source: "Hamlet — William Shakespeare (c.1600)", genre: "Revenge Thriller", style: "8-bit", accent: "#6828B4", status: "live",
     blurb: "Five acts of Shakespeare's greatest tragedy — dodge the Ghost on the battlements, expose Claudius with the Mousetrap, spy behind the arras, gather Ophelia's flowers, and duel Laertes on the fateful stage.", tags: ["shakespeare","tragedy","multi-chapter"] },
-  { id: "blackbeauty-rider", title: "Black Beauty", source: "Black Beauty — Anna Sewell (1877)", genre: "Racing Adventure", style: "8-bit", accent: "#4040A0", status: "soon",
-    blurb: "Five rides through Beauty's life — gallop the open fields, endure the bearing rein, race to the doctor through the storm, pull the cab through London, and find the meadow of rest.", tags: ["racing","adventure","multi-chapter"] },
+  { id: "blackbeauty-rider", title: "Black Beauty", source: "Black Beauty — Anna Sewell (1877)", genre: "Racing Adventure", style: "8-bit", accent: "#D8A000", status: "live",
+    blurb: "Five rides through Beauty's life — gallop the open fields at Birtwick Park, endure the bearing rein, race to the doctor through the midnight storm, haul the London cab, and find the peaceful meadow of rest.", tags: ["racing","adventure","multi-chapter"] },
   { id: "swissfamily-island", title: "Swiss Family Robinson", source: "Swiss Family Robinson — Johann David Wyss (1812)", genre: "Island Survival", style: "8-bit", accent: "#5dff8f", status: "soon",
     blurb: "Five island adventures — salvage the wreck, build the treehouse, hunt the strangest creatures, defend against pirates, and finally choose who sails for home.", tags: ["survival","adventure","multi-chapter"] },
   { id: "ivanhoe-joust", title: "Ivanhoe", source: "Ivanhoe — Sir Walter Scott (1819)", genre: "Medieval Joust", style: "8-bit", accent: "#c8102e", status: "soon",

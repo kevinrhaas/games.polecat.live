@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <title>Black Beauty — games.polecat.live</title>
+  <meta name="theme-color" content="#1C0808" />
+  <link rel="icon" href="../../assets/logo.svg" type="image/svg+xml" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/site.css" />
+  <link rel="stylesheet" href="../../css/game.css" />
+  <style id="game-theme">:root{
+    --g-bg1:#2A1008;
+    --g-bg2:#1C0808;
+    --g-bar:rgba(28,8,8,.96);
+    --g-accent:#D8A000;
+    --g-title:#F0E0B8;
+    --g-panel:rgba(40,16,8,.90);
+    --g-border:#804020;
+    --g-text:#C0A880;
+    --g-key:#F8D848;
+    --g-stage:#180808;
+    --g-glow:rgba(200,80,0,.18);
+  }</style>
+</head>
+<body class="game-page">
+  <div class="game-bar">
+    <a class="back" href="../../index.html">◀ ARCADE</a>
+    <span class="title">Black Beauty</span>
+    <span class="src">· Anna Sewell</span>
+    <span class="spacer"></span>
+    <button class="icon-btn" id="fullscreenBtn" title="Full screen">⛶</button>
+    <button class="icon-btn" id="muteBtn" title="Mute">🔊</button>
+    <button class="icon-btn" id="restartBtn" title="Restart">↻</button>
+  </div>
+  <div class="game-main">
+    <div id="game"></div>
+    <div class="game-help">
+      <b>Black Beauty — Five Rides.</b> Gallop the open fields at Birtwick Park, endure the bearing rein, race through the night storm to save a life, haul the cab through London, and find peace in the meadow at last. Tap <b>⛶ Full screen</b> for the full experience.
+      <span class="keys">TAP / DRAG · ARROW KEYS · earn PRIDE across five chapters of Beauty's life</span>
+    </div>
+  </div>
+  <script src="../../js/retro-engine.js"></script>
+  <script src="../../js/saga.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
