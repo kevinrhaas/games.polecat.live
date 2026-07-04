@@ -13,7 +13,7 @@ export const CHANGELOG = [
     v: 95,
     title: 'New game: The Scarlet Pimpernel — They Seek Him Here (Stealth Swashbuckler)',
     kind: 'game',
-    ts: '',
+    ts: '2026-07-04T10:21:04.292Z',
     items: [
       'Five escapades through revolutionary France: catch falling code letters in sequence to decode Sir Percy\'s BLAKENEY dispatch (8 letters, 3 lives, decoys punish); steer the night carriage past patrol soldiers, barriers, and lantern posts for 22 seconds; tap the pendulum into the gold zone 3 times to launch guillotine diversions (zone narrows, 4 misses lose); navigate the dark inn past 3 guard torch-cones to reach the exit; and dodge Chauvelin\'s thrown lanterns then strike back 4 times during his reload windows on the Dover cliffs.',
       'Deep midnight crimson palette — void black, scarlet, aristocratic gold, parchment cream, revolutionary navy — with a unique DIAMOND MASK chapter menu: five ornate masquerade masks (scarlet, gold, blue, silver, purple) arranged in a pentagon on a candlelit grand ballroom background with crimson curtain pillars and a flickering chandelier. Page chrome in deep midnight crimson and scarlet.',
