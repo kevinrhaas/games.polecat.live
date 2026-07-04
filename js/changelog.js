@@ -10,6 +10,16 @@
 // format stays identical to the rest of the fleet.
 export const CHANGELOG = [
   {
+    v: 101,
+    title: 'Ivanhoe — the tournament at Ashby is open',
+    kind: 'game',
+    ts: '',
+    items: [
+      'Five knightly chapters from Scott\'s 1819 epic: time your lance at the joust, sneak through Torquilstone\'s torchlit corridors, parry and riposte against Brian de Bois-Guilbert, scale the castle wall through a storm of arrows, and fight at King Richard\'s side.',
+      'Tournament bracket menu layout (not a list!), bright sunlit heraldic palette, and five genuinely different mechanics — joust timing, top-down stealth, directional duel, wall climb, and wave brawler.',
+    ],
+  },
+  {
     v: 100,
     title: 'Play every story in both 8-bit and 16-bit',
     kind: 'feature',

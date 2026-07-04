@@ -197,6 +197,6 @@ window.POLECAT_CATALOG = [
     blurb: "Five rides through Beauty's life — gallop the open fields at Birtwick Park, endure the bearing rein, race to the doctor through the midnight storm, haul the London cab, and find the peaceful meadow of rest.", tags: ["racing","adventure","multi-chapter"] },
   { id: "swissfamily-island", title: "Swiss Family Robinson", source: "Swiss Family Robinson — Johann David Wyss (1812)", genre: "Island Survival", style: "8-bit", accent: "#00A800", status: "live",
     blurb: "Five island adventures — salvage the wreck, build the treehouse high in the great fig tree, hunt the jungle for provisions, defend against pirates, and finally choose who sails for home.", tags: ["survival","adventure","multi-chapter"] },
-  { id: "ivanhoe-joust", title: "Ivanhoe", source: "Ivanhoe — Sir Walter Scott (1819)", genre: "Medieval Joust", style: "8-bit", accent: "#c8102e", status: "soon",
-    blurb: "Five deeds of Wilfred of Ivanhoe — unhorse the Norman knights at Ashby, rescue Lady Rowena from Torquilstone, parry Brian de Bois-Guilbert's lance, storm the castle walls, and restore the Saxon crown.", tags: ["joust","action","multi-chapter","medieval"] },
+  { id: "ivanhoe-joust", title: "Ivanhoe", source: "Ivanhoe — Sir Walter Scott (1819)", genre: "Medieval Combat", style: "8-bit", accent: "#c8102e", status: "live",
+    blurb: "Five knightly trials — time your lance at the Ashby joust, sneak through Torquilstone's torchlit corridors, parry and riposte against Brian de Bois-Guilbert, scale the castle wall through a storm of arrows, and fight at Richard's side to free Saxon England.", tags: ["joust","combat","multi-chapter","medieval"] },
 ];
