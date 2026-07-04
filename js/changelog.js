@@ -10,6 +10,16 @@
 // format stays identical to the rest of the fleet.
 export const CHANGELOG = [
   {
+    v: 96,
+    title: 'New game: Hamlet — The Prince of Denmark (Revenge Thriller)',
+    kind: 'game',
+    ts: '',
+    items: [
+      'Five Shakespearean acts: dodge the Ghost\'s spectral sweeps on the battlements and collect his 5 message tokens; tap the timing meter to signal 6 cues in the golden zone and expose Claudius with the Mousetrap; sneak past 3 guard torch-cones in Gertrude\'s chamber to collect 6 royal wax seals; catch Ophelia\'s rosemary and pansies while avoiding fennel and rue; then dodge Laertes\' poisoned rapier lane attacks and counter-strike 5 times in the final duel.',
+      'Dark Elizabethan palette — midnight navy, royal purple, Elsinore gold, ghost silver, and crimson blood — with a unique FOLIO MANUSCRIPT PAGES menu: five aged parchment pages in a pentagon on Elsinore\'s torch-lit great hall, connected by ink-quill dotted paths. Page chrome in deep navy and royal purple.',
+    ],
+  },
+  {
     v: 95,
     title: 'New game: The Scarlet Pimpernel — They Seek Him Here (Stealth Swashbuckler)',
     kind: 'game',

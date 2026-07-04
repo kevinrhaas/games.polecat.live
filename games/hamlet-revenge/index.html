@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <title>Hamlet — games.polecat.live</title>
+  <meta name="theme-color" content="#0C0820" />
+  <link rel="icon" href="../../assets/logo.svg" type="image/svg+xml" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/site.css" />
+  <link rel="stylesheet" href="../../css/game.css" />
+  <style id="game-theme">:root{
+    --g-bg1:#180830;
+    --g-bg2:#0C0820;
+    --g-bar:rgba(12,8,28,.96);
+    --g-accent:#C8A020;
+    --g-title:#E8D8A8;
+    --g-panel:rgba(20,12,40,.90);
+    --g-border:#4C2880;
+    --g-text:#A090C0;
+    --g-key:#F8C800;
+    --g-stage:#0C0820;
+    --g-glow:rgba(72,40,160,.22);
+  }</style>
+</head>
+<body class="game-page">
+  <div class="game-bar">
+    <a class="back" href="../../index.html">◀ ARCADE</a>
+    <span class="title">Hamlet</span>
+    <span class="src">· William Shakespeare</span>
+    <span class="spacer"></span>
+    <button class="icon-btn" id="fullscreenBtn" title="Full screen">⛶</button>
+    <button class="icon-btn" id="muteBtn" title="Mute">🔊</button>
+    <button class="icon-btn" id="restartBtn" title="Restart">↻</button>
+  </div>
+  <div class="game-main">
+    <div id="game"></div>
+    <div class="game-help">
+      <b>Hamlet — The Prince of Denmark.</b> Five acts of Shakespeare's greatest tragedy: dodge the Ghost on the battlements, expose Claudius with The Mousetrap, spy behind the arras, gather Ophelia's flowers, and duel Laertes on the fateful stage. Tap <b>⛶ Full screen</b> for the full experience.
+      <span class="keys">TAP / DRAG · ARROW KEYS · earn HONOUR across five tragic acts</span>
+    </div>
+  </div>
+  <script src="../../js/retro-engine.js"></script>
+  <script src="../../js/saga.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
