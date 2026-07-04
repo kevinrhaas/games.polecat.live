@@ -13,7 +13,7 @@ export const CHANGELOG = [
     v: 101,
     title: 'Ivanhoe — the tournament at Ashby is open',
     kind: 'game',
-    ts: '',
+    ts: '2026-07-04T15:09:11.778Z',
     items: [
       'Five knightly chapters from Scott\'s 1819 epic: time your lance at the joust, sneak through Torquilstone\'s torchlit corridors, parry and riposte against Brian de Bois-Guilbert, scale the castle wall through a storm of arrows, and fight at King Richard\'s side.',
       'Tournament bracket menu layout (not a list!), bright sunlit heraldic palette, and five genuinely different mechanics — joust timing, top-down stealth, directional duel, wall climb, and wave brawler.',
