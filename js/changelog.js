@@ -11,11 +11,11 @@
 export const CHANGELOG = [
   {
     v: 92,
-    title: "New game: Gulliver's Travels — Into Several Remote Nations (Scale Adventure)",
+    title: 'New game: Gulliver\'s Travels — Into Several Remote Nations (Scale Adventure)',
     kind: 'game',
-    ts: '',
+    ts: '2026-07-04T07:39:21.977Z',
     items: [
-      "Five voyages through Jonathan Swift's 1726 satire: steer Gulliver on the storm-lashed deck dodging falling mast sections and barrels for 22 seconds (3 lives); tap 14 swarming Lilliputians across three lanes before they trip you (3 misses allowed, 30s); free-move tiny Gulliver around a giant farmhouse dodging telegraphed giant boots and a prowling cat (24s, 3 lives); catch 12 magnetic lodestones dropped by Laputa's floating-island scholars while dodging useless philosophical books (3 misses, 30s); and time the pendulum into the gold 'reason zone' 6 times to convince the noble horse-folk, while Yahoos charge and cost lives.",
+      'Five voyages through Jonathan Swift\'s 1726 satire: steer Gulliver on the storm-lashed deck dodging falling mast sections and barrels for 22 seconds (3 lives); tap 14 swarming Lilliputians across three lanes before they trip you (3 misses allowed, 30s); free-move tiny Gulliver around a giant farmhouse dodging telegraphed giant boots and a prowling cat (24s, 3 lives); catch 12 magnetic lodestones dropped by Laputa\'s floating-island scholars while dodging useless philosophical books (3 misses, 30s); and time the pendulum into the gold \'reason zone\' 6 times to convince the noble horse-folk, while Yahoos charge and cost lives.',
       'Aged parchment palette — map-ink brown (#503000), sea blue (#0058F8), bright gold (#F8B800), grass green (#58D854) — with a unique SATIRICAL CARTOGRAPHIC MAP chapter select: five parchment cards at geographical positions (England, Lilliput, Brobdingnag, Laputa, Houyhnhnms) linked by red dotted voyage routes across a hand-drawn sea chart complete with compass rose, floating ships, and a sea serpent. Page chrome in deep ocean blue and map-amber.',
     ],
   },
