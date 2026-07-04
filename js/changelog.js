@@ -13,7 +13,7 @@ export const CHANGELOG = [
     v: 97,
     title: 'New game: Black Beauty — Five Rides (Racing Adventure)',
     kind: 'game',
-    ts: '',
+    ts: '2026-07-04T12:09:25.851Z',
     items: [
       'Five chapters through Anna Sewell\'s 1877 classic: gallop the Birtwick Park fields jumping fences to collect rosettes; catch apples in the manor yard while freezing when the groom watches (bearing rein chapter); steer through the midnight storm to race the doctor; keep the stamina bar alive hauling the London cab up Ludgate Hill; and catch drifting flower petals in the final peaceful meadow.',
       'Warm chestnut-and-hay equestrian palette with a unique STABLE STALL DOORS menu — five Dutch doors in a 2+1+2 rhombus layout on a lantern-lit Birtwick barn yard, connected by lead-line ropes. Page chrome in deep barn-red and gold.',
