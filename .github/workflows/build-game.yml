@@ -69,6 +69,14 @@ jobs:
             Alice's falling mechanic) and DROP its legacy:true flag in the catalog
             so it appears on the home page.
 
+            REBUILD QUEUE: roughly one run in three (when no legacy game is left),
+            instead of a new game, take the TOP entry of REBUILD_QUEUE.md and REBUILD
+            that game as the target genre/structure listed — a genuine GENRE SHIFT
+            (new verbs, varied structure/opening per "Variety is the job"), NOT a
+            reskin. Re-shoot its thumbnail, and DELETE that line from REBUILD_QUEUE.md
+            in the same commit. These are the arcade's most repetitive games; fixing
+            them is as valuable as a new title.
+
             GENERATIONS follow real console history: 8-bit = Gen 3 (NES), 16-bit =
             Gen 4 (SNES/Genesis), 3D = Gen 5 (future). New 8-bit games are Gen 3.
             Roughly one run in five (when no legacy game is left), PROMOTE a marquee
