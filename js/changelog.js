@@ -10,6 +10,16 @@
 // format stays identical to the rest of the fleet.
 export const CHANGELOG = [
   {
+    v: 89,
+    title: 'New game: Song of the Sirens — The Odyssey',
+    kind: 'game',
+    ts: '',
+    items: [
+      'Five crossings through Homer\'s Odyssey — balance the storm-tossed ship when the bag of winds opens, summon the right shades at the underworld\'s edge, resist the Sirens\' golden song while lashed to the mast, dodge Scylla\'s snapping heads in the straits, and steer a desperate raft through Poseidon\'s fury.',
+      'Aegean night palette — deep navy, siren gold, seafoam silver — with a unique constellation star-map chapter menu and Homeric voices on every screen.',
+    ],
+  },
+  {
     v: 88,
     title: 'New game: As I Lay Dying — The Bundren Journey',
     kind: 'game',
