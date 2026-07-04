@@ -13,7 +13,7 @@ export const CHANGELOG = [
     v: 102,
     title: 'Sinbad rebuilt — five genuinely different voyages',
     kind: 'fix',
-    ts: '',
+    ts: '2026-07-04T16:04:02.010Z',
     items: [
       'Sinbad the Sailor rebuilt from scratch: each of the five voyages is now a completely different game — a timed crate rush, a gem-memory puzzle, a stealth creep past the Old Man of the Sea, a balance-on-the-rope endurance challenge, and a monster-blasting shmup.',
       'No more five-chapter L/R dodge marathon — Sinbad is now one of the most varied games in the arcade.',
