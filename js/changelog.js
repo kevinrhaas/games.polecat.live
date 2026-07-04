@@ -13,7 +13,7 @@ export const CHANGELOG = [
     v: 98,
     title: 'New game: Swiss Family Robinson — Island Bound (Island Survival)',
     kind: 'game',
-    ts: '',
+    ts: '2026-07-04T13:10:04.300Z',
     items: [
       'Five island adventures from Wyss\'s 1812 classic: dodge cargo on the storm-struck ship to survive the wreck; catch planks and rope while swatting hornets to build the treehouse; move the crosshair and hunt 6 animals to feed the family; tap approaching pirate boats to defend New Switzerland with the cannon; then steer the raft through reef rocks to reach the rescue ship.',
       'Bright tropical NES palette — jungle green, ocean blue, golden sand — with a unique ISLAND MAP menu: five bamboo plank signs scattered in a ring around the lagoon, connected by dotted trail lines. Page chrome in deep jungle green and gold.',
