@@ -11,10 +11,9 @@ shift** (not a reskin — new verbs, and vary the structure/opening per CLAUDE.m
 queue** in the same commit. Promote to Gen-4 (hub + branches) where noted.
 
 ## Queue
-1. **huckfinn-raft** — 4/5 steer-dodge → **Oregon-Trail-style river journey sim**: branching stops, supplies/trust economy, help-Jim moral choices; the river map gates real branches.
-2. **journeycenter-earth** — 5/5 dodge → **Verne descent resource-sim**: ration air/rope/water, branching descent routes on a vertical strata map (turn-based survival).
-3. **annegreen-gables** — 4/5 fall-catchers → **cozy life-sim / dialogue visual-novel**: imagination & social scrapes as branching conversation.
-4. **pride-prejudice** — 5 chapters, only 2 real mechanics → **Regency dating-sim**: reputation/affection meters + a minuet rhythm beat + a letter-writing word puzzle; branching dialogue.
+1. **journeycenter-earth** — 5/5 dodge → **Verne descent resource-sim**: ration air/rope/water, branching descent routes on a vertical strata map (turn-based survival).
+2. **annegreen-gables** — 4/5 fall-catchers → **cozy life-sim / dialogue visual-novel**: imagination & social scrapes as branching conversation.
+3. **pride-prejudice** — 5 chapters, only 2 real mechanics → **Regency dating-sim**: reputation/affection meters + a minuet rhythm beat + a letter-writing word puzzle; branching dialogue.
 5. **phantom-opera** — a MUSIC property wasted on dodge → **rhythm/music game** across the staff + a stalking-pursuit mode through the Garnier.
 6. **invisibleman-fade** — 3 repeated sight-cone dodges → **dedicated stealth game**: one contiguous manhunt with a persistent exposure/visibility economy (footprints, snow, smoke reveal you); fewer, deeper levels.
 7. **sleepyhollow-ride** — 4/5 steer-dodge → **hide-from-the-Horseman stealth-horror** (one escalating chase) + a schoolmaster courting social-sim.
