@@ -10,6 +10,17 @@
 // format stays identical to the rest of the fleet.
 export const CHANGELOG = [
   {
+    v: 104,
+    title: 'Journey to the Center rebuilt — descent resource sim',
+    kind: 'fix',
+    ts: '',
+    items: [
+      'Journey to the Center of the Earth is now a genuine Verne resource-sim: ration AIR, ROPE, and LIGHT before you go in — your choices shape every chapter that follows.',
+      'Five completely different mechanics: supply allocation, grid tunnel navigation, bubble-catch timing on Lidenbrock Sea, prehistoric fossil memory-match, and a pressure-valve eruption sequence.',
+      'Vertical geological strata cross-section menu — five stone plaques descending from the crater rim to the volcanic shaft.',
+    ],
+  },
+  {
     v: 103,
     title: 'Huck Finn rebuilt — Oregon Trail on the Mississippi',
     kind: 'fix',
