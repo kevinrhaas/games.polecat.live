@@ -178,4 +178,6 @@ window.POLECAT_CATALOG = [
     blurb: "Five trials of the castaway — steer through the shipwreck storm, salvage supplies from the wreck, hide from cannibal scouts in the jungle, rescue Friday from the attackers, and signal a passing ship to earn your rescue after twenty-eight years.", tags: ["survival","adventure","multi-chapter"] },
   { id: "gulliver-travels", title: "Gulliver's Travels", source: "Gulliver's Travels — Jonathan Swift (1726)", genre: "Scale Adventure", style: "8-bit", accent: "#F8B800", status: "live",
     blurb: "Five voyages into several remote nations — survive the shipwreck storm, shoo the swarming Lilliputians, dodge giant boots in Brobdingnag, catch lodestones from the flying island of Laputa, and prove your reason to the noble Houyhnhnms.", tags: ["adventure","multi-chapter","satire"] },
+  { id: "romeo-juliet", title: "Romeo & Juliet", source: "Romeo and Juliet — William Shakespeare (c.1594)", genre: "Romance Tragedy", style: "8-bit", accent: "#F878F8", status: "live",
+    blurb: "Five scenes from Shakespeare's tragedy — crash the Capulet feast for roses, time the balcony climb to reach Juliet, duel Tybalt at noon, gather Friar Lawrence's sleeping herbs, and race through Verona past the watch to the Capulet tomb.", tags: ["romance","tragedy","multi-chapter","shakespeare"] },
 ];

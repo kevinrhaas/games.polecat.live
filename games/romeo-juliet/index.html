@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <title>Romeo and Juliet — games.polecat.live</title>
+  <meta name="theme-color" content="#0a0020" />
+  <link rel="icon" href="../../assets/logo.svg" type="image/svg+xml" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/site.css" />
+  <link rel="stylesheet" href="../../css/game.css" />
+  <style id="game-theme">:root{
+    --g-bg1:#12003a;
+    --g-bg2:#0a0020;
+    --g-bar:rgba(10,0,32,.96);
+    --g-accent:#F878F8;
+    --g-title:#F8D8B0;
+    --g-panel:rgba(18,0,58,.88);
+    --g-border:#4428BC;
+    --g-text:#9878F8;
+    --g-key:#F8B800;
+    --g-stage:#1a0040;
+    --g-glow:rgba(248,120,248,.22);
+  }</style>
+</head>
+<body class="game-page">
+  <div class="game-bar">
+    <a class="back" href="../../index.html">◀ ARCADE</a>
+    <span class="title">Romeo &amp; Juliet</span>
+    <span class="src">· William Shakespeare</span>
+    <span class="spacer"></span>
+    <button class="icon-btn" id="fullscreenBtn" title="Full screen">⛶</button>
+    <button class="icon-btn" id="muteBtn" title="Mute">🔊</button>
+    <button class="icon-btn" id="restartBtn" title="Restart">↻</button>
+  </div>
+  <div class="game-main">
+    <div id="game"></div>
+    <div class="game-help">
+      <b>Romeo &amp; Juliet — Star-Cross'd.</b> Five scenes from Shakespeare's tragedy: crash the Capulet feast, reach the balcony, duel Tybalt at noon, gather Friar Lawrence's sleeping herbs, and race to the Capulet tomb. Tap <b>⛶ Full screen</b> for the full experience.
+      <span class="keys">TAP / DRAG · ARROW KEYS · earn HEARTS across all five scenes</span>
+    </div>
+  </div>
+  <script src="../../js/retro-engine.js"></script>
+  <script src="../../js/saga.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
