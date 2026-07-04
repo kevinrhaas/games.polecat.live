@@ -190,8 +190,8 @@ window.POLECAT_CATALOG = [
     blurb: "Five acts of Shakespeare's greatest tragedy — dodge the Ghost on the battlements, expose Claudius with the Mousetrap, spy behind the arras, gather Ophelia's flowers, and duel Laertes on the fateful stage.", tags: ["shakespeare","tragedy","multi-chapter"] },
   { id: "blackbeauty-rider", title: "Black Beauty", source: "Black Beauty — Anna Sewell (1877)", genre: "Racing Adventure", style: "8-bit", accent: "#D8A000", status: "live",
     blurb: "Five rides through Beauty's life — gallop the open fields at Birtwick Park, endure the bearing rein, race to the doctor through the midnight storm, haul the London cab, and find the peaceful meadow of rest.", tags: ["racing","adventure","multi-chapter"] },
-  { id: "swissfamily-island", title: "Swiss Family Robinson", source: "Swiss Family Robinson — Johann David Wyss (1812)", genre: "Island Survival", style: "8-bit", accent: "#5dff8f", status: "soon",
-    blurb: "Five island adventures — salvage the wreck, build the treehouse, hunt the strangest creatures, defend against pirates, and finally choose who sails for home.", tags: ["survival","adventure","multi-chapter"] },
+  { id: "swissfamily-island", title: "Swiss Family Robinson", source: "Swiss Family Robinson — Johann David Wyss (1812)", genre: "Island Survival", style: "8-bit", accent: "#00A800", status: "live",
+    blurb: "Five island adventures — salvage the wreck, build the treehouse high in the great fig tree, hunt the jungle for provisions, defend against pirates, and finally choose who sails for home.", tags: ["survival","adventure","multi-chapter"] },
   { id: "ivanhoe-joust", title: "Ivanhoe", source: "Ivanhoe — Sir Walter Scott (1819)", genre: "Medieval Joust", style: "8-bit", accent: "#c8102e", status: "soon",
     blurb: "Five deeds of Wilfred of Ivanhoe — unhorse the Norman knights at Ashby, rescue Lady Rowena from Torquilstone, parry Brian de Bois-Guilbert's lance, storm the castle walls, and restore the Saxon crown.", tags: ["joust","action","multi-chapter","medieval"] },
 ];

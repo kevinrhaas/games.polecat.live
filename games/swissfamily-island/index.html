@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <title>Swiss Family Robinson — games.polecat.live</title>
+  <meta name="theme-color" content="#004820" />
+  <link rel="icon" href="../../assets/logo.svg" type="image/svg+xml" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/site.css" />
+  <link rel="stylesheet" href="../../css/game.css" />
+  <style id="game-theme">:root{
+    --g-bg1:#003C18;
+    --g-bg2:#002410;
+    --g-bar:rgba(0,36,16,.96);
+    --g-accent:#F8B800;
+    --g-title:#FCDC88;
+    --g-panel:rgba(0,30,12,.90);
+    --g-border:#008840;
+    --g-text:#A8D870;
+    --g-key:#FCDC00;
+    --g-stage:#001C0C;
+    --g-glow:rgba(0,168,64,.18);
+  }</style>
+</head>
+<body class="game-page">
+  <div class="game-bar">
+    <a class="back" href="../../index.html">◀ ARCADE</a>
+    <span class="title">Swiss Family Robinson</span>
+    <span class="src">· J. D. Wyss</span>
+    <span class="spacer"></span>
+    <button class="icon-btn" id="fullscreenBtn" title="Full screen">⛶</button>
+    <button class="icon-btn" id="muteBtn" title="Mute">🔊</button>
+    <button class="icon-btn" id="restartBtn" title="Restart">↻</button>
+  </div>
+  <div class="game-main">
+    <div id="game"></div>
+    <div class="game-help">
+      <b>Swiss Family Robinson — Island Bound.</b> Salvage the wreck, build the treehouse, hunt the island for provisions, defend against pirates, and finally choose who sails for home. Tap <b>⛶ Full screen</b> for the best experience.
+      <span class="keys">TAP / DRAG · ARROW KEYS · earn PROVISIONS across five island adventures</span>
+    </div>
+  </div>
+  <script src="../../js/retro-engine.js"></script>
+  <script src="../../js/saga.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
