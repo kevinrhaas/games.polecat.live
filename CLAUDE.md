@@ -161,6 +161,30 @@ pacing-audited).
 7. Commit + push to the working branch.
 
 ## Design principles
+- **Variety is the job — fight sameness (highest priority).** The shell makes
+  everything rhyme: title → 5-node click menu → chapter + quote, and most
+  mechanics collapse into "move to dodge." That's the trap. Every new game must
+  break the mould on THREE axes vs. the recent builds (scan the last ~8 catalog
+  entries + their game.js first):
+  1. **Core genre.** Pick a PRIMARY genre that's under-represented lately, from
+     the full space: action, adventure, action-adventure, RPG, simulation,
+     strategy/tactics, sports, racing, puzzle, shooter, fighting, platformer,
+     survival, horror, stealth, sandbox/open-world, tower-defense, roguelike,
+     rhythm, card, board, trivia, tycoon/management, point-and-click. Match the
+     genre to BOTH the property AND its era. Do NOT ship another dodge/steer
+     game if the last few were dodge/steer. Within a game, the sub-mechanics
+     should span ≥3 distinct genres — never five dodge chapters.
+  2. **Structure/flow.** The 5-chapter click-menu is the DEFAULT, not the law.
+     Vary it: 3–6 nodes, a branching path, a boss-rush ladder, a level dial, a
+     board/track you traverse, a character-select, or a SINGLE continuous game
+     with no chapter menu at all (a full platformer, a card game, a roguelike
+     run, a tycoon) built on bare `RetroEngine` when the genre wants it. A card
+     or board game should look like cards/a board, not a chapter list.
+  3. **Title/opening.** Not always big-title + subtitle + tap + quote. Mix it up:
+     an arcade attract-loop, a cold open that drops into action, a comic-panel
+     prologue, a map/scroll reveal, a character-select splash. Quotes are
+     optional, not a template. Keep the STORY framing (that part works) — just
+     stop repeating the same sequence. Two games in a row must not open alike.
 - **Pacing — every chapter must be playable.** No chapter may end (win OR lose)
   before the player has had real time to play it: aim for ~15-30s of play for a
   survive/dodge/distance/defend chapter, several attempts for a timing beat.

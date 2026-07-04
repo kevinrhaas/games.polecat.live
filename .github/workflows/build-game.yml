@@ -93,9 +93,27 @@ jobs:
             renderBoot + menu). Read the "Generations" section of CLAUDE.md first.
             This is high-care work — test the whole scene walk headless (zero
             pageerrors, every phase pacing-audited) before shipping. Otherwise build the next status:"soon"
-            property in js/catalog.js (most-famous-first;
-            vary the genre from recent builds) as a full multi-chapter game using
-            RetroSaga (js/saga.js) — FIVE varied, easy, faithful mini-games that hit the
+            property in js/catalog.js (most-famous-first) as a story game.
+
+            VARIETY IS THE JOB — fight sameness (read CLAUDE.md "Variety is the
+            job" first). Before building, scan the last ~8 live catalog entries
+            AND skim their game.js. Then deliberately differ on THREE axes:
+            (1) CORE GENRE — pick a PRIMARY genre under-represented lately from the
+            full space (action, adventure, RPG, simulation, strategy/tactics,
+            sports, racing, puzzle, shooter, fighting, platformer, survival,
+            horror, stealth, sandbox/open-world, tower-defense, roguelike, rhythm,
+            card, board, trivia, tycoon, point-and-click), matched to the property
+            AND its era; do NOT ship another dodge/steer game if recent ones were,
+            and a game's sub-mechanics must span >=3 distinct genres (never five
+            dodge chapters); (2) STRUCTURE — the 5-node click menu is the default,
+            not the law: vary node count/arrangement or use a branching path, a
+            boss-rush ladder, a board/track, a character-select, or a SINGLE
+            continuous game (card game, roguelike run, platformer, tycoon) on bare
+            RetroEngine when the genre wants it; (3) OPENING — vary the title
+            sequence (attract-loop, cold open, comic-panel prologue, map reveal,
+            character-select); quotes are optional; two games in a row must not
+            open alike. Keep the story framing. Deliver
+            FIVE varied, easy, faithful mini-games that hit the
             property's iconic scenes, PLUS a WILDLY UNIQUE on-property look — two games
             must look nothing alike. Keep new 8-bit (Gen 3) games PERIOD-HONEST NES:
             pick colors from the NES palette (Retro.NES / Retro.snapNES(hex)); use

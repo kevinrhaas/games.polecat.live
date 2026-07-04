@@ -10,6 +10,16 @@
 // format stays identical to the rest of the fleet.
 export const CHANGELOG = [
   {
+    v: 99,
+    title: 'More variety coming — new games will break the mould',
+    kind: 'feature',
+    ts: '2026-07-04T13:53:01.020Z',
+    items: [
+      'New games are now required to differ from recent ones on three fronts: a genuinely different genre (not another dodge-and-move game — think strategy, card, rhythm, tycoon, roguelike, fighting, and more, matched to the story and its era), a different structure (not always the same five-button menu), and a different opening sequence.',
+      'The story framing stays — that part works — but expect more surprises in how each game plays and looks.',
+    ],
+  },
+  {
     v: 98,
     title: 'New game: Swiss Family Robinson — Island Bound (Island Survival)',
     kind: 'game',
