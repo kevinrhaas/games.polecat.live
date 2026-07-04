@@ -12,9 +12,11 @@ name: Hourly Game Build
 # Dial the cadence with the cron below, or the model/turns under claude_args.
 
 on:
-  schedule:
-    - cron: '23 * * * *'   # hourly, off the :00 mark
-  workflow_dispatch:        # run on demand from the Actions tab
+  # PAUSED to save tokens — the hourly schedule is disabled. Re-enable by
+  # uncommenting the two lines below (cron '23 * * * *' = hourly, off the :00).
+  # schedule:
+  #   - cron: '23 * * * *'
+  workflow_dispatch:        # still runnable on demand from the Actions tab
 
 permissions:
   contents: write
