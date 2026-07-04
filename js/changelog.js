@@ -13,7 +13,7 @@ export const CHANGELOG = [
     v: 105,
     title: 'Anne of Green Gables rebuilt — dialogue & social scrapes',
     kind: 'fix',
-    ts: '',
+    ts: '2026-07-04T19:05:22.430Z',
     items: [
       'Anne of Green Gables is now a cozy dialogue visual-novel: choose Anne\'s most poetic words on the drive with Matthew, build a sincere apology to Mrs. Lynde, match kindred-spirit pairs with Diana, fill in Anne\'s ghost story, and race Gilbert Blythe to the Avery Scholarship.',
       'Five completely different mechanics — imagination chooser, phrase builder, memory match, story fill-in, and a head-to-head speed quiz — replacing the old fall-catcher chapters.',
