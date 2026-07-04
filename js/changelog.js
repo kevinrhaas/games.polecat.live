@@ -13,7 +13,7 @@ export const CHANGELOG = [
     v: 88,
     title: 'New game: As I Lay Dying — The Bundren Journey',
     kind: 'game',
-    ts: '',
+    ts: '2026-07-04T01:19:53.744Z',
     items: [
       'Five Mississippi chapters from Faulkner\'s 1930 masterpiece — steer a makeshift raft across the flooding Yoknapatawpha, dodge potholes on the nine-day road, swat buzzards off the coffin, escape Gillespie\'s burning barn, and navigate Jefferson streets to lay Addie to rest.',
       'Dusty Southern Gothic palette: earth ochre, river blue, and fire red — with a zigzag highway-sign chapter menu and Faulkner voices in every screen.',
