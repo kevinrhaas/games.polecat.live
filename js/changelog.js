@@ -13,7 +13,7 @@ export const CHANGELOG = [
     v: 90,
     title: 'New game: Bah, Humbug! — A Christmas Carol (Story Arcade)',
     kind: 'game',
-    ts: '',
+    ts: '2026-07-04T03:54:31.893Z',
     items: [
       'Five chapters through Dickens\' 1843 novella: slide left/right to catch gold shillings in Scrooge\'s cold countinghouse (dodge grey farthings, collect 14, 26s); move up/down to dodge Marley\'s flying cash-box chains for 24 seconds (3 lives); tap each candle memory in the shrinking gold timing ring for 8 rounds (ring speeds up each time, 3 misses lose); tap glowing gift boxes in the Spirit\'s 5×2 grid before they fade (12 gifts, 3 expired = lose); and navigate the graveyard in free movement — dodge the cloaked Ghost\'s pointing beam and collect 5 tombstone echoes to escape (30s timer).',
       'Dark miser palette: counting-house amber and parchment for day, ghost-blue and silver for the haunting, Christmas red for the finale — with a unique open LEDGER BOOK chapter menu of five ruled accounting entries. Emblem: an open ledger with quill, coins, and candle. In-voice labels: SHILLINGS currency; BAH! Well done. / HUMBUG! Wasted. headers. Page chrome in dark leather and gold.',
