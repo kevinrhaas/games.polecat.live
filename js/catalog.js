@@ -182,4 +182,16 @@ window.POLECAT_CATALOG = [
     blurb: "Five scenes from Shakespeare's tragedy — crash the Capulet feast for roses, time the balcony climb to reach Juliet, duel Tybalt at noon, gather Friar Lawrence's sleeping herbs, and race through Verona past the watch to the Capulet tomb.", tags: ["romance","tragedy","multi-chapter","shakespeare"] },
   { id: "dante-inferno", title: "The Long Descent", source: "The Divine Comedy — Dante Alighieri (c.1320)", genre: "Dark Descent", style: "8-bit", accent: "#FC6000", status: "live",
     blurb: "Five circles from Dante's Inferno — dodge wild beasts in the dark wood, row Charon's ferry across the Acheron, survive the boiling blood of Phlegethon, sneak past Malebranche demons in Malebolge, and climb past Lucifer's frozen form to freedom.", tags: ["horror","descent","multi-chapter","classic"] },
+  { id: "scarletpimpernel-rescue", title: "They Seek Him Here", source: "The Scarlet Pimpernel — Baroness Orczy (1905)", genre: "Stealth Swashbuckler", style: "8-bit", accent: "#D82800", status: "live",
+    blurb: "Five escapades through revolutionary France — decode Sir Percy's coded dispatch, race the carriage to Calais past patrols, launch three guillotine diversions at the perfect moment, slip through the dark inn unseen, and duel Chauvelin on the Dover cliffs.", tags: ["stealth","swashbuckler","multi-chapter","historical"] },
+
+  // ---------------------------- SOON (planned) ----------------------------
+  { id: "hamlet-revenge", title: "The Prince of Denmark", source: "Hamlet — William Shakespeare (c.1600)", genre: "Revenge Thriller", style: "8-bit", accent: "#6828B4", status: "soon",
+    blurb: "Five acts of Shakespeare's greatest tragedy — spy on Claudius with the Ghost's oath, perform the play-within-a-play, duel Laertes on the fateful stage, and avenge the crown of Denmark.", tags: ["shakespeare","tragedy","multi-chapter"] },
+  { id: "blackbeauty-rider", title: "Black Beauty", source: "Black Beauty — Anna Sewell (1877)", genre: "Racing Adventure", style: "8-bit", accent: "#4040A0", status: "soon",
+    blurb: "Five rides through Beauty's life — gallop the open fields, endure the bearing rein, race to the doctor through the storm, pull the cab through London, and find the meadow of rest.", tags: ["racing","adventure","multi-chapter"] },
+  { id: "swissfamily-island", title: "Swiss Family Robinson", source: "Swiss Family Robinson — Johann David Wyss (1812)", genre: "Island Survival", style: "8-bit", accent: "#5dff8f", status: "soon",
+    blurb: "Five island adventures — salvage the wreck, build the treehouse, hunt the strangest creatures, defend against pirates, and finally choose who sails for home.", tags: ["survival","adventure","multi-chapter"] },
+  { id: "ivanhoe-joust", title: "Ivanhoe", source: "Ivanhoe — Sir Walter Scott (1819)", genre: "Medieval Joust", style: "8-bit", accent: "#c8102e", status: "soon",
+    blurb: "Five deeds of Wilfred of Ivanhoe — unhorse the Norman knights at Ashby, rescue Lady Rowena from Torquilstone, parry Brian de Bois-Guilbert's lance, storm the castle walls, and restore the Saxon crown.", tags: ["joust","action","multi-chapter","medieval"] },
 ];

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <title>The Scarlet Pimpernel — games.polecat.live</title>
+  <meta name="theme-color" content="#180010" />
+  <link rel="icon" href="../../assets/logo.svg" type="image/svg+xml" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/site.css" />
+  <link rel="stylesheet" href="../../css/game.css" />
+  <style id="game-theme">:root{
+    --g-bg1:#280010;
+    --g-bg2:#180008;
+    --g-bar:rgba(20,0,10,.96);
+    --g-accent:#D82800;
+    --g-title:#F8E8C8;
+    --g-panel:rgba(28,0,14,.90);
+    --g-border:#A80020;
+    --g-text:#C8A060;
+    --g-key:#F8B800;
+    --g-stage:#100006;
+    --g-glow:rgba(216,40,0,.22);
+  }</style>
+</head>
+<body class="game-page">
+  <div class="game-bar">
+    <a class="back" href="../../index.html">◀ ARCADE</a>
+    <span class="title">The Scarlet Pimpernel</span>
+    <span class="src">· Baroness Orczy</span>
+    <span class="spacer"></span>
+    <button class="icon-btn" id="fullscreenBtn" title="Full screen">⛶</button>
+    <button class="icon-btn" id="muteBtn" title="Mute">🔊</button>
+    <button class="icon-btn" id="restartBtn" title="Restart">↻</button>
+  </div>
+  <div class="game-main">
+    <div id="game"></div>
+    <div class="game-help">
+      <b>They Seek Him Here — The Scarlet Pimpernel.</b> Five escapades through revolutionary France: decode Sir Percy's coded dispatch, race the carriage road to Calais, launch diversions at the guillotine, slip past agents in the dark inn, and duel Chauvelin at Dover cliffs. Tap <b>⛶ Full screen</b> for the full experience.
+      <span class="keys">TAP / DRAG · ARROW KEYS · earn GLORY across five daring rescues</span>
+    </div>
+  </div>
+  <script src="../../js/retro-engine.js"></script>
+  <script src="../../js/saga.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
