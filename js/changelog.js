@@ -13,7 +13,7 @@ export const CHANGELOG = [
     v: 103,
     title: 'Huck Finn rebuilt — Oregon Trail on the Mississippi',
     kind: 'fix',
-    ts: '',
+    ts: '2026-07-04T17:07:07.496Z',
     items: [
       'Huckleberry Finn is now a genuine journey sim: a GRUB & TRUST economy persists across five stops — fishing for supplies, bluffing through raftsmen encounters, navigating Cairo fog by starlight, sorting evidence to expose the King\'s fraud, and throwing a rope to free Jim.',
       'No more steer-and-dodge marathon — five completely different mechanics, and every choice you make actually changes the next chapter.',
