@@ -10,6 +10,16 @@
 // format stays identical to the rest of the fleet.
 export const CHANGELOG = [
   {
+    v: 94,
+    title: "New game: Dante's Inferno — The Long Descent (Dark Descent)",
+    kind: 'game',
+    ts: '',
+    items: [
+      "Five circles from Dante Alighieri's c.1320 Inferno: dodge three wild beasts (panther, lion, wolf) sweeping across the dark wood in three height lanes for 24 seconds; row Charon's ferry across the black river Acheron with a pendulum timing tap (8 strokes, zone narrows, 4 misses lose); free-steer through the boiling blood river Phlegethon dodging centaur arrows from above and blood eruptions from below for 26 seconds; sneak freely past five Malebranche demon torch-cones in Malebolge collecting 8 gold soul-flames in 28 seconds; and tap the pendulum 8 times to climb past Lucifer's three-headed frozen form in Cocytus to escape.",
+      "Deep hellfire palette — void black, ember crimson, hellfire orange, sulfur gold, frozen Cocytus ice-blue — with a unique ZIGZAG DESCENT chapter menu: five carved stone tablets staggered left-right down the screen like descending circles of Hell, connected by ember-trail dotted paths on a dark rock-strata cavern with fire glow at the base. In-voice labels: SOULS currency; THE WAY IS OPEN / THE DARK TAKES YOU win/lose headers. Page chrome in deep hellfire red and ember orange.",
+    ],
+  },
+  {
     v: 93,
     title: 'New game: Romeo & Juliet — Star-Cross\'d (Romance Tragedy)',
     kind: 'game',

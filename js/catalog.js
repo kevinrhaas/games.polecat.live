@@ -180,4 +180,6 @@ window.POLECAT_CATALOG = [
     blurb: "Five voyages into several remote nations — survive the shipwreck storm, shoo the swarming Lilliputians, dodge giant boots in Brobdingnag, catch lodestones from the flying island of Laputa, and prove your reason to the noble Houyhnhnms.", tags: ["adventure","multi-chapter","satire"] },
   { id: "romeo-juliet", title: "Romeo & Juliet", source: "Romeo and Juliet — William Shakespeare (c.1594)", genre: "Romance Tragedy", style: "8-bit", accent: "#F878F8", status: "live",
     blurb: "Five scenes from Shakespeare's tragedy — crash the Capulet feast for roses, time the balcony climb to reach Juliet, duel Tybalt at noon, gather Friar Lawrence's sleeping herbs, and race through Verona past the watch to the Capulet tomb.", tags: ["romance","tragedy","multi-chapter","shakespeare"] },
+  { id: "dante-inferno", title: "The Long Descent", source: "The Divine Comedy — Dante Alighieri (c.1320)", genre: "Dark Descent", style: "8-bit", accent: "#FC6000", status: "live",
+    blurb: "Five circles from Dante's Inferno — dodge wild beasts in the dark wood, row Charon's ferry across the Acheron, survive the boiling blood of Phlegethon, sneak past Malebranche demons in Malebolge, and climb past Lucifer's frozen form to freedom.", tags: ["horror","descent","multi-chapter","classic"] },
 ];
