@@ -13,7 +13,7 @@ export const CHANGELOG = [
     v: 104,
     title: 'Journey to the Center rebuilt — descent resource sim',
     kind: 'fix',
-    ts: '',
+    ts: '2026-07-04T18:05:30.772Z',
     items: [
       'Journey to the Center of the Earth is now a genuine Verne resource-sim: ration AIR, ROPE, and LIGHT before you go in — your choices shape every chapter that follows.',
       'Five completely different mechanics: supply allocation, grid tunnel navigation, bubble-catch timing on Lidenbrock Sea, prehistoric fossil memory-match, and a pressure-valve eruption sequence.',
