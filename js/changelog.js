@@ -13,7 +13,7 @@ export const CHANGELOG = [
     v: 93,
     title: 'New game: Romeo & Juliet — Star-Cross\'d (Romance Tragedy)',
     kind: 'game',
-    ts: '',
+    ts: '2026-07-04T08:32:40.960Z',
     items: [
       'Five scenes from Shakespeare\'s c.1594 tragedy: steer Romeo through Capulet guests at the masked feast to catch 12 falling roses in 24 seconds; tap the pendulum into the shrinking gold zone 8 times to climb the garden wall to Juliet\'s balcony; dodge Tybalt\'s telegraphed left/right sword-swings at noon and tap the counter window to strike 5 hits; catch 12 golden herb vials in Friar Lawrence\'s cell while avoiding red poison bottles (26s); and sprint Romeo through scrolling Verona streets dodging watchmen\'s sweeping lantern cones for 28 seconds to reach the Capulet tomb.',
       'Deep Verona night palette — midnight blue, Capulet crimson, Montague gold, Juliet rose — with a unique PALAZZO FACADE chapter menu: five lit archway windows set into a Verona stone building, linked by dotted rose-vine connectors. Page chrome in deep midnight purple and rose.',
