@@ -1,10 +1,19 @@
 /* ============================================================================
- * Home page controller — renders the catalog, draws procedural pixel
- * thumbnails, and powers search / genre / style filtering.
- * ES module: the changelog is an ES module too (shared polecat convention),
- * so we import it directly. The catalog stays a classic global.
+ * Home page controller — the arcade on Polecat Shell.
+ * Renders the catalog, draws procedural pixel thumbnails, powers search /
+ * genre-family / style filtering, and builds the shared shell chrome (left
+ * rail + topbar + right-panel What's New + fleet app switcher) from
+ * vendor/polecat-shell (read-only — see the platform repo to change it).
+ * The catalog stays a classic global; the changelog is an ES module (shared
+ * polecat convention).
  * ============================================================================ */
 import { CHANGELOG, LATEST_VERSION } from './changelog.js';
+import { configure as themeConfigure, applyTheme, toggleMode, effectiveMode } from '../vendor/polecat-shell/theme.js';
+import { initShell, rightPanel, appSwitcher } from '../vendor/polecat-shell/shell.js';
+import { el } from '../vendor/polecat-shell/ui.js';
+import { icon } from '../vendor/polecat-shell/icons.js';
+import { initWhatsNew, hasUnseen, markSeen } from '../vendor/polecat-shell/whatsnew.js';
+import { FLEET } from '../vendor/polecat-shell/catalog.js';
 
 (function () {
   'use strict';
@@ -12,21 +21,36 @@ import { CHANGELOG, LATEST_VERSION } from './changelog.js';
   const grid = document.getElementById('grid');
   const empty = document.getElementById('empty');
   const search = document.getElementById('search');
-  const genreChips = document.getElementById('genreChips');
+  const familyChips = document.getElementById('familyChips');
   const styleChips = document.getElementById('styleChips');
 
-  const state = { q: '', genre: 'All', style: 'All' };
+  const state = { q: '', family: 'All', style: 'All' };
 
   // The home grid & search only surface finished, multi-chapter STORY-MODE games.
-  // That means: built (status:"live") AND not a legacy single-mechanic game.
-  // Unfinished ("soon") and legacy games are hidden until they ship in story
-  // mode — new story games then appear automatically (no per-game flag needed).
   const shown = (g) => g.status === 'live' && !g.legacy;
   const shownGames = () => catalog.filter(shown);
 
-  // Console-history generation for the card badge: 8-bit = Gen 3 (NES era),
-  // 16-bit = Gen 4 (SNES/Genesis), 3D = Gen 5. Honors an explicit g.gen.
+  // Console-history generation for the card badge (8-bit = Gen 3, 16-bit = Gen 4).
   const genOf = (g) => g.gen || (g.style === '16-bit' ? 4 : g.style === '3d' ? 5 : 3);
+
+  /* ----------- genre FAMILIES -----------
+   * The catalog carries ~70 bespoke genre strings (great flavor on cards,
+   * hopeless as navigation). The rail and chips filter by ~10 curated
+   * families instead; first matching rule wins, so order matters. */
+  const FAMILIES = [
+    { key: 'Horror',    icon: 'eyeOff',  re: /horror|dark descent|sanity|decay/i },
+    { key: 'Stealth',   icon: 'eye',     re: /stealth|pickpocket|heist|night chase/i },
+    { key: 'Puzzle',    icon: 'grid',    re: /puzzle|swap|mining|garden|spell|transformation|collect/i },
+    { key: 'Rhythm',    icon: 'activity', re: /rhythm/i },
+    { key: 'Racing',    icon: 'bolt',    re: /racing|driving|race|sled|flight|joust|runner|time attack|chase/i },
+    { key: 'Combat',    icon: 'target',  re: /brawler|boss|combat|duel|shooter|shmup|harpoon|cannon|aim|archery|fencing|swashbuckler|battle/i },
+    { key: 'Survival',  icon: 'fire',    re: /survival|convoy|island|climb/i },
+    { key: 'Strategy',  icon: 'layers',  re: /strategy|tactics|defense|manager|sim\b|tycoon/i },
+    { key: 'Story',     icon: 'book',    re: /narrative|drama|mystery|romance|story|dialogue|journey|tragedy/i },
+    { key: 'Adventure', icon: 'compass', re: /./ },   // everything else
+  ];
+  const familyOf = (g) => FAMILIES.find((f) => f.re.test(g.genre || '')).key;
+  const familyCount = (key) => shownGames().filter((g) => familyOf(g) === key).length;
 
   /* ----------- tiny seeded RNG so each thumbnail is stable ----------- */
   function seedFrom(str) {
@@ -57,42 +81,34 @@ import { CHANGELOG, LATEST_VERSION } from './changelog.js';
     const rng = mulberry(seedFrom(game.id));
     const accent = game.accent || '#21e6ff';
 
-    // sky gradient
     const g = ctx.createLinearGradient(0, 0, 0, H);
     g.addColorStop(0, shade(accent, -120));
     g.addColorStop(1, '#06010f');
     ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
 
-    // starfield
     ctx.fillStyle = 'rgba(255,255,255,.7)';
     for (let i = 0; i < 26; i++) ctx.fillRect((rng() * W) | 0, (rng() * H * 0.6) | 0, 1, 1);
 
-    // distant moon / sun
     ctx.fillStyle = shade(accent, 60);
     const mx = 20 + rng() * 120, my = 14 + rng() * 22, mr = 8 + rng() * 8;
     ctx.beginPath(); ctx.arc(mx, my, mr, 0, Math.PI * 2); ctx.fill();
     ctx.globalAlpha = 0.25; ctx.beginPath(); ctx.arc(mx, my, mr + 4, 0, Math.PI * 2); ctx.fill(); ctx.globalAlpha = 1;
 
-    // silhouette skyline / terrain — varied per game
     const kind = seedFrom(game.genre) % 4;
     ctx.fillStyle = '#0a0420';
     if (kind === 0) {
-      // jagged mountains
       ctx.beginPath(); ctx.moveTo(0, H);
       for (let x = 0; x <= W; x += 16) ctx.lineTo(x, H - 26 - rng() * 34);
       ctx.lineTo(W, H); ctx.closePath(); ctx.fill();
     } else if (kind === 1) {
-      // city towers
       for (let x = 0; x < W; x += 14) {
         const th = 24 + rng() * 46; ctx.fillRect(x, H - th, 11, th);
       }
     } else if (kind === 2) {
-      // rolling sea
       ctx.fillRect(0, H - 34, W, 34);
       ctx.fillStyle = shade(accent, -60);
       for (let x = 0; x < W; x += 8) ctx.fillRect(x, H - 34 + ((x / 8) % 2 ? 2 : 5), 8, 2);
     } else {
-      // forest
       ctx.fillRect(0, H - 22, W, 22);
       for (let i = 0; i < 9; i++) {
         const tx = rng() * W, th = 18 + rng() * 26;
@@ -101,7 +117,6 @@ import { CHANGELOG, LATEST_VERSION } from './changelog.js';
       }
     }
 
-    // hero sprite (accent blob) center-ish
     const hx = (W / 2 + (rng() - 0.5) * 40) | 0, hy = H - 30;
     ctx.fillStyle = accent;
     ctx.fillRect(hx - 4, hy - 8, 8, 8);
@@ -109,19 +124,15 @@ import { CHANGELOG, LATEST_VERSION } from './changelog.js';
     ctx.fillStyle = '#000';
     ctx.fillRect(hx - 2, hy - 6, 2, 2); ctx.fillRect(hx + 1, hy - 6, 2, 2);
 
-    // ground grid glow
     ctx.strokeStyle = 'rgba(123,92,255,.5)'; ctx.lineWidth = 1;
     for (let x = -2; x < 14; x++) { ctx.beginPath(); ctx.moveTo((x / 12) * W, H); ctx.lineTo(W / 2, H - 14); ctx.stroke(); }
 
-    // vignette
     const v = ctx.createRadialGradient(W / 2, H / 2, 20, W / 2, H / 2, 90);
     v.addColorStop(0, 'rgba(0,0,0,0)'); v.addColorStop(1, 'rgba(0,0,0,.55)');
     ctx.fillStyle = v; ctx.fillRect(0, 0, W, H);
   }
 
   /* ----------- thumbnail media ----------- */
-  // Live games show a real screenshot (games/<id>/thumb.png); if it's missing
-  // we fall back to the procedural pixel scene. "Soon" games use procedural art.
   function thumbMedia(game) {
     if (game.status === 'live') {
       const img = document.createElement('img');
@@ -141,23 +152,18 @@ import { CHANGELOG, LATEST_VERSION } from './changelog.js';
     return cv;
   }
 
-  /* ----------- card builder -----------
-   * Takes an array of variants for one property (usually 1; 2+ when a property
-   * exists in multiple generations, e.g. Dracula in 8-bit + 16-bit). A single
-   * variant is a whole-card link; multiple variants render a card with a
-   * per-generation play switch (Gen 4 first). */
+  /* ----------- card builder (unchanged from the pre-shell arcade) ----------- */
   function card(variants) {
     const list = variants.slice().sort((a, b) => genOf(b) - genOf(a));
-    const g = list[0]; // primary = highest generation
+    const g = list[0];
     const multi = list.length > 1;
 
-    const el = document.createElement(multi ? 'div' : 'a');
-    el.className = 'card' + (multi ? ' multi' : '');
-    if (!multi) el.href = 'games/' + g.id + '/';
-    el.dataset.genre = g.genre;
-    el.dataset.style = g.style;
+    const node = document.createElement(multi ? 'div' : 'a');
+    node.className = 'card' + (multi ? ' multi' : '');
+    if (!multi) node.href = 'games/' + g.id + '/';
+    node.dataset.genre = g.genre;
+    node.dataset.style = g.style;
 
-    // thumb links to the primary (Gen 4) version on multi cards
     const thumb = document.createElement(multi ? 'a' : 'div');
     thumb.className = 'thumb';
     if (multi) thumb.href = 'games/' + g.id + '/';
@@ -180,15 +186,15 @@ import { CHANGELOG, LATEST_VERSION } from './changelog.js';
       : `<div class="meta"><span class="src">${g.source.split('—')[0].trim()}</span><span class="play">▶ PLAY</span></div>`;
     body.innerHTML = `<h3>${g.title}</h3><p>${g.blurb}</p>` + meta;
 
-    el.appendChild(thumb);
-    el.appendChild(body);
-    return el;
+    node.appendChild(thumb);
+    node.appendChild(body);
+    return node;
   }
 
   /* ----------- filtering ----------- */
   function visible(game) {
     if (!shown(game)) return false;
-    if (state.genre !== 'All' && game.genre !== state.genre) return false;
+    if (state.family !== 'All' && familyOf(game) !== state.family) return false;
     if (state.style !== 'All' && game.style !== state.style) return false;
     if (state.q) {
       const hay = (game.title + ' ' + game.source + ' ' + game.genre + ' ' + (game.tags || []).join(' ')).toLowerCase();
@@ -200,8 +206,6 @@ import { CHANGELOG, LATEST_VERSION } from './changelog.js';
   function render() {
     grid.innerHTML = '';
     const items = catalog.filter(visible);
-    // group variants of the same property into ONE card (keyed by `property`),
-    // preserving first-appearance order
     const groups = new Map();
     items.forEach((g) => { const k = g.property || g.id; if (!groups.has(k)) groups.set(k, []); groups.get(k).push(g); });
     const cards = [...groups.values()];
@@ -209,25 +213,27 @@ import { CHANGELOG, LATEST_VERSION } from './changelog.js';
     empty.hidden = cards.length > 0;
   }
 
-  /* ----------- chips ----------- */
+  /* ----------- family selection (rail + chips stay in sync) ----------- */
+  let shell; // set below
+  function setFamily(key, { scroll = false } = {}) {
+    state.family = key;
+    familyChips.querySelectorAll('.chip').forEach((x) => x.setAttribute('aria-pressed', String(x.dataset.key === key)));
+    shell && shell.setActive(key === 'All' ? 'all' : key);
+    render();
+    if (scroll) document.getElementById('games').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
   function buildChips() {
-    // Only list genres that actually have a playable game, so the filter stays a
-    // short, swipeable row instead of a 40-chip wall. It grows as games ship.
-    const liveGenres = Array.from(new Set(shownGames().map((g) => g.genre))).sort();
-    const genres = ['All', ...liveGenres];
-    genres.forEach((gname) => {
+    const fams = ['All', ...FAMILIES.map((f) => f.key).filter((k) => familyCount(k) > 0)];
+    fams.forEach((k) => {
       const c = document.createElement('button');
       c.className = 'chip';
-      c.textContent = gname;
-      c.setAttribute('aria-pressed', gname === 'All');
-      c.addEventListener('click', () => {
-        state.genre = gname;
-        genreChips.querySelectorAll('.chip').forEach((x) => x.setAttribute('aria-pressed', x === c));
-        render();
-      });
-      genreChips.appendChild(c);
+      c.dataset.key = k;
+      c.textContent = k;
+      c.setAttribute('aria-pressed', String(k === state.family));
+      c.addEventListener('click', () => setFamily(k));
+      familyChips.appendChild(c);
     });
-    // Hide the style filter entirely until there's more than one style to pick.
     const distinctStyles = Array.from(new Set(catalog.map((g) => g.style)));
     if (distinctStyles.length <= 1) { styleChips.style.display = 'none'; return; }
     const styles = ['All', ...distinctStyles.sort()];
@@ -251,14 +257,9 @@ import { CHANGELOG, LATEST_VERSION } from './changelog.js';
     document.getElementById('statLive').textContent = liveCount;
     document.getElementById('statTotal').textContent = catalog.length;
     const yEl = document.getElementById('year'); if (yEl) yEl.textContent = '2026';
-    // marquee teases the playable story-mode games (leads), then the roadmap
-    // (unique titles — a property in two generations shouldn't list twice)
     const titles = [...new Set([...shownGames(), ...catalog.filter((g) => !shown(g))].map((g) => g.title))];
     const marquee = document.getElementById('marquee');
     marquee.textContent = '★ ' + titles.join('  ★  ') + '  ★  NEW LEGENDS EVERY HOUR  ★  ';
-    // The crawl distance grows with the catalog, so derive the duration from the
-    // actual width for a calm, constant ~40px/sec speed regardless of how many
-    // titles there are.
     requestAnimationFrame(() => {
       const travel = marquee.scrollWidth || 2000;
       marquee.style.animationDuration = Math.max(40, Math.round(travel / 40)) + 's';
@@ -283,7 +284,6 @@ import { CHANGELOG, LATEST_VERSION } from './changelog.js';
   function buildPromos() {
     const live = shownGames();
     if (!live.length) return;
-    // deterministic-but-rotating pick based on the hour, so it changes over time
     const hour = new Date().getHours();
     const pick = (n, offset) => {
       const out = [];
@@ -291,7 +291,7 @@ import { CHANGELOG, LATEST_VERSION } from './changelog.js';
       return out;
     };
     document.querySelectorAll('.ad-slot[data-ad]').forEach((slot) => {
-      const n = slot.classList.contains('billboard') ? 3 : (slot.classList.contains('rail') ? 2 : 2);
+      const n = slot.classList.contains('billboard') ? 3 : 2;
       const offset = slot.dataset.ad === 'home-billboard' ? 2 : 0;
       const games = pick(n, offset);
       if (!games.length) return;
@@ -304,6 +304,77 @@ import { CHANGELOG, LATEST_VERSION } from './changelog.js';
     });
   }
 
+  /* ----------- "What's New" (fleet-format changelog → shell right panel) ---- */
+  const SEEN_KEY = 'polecat.updates.seen';
+  function fmtCT(ts) {
+    if (!ts) return 'Just now';
+    if (/CT$/.test(ts)) return ts;
+    const d = new Date(ts);
+    if (isNaN(d.getTime())) return ts;
+    return d.toLocaleString('en-US', { timeZone: 'America/Chicago', month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' }) + ' CT';
+  }
+  function openWhatsNew(btn) {
+    rightPanel({
+      title: "What's New",
+      body: initWhatsNew({ entries: CHANGELOG, latest: LATEST_VERSION, storageKey: SEEN_KEY }),
+    });
+    markSeen(SEEN_KEY, LATEST_VERSION);
+    btn.classList.remove('has-unseen');
+  }
+
+  /* ----------- the shell: rail + topbar + waffle ----------- */
+  themeConfigure({ storageKey: 'games.theme', defaultTheme: 'neon:dark' });
+  applyTheme();
+
+  const arcade = document.getElementById('arcade');
+  const wnBtn = el('button', { class: 'btn icon ghost', title: "What's new", 'aria-label': "What's new", html: icon('sparkle', 18) });
+  wnBtn.addEventListener('click', () => openWhatsNew(wnBtn));
+  if (hasUnseen(SEEN_KEY, LATEST_VERSION)) wnBtn.classList.add('has-unseen');
+
+  const themeBtn = el('button', { class: 'btn icon ghost', title: 'Day / night arcade', 'aria-label': 'Toggle light or dark', html: icon(effectiveMode() === 'dark' ? 'sun' : 'moon', 18) });
+  themeBtn.addEventListener('click', () => {
+    toggleMode();
+    themeBtn.innerHTML = icon(effectiveMode() === 'dark' ? 'sun' : 'moon', 18);
+  });
+
+  const sections = [
+    { group: 'Arcade' },
+    { key: 'all', label: 'All Games', icon: icon('gamepad', 18) },
+    { key: 'surprise', label: 'Surprise Me', icon: icon('sparkle', 18) },
+    { group: 'Genres' },
+    ...FAMILIES.filter((f) => familyCount(f.key) > 0).map((f) => ({ key: f.key, label: f.key, icon: icon(f.icon, 18) })),
+    { group: 'More' },
+    { key: 'about', label: 'About', icon: icon('info', 18) },
+  ];
+
+  shell = initShell({
+    app: { id: 'games', name: 'games.polecat.live', wordmark: '<img src="assets/logo.svg" alt="">' },
+    sections,
+    onNav(key) {
+      if (key === 'surprise') {
+        const live = shownGames();
+        if (live.length) location.href = 'games/' + live[Math.floor(Math.random() * live.length)].id + '/';
+        return;
+      }
+      if (key === 'about') {
+        shell.setActive('about');
+        document.getElementById('about').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        return;
+      }
+      setFamily(key === 'all' ? 'All' : key, { scroll: true });
+    },
+    rail: { storageKey: 'games.rail' },
+    topbar: {
+      left: [el('h1', { text: 'ARCADE OF LEGENDS' })],
+      right: [appSwitcher(FLEET, { current: 'games' }), wnBtn, themeBtn],
+    },
+  });
+  // adopt the arcade content into the shell's scrolling view
+  shell.els.main.append(arcade);
+  // live counts on the genre rail
+  FAMILIES.forEach((f) => { const n = familyCount(f.key); if (n) shell.setBadge(f.key, n); });
+  shell.setActive('all');
+
   /* ----------- wire up ----------- */
   search.addEventListener('input', () => { state.q = search.value.trim().toLowerCase(); render(); });
   const randBtn = document.getElementById('randomBtn');
@@ -312,51 +383,11 @@ import { CHANGELOG, LATEST_VERSION } from './changelog.js';
     const live = shownGames();
     if (live.length) location.href = 'games/' + live[Math.floor(Math.random() * live.length)].id + '/';
   });
-
-  /* ----------- "What's New" updates drawer ----------- */
-  // Timestamps are stored as ISO-8601 UTC (relay convention) and formatted into
-  // the reader-facing US Central time here. Tolerates an empty ts (a just-added
-  // entry the workflow hasn't stamped yet) and legacy pre-formatted CT strings.
-  function fmtCT(ts) {
-    if (!ts) return 'Just now';
-    if (/CT$/.test(ts)) return ts; // legacy pre-formatted string
-    const d = new Date(ts);
-    if (isNaN(d.getTime())) return ts;
-    return d.toLocaleString('en-US', { timeZone: 'America/Chicago', month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' }) + ' CT';
-  }
-  function buildChangelog() {
-    const log = CHANGELOG || [];
-    const lu = document.getElementById('lastUpdated');
-    if (lu && log[0]) lu.textContent = fmtCT(log[0].ts);
-    const list = document.getElementById('updatesList');
-    if (list) list.innerHTML = log.map((e) => {
-      const items = e.items || e.notes || [];
-      const kind = e.kind || 'feature';
-      return `<div class="update"><div class="when">${fmtCT(e.ts)}` +
-        `<span class="kind kind-${kind}">${kind}</span></div><h4>${e.title}</h4>` +
-        (items.length ? '<ul>' + items.map((n) => `<li>${n}</li>`).join('') + '</ul>' : '') + `</div>`;
-    }).join('');
-    const drawer = document.getElementById('updatesDrawer');
-    const scrim = document.getElementById('updatesScrim');
-    const open = () => { if (drawer) drawer.hidden = false; if (scrim) scrim.hidden = false; };
-    const close = () => { if (drawer) drawer.hidden = true; if (scrim) scrim.hidden = true; };
-    // "unseen updates" dot: light the ✨ button when the latest version is newer
-    // than what this visitor has already opened (stored locally).
-    const latest = LATEST_VERSION || (log[0] && log[0].v) || 0;
-    const SEEN_KEY = 'polecat.updates.seen';
-    let seen = parseInt(localStorage.getItem(SEEN_KEY) || '0', 10) || 0;
-    const fab = document.getElementById('updatesBtn');
-    if (fab && latest > seen) fab.classList.add('has-unseen');
-    const markSeen = () => { try { localStorage.setItem(SEEN_KEY, String(latest)); } catch (e) {} if (fab) fab.classList.remove('has-unseen'); };
-    if (fab) fab.addEventListener('click', () => { open(); markSeen(); });
-    if (scrim) scrim.addEventListener('click', close);
-    const cb = document.getElementById('updatesClose'); if (cb) cb.addEventListener('click', close);
-    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
-  }
+  const lu = document.getElementById('lastUpdated');
+  if (lu && CHANGELOG[0]) lu.textContent = fmtCT(CHANGELOG[0].ts);
 
   buildChips();
   meta();
   render();
   buildPromos();
-  buildChangelog();
 })();

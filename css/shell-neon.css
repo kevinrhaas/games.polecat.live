@@ -1,0 +1,92 @@
+/* ============================================================
+ * shell-neon.css — the arcade's skin over Polecat Shell.
+ * Load order: vendor tokens.css → site.css → vendor shell.css →
+ * THIS FILE. The shell owns .btn (dialogs, topbar, panels); the
+ * arcade's chunky pixel CTA lives on .abtn now. Restrained Miami
+ * dusk: magenta/cyan duotone, glow borders, Press Start 2P only
+ * on the logo, headings and badges — Inter everywhere else.
+ * ============================================================ */
+
+/* daylight arcade: site.css pins the arcade vars to their night values in
+   :root, so re-flip them for light mode here (this file loads last) */
+[data-theme="light"] {
+  --ink: #241457;
+  --ink-dim: #6b5a9e;
+  --panel: rgba(255, 255, 255, .72);
+  --panel-br: rgba(123, 92, 255, .45);
+  --grid: rgba(123, 92, 255, .14);
+  --shadow: 0 0 0 2px rgba(36, 20, 87, .08), 0 8px 30px rgba(36, 20, 87, .16);
+}
+
+/* the synthwave backdrop, re-asserted over shell.css's flat --bg */
+body.ps-shell {
+  background:
+    radial-gradient(1200px 600px at 50% -10%, #2a1066 0%, transparent 60%),
+    radial-gradient(900px 500px at 90% 10%, rgba(255, 46, 151, .18) 0%, transparent 55%),
+    linear-gradient(180deg, var(--bg) 0%, #06010f 100%);
+}
+[data-theme="light"] body.ps-shell {
+  background:
+    radial-gradient(1200px 600px at 50% -10%, #e6d5ff 0%, transparent 60%),
+    radial-gradient(900px 500px at 90% 10%, rgba(255, 46, 151, .14) 0%, transparent 55%),
+    linear-gradient(180deg, var(--bg) 0%, #efe4ff 100%);
+}
+/* the horizon grid + scanlines ride on body pseudos in site.css and stay */
+
+/* the view supplies no gutters — the arcade's .wrap does */
+.ps-view { padding: 0 0 40px; }
+
+/* chrome: dusk glass over the gradient, neon hairlines */
+.ps-topbar {
+  background: linear-gradient(180deg, rgba(11, 4, 32, .92), rgba(11, 4, 32, .55));
+  border-bottom: 2px solid var(--panel-br);
+}
+[data-theme="light"] .ps-topbar { background: linear-gradient(180deg, rgba(250, 245, 255, .92), rgba(250, 245, 255, .6)); }
+.ps-topbar h1 {
+  font-family: var(--font-pixel); font-size: 12px; letter-spacing: 1px;
+  color: var(--ink); text-shadow: 0 0 10px rgba(33, 230, 255, .35);
+}
+.ps-rail { border-right: 2px solid var(--panel-br); }
+.ps-rail-brand b { font-family: var(--font-pixel); font-size: 10px; letter-spacing: .5px; color: var(--cyan); }
+.ps-rail-brand small { font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; }
+.ps-rail-logo { background: none; box-shadow: none; }
+.ps-rail-logo img { width: 34px; height: 34px; filter: drop-shadow(0 0 8px rgba(33, 230, 255, .45)); }
+.ps-rail-group { font-family: var(--font-pixel); font-size: 7px; letter-spacing: 2px; }
+.ps-rail-item.active { box-shadow: inset 0 0 0 1px var(--panel-br), 0 0 14px rgba(255, 46, 151, .18); }
+.ps-rail-item .badge { background: var(--magenta); box-shadow: 0 0 8px rgba(255, 46, 151, .5); }
+
+/* the arcade CTA — the old chunky .btn, renamed so the shell owns .btn */
+.abtn {
+  font-family: var(--font-pixel); font-size: 11px;
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 12px 18px; border-radius: 10px; cursor: pointer;
+  border: 2px solid #000; color: #0b0420; background: var(--cyan);
+  box-shadow: 0 4px 0 #0a8ca3, var(--shadow);
+  transition: transform .05s ease, box-shadow .05s ease;
+  text-decoration: none;
+}
+.abtn:active { transform: translateY(3px); box-shadow: 0 1px 0 #0a8ca3, var(--shadow); }
+.abtn.magenta { background: var(--magenta); color: #fff; box-shadow: 0 4px 0 #a01060, var(--shadow); }
+.abtn.ghost { background: transparent; color: var(--ink); border-color: var(--panel-br); box-shadow: var(--shadow); }
+
+/* unseen dot on the topbar What's-New sparkle */
+.ps-topbar .btn.has-unseen { position: relative; }
+.ps-topbar .btn.has-unseen::after {
+  content: ""; position: absolute; top: 5px; right: 5px;
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--green); box-shadow: 0 0 6px var(--green);
+  animation: pulseDot 1.4s ease-in-out infinite;
+}
+
+/* What's-New feed inside the shell right panel, arcade-flavored */
+.ps-rpanel { background: linear-gradient(180deg, #150a35, #0b0420); border-left: 2px solid var(--panel-br); }
+[data-theme="light"] .ps-rpanel { background: linear-gradient(180deg, #faf5ff, #efe4ff); }
+.ps-rpanel-head h2 { font-family: var(--font-pixel); font-size: 11px; letter-spacing: 1px; color: var(--cyan); }
+
+/* light "daylight arcade" content fixes: site.css hardcodes a few dark inks */
+[data-theme="light"] .hero h1 { color: #2a1066; text-shadow: 0 0 12px rgba(255, 46, 151, .35), 3px 3px 0 rgba(255, 46, 151, .55), -2px -2px 0 rgba(33, 230, 255, .7); }
+[data-theme="light"] .site-footer, [data-theme="light"] .game-help { color: var(--ink); }
+
+/* the shell drawer breakpoint replaces the old sticky header on phones;
+   give the toolbar room to breathe under the topbar */
+#games .toolbar { margin-top: 6px; }

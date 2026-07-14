@@ -4,9 +4,24 @@ An ever-growing browser arcade of **instantly-playable 8-bit games built from
 public-domain stories**. Pure static HTML/CSS/JS — no build step, no
 dependencies, no backend. Deployed as static files.
 
+## The home page runs on Polecat Shell (vendored — READ-ONLY)
+`vendor/polecat-shell/` is a versioned copy of the shared fleet UI library from
+the `kevinrhaas/polecat-platform` repo (see its docs/SHELL-API.md). It powers
+the home page's left rail (genre families + counts), top bar, the 3×3 fleet
+app switcher, the What's-New right panel, and the neon theme tokens
+(`data-palette="neon"` × `data-theme` light/dark, stored at `games.theme`).
+**Never edit files under `vendor/polecat-shell/`** — changes there belong in
+the platform repo and arrive via `chore: polecat-shell vX.Y.Z` PRs
+(MANIFEST.json sha256 hashes are drift-checked by fleet sweeps). Games-side
+skinning lives in `css/shell-neon.css` (the arcade `.abtn` CTA, chrome glow,
+light-mode fixes); home wiring lives in `js/home.js`. Per-game pages do NOT
+load the shell — they keep their own `--g-*` chrome (below).
+
 ## Layout
 ```
-index.html            Home page (hero, filters, game grid, ad slots)
+index.html            Home page (shell rail/topbar + hero, filters, grid, ads)
+vendor/polecat-shell/ Shared fleet UI library (READ-ONLY — see above)
+css/shell-neon.css    The arcade's skin over the shell (abtn, glows, light mode)
 css/site.css          Global design system (synthwave/neon arcade)
 css/game.css          Shared per-game page layout + touch-control styles
 js/retro-engine.js    The shared 8-bit game engine (see API below)

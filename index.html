@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-palette="neon" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
@@ -10,35 +10,35 @@
   <meta property="og:title" content="games.polecat.live" />
   <meta property="og:description" content="Instantly-playable 8-bit games starring the greatest stories and characters ever told." />
   <meta property="og:type" content="website" />
+  <script>
+    /* pre-paint: palette is always neon here; light/dark follows games.theme */
+    (function () {
+      var t = 'neon:dark';
+      try { t = localStorage.getItem('games.theme') || t; } catch (e) {}
+      var mode = (t.split(':')[1] || 'dark');
+      if (mode === 'system') mode = (window.matchMedia && matchMedia('(prefers-color-scheme: light)').matches) ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-palette', 'neon');
+      document.documentElement.setAttribute('data-theme', mode);
+    })();
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="vendor/polecat-shell/tokens.css" />
   <link rel="stylesheet" href="css/site.css" />
+  <link rel="stylesheet" href="vendor/polecat-shell/shell.css" />
+  <link rel="stylesheet" href="css/shell-neon.css" />
 </head>
 <body>
-  <header class="site-header">
-    <div class="wrap">
-      <a class="brand" href="./" aria-label="games.polecat.live home">
-        <img src="assets/logo.svg" alt="" width="52" height="52" />
-        <span class="brand-name">games<span class="dot">.</span><b>polecat</b><span class="dot">.</span>live
-          <small>ARCADE OF LEGENDS</small>
-        </span>
-      </a>
-      <nav class="nav">
-        <a href="#games">Games</a>
-        <a href="#about">About</a>
-        <a class="btn magenta" href="#games">▶ Play Now</a>
-      </nav>
-    </div>
-  </header>
-
-  <main>
+  <!-- The shell (rail + topbar) is built by js/home.js on boot; everything
+       below is the arcade content it adopts into the main view. -->
+  <main id="arcade">
     <section class="hero wrap">
       <h1>Play the Classics</h1>
       <p class="tag">Hand-crafted 8-bit games starring the greatest stories and characters ever told. No installs, no logins — just press start.</p>
       <div class="cta">
-        <a class="btn magenta" href="#games">▶ Browse Games</a>
-        <a class="btn ghost" href="#random" id="randomBtn">🎲 Surprise Me</a>
+        <a class="abtn magenta" href="#games">▶ Browse Games</a>
+        <a class="abtn ghost" href="#random" id="randomBtn">🎲 Surprise Me</a>
       </div>
       <div class="stats">
         <div><b id="statLive">0</b><span>Playable Now</span></div>
@@ -62,7 +62,7 @@
           <span aria-hidden="true">🔎</span>
           <input id="search" type="search" placeholder="Search a story, hero, or genre…" aria-label="Search games" />
         </label>
-        <div class="chips" id="genreChips" role="group" aria-label="Filter by genre"></div>
+        <div class="chips" id="familyChips" role="group" aria-label="Filter by genre"></div>
       </div>
       <div class="chips" id="styleChips" role="group" aria-label="Filter by style" style="margin-bottom:14px"></div>
 
@@ -80,40 +80,27 @@
       <div class="game-help" style="max-width:none">
         <p><b>games.polecat.live</b> turns the world's most beloved stories and characters into bite-sized, instantly-playable arcade games. Every title is built in pure HTML &amp; JavaScript, runs in any modern browser, and plays great with a keyboard or with touch on your phone.</p>
         <p>We start in glorious <b>8-bit</b> and add new legends every hour. Sherlock Holmes, Dracula, Alice, Oz — and dozens more on the way. <span class="keys">PRESS START</span></p>
+        <p>Part of the <a href="https://polecat.live">Polecat suite</a> — open the app switcher (the 3×3 grid up top) to hop between apps.</p>
       </div>
     </section>
+
+    <footer class="site-footer" id="footer">
+      <div class="wrap">
+        <div>
+          <h4>games.polecat.live</h4>
+          <p>An ever-growing arcade of the world's greatest legends. Built with love and pixels.</p>
+        </div>
+        <div>
+          <h4>Explore</h4>
+          <p><a href="#games">All Games</a><br /><a href="#about">About</a><br /><a href="https://polecat.live">polecat.live ↗</a></p>
+        </div>
+        <div class="legal">
+          All games are original works inspired by classic stories and characters. © <span id="year"></span> polecat.live
+          <br />Last updated <span id="lastUpdated">—</span>
+        </div>
+      </div>
+    </footer>
   </main>
-
-  <footer class="site-footer" id="footer">
-    <div class="wrap">
-      <div>
-        <h4>games.polecat.live</h4>
-        <p>An ever-growing arcade of the world's greatest legends. Built with love and pixels.</p>
-      </div>
-      <div>
-        <h4>Explore</h4>
-        <p><a href="#games">All Games</a><br /><a href="#about">About</a><br /><a href="https://polecat.live">polecat.live ↗</a></p>
-      </div>
-      <div class="legal">
-        All games are original works inspired by classic stories and characters. © <span id="year"></span> polecat.live
-        <br />Last updated <span id="lastUpdated">—</span>
-      </div>
-    </div>
-  </footer>
-
-  <!-- Discreet "What's New" updates drawer -->
-  <button id="updatesBtn" class="updates-fab" aria-haspopup="dialog" aria-controls="updatesDrawer" title="What's new">
-    <span class="dot" aria-hidden="true"></span> WHAT'S NEW
-  </button>
-  <div id="updatesScrim" class="drawer-scrim" hidden></div>
-  <aside id="updatesDrawer" class="drawer" role="dialog" aria-label="Update history" aria-modal="true" hidden>
-    <header>
-      <h3>What's New</h3>
-      <button id="updatesClose" class="drawer-close" aria-label="Close updates">✕</button>
-    </header>
-    <p class="drawer-sub">New games &amp; improvements, newest first · times in CT</p>
-    <div id="updatesList" class="updates-list"></div>
-  </aside>
 
   <script src="js/catalog.js"></script>
   <!-- changelog.js is an ES module imported by home.js (shared polecat convention) -->
