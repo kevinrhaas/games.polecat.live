@@ -10,6 +10,17 @@
 // format stays identical to the rest of the fleet.
 export const CHANGELOG = [
   {
+    v: 114,
+    title: 'Active-play sweep: fixed a results-screen crash and a few too-easy finales',
+    kind: 'fix',
+    ts: '2026-07-15T22:29:13.084Z',
+    items: [
+      'Built a second audit that actually plays each 8-bit level (not just idle-checks it) and fixed what it caught.',
+      'Anne of Green Gables could crash on the results screen after you cleared the apology and haunted-wood levels — fixed, and hardened the shared results screen so no game can crash there again.',
+      'Tuned three finales that a button-masher could clear in a second or two: Snow White’s awakening kiss now takes real, sustained effort; the chase round the walls of Troy runs longer; and Tom Sawyer’s dig needs sharper timing.',
+    ],
+  },
+  {
     v: 113,
     title: 'Playability sweep: fixed unplayable and too-short 8-bit levels',
     kind: 'fix',

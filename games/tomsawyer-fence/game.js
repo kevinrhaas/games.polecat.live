@@ -856,18 +856,26 @@
           if (this.strikeT > 0 && this.strikeT < 0.12 && !this.strikeChecked) {
             this.strikeChecked = true;
             const sp = this.spots[this.cur];
-            if (Math.abs(this.shovelX - sp.x) < 22) {
-              sp.dug = true;
-              this.found++;
-              api.addScore(400);
-              api.audio.sfx('win');
-              api.burst(sp.x, sp.y, '#d4a020', 16);
+            if (Math.abs(this.shovelX - sp.x) < 16) { // tighter dig window
+              // each spot takes TWO good strikes to dig out (dig deeper) — a
+              // masher used to clear all three in ~2.5s, undercutting the timer
+              sp.depth = (sp.depth || 0) + 1;
+              api.addScore(200);
               api.shake(3, 0.3);
-              if (this.found >= 3) { this.won = true; api.win(); }
-              else {
-                do { this.cur = (this.cur + 1) % 3; } while (this.spots[this.cur].dug);
-                this.shovelX = this.spots[this.cur].x;
-                this.strikeT = 0;
+              if (sp.depth >= 2) {
+                sp.dug = true;
+                this.found++;
+                api.audio.sfx('win');
+                api.burst(sp.x, sp.y, '#d4a020', 16);
+                if (this.found >= 3) { this.won = true; api.win(); }
+                else {
+                  do { this.cur = (this.cur + 1) % 3; } while (this.spots[this.cur].dug);
+                  this.shovelX = this.spots[this.cur].x;
+                  this.strikeT = 0;
+                }
+              } else {
+                api.audio.sfx('coin');
+                api.burst(sp.x, sp.y, '#a07018', 8);
               }
             } else {
               api.shake(1, 0.15);

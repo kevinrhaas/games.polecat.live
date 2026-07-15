@@ -349,8 +349,11 @@
     function drawResult() {
       if (cfg.renderResult) { cfg.renderResult(api, { ch: cur, result, respect: respect(), sceneT }); return; }
       // the chapter's last frame sits underneath, dimmed, so the score screen
-      // still wears the world it was just played in
-      if (cur.draw) { ctx.globalAlpha = 0.5; cur.draw.call(cur, api); ctx.globalAlpha = 1; }
+      // still wears the world it was just played in. This is decorative — a
+      // chapter whose draw isn't safe at its terminal state (e.g. a step counter
+      // sitting one past its array after a win) must never crash the result
+      // screen, so guard it.
+      if (cur.draw) { ctx.globalAlpha = 0.5; try { cur.draw.call(cur, api); } catch (e) {} ctx.globalAlpha = 1; }
       gfx.rect(0, 0, W, H, ST.overlay);
       const won = result.won;
       // headline wraps to fit the screen; push the outcome text below it

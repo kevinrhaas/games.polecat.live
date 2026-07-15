@@ -636,8 +636,8 @@
           // Prompt
           g.rect(0, 256, W, 16, C.dark);
           api.txtCFit('WHICH SOUNDS MORE SINCERE?', W / 2, 260, 5, C.cream, false, W - 10);
-          // Buttons (2 options)
-          var rnd = APOLOGY[this.round];
+          // Buttons (2 options) — clamp: after a win, round sits one past the end
+          var rnd = APOLOGY[Math.min(this.round, APOLOGY.length - 1)];
           var state0 = 'normal', state1 = 'normal';
           if (this.phase === 'feedback') {
             state0 = 0 === rnd.c ? 'correct' : (this.chosen === 0 ? 'wrong' : 'normal');
@@ -914,8 +914,8 @@
           g.rectO(8, 160, W - 16, 100, C.shadow, 1);
           g.rectO(10, 162, W - 20, 96, '#481870', 1);
           api.txtCFit('ANNE\'S STORY:', 14, 170, 5, C.roseL, false, 90);
-          // Build story with chosen words
-          var bl = STORY_BLANKS[this.blank];
+          // Build story with chosen words — clamp: after a win, blank sits one past the end
+          var bl = STORY_BLANKS[Math.min(this.blank, STORY_BLANKS.length - 1)];
           var storyY = 186;
           for (var si = 0; si < this.chosenWords.length && si < 3; si++) {
             var cw2 = this.chosenWords[si];
