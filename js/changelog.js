@@ -10,6 +10,18 @@
 // format stays identical to the rest of the fleet.
 export const CHANGELOG = [
   {
+    v: 108,
+    title: '16-bit Dracula: every night is fully 16-bit now',
+    kind: 'feature',
+    ts: '2026-07-15T15:49:56.196Z',
+    items: [
+      'Finished the 16-bit pass across the whole story — the storm-tossed Demeter, the lantern-lit hold, the asylum cell, Lucy’s churchyard trail, the crypt stake, and the sunset race all now play with detailed lit environments, parallax depth, bigger shaded animated sprites, fog and drifting embers, not just their 8-bit look scaled up.',
+      'Brightened the ship’s hold so the timber deck, swinging lantern, and creeping wraiths actually read.',
+      'Fixed a doubled status bar during play so your health, wards, and boss progress are clear at a glance.',
+      'Walked every night end to end, including all three bosses, with zero errors.',
+    ],
+  },
+  {
     v: 107,
     title: '16-bit Dracula: the gameplay looks 16-bit now, too',
     kind: 'feature',

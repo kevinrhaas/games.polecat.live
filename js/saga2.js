@@ -356,6 +356,8 @@
 
     // in-play HUD: currency + phase pips + owned upgrades
     function drawHud() {
+      // games whose phases draw their own status bar opt out so the two don't collide
+      if (cfg.ownPhaseHud) return;
       g2.roundRect(4, 4, 92, 15, 5, 'rgba(8,6,16,.6)', null);
       txt(CUR + ' ' + banked(), 9, 8, 8, PAL.gold);
       if (curNode.phases.length > 1) {

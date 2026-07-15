@@ -185,6 +185,15 @@
     '.k..BB..k.', '..kBBBBk..', '..k.BB.k..', '...k..k...',
   ];
   const CPAL_BIG = { k: '#070409', K: '#1a0e1e', w: '#e8dcf0', W: '#b8a8c8', r: C.blood, B: '#2a0e18', };
+  // more 16-bit sprites (multi-tone, outlined) for the other phases
+  const SHIP = ['...ss...', '..ssss..', '.s.mm.s.', '.s.mm.s.', 'HHHHHHHH', 'hHHHHHHh', 'hhHHHHhh', '.hhhhhh.'];
+  const SHIPPAL = { s: '#e0d8c0', m: '#2a1c0e', H: '#7a4a22', h: '#4a2c14' };
+  const HUNTER = ['..kkkk..', '.kHssHk.', '.ksffsk.', '..ffff..', '.kCCCCk.', 'kCCLLCCk', 'kCL..LCk', '.b.CC.b.', '.bb..bb.'];
+  const HUNTERPAL = { k: '#0a0610', H: '#2a3444', s: '#3a4a5e', f: '#d8b088', C: '#243040', L: '#3a5068', b: '#141018' };
+  const LUCY = ['..pppp..', '.pWWWWp.', '.pWrrWp.', '.pWWWWp.', '..pPPp..', '.pPPPPp.', 'pPP..PPp', '.pP..Pp.'];
+  const LUCYPAL = { p: '#a898c0', W: '#f2ecf8', r: C.blood, P: '#e0d6ee' };
+  const WRAITH = ['..kk..', '.kkkk.', 'kkGGkk', 'kkkkkk', 'k.kk.k', '.k..k.'];
+  const WRAITHPAL = { k: '#160a1e', G: '#c81028' };
 
   /* --- CASTLE p1: the climb (timing) --- */
   function climb() {
@@ -325,15 +334,33 @@
         api.score = Math.floor(this.z); if (this.z >= this.need) { api.addScore(60); api.win(); }
       },
       draw(api) {
-        const W = api.W, H = api.H, g = api.gfx;
-        api.g2.skyGradient([[0, '#0a0818'], [1, '#1a2038']], H * 0.44);
-        api.g2.glow(W - 50, 44, 30, '#7a1420', 0.5);
-        api.g2.mode7({ horizon: H * 0.44, camZ: this.z * 2, angle: Math.sin(api.t * 0.4) * 0.15, height: 1.2, fog: '#12203a', tex: (wx, wz) => ((Math.floor(wx / 46) + Math.floor(wz / 46)) & 1) ? '#123152' : '#0e2844' });
-        for (const o of this.obs) { g.rect(o.x - 10, o.y - 6, 20, 12, '#3a586a'); g.rect(o.x - 6, o.y - 3, 12, 6, '#5a9aaa'); }
+        const W = api.W, H = api.H, g = api.gfx, c = api.ctx, g2 = api.g2, t = api.t;
+        const hz = H * 0.44;
+        g2.skyGradient([[0, '#080614'], [0.6, '#101830'], [1, '#1a2440']], hz);
+        // parallax storm clouds
+        g2.parallax(t * 30, [
+          { speed: 0.4, draw: (ox) => { c.fillStyle = '#141a30'; g2.tiled(ox, 90, (x) => { c.beginPath(); c.arc(x + 45, 30, 26, Math.PI, 0); c.fill(); }); } },
+          { speed: 0.8, draw: (ox) => { c.fillStyle = '#0e1424'; g2.tiled(ox, 70, (x) => { c.beginPath(); c.arc(x + 35, 40, 22, Math.PI, 0); c.fill(); }); } },
+        ]);
+        g2.glow(W - 50, 40, 28, '#7a1420', 0.45);
+        // lightning
+        const L = g2.lightning(t, 5.5);
+        if (L > 0.3) { c.strokeStyle = 'rgba(200,220,255,' + L + ')'; c.lineWidth = 2; c.beginPath(); const lx = W * 0.3; c.moveTo(lx, 0); c.lineTo(lx + 8, 20); c.lineTo(lx - 4, 34); c.lineTo(lx + 10, hz); c.stroke(); }
+        // mode7 churning sea
+        g2.mode7({ horizon: hz, camZ: this.z * 2, angle: Math.sin(t * 0.4) * 0.18, height: 1.2, fog: '#0c1830', tex: (wx, wz) => ((Math.floor(wx / 46) + Math.floor(wz / 46)) & 1) ? '#123152' : '#0e2844' });
+        if (L > 0) { c.fillStyle = 'rgba(160,180,255,' + (L * 0.18) + ')'; c.fillRect(0, hz, W, H - hz); }
+        // reefs with whitecaps
+        for (const o of this.obs) { c.fillStyle = '#2a3a48'; c.fillRect(o.x - 11, o.y - 7, 22, 14); c.fillStyle = '#4a6a7c'; c.fillRect(o.x - 7, o.y - 4, 14, 7); c.fillStyle = '#cfe4ee'; c.fillRect(o.x - 8, o.y - 8, 16, 3); }
+        // ship with foam wake
         const blink = this.imm > 0 && Math.floor(this.imm * 10) % 2 === 0;
-        if (!blink) api.g2.bigSprite(['.ww.', 'wwww', 'wwww', '.ww.'], this.x - 16, H - 92, { w: '#6a4018' }, 8, { shadow: true, outline: '#2a1608' });
-        api.txtCFit('❤'.repeat(Math.max(0, this.lives)), 40, 8, 10, C.blood);
-        api.txtCFit('LANDFALL ' + Math.floor(this.z / this.need * 100) + '%', W / 2, 8, 9, C.rose);
+        c.globalAlpha = 0.4; c.fillStyle = '#a8d0e0'; c.beginPath(); c.ellipse(this.x, H - 60 + Math.sin(t * 6) * 2, 22, 7, 0, 0, 7); c.fill(); c.globalAlpha = 1;
+        if (!blink) g2.bigSprite(SHIP, this.x - 24, H - 108 + Math.sin(t * 3) * 3, SHIPPAL, 6, { shadow: true, outline: '#160a08' });
+        // sea spray
+        g2.embers(t, 10, { yBottom: H, yTop: hz, color: '#bfe0ee', speed: 0.2, size: 2, alpha: 0.35 });
+        g2.roundRect(6, 4, W - 12, 15, 5, 'rgba(6,8,20,.6)', '#2a3a52', 1);
+        api.txt('❤'.repeat(Math.max(0, this.lives)), 11, 8, 9, C.blood);
+        api.txtCFit('LANDFALL ' + Math.floor(this.z / this.need * 100) + '%', W - 46, 8, 8, C.rose, false, 84);
+        api.vignette();
       },
     };
   }
@@ -354,13 +381,30 @@
         if (this.time <= 0) { api.addScore(70); api.win(); }
       },
       draw(api) {
-        const W = api.W, H = api.H, g = api.gfx;
-        api.clear('#0b0714'); api.g2.dither(0, H, '#160a18', '#0b0714', 3);
-        // mast / crew heart at center
-        api.g2.glow(W / 2, H / 2, 26, '#e3a030', 0.5); g.rect(W / 2 - 3, H / 2 - 20, 6, 40, '#3a2a16'); g.rect(W / 2 - 14, H / 2 - 14, 28, 4, '#3a2a16');
-        for (const s of this.shadows) { api.g2.glow(s.x, s.y, 12, '#5a1020', 0.6); g.sprite(['.kk.', 'kkkk', 'k.kk', 'kk.k'], s.x - 4, s.y - 4, { k: '#1a0a1e' }, 2); }
-        api.txtCFit('WARD OFF · ' + Math.ceil(this.time) + 's', W / 2, 8, 9, C.rose);
-        api.txtCFit('BREACHES ' + this.breaches + '/' + this.max, W / 2, 24, 8, C.mist);
+        const W = api.W, H = api.H, g = api.gfx, c = api.ctx, g2 = api.g2, t = api.t;
+        // wooden hold interior — plank walls (stoneWall with warm timber tones) + beams
+        g2.stoneWall(0, 0, W, H, { base: '#4a3218', light: '#6a4a24', dark: '#241608', mortar: '#140c06', moss: '#3a3414' }, 0);
+        for (let x = 20; x < W; x += 64) { c.fillStyle = '#1e140a'; c.fillRect(x, 0, 8, H); c.fillStyle = '#5a3e22'; c.fillRect(x, 0, 2, H); c.fillStyle = '#2a1c0e'; c.fillRect(x + 6, 0, 2, H); } // vertical beams w/ highlight+shadow
+        // warm ambient lantern wash so the deck reads
+        g2.glow(W / 2, H / 2, 150, '#c88028', 0.32);
+        c.fillStyle = 'rgba(10,6,14,.14)'; c.fillRect(0, 0, W, H);
+        // lantern-lit crew at the mast (protect this)
+        const lp = 0.5 + 0.15 * Math.sin(t * 5);
+        g2.glow(W / 2, H / 2, 44 + 5 * Math.sin(t * 4), '#ffc050', 0.7 + 0.18 * lp);
+        c.fillStyle = '#3a2a16'; c.fillRect(W / 2 - 3, H / 2 - 22, 6, 44); c.fillRect(W / 2 - 14, H / 2 - 16, 28, 4);
+        c.fillStyle = '#e8b040'; c.fillRect(W / 2 - 4, H / 2 - 6, 8, 12); c.fillStyle = '#fff0c0'; c.fillRect(W / 2 - 2, H / 2 - 3, 4, 5); // lantern
+        g2.fog(t, { y0: H * 0.5, y1: H, bands: 4, color: '#2a1020', alpha: 0.08 });
+        // creeping wraiths — bigger, glowing eyes, animated
+        for (const s of this.shadows) {
+          g2.glow(s.x, s.y, 14, '#7a1020', 0.6);
+          const fr = Math.floor(t * 8 + s.x) % 2;
+          g2.bigSprite(WRAITH, s.x - 6 + (fr ? 1 : 0), s.y - 6, WRAITHPAL, 2, { outline: '#0a0510' });
+        }
+        g2.embers(t, 8, { yBottom: H, yTop: 0, color: '#e0a040', speed: 0.08, size: 2, alpha: 0.3 });
+        g2.roundRect(6, 4, W - 12, 15, 5, 'rgba(6,4,10,.7)', '#5a2a20', 1);
+        api.txt('WARD · ' + Math.ceil(this.time) + 's', 11, 8, 8, C.rose);
+        api.txtCFit('BREACHES ' + this.breaches + '/' + this.max, W - 46, 8, 8, C.mist, false, 84);
+        api.vignette();
       },
     };
   }
@@ -380,11 +424,26 @@
         if (this.time <= 0) { if (this.caught >= this.need * 0.6) { api.win(); } else api.lose(); }
       },
       draw(api) {
-        const W = api.W, H = api.H, g = api.gfx;
-        api.clear('#12100a'); api.g2.dither(0, H, '#1a1510', '#0c0a06', 3);
-        g.rect(0, H - 40, W, 40, '#241a10');
-        for (const f of this.flies) { g.rect(f.x - 2, f.y - 2, 4, 4, '#101010'); g.rect(f.x - 3, f.y - 1, 2, 2, 'rgba(200,220,255,.6)'); }
+        const W = api.W, H = api.H, g = api.gfx, c = api.ctx, g2 = api.g2, t = api.t;
+        // grimy asylum cell — stone wall, barred moonlit window, plank floor
+        g2.stoneWall(0, 0, W, H - 34, { base: '#221e18', light: '#342e24', dark: '#14110c', mortar: '#0a0806', moss: '#243420' }, 0);
+        const wx = W - 56, wy = 26;
+        c.fillStyle = '#0a0c14'; c.fillRect(wx - 20, wy, 40, 46); c.beginPath(); c.arc(wx, wy, 20, Math.PI, 0); c.fill();
+        g2.glow(wx, wy + 20, 24, '#8ab0e0', 0.4); c.fillStyle = '#2a3a5a'; c.fillRect(wx - 15, wy + 4, 30, 40);
+        c.fillStyle = '#0e0a08'; for (let i = -1; i < 2; i++) c.fillRect(wx + i * 9, wy + 2, 3, 42); // bars
+        c.fillStyle = '#4a3420'; c.fillRect(0, H - 34, W, 34); c.fillStyle = '#2a1c0e'; for (let x = 0; x < W; x += 22) c.fillRect(x, H - 34, 2, 34);
+        // Renfield crouched in the corner
+        g2.bigSprite(['..kk..', '.kffk.', '.kffk.', 'kCCCCk', 'kC..Ck'], 8, H - 74, { k: '#1a120a', f: '#c8a878', C: '#3a2a18' }, 4, { outline: '#0a0806', shadow: true });
+        g2.embers(t, 6, { yBottom: H, yTop: 0, color: '#6a5a3a', speed: 0.06, size: 1, alpha: 0.4 });
+        // flies — bigger, with flapping wings + shadow
+        for (const f of this.flies) {
+          const wing = Math.sin(t * 30 + f.ph) > 0;
+          c.fillStyle = 'rgba(220,235,255,.5)'; c.fillRect(f.x - (wing ? 4 : 3), f.y - 2, 3, 2); c.fillRect(f.x + 1, f.y - 2, 3, 2);
+          c.fillStyle = '#0a0a0c'; c.fillRect(f.x - 2, f.y - 1, 4, 4); c.fillStyle = '#3a3a44'; c.fillRect(f.x - 1, f.y, 2, 1);
+        }
+        g2.roundRect(6, 4, W - 12, 15, 5, 'rgba(8,6,4,.7)', '#4a3a20', 1);
         api.txtCFit('CAUGHT ' + this.caught + '/' + this.need + ' · ' + Math.ceil(this.time) + 's', W / 2, 8, 9, C.rose);
+        api.vignette();
       },
     };
   }
@@ -406,17 +465,28 @@
         api.score = Math.floor(this.z); if (this.z >= this.need) { api.addScore(60); api.win(); }
       },
       draw(api) {
-        const W = api.W, H = api.H, g = api.gfx;
-        api.g2.skyGradient([[0, '#0a0816'], [1, '#241830']]);
-        api.g2.glow(this.bat, 70, 16, '#5a1020', 0.6); g.sprite(['k.kk.k', '.kkkk.'], this.bat - 6, 66, { k: '#1a0a1e' }, 2);
-        // fog bands
-        for (let i = 0; i < 4; i++) { api.ctx.globalAlpha = 0.08; g.rect(0, 150 + i * 70 + Math.sin(api.t + i) * 6, W, 20, '#9b7bbf'); } api.ctx.globalAlpha = 1;
-        g.rect(0, H - 44, W, 44, '#14101c');
-        for (const r of this.rocks) g.circle(r.x, r.y, 7, '#4a4258');
+        const W = api.W, H = api.H, g = api.gfx, c = api.ctx, g2 = api.g2, t = api.t;
+        g2.skyGradient([[0, '#0a0816'], [0.55, '#1a1226'], [1, '#241830']]);
+        g2.stars(t, 30, H * 0.4, '#cfc0e8');
+        // moon + drifting cloud
+        g2.glow(46, 44, 30, '#c8b8d8', 0.4); c.fillStyle = '#d8cce8'; c.beginPath(); c.arc(46, 44, 16, 0, 7); c.fill(); c.fillStyle = '#241830'; c.beginPath(); c.arc(52, 40, 13, 0, 7); c.fill();
+        // parallax churchyard: far crosses, near gravestones scrolling by
+        g2.parallax(this.z, [
+          { speed: 0.35, draw: (ox) => { c.fillStyle = '#100c1c'; g2.tiled(ox, 80, (x) => { c.fillRect(x + 30, H * 0.5, 4, 24); c.fillRect(x + 24, H * 0.5 + 6, 16, 4); }); } },
+          { speed: 0.9, draw: (ox) => { g2.tiled(ox, 64, (x) => { c.fillStyle = '#1e1730'; c.fillRect(x + 16, H * 0.62, 20, 30); c.beginPath(); c.arc(x + 26, H * 0.62, 10, Math.PI, 0); c.fill(); c.fillStyle = '#2c2340'; c.fillRect(x + 16, H * 0.62, 20, 3); }); } },
+        ]);
+        // the pale bat leading, bigger & animated
+        g2.glow(this.bat, 70, 18, '#5a1020', 0.6); g.sprite(Math.sin(t * 12) > 0 ? ['k.kk.k', '.kkkk.'] : ['.k..k.', 'kkkkkk'], this.bat - 8, 66, { k: '#2a1a30' }, 3);
+        g2.fog(t, { y0: H * 0.45, y1: H, bands: 5, color: '#9b7bbf', alpha: 0.09 });
+        c.fillStyle = '#14101c'; c.fillRect(0, H - 44, W, 44); c.fillStyle = '#221a2e'; c.fillRect(0, H - 44, W, 3);
+        // rocks/tombstone chips
+        for (const r of this.rocks) { c.fillStyle = '#3a3448'; c.beginPath(); c.arc(r.x, r.y, 8, 0, 7); c.fill(); c.fillStyle = '#5a5470'; c.fillRect(r.x - 5, r.y - 6, 6, 3); }
         const blink = this.imm > 0 && Math.floor(this.imm * 10) % 2 === 0;
-        if (!blink) api.g2.bigSprite(['.ww.', 'wwww', '.ww.', 'w..w'], this.x - 8, H - 78, { w: '#caa07a' }, 4, { shadow: true });
-        api.txtCFit('❤'.repeat(Math.max(0, this.lives)), 40, 8, 10, C.blood);
-        api.txtCFit('FOLLOW ' + Math.floor(this.z / this.need * 100) + '%', W / 2, 8, 9, C.rose);
+        if (!blink) g2.bigSprite(HUNTER, this.x - 16, H - 80, HUNTERPAL, 4, { shadow: true, outline: '#0a0610' });
+        g2.roundRect(6, 4, W - 12, 15, 5, 'rgba(8,6,16,.6)', '#3a2a44', 1);
+        api.txt('❤'.repeat(Math.max(0, this.lives)), 11, 8, 9, C.blood);
+        api.txtCFit('FOLLOW ' + Math.floor(this.z / this.need * 100) + '%', W - 46, 8, 8, C.rose, false, 84);
+        api.vignette();
       },
     };
   }
@@ -435,17 +505,29 @@
         }
       },
       draw(api) {
-        const W = api.W, H = api.H, cx = W / 2, cy = H / 2 + 10, c = api.ctx;
-        api.clear('#0c0714'); api.g2.dither(0, H, '#1a0a1e', '#0c0714', 3);
-        // Lucy
-        api.g2.glow(cx, cy, 30, '#5a1020', 0.5);
-        api.g2.bigSprite(['.ww.', 'wwww', 'wrrw', '.ww.'], cx - 16, cy - 40, { w: '#e0d0e8', r: C.blood }, 8, { shadow: true });
-        // heart target
-        api.g2.glow(cx, cy, 8, C.blood, 0.9); c.fillStyle = C.blood; c.beginPath(); c.arc(cx, cy, 6, 0, 7); c.fill();
-        // closing ring
-        const rr = 14 + this.r * 90; c.strokeStyle = this.r < 0.12 + this.band ? C.gold : C.bone; c.lineWidth = 3; c.beginPath(); c.arc(cx, cy, rr, 0, Math.PI * 2); c.stroke();
-        api.txtCFit('STAKES ' + this.hits + '/' + this.need, W / 2, 8, 9, C.rose);
-        api.txtCFit('MISS ' + this.miss + '/4', W / 2, 24, 8, C.mist);
+        const W = api.W, H = api.H, cx = W / 2, cy = H / 2 + 14, c = api.ctx, g2 = api.g2, t = api.t;
+        // candlelit crypt
+        g2.verticalGradient(0, 0, W, H, [[0, '#1a0e22'], [1, '#08040e']]);
+        g2.stoneWall(0, 0, W, H * 0.5, { base: '#1e1628', light: '#302442', dark: '#100a1a', mortar: '#080510', moss: '#241a2e' }, 0);
+        for (const px of [24, W - 24]) { g2.flame(px, 58, t, 0.9); g2.glow(px, 58, 28, 'rgba(255,150,40,.4)', 0.35); }
+        // stone coffin she rises from
+        c.fillStyle = '#241a30'; c.fillRect(cx - 40, cy + 20, 80, 40); c.fillStyle = '#160e20'; c.fillRect(cx - 36, cy + 24, 72, 32);
+        c.fillStyle = '#302440'; c.fillRect(cx - 40, cy + 20, 80, 3);
+        g2.fog(t, { y0: H * 0.55, y1: H, bands: 3, color: '#3a2440', alpha: 0.1 });
+        // Lucy hovering with a pale aura
+        const ly = cy - 44 + Math.sin(t * 1.6) * 4;
+        g2.glow(cx, ly + 20, 30, '#5a2050', 0.4);
+        g2.bigSprite(LUCY, cx - 16, ly, LUCYPAL, 4, { shadow: true, outline: '#0a0610' });
+        // heart target + closing ring
+        g2.glow(cx, cy, 9, C.blood, 0.9); c.fillStyle = C.blood; c.beginPath(); c.arc(cx, cy, 6, 0, 7); c.fill();
+        const near = this.r < 0.12 + this.band;
+        if (near) g2.glow(cx, cy, 16, C.gold, 0.7);
+        const rr = 14 + this.r * 90; c.strokeStyle = near ? C.gold : C.bone; c.lineWidth = near ? 4 : 3; c.beginPath(); c.arc(cx, cy, rr, 0, Math.PI * 2); c.stroke();
+        g2.roundRect(6, 4, W - 12, 15, 5, 'rgba(8,4,14,.7)', '#4a2038', 1);
+        api.txt('STAKES ' + this.hits + '/' + this.need, 11, 8, 8, C.rose);
+        api.txtCFit('MISS ' + this.miss + '/4', W - 40, 8, 8, C.mist, false, 70);
+        if (near) api.txtCFit('STRIKE!', cx, cy + 66, 9, C.gold);
+        api.vignette();
       },
     };
   }
@@ -467,17 +549,33 @@
         api.score = Math.floor(this.z); if (this.z >= this.need) { api.addScore(60); api.win(); }
       },
       draw(api) {
-        const W = api.W, H = api.H, g = api.gfx;
-        api.g2.verticalGradient(0, 0, W, H * 0.42, [[0, '#3a1a20'], [1, '#e08040']]); // sunset
-        api.g2.glow(W / 2, H * 0.42, 50, '#ffb060', 0.5);
-        api.g2.mode7({ horizon: H * 0.42, camZ: this.z * 2, angle: Math.sin(api.t * 0.5) * 0.2, height: 1.1, fog: '#2a1810', tex: (wx, wz) => ((Math.floor(wx / 44) + Math.floor(wz / 44)) & 1) ? '#3a2a18' : '#2e2012' });
-        // the fleeing cart near horizon
-        g.rect(this.cart - 8, H * 0.42 + 8, 16, 8, '#3a2410');
-        for (const o of this.obs) { g.rect(o.x - 9, o.y - 5, 18, 10, '#4a3520'); }
+        const W = api.W, H = api.H, g = api.gfx, c = api.ctx, g2 = api.g2, t = api.t;
+        const hz = H * 0.42;
+        // burning sunset sky + sinking sun
+        g2.verticalGradient(0, 0, W, hz, [[0, '#2a1030'], [0.5, '#b0402a'], [1, '#f0a040']]);
+        const prog = this.z / this.need;
+        const sunY = hz - 8 - (1 - prog) * 6;
+        g2.glow(W / 2, sunY, 46, '#ffd070', 0.55); c.fillStyle = '#ffcf70'; c.beginPath(); c.arc(W / 2, sunY, 20, 0, 7); c.fill();
+        // parallax mountain ridges (Carpathian peaks)
+        g2.parallax(this.z, [
+          { speed: 0.25, draw: (ox) => { c.fillStyle = '#3a1c28'; g2.tiled(ox, 120, (x) => { c.beginPath(); c.moveTo(x, hz); c.lineTo(x + 60, hz - 40); c.lineTo(x + 120, hz); c.fill(); }); } },
+          { speed: 0.5, draw: (ox) => { c.fillStyle = '#241019'; g2.tiled(ox, 90, (x) => { c.beginPath(); c.moveTo(x, hz); c.lineTo(x + 45, hz - 26); c.lineTo(x + 90, hz); c.fill(); }); } },
+        ]);
+        // mode7 mountain road
+        g2.mode7({ horizon: hz, camZ: this.z * 2, angle: Math.sin(t * 0.5) * 0.2, height: 1.1, fog: '#3a1c14', tex: (wx, wz) => { const road = Math.abs(wx) < 60; return road ? (((Math.floor(wz / 30)) & 1) ? '#4a3420' : '#3a2818') : (((Math.floor(wx / 40) + Math.floor(wz / 40)) & 1) ? '#22301a' : '#1a2614'); } });
+        // fleeing box-cart near horizon (bounces)
+        const cbx = this.cart, cby = hz + 6 + Math.sin(t * 8) * 1.5;
+        c.fillStyle = '#1a0e08'; c.fillRect(cbx - 9, cby, 18, 9); c.fillStyle = '#3a2410'; c.fillRect(cbx - 7, cby + 1, 14, 5); c.fillStyle = '#0a0604'; c.fillRect(cbx - 8, cby + 9, 4, 3); c.fillRect(cbx + 4, cby + 9, 4, 3);
+        // obstacles: rocks & wolves
+        for (const o of this.obs) { c.fillStyle = '#2a2018'; c.beginPath(); c.arc(o.x, o.y, 9, 0, 7); c.fill(); c.fillStyle = '#4a3a28'; c.fillRect(o.x - 6, o.y - 7, 8, 4); }
+        g2.embers(t, 8, { yBottom: H, yTop: hz, color: '#e0a050', speed: 0.22, size: 2, alpha: 0.4 });
+        // the hunter's carriage (horse + rider)
         const blink = this.imm > 0 && Math.floor(this.imm * 10) % 2 === 0;
-        if (!blink) api.g2.bigSprite(['.hh.', 'hhhh', '.hh.'], this.x - 8, H - 80, { h: '#5a3a1a' }, 4, { shadow: true });
-        api.txtCFit('❤'.repeat(Math.max(0, this.lives)), 40, 8, 10, C.blood);
-        api.txtCFit('CLOSING ' + Math.floor(this.z / this.need * 100) + '%', W / 2, 8, 9, C.rose);
+        if (!blink) g2.bigSprite(['..HH....', '.HHHH...', 'HHHHHH..', '.hh.hh.C', '.......C', '..oo.ooC'], this.x - 16, H - 82, { H: '#3a2414', h: '#1a0e08', C: '#5a2028', o: '#241810' }, 4, { shadow: true, outline: '#0a0604' });
+        g2.roundRect(6, 4, W - 12, 15, 5, 'rgba(20,8,6,.6)', '#7a3a20', 1);
+        api.txt('❤'.repeat(Math.max(0, this.lives)), 11, 8, 9, C.blood);
+        api.txtCFit('CLOSING ' + Math.floor(prog * 100) + '%', W - 46, 8, 8, C.rose, false, 84);
+        api.vignette();
       },
     };
   }
@@ -485,7 +583,7 @@
   /* =============================== the game =============================== */
   RetroSaga2.create({
     id: 'dracula', title: 'Dracula', subtitle: 'NIGHTS OF BLOOD',
-    currency: 'BLOOD', accent: C.gold,
+    currency: 'BLOOD', accent: C.gold, ownPhaseHud: true,
     credit: 'A 16-BIT TRIBUTE · B. STOKER, 1897',
     bootCta: 'TAP TO ENTER', bootLine: 'A CHRONICLE IN BLOOD',
     width: 270, height: 480, parent: '#game',
