@@ -399,8 +399,10 @@
           const f = dt * 60;
           this.phaseT += dt;
           if (this.phase === 'watch') {
-            // John slowly pushes Robin back
-            this.pos = Math.max(0.12, this.pos - 0.006 * f);
+            // John slowly pushes Robin back — slow enough that the first strike
+            // window (≤1.6s) always arrives before balance runs out (~2.7s), so
+            // the duel is never lost before you can act (was 0.006 → dead in 1.06s).
+            this.pos = Math.max(0.12, this.pos - 0.0023 * f);
             this.attackT -= dt;
             if (this.attackT <= 0) {
               this.phase = 'strike'; this.phaseT = 0;

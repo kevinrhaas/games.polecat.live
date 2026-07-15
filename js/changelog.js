@@ -10,6 +10,18 @@
 // format stays identical to the rest of the fleet.
 export const CHANGELOG = [
   {
+    v: 113,
+    title: 'Playability sweep: fixed unplayable and too-short 8-bit levels',
+    kind: 'fix',
+    ts: '2026-07-15T20:30:39.026Z',
+    items: [
+      'Built an automated pacing/crash audit that plays every 8-bit game headlessly and flags levels that crash, that can be "won" without touching the controls, or that end almost instantly — and fixed everything it caught.',
+      'The Twelve Labors (Hercules) was crashing on entry to every labor — it now plays. The Nemean Lion and the rest are reachable again.',
+      'Fixed levels that ended too fast to play: Treasure Island\'s jungle crossing, Peter Pan\'s rooftop flight, Huck Finn\'s Cairo fog, and the Prince & Pauper procession no longer auto-finish in a few seconds.',
+      'Fixed levels that ended before you could react: the Robin Hood log-bridge duel (you were knocked out before the first block window) and the Black Beauty cab run (a stamina bug drained you in half a second).',
+    ],
+  },
+  {
     v: 112,
     title: 'New 16-bit game: Robin Hood — The Outlaw of Sherwood',
     kind: 'feature',

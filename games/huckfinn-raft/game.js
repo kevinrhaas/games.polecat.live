@@ -568,7 +568,8 @@
           this.spawnB = 2.0;
           this.elapsed = 0;
           this.invT  = 0;
-          this.starX = api.W * 0.4 + Math.random() * api.W * 0.2;
+          this.starPhase = Math.random() * 6.28;
+          this.starX = api.W / 2; // the guiding star-gap SWEEPS across the river (set each frame)
           // Fog blocks (large flat rectangles)
           this.fog = Array.from({length: 10}, (_, i) => ({
             x: Math.random() * api.W,
@@ -591,6 +592,10 @@
           this.elapsed += dt;
           if (this.timer <= 0 && this.dist < this.goal) { api.lose(); return; }
 
+          // The star-gap drifts across the river, so you must steer to track it;
+          // idling loses alignment and the fog-crossing times out (was a static
+          // gap that could sit on the raft's start line and auto-cross in ~6s).
+          this.starX = clamp(W / 2 + Math.sin(this.elapsed * 0.85 + this.starPhase) * (W * 0.44), 28, W - 28);
           // Advance distance when aligned with star gap
           const aligned = Math.abs(this.rx - this.starX) < 32;
           if (aligned) {

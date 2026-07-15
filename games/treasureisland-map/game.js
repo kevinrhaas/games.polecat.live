@@ -899,7 +899,9 @@
             }
           }
 
-          this.dist += 1.5 * f;
+          // forward progress is REAL-TIME slow (~16s) so the stealth actually
+          // matters — the old 1.5/frame crossed the jungle in ~4.9s untouched.
+          this.dist += 0.45 * f;
           api.score = Math.floor(this.dist / 4) + this.stealth * 20;
           if (this.dist >= 440 || this.jy < 90) { api.score += 80; this.done = true; api.win(); }
         },

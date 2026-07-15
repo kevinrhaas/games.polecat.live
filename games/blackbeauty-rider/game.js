@@ -1145,8 +1145,9 @@
       if (this.needle >= 1) { this.needle = 1; this.needleDir = -1; }
       if (this.needle <= 0) { this.needle = 0; this.needleDir = 1; }
 
-      // Stamina drains
-      this.stamina -= 0.024 * dt * 60;
+      // Stamina drains (per-SECOND). The old `* dt * 60` drained per-frame and
+      // emptied the 0.75 start in ~0.5s — an instant loss before you could tap.
+      this.stamina -= 0.045 * dt;
 
       // Tap in gold zone (0.38–0.62)
       const inGold = this.needle >= 0.38 && this.needle <= 0.62;

@@ -791,7 +791,7 @@
           /* Advance distance */
           const elapsed = this.dist / this.distNeed;
           const roadSpd = 60 + elapsed * 80;
-          this.dist += roadSpd * dt * 4;
+          this.dist += roadSpd * dt * 0.6; // ~18s procession — the *4 crossed it in ~2.7s untouched
           this.scroll += roadSpd * dt;
 
           if (this.dist >= this.distNeed) { api.addScore(150); api.win(); return; }

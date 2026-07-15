@@ -287,7 +287,7 @@
           this.y = api.H * 0.5;
           this.vy = 0;
           this.dist = 0;
-          this.need = 280;
+          this.need = 1500; // ~18s of flight — the old 280 crossed in ~4s
           this.obs = [];
           this.pixies = [];
           this.spawnT = 0;

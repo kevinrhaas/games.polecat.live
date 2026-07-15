@@ -147,7 +147,7 @@
     /* --------------------------- mini-game api ---------------------- */
     const api = {
       W, H, gfx, ctx, input, audio, util: U, pointer: ptr, colors: PAL, engine,
-      t: 0, dt: 0, score: 0,
+      t: 0, dt: 0, score: 0, state: {},
       addScore(n) { this.score += n; },
       win() { endChapter(true); },
       lose() { endChapter(false); },
@@ -168,7 +168,7 @@
       curIndex = i; cur = chapters[i]; setScene('intro');
     }
     function playChapter() {
-      api.t = 0; api.score = 0; api.dt = 0;
+      api.t = 0; api.score = 0; api.dt = 0; api.state = {}; // fresh per-chapter scratch bag
       if (cur.init) cur.init.call(cur, api);
       setScene('play');
     }
@@ -178,9 +178,19 @@
       if (!save.best[cur.id] || sc > save.best[cur.id]) save.best[cur.id] = sc;
       persist();
       result = { won, score: sc, justFinished: cur.id, finale: won && allDone() };
+      // pacing-audit surface: record how long the chapter actually ran (api.t)
+      if (global.__sagaTest) global.__sagaTest.last = { id: cur.id, won, t: Math.round(api.t * 100) / 100 };
       setScene('result');
       audio.sfx(won ? 'win' : 'lose');
     }
+
+    /* Headless test surface for pacing/crash audits (tools/audit-saga.mjs).
+       Harmless in normal play — just exposes chapter ids + a jump-to-play. */
+    global.__sagaTest = {
+      chapters: chapters.map((c) => c.id),
+      scene: () => scene,
+      jump(i) { startChapter(i); playChapter(); },
+    };
 
     /* ------------------------------ update -------------------------- */
     function update(dt) {
