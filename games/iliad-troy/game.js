@@ -969,13 +969,16 @@
 
         init: function (api) {
           this.phase = 'chase';
-          this.gap = 175;
           this.stamina = 100;
           this.t = 0;
           this.timeLeft = 26;
-          // Hector runs around an oval path; we store angular position
+          // Hector runs around an oval path; we store angular position. update()
+          // recomputes this.gap from the angle difference every frame, so the
+          // REAL starting distance is set here by achillesAng — the old -0.22
+          // put Achilles ~24px behind and the chase was over in a blink.
           this.hectorAng = 0;
-          this.achillesAng = -0.22; // slightly behind in angle
+          this.achillesAng = -1.6; // a real lap-and-a-half of pursuit round the walls
+          this.gap = 178;          // first-frame display (overwritten each update)
           this.trackCx = api.W / 2;
           this.trackCy = api.H / 2 + 18;
           this.trackRx = 92;

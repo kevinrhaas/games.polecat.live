@@ -853,7 +853,9 @@
 
           const pressed = api.pointer.justDown || api.keyPressed('a') || api.keyPressed('start') || api.keyPressed('up');
           if (pressed) {
-            this.love = Math.min(100, this.love + 8 + (100 - this.love) * 0.04);
+            // flat, modest gain vs the 12/s decay → a sustained ~15s finale
+            // (the old front-loaded +8+(100-love)*.04 let a masher hit 100 in ~1.6s)
+            this.love = Math.min(100, this.love + 4);
             this.heartPulse = 1;
             this.tapFlash   = 0.15;
             api.addScore(10);
