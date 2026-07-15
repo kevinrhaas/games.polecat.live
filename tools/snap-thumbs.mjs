@@ -77,9 +77,9 @@ async function main() {
     await page.waitForTimeout(500);
     const canvas = page.locator('.re-canvas');
     await canvas.scrollIntoViewIfNeeded();
-    // Saga games: capture the epic title screen (no input). Single-mechanic
-    // games: kick off and grab a live gameplay frame.
-    const isSaga = await page.evaluate(() => typeof window.__sagaScene !== 'undefined');
+    // Saga games (8-bit AND 16-bit shells): capture the epic title screen (no
+    // input). Single-mechanic games: kick off and grab a live gameplay frame.
+    const isSaga = await page.evaluate(() => typeof window.__sagaScene !== 'undefined' || typeof window.__saga2Scene !== 'undefined');
     if (isSaga) {
       await page.waitForTimeout(900);
     } else {

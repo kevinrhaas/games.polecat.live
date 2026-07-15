@@ -213,9 +213,24 @@
         result = { won: false, node: curNode, sc, ph };
       }
       persist();
+      // pacing-audit surface: record how long the phase actually ran (api.t)
+      if (global.__saga2Test) global.__saga2Test.last = { id: curNode.id, phase: phaseIdx, won, t: Math.round(api.t * 100) / 100 };
       setScene('result');
       audio.sfx(won ? 'win' : 'lose');
     }
+    /* Headless test surface for pacing/crash audits (mirrors saga.js
+       __sagaTest). Harmless in normal play — exposes node/phase ids plus a
+       jump-straight-to-play so audits can reach boss phases directly. */
+    global.__saga2Test = {
+      nodes: nodes.map((n) => ({ id: n.id, phases: n.phases.length })),
+      scene: () => scene,
+      jump(i, p) {
+        const n = nodes[i]; if (!n) return;
+        curNode = n; curNodeIdx = i; api.node = n; pendingChoice = null;
+        phaseIdx = Math.min(p || 0, Math.max(0, n.phases.length - 1));
+        startPhase();
+      },
+    };
     function pickEnding() {
       const list = cfg.endings || [];
       for (const e of list) { try { if (e.when && e.when(save.flags, save)) return e; } catch (x) {} }
