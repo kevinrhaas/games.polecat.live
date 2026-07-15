@@ -128,17 +128,24 @@ structure while keeping their story.
   (`upgrades{}` + node `grant`, read with `api.has(key)`) and banked `currency`,
   a per-node `choice` that sets `flags`, and multiple `endings` chosen by those
   flags. `api.g2` gives `skyGradient/dither/parallax/mode7/glow/roundRect/
-  bigSprite` PLUS animation helpers `stars/embers/fog/flame(torch)/gleamText/
-  lightning/ornateFrame`. **Reference: `games/dracula-castle/` (Dracula — Nights
-  of Blood).** Load order in index.html: retro-engine.js → retro-gfx2.js →
-  saga2.js → game.js.
-  **Gen-4 must look like a real SNES/Genesis game, not "8-bit with gradients":**
-  an ANIMATED title screen (supply `renderBoot(api,info)` — a gleaming logo via
-  `g2.gleamText`, a parallax multi-layer scene, particles, flicker, an animated
-  CTA), and a DETAILED, ANIMATED menu/hub (ornate framed node medallions each
-  with a tiny per-location vignette, a flowing animated connector between nodes,
-  torch flames, a selection glow/cursor — `cfg.map.title/node` receive `sceneT`).
-  Static screens are a fail — every framed screen should move.
+  bigSprite/stoneWall` PLUS animation helpers `stars/embers/fog/flame(torch)/
+  gleamText/lightning/ornateFrame`. **Reference: `games/dracula-castle/` (Dracula
+  — Nights of Blood).** Load order in index.html: retro-engine.js → retro-gfx2.js
+  → saga2.js → game.js.
+  **The 8→16-bit LEAP MUST BE OBVIOUS — and it has to show in GAMEPLAY, not just
+  the title/menu.** Keep the story & chapters, but a Gen-4 phase must look
+  clearly richer than its 8-bit self: DETAILED, LAYERED, LIT environments
+  (`g2.stoneWall`/parallax/gradients/`fog`/`flame` — never a flat `clear()` + a
+  2-tone tile loop); LARGER multi-tone **animated** sprites (5+ shades, an
+  outline, 2+ frames — not a 4-row chunky sprite scaled up); richer color and
+  depth (fore/mid/background); ambient particles; framed/ornate HUDs. If a
+  gameplay screen looks like the 8-bit version, it is NOT done. (See the Castle
+  Wall climb + the Count boss in `games/dracula-castle/game.js` — detailed
+  stonework, torches, a recessed moonlit window, a bigger animated climber.)
+  Likewise: an ANIMATED title (`renderBoot` — gleaming logo, parallax scene,
+  particles) and a DETAILED ANIMATED menu/hub (ornate framed node medallions
+  with per-location vignettes, a flowing connector, torch flames, a selection
+  glow/cursor — `cfg.map.title/node` receive `sceneT`). Static screens are a fail.
 
 **NORTH STAR: every property gets BOTH a Gen-3 (8-bit) and a Gen-4 (16-bit)
 version.** They coexist — a Gen-4 is **ADDITIVE, never a replacement** for the

@@ -10,10 +10,20 @@
 // format stays identical to the rest of the fleet.
 export const CHANGELOG = [
   {
+    v: 107,
+    title: '16-bit Dracula: the gameplay looks 16-bit now, too',
+    kind: 'feature',
+    ts: '2026-07-15T14:26:49.606Z',
+    items: [
+      'The step up from 8-bit to 16-bit was only showing on the title and menu — the actual play still looked 8-bit. Now the gameplay leaps too: detailed, lit stonework with moss and cracks, flickering wall torches, a recessed moonlit window with real depth, bigger shaded and animated characters, drifting embers.',
+      'This is the new bar for every 16-bit game: the jump from 8-bit has to be obvious where you actually play, not just on the menus.',
+    ],
+  },
+  {
     v: 106,
     title: 'A new neon shell — rail navigation & the Polecat app switcher',
     kind: 'feature',
-    ts: '',
+    ts: '2026-07-15T14:26:49.606Z',
     items: [
       'The arcade home now runs on Polecat Shell: a collapsible left rail with ten curated genre families (live game counts on each), a top bar, and a slide-in What\'s New panel replacing the old drawer.',
       'New 3×3 app switcher in the top bar hops to every app in the Polecat suite — Chat, JobTracker, Analytics, AutoSelector, Relay, Manager.',

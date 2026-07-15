@@ -102,8 +102,15 @@ jobs:
             g2.ornateFrame with a tiny per-location vignette, a flowing animated
             connector between nodes, torch flames via g2.flame, and a selection
             glow/cursor; map.title/node receive sceneT for animation). Every framed
-            screen should MOVE — static screens are a fail. Also use mode7/glow/big
-            sprites in gameplay. The new games/<id>-16/index.html loads the Gen-4
+            screen should MOVE — static screens are a fail. CRUCIAL: the 8->16-bit
+            leap must be OBVIOUS in GAMEPLAY too, not just title/menu — every phase
+            needs a DETAILED LAYERED LIT environment (g2.stoneWall / parallax /
+            gradients / g2.fog / g2.flame — never a flat clear()+2-tone tile loop),
+            LARGER multi-tone ANIMATED sprites (5+ shades, an outline, 2+ frames —
+            not a 4-row chunky sprite scaled up), depth (fore/mid/background),
+            ambient particles, and framed HUDs. If a phase looks like the 8-bit
+            version it is NOT done. Study the Castle Wall climb + Count boss in
+            games/dracula-castle/game.js. The new games/<id>-16/index.html loads the Gen-4
             script order (retro-engine -> retro-gfx2 -> saga2 -> game.js); give the
             new catalog entry a fresh 16-bit blurb; shoot its thumbnail. Do NOT
             touch the 8-bit folder. Reference pair: games/dracula-8bit (Gen 3) +

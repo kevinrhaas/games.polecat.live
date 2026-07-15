@@ -312,6 +312,31 @@
       [[x + 6, y + 6], [x + w - 6, y + 6], [x + 6, y + h - 6], [x + w - 6, y + h - 6]].forEach((p) => { c.beginPath(); c.arc(p[0], p[1], 1.6, 0, 7); c.fill(); });
     }
 
+    // detailed multi-tone masonry — the kind of layered, lit stonework that
+    // separates a 16-bit background from a flat 8-bit brick loop. pal keys:
+    // base, light, dark, mortar, moss (any omitted are derived).
+    stoneWall(x0, y0, w, h, pal, scrollY) {
+      const c = this.ctx, p = pal || {};
+      const base = p.base || '#2a2432', light = p.light || mix(base, '#ffffff', 0.18),
+        dark = p.dark || mix(base, '#000000', 0.4), mortar = p.mortar || mix(base, '#000000', 0.6),
+        moss = p.moss || '#2a3a20';
+      const bw = 34, bh = 20, sy = ((scrollY || 0) % bh);
+      c.fillStyle = mortar; c.fillRect(x0, y0, w, h);
+      for (let ry = -1; ry * bh < h + bh; ry++) {
+        const rowY = y0 + ry * bh + sy, off = (ry & 1) ? bw / 2 : 0;
+        for (let rx = -1; rx * bw < w + bw; rx++) {
+          const bx = x0 + rx * bw + off, by = rowY;
+          const seed = (((rx * 73 + ry * 131) >>> 0) % 6);
+          const tone = seed < 1 ? dark : seed > 4 ? light : base;
+          c.fillStyle = tone; c.fillRect(bx, by, bw - 2, bh - 2);
+          c.fillStyle = light; c.fillRect(bx, by, bw - 2, 2);          // top-lit edge
+          c.fillStyle = dark; c.fillRect(bx, by + bh - 4, bw - 2, 2);   // bottom shadow
+          if (seed === 2) { c.fillStyle = moss; c.fillRect(bx + 4, by + bh - 6, 7, 3); }
+          if (seed === 4) { c.fillStyle = dark; c.fillRect(bx + bw - 8, by + 4, 1, bh - 8); } // crack
+        }
+      }
+    }
+
     // expose the color mixer for games (fog tints, health bars, etc.)
     mix(a, b, t) { return mix(a, b, t); }
   }

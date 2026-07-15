@@ -169,6 +169,23 @@
   const COUNT = ['..kk..', '.kwwk.', 'kwrwrk', 'krwwrk', '.kwwk.', 'kk..kk'];
   const COUNTPAL = { k: '#0a0610', w: '#d8c8e0', r: C.blood };
 
+  // larger, multi-tone 16-bit sprites (shaded, outlined). Harker has 2 climb frames.
+  const HARKER_A = [
+    '..hhhh..', '.hHssHh.', '.hsffsh.', '..ffff..', '.kCCCCk.',
+    'kCCLLCCk', 'kCL..LCk', '.kC..Ck.', '.bb..bb.', 'LL....LL',
+  ];
+  const HARKER_B = [
+    '..hhhh..', '.hHssHh.', '.hsffsh.', '..ffff..', '.kCCCCk.',
+    'kCCLLCCk', '.kCLLCk.', 'bkC..Ckb', 'L.b..b.L', '.L....L.',
+  ];
+  const HPAL = { h: '#1a0f08', H: '#3a2416', s: '#5a3a20', f: '#d8b088', k: '#160a10', C: '#5a2028', L: '#8a3038', b: '#241014' };
+  const COUNT_BIG = [
+    '...kkkk...', '..kKKKKk..', '.kKrwwrKk.', '.kKwRRwKk.', '.kKwwwwKk.',
+    '..kwwww k.', '.kBBBBBBk.', 'kBBrBBrBBk', 'kBB.BB.BBk', 'kB..BB..Bk',
+    '.k..BB..k.', '..kBBBBk..', '..k.BB.k..', '...k..k...',
+  ];
+  const CPAL_BIG = { k: '#070409', K: '#1a0e1e', w: '#e8dcf0', W: '#b8a8c8', r: C.blood, B: '#2a0e18', };
+
   /* --- CASTLE p1: the climb (timing) --- */
   function climb() {
     return {
@@ -184,17 +201,40 @@
         }
       },
       draw(api) {
-        const g = api.gfx, W = api.W, H = api.H;
-        api.clear('#0c0a12');
-        for (let y = 0; y < H; y += 18) for (let x = 0; x < W; x += 30) g.rect(x + ((Math.floor(y / 18) % 2) ? 15 : 0), y, 28, 16, '#1b1424');
-        api.g2.glow(W / 2, 40, 30, '#e3a030', 0.5); g.rect(W / 2 - 12, 24, 24, 30, '#e3c567');
-        const cy = H - 70 - (H - 150) * (this.h / this.need);
-        api.g2.bigSprite(['.hh.', 'hffh', '.cc.', 'c..c'], W / 2 - 8, cy, { h: '#3a2f1a', f: '#caa07a', c: '#6a2a2a' }, 4, { shadow: true });
-        // grip meter
-        const mx = 30, mw = W - 60, my = H - 30;
-        g.rect(mx, my, mw, 8, '#241a2e'); g.rect(mx + mw * (0.5 - this.band), my, mw * this.band * 2, 8, '#1e5a2a');
-        g.rect(mx + mw * this.m - 2, my - 3, 4, 14, C.bloodL);
-        api.txtCFit('CLIMB  ' + this.h + '/' + this.need, W / 2, 8, 9, C.rose);
+        const g = api.gfx, c = api.ctx, g2 = api.g2, W = api.W, H = api.H, t = api.t;
+        const prog = this.h / this.need;
+        // deep night sky behind, then the towering lit stone wall (scrolls up as you climb)
+        g2.skyGradient([[0, '#160a1e'], [1, '#0a0610']]);
+        g2.stoneWall(0, 0, W, H, { base: '#241a2e', light: '#3a2c46', dark: '#150e1e', mortar: '#0c0712', moss: '#243a22' }, t * 20 + prog * 40);
+        // arched moonlit window with depth (the goal), high up
+        const wy = 30 - prog * 6;
+        c.fillStyle = '#0a0610'; c.fillRect(W / 2 - 20, wy, 40, 46);
+        c.beginPath(); c.arc(W / 2, wy, 20, Math.PI, 0); c.fill();
+        g2.glow(W / 2, wy + 22, 26, '#e8b850', 0.5 + 0.1 * Math.sin(t * 3));
+        c.fillStyle = '#3a2a5a'; c.fillRect(W / 2 - 15, wy + 4, 30, 40);
+        c.beginPath(); c.arc(W / 2, wy + 4, 15, Math.PI, 0); c.fill();
+        c.fillStyle = '#e8c870'; c.beginPath(); c.arc(W / 2 + 8, wy + 2, 7, 0, 7); c.fill(); // moon in the window
+        c.fillStyle = '#241838'; c.fillRect(W / 2 - 1, wy + 2, 2, 42); c.fillRect(W / 2 - 15, wy + 20, 30, 2); // mullions
+        // wall torches casting light
+        g2.flame(28, H * 0.32, t, 1.1); g2.flame(W - 28, H * 0.55, t, 1.1);
+        g2.glow(28, H * 0.32, 34, 'rgba(255,150,40,.5)', 0.4); g2.glow(W - 28, H * 0.55, 34, 'rgba(255,150,40,.5)', 0.4);
+        // drifting embers + faint fog for depth
+        g2.embers(t, 12, { yBottom: H, yTop: 20, color: '#e08040', speed: 0.12, size: 2, alpha: 0.4 });
+        g2.fog(t, { y0: H * 0.6, y1: H, bands: 3, color: '#3a2a40', alpha: 0.08 });
+        // Harker — bigger, shaded, 2-frame climb animation
+        const cy = H - 78 - (H - 170) * prog;
+        const frame = Math.floor(t * 6) % 2 ? HARKER_B : HARKER_A;
+        g2.bigSprite(frame, W / 2 - 16, cy, HPAL, 4, { shadow: true, outline: '#0a0610' });
+        // framed grip meter (ornate)
+        const mx = 26, mw = W - 52, my = H - 26;
+        g2.roundRect(mx - 4, my - 5, mw + 8, 16, 4, 'rgba(10,6,16,.85)', '#5a3a4a', 1);
+        g.rect(mx, my, mw, 6, '#241a2e');
+        const gz = mx + mw * (0.5 - this.band); g2.glow(gz + mw * this.band, my + 3, 12, '#2effa0', 0.4);
+        g.rect(gz, my, mw * this.band * 2, 6, '#1e7a3a');
+        g.rect(mx + mw * this.m - 2, my - 3, 4, 12, C.bloodL);
+        api.txtCFit('THE CASTLE WALL', W / 2, 8, 9, C.rose);
+        api.txtCFit('CLIMB  ' + this.h + '/' + this.need, W / 2, H - 44, 9, C.gold);
+        api.vignette();
       },
     };
   }
@@ -229,19 +269,40 @@
         }
       },
       draw(api) {
-        const g = api.gfx, W = api.W, H = api.H;
-        api.clear('#120818');
-        if (finalSun) { api.g2.verticalGradient(0, 0, W, H, [[0, '#3a1020'], [1, '#120818']]); api.g2.glow(W / 2, H * (1 - this.sun) - 20, 60, '#e8a030', 0.4 + this.sun * 0.4); }
-        // the Count
-        if (this.strike) api.g2.glow(this.bx, 118, 34, C.bloodL, 0.7);
-        api.g2.bigSprite(COUNT, this.bx - 18, 96, COUNTPAL, 6, { shadow: true, outline: true });
-        // shards
-        for (const s of this.shards) { g.rect(s.x - 2, s.y - 5, 4, 10, C.bloodL); }
-        // player
-        api.g2.bigSprite(['.ww.', 'wwww', '.ww.'], this.x - 8, H - 78, { w: '#caa07a' }, 4, { shadow: true });
-        api.txtCFit('THE COUNT  ' + '♥'.repeat(this.hp), W / 2, 8, 9, C.rose);
-        api.txtCFit('WOUNDS ' + this.taken + '/' + this.maxTaken, W / 2, 24, 8, C.mist);
-        if (this.strike) api.txtCFit('STRIKE!', this.bx, 150, 9, C.gold);
+        const g = api.gfx, c = api.ctx, g2 = api.g2, W = api.W, H = api.H, t = api.t;
+        // crypt / throne hall — gradient + stone floor + pillars + candlelight
+        if (finalSun) { g2.verticalGradient(0, 0, W, H, [[0, '#5a1e22'], [0.5, '#2a0e1a'], [1, '#120818']]); g2.glow(W / 2, H * (1 - this.sun) - 10, 66, '#ffb040', 0.4 + this.sun * 0.45); }
+        else { g2.verticalGradient(0, 0, W, H, [[0, '#1e0e24'], [1, '#0a0510']]); }
+        // back wall stonework + two flanking pillars for depth
+        g2.stoneWall(0, 0, W, H * 0.62, { base: '#20182c', light: '#342642', dark: '#120c1c', mortar: '#0a0612', moss: '#2a1a30' }, 0);
+        for (const px of [26, W - 26]) {
+          c.fillStyle = '#160e20'; c.fillRect(px - 12, 0, 24, H * 0.72);
+          c.fillStyle = '#2a1e38'; c.fillRect(px - 12, 0, 5, H * 0.72);
+          c.fillStyle = '#0c0714'; c.fillRect(px + 7, 0, 5, H * 0.72);
+          for (let yy = 10; yy < H * 0.7; yy += 22) { c.fillStyle = '#0c0714'; c.fillRect(px - 12, yy, 24, 3); }
+          g2.flame(px, 60 + (px > W / 2 ? 20 : 0), t, 1.0);
+        }
+        // stone floor
+        g2.verticalGradient(0, H * 0.62, W, H * 0.38, [[0, '#1a1122'], [1, '#0a0610']]);
+        for (let i = 0; i < 5; i++) { c.strokeStyle = 'rgba(120,90,140,.15)'; c.beginPath(); c.moveTo(W / 2 + (i - 2) * 40, H * 0.62); c.lineTo(W / 2 + (i - 2) * 120, H); c.stroke(); }
+        g2.fog(t, { y0: H * 0.5, y1: H, bands: 4, color: '#4a2a44', alpha: 0.09 });
+        // the Count — large, shaded, floating with a menacing pulse
+        const cy = 92 + Math.sin(t * 1.5) * 5;
+        if (this.strike) { g2.glow(this.bx, cy + 24, 40, C.bloodL, 0.75); }
+        else g2.glow(this.bx, cy + 24, 26, '#5a1020', 0.4);
+        g2.bigSprite(COUNT_BIG, this.bx - 20, cy, CPAL_BIG, 4, { shadow: true, outline: '#050309' });
+        c.fillStyle = this.strike ? '#ff3040' : '#c81028'; c.fillRect(this.bx - 8, cy + 12, 2, 2); c.fillRect(this.bx + 6, cy + 12, 2, 2); // glowing eyes
+        // shards — with motion glow
+        for (const s of this.shards) { g2.glow(s.x, s.y, 8, '#7a1420', 0.5); c.fillStyle = C.bloodL; c.fillRect(s.x - 2, s.y - 6, 4, 12); c.fillStyle = '#ff8080'; c.fillRect(s.x - 1, s.y - 5, 1, 6); }
+        // player — bigger hunter sprite
+        const blinkP = false;
+        g2.bigSprite(['..ww..', '.wffw.', '.wwww.', 'kCCCCk', 'kC..Ck', '.b..b.'], this.x - 12, H - 84, { w: '#d8b088', f: '#f0d0a8', k: '#160a10', C: '#4a2028', b: '#241014' }, 4, { shadow: true, outline: '#0a0610' });
+        // ornate HUD
+        g2.roundRect(6, 4, 96, 15, 5, 'rgba(8,4,12,.7)', '#5a2a34', 1);
+        api.txt('BLOOD ' + '♥'.repeat(this.hp), 11, 8, 8, C.rose);
+        api.txtCFit('WOUNDS ' + this.taken + '/' + this.maxTaken, W - 46, 8, 8, C.mist, false, 78);
+        if (this.strike) { api.txtCFit('▸ STRIKE! ◂', this.bx, cy - 16, 9, C.gold); }
+        api.vignette();
       },
     };
   }
