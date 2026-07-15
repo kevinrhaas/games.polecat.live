@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <title>Robin Hood — games.polecat.live</title>
+  <meta name="theme-color" content="#173d14" />
+  <link rel="icon" href="../../assets/logo.svg" type="image/svg+xml" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Pixelify+Sans:wght@400;500;600;700&family=Jacquard+24&family=Jersey+25&family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/site.css" />
+  <link rel="stylesheet" href="../../css/game.css" />
+  <style id="game-theme">:root{--g-bg1:#1c3d12;--g-bg2:#08160a;--g-bar:rgba(14,30,10,.95);--g-accent:#5dff8f;--g-title:#f0e6c0;--g-panel:rgba(20,40,14,.82);--g-border:#3a5a1e;--g-text:#a8c07a;--g-key:#e3c567;--g-stage:#3a5a1e;--g-glow:rgba(93,255,143,.28)}</style>
+</head>
+<body class="game-page">
+  <div class="game-bar">
+    <a class="back" href="../../index.html">◀ ARCADE</a>
+    <span class="title">Robin Hood</span>
+    <span class="src">· Howard Pyle</span>
+    <span class="spacer"></span>
+    <button class="icon-btn" id="fullscreenBtn" title="Full screen">⛶</button>
+    <button class="icon-btn" id="muteBtn" title="Mute">🔊</button>
+    <button class="icon-btn" id="restartBtn" title="Restart">↻</button>
+  </div>
+  <div class="game-main">
+    <div id="game"></div>
+    <div class="game-help">
+      <b>Robin Hood — The Outlaw of Sherwood.</b> A 16-bit legend: roam the Sherwood map, play every tale in any order — the tournament, the forest ride, the log-bridge duel, the Bishop's feast, the Sheriff's keep — gathering gear that carries between them. Tap <b>⛶ Full screen</b> for the full experience.
+      <span class="keys">TAP / DRAG · ARROW KEYS · choose your tale · win the GLORY of Sherwood</span>
+    </div>
+  </div>
+  <script src="../../js/retro-engine.js"></script>
+  <script src="../../js/retro-gfx2.js"></script>
+  <script src="../../js/saga2.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

@@ -10,6 +10,26 @@
 // format stays identical to the rest of the fleet.
 export const CHANGELOG = [
   {
+    v: 112,
+    title: 'New 16-bit game: Robin Hood — The Outlaw of Sherwood',
+    kind: 'feature',
+    ts: '2026-07-15T19:44:49.035Z',
+    items: [
+      'The second 16-bit game joins Dracula: roam a hand-inked Sherwood map and play any tale in any order — the golden-arrow tournament and a duel with Sir Guy, the forest ride and the Bishop\'s ambush, the log-bridge quarterstaff bout with Little John, the feast heist and gallows rescue, and a final reckoning with the Sheriff in Nottingham Castle.',
+      'Nine distinct mini-games across archery, a galloping Mode-7 forest ride, tap-defense, a block-and-strike duel, a stealth heist and a castle infiltration — with gear (longbow, horn, quarterstaff) that carries between tales and a branching ending.',
+      'It shares one home card with the 8-bit Sherwood Sharpshooter — flip between the 8-bit and 16-bit versions.',
+    ],
+  },
+  {
+    v: 111,
+    title: '16-bit type now looks 16-bit: period-correct pixel fonts',
+    kind: 'improvement',
+    ts: '2026-07-15T19:44:49.035Z',
+    items: [
+      'The 16-bit title cards were using smooth modern serifs that read too new for the era. They now use higher-resolution PIXEL display fonts — an engraved pixel-blackletter for Dracula, a bold pixel display for Robin Hood — with a clean pixel face for body text, so everything looks digital and period-correct while staying crisp.',
+    ],
+  },
+  {
     v: 110,
     title: '16-bit games get a universal upgrade: crisp type, open levels',
     kind: 'feature',
