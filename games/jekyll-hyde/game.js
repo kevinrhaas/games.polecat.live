@@ -510,6 +510,7 @@
         winText: 'Every curtain falls before a word escapes. The street is quiet.',
         loseText: 'A scream tears the fog. The whole street is awake.',
         init(api) {
+          const W = api.W;
           this.silenced = 0;
           this.need = 14;
           this.timer = 24;
@@ -518,21 +519,12 @@
           this.windows = [];
           this.wSpawn = 0.9;
           this.active = [];
-          // grid of windows on two buildings
-          this.grid = [];
-          const cols = 3, rows = 4;
-          for (let r = 0; r < rows; r++) {
-            for (let col = 0; col < cols; col++) {
-              this.grid.push({ x: 18 + col * 46, y: 80 + r * 72, side: 'L' });
-              this.grid.push({ x: W - 58 + col * 46, y: 80 + r * 72, side: 'R' });
-            }
-          }
-          // use only left building windows (right side overflow)
+          // two columns of windows on each of the two Victorian buildings
           this.grid = [];
           for (let r = 0; r < 4; r++) for (let col = 0; col < 2; col++)
             this.grid.push({ x: 16 + col * 52, y: 78 + r * 72 });
           for (let r = 0; r < 4; r++) for (let col = 0; col < 2; col++)
-            this.grid.push({ x: W - 68 + col * 52, y: 78 + r * 72 });
+            this.grid.push({ x: W - 108 + col * 52, y: 78 + r * 72 }); // both columns stay on-screen (window w=40, W=270)
         },
         update(api, dt) {
           const W = api.W;

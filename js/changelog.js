@@ -10,6 +10,16 @@
 // format stays identical to the rest of the fleet.
 export const CHANGELOG = [
   {
+    v: 109,
+    title: 'Fixed: Jekyll & Hyde “The Carew Night” wouldn’t start',
+    kind: 'fix',
+    ts: '2026-07-15T19:04:47.168Z',
+    items: [
+      'Tapping to enter the third chapter did nothing — a coding slip crashed the level as it loaded. It now opens and plays correctly.',
+      'While in there, pulled the far building’s windows fully on-screen so every witness can actually be reached.',
+    ],
+  },
+  {
     v: 108,
     title: '16-bit Dracula: every night is fully 16-bit now',
     kind: 'feature',
