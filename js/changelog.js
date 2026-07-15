@@ -10,6 +10,18 @@
 // format stays identical to the rest of the fleet.
 export const CHANGELOG = [
   {
+    v: 115,
+    title: 'New 16-bit mystery: Sherlock Holmes — The Hound of the Baskervilles',
+    kind: 'game',
+    ts: '2026-07-15T23:27:16.459Z',
+    items: [
+      'The third 16-bit game: work a pinned case map of Dartmoor in any order — read the walking stick, chase the spy’s cab through gaslit London, piece the pasted warning, catch the candle signal, cross the Grimpen Mire, stalk the convict on the tor, and face the hound in the fog.',
+      'The lens, revolver, notebook and Baskerville portrait carry between leads, a Baker Street choice branches the ending, and Merripit House is an optional sunlit side-case.',
+      'One home card now offers both the 8-bit and 16-bit Hound of the Baskervilles.',
+      'Under the hood: 16-bit games are now headlessly auditable like the 8-bit ones, and a horizon-line rendering artifact in the shared 16-bit graphics layer was fixed.',
+    ],
+  },
+  {
     v: 114,
     title: 'Active-play sweep: fixed a results-screen crash and a few too-easy finales',
     kind: 'fix',

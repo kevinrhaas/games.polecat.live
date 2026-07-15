@@ -112,7 +112,9 @@
       const sn = Math.sin(ang), cs = Math.cos(ang);
       const span = H - horizon;
       for (let y = Math.floor(horizon); y < H; y += rowStep) {
-        const py = y - horizon + 0.5;
+        // clamp: a fractional horizon can make the first row's py negative,
+        // which flips depth and extrapolates mix() into a bright artifact line
+        const py = Math.max(0.5, y - horizon + 0.5);
         const depth = (height * H) / py;         // near horizon -> huge depth
         const t01 = (y - horizon) / span;
         for (let x = 0; x < W; x += colStep) {

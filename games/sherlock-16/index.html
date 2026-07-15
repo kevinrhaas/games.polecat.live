@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <title>Sherlock Holmes — games.polecat.live</title>
+  <meta name="theme-color" content="#1a140c" />
+  <link rel="icon" href="../../assets/logo.svg" type="image/svg+xml" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Pixelify+Sans:wght@400;500;600;700&family=Jacquard+12&family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/site.css" />
+  <link rel="stylesheet" href="../../css/game.css" />
+  <style id="game-theme">:root{--g-bg1:#1c160c;--g-bg2:#0a0806;--g-bar:rgba(26,20,10,.95);--g-accent:#c9a14a;--g-title:#efe2c2;--g-panel:rgba(30,24,12,.82);--g-border:#4a3c22;--g-text:#a89468;--g-key:#5dff8f;--g-stage:#4a3c22;--g-glow:rgba(201,161,74,.28)}</style>
+</head>
+<body class="game-page">
+  <div class="game-bar">
+    <a class="back" href="../../index.html">◀ ARCADE</a>
+    <span class="title">Sherlock Holmes</span>
+    <span class="src">· A. C. Doyle</span>
+    <span class="spacer"></span>
+    <button class="icon-btn" id="fullscreenBtn" title="Full screen">⛶</button>
+    <button class="icon-btn" id="muteBtn" title="Mute">🔊</button>
+    <button class="icon-btn" id="restartBtn" title="Restart">↻</button>
+  </div>
+  <div class="game-main">
+    <div id="game"></div>
+    <div class="game-help">
+      <b>Sherlock Holmes — The Hound of the Baskervilles.</b> A 16-bit mystery: work the pinned case map of Dartmoor in any order — the walking stick, the pasted warning, the candle at the window, the Grimpen Mire, and the hound itself — gathering the lens, revolver, notebook and portrait that carry between leads. Tap <b>⛶ Full screen</b> for the full experience.
+      <span class="keys">TAP / DRAG · ARROW KEYS · follow the red thread · bank INSIGHT to close the case</span>
+    </div>
+  </div>
+  <script src="../../js/retro-engine.js"></script>
+  <script src="../../js/retro-gfx2.js"></script>
+  <script src="../../js/saga2.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
