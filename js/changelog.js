@@ -10,6 +10,18 @@
 // format stays identical to the rest of the fleet.
 export const CHANGELOG = [
   {
+    v: 106,
+    title: 'A new neon shell — rail navigation & the Polecat app switcher',
+    kind: 'feature',
+    ts: '',
+    items: [
+      'The arcade home now runs on Polecat Shell: a collapsible left rail with ten curated genre families (live game counts on each), a top bar, and a slide-in What\'s New panel replacing the old drawer.',
+      'New 3×3 app switcher in the top bar hops to every app in the Polecat suite — Chat, JobTracker, Analytics, AutoSelector, Relay, Manager.',
+      'A daylight arcade: toggle between the classic neon night and a new dusk-pastel light mode, remembered per browser.',
+      'Every game page is untouched — same games, same controls, same speed.',
+    ],
+  },
+  {
     v: 105,
     title: 'Anne of Green Gables rebuilt — dialogue & social scrapes',
     kind: 'fix',
