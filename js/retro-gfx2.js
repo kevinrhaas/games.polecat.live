@@ -278,7 +278,7 @@
     gleamText(str, cx, y, size, color, t, opts) {
       const c = this.ctx, o = opts || {};
       c.save();
-      c.font = size + "px 'Press Start 2P'";
+      c.font = (o.font ? 'bold ' + size + 'px ' + o.font : size + "px 'Press Start 2P'");
       c.textAlign = 'center'; c.textBaseline = 'top';
       const w = c.measureText(str).width;
       if (o.shadow !== false) { c.fillStyle = o.shadow || 'rgba(0,0,0,.6)'; c.fillText(str, cx + Math.max(2, size * 0.08), y + Math.max(2, size * 0.08)); }

@@ -584,6 +584,7 @@
   RetroSaga2.create({
     id: 'dracula', title: 'Dracula', subtitle: 'NIGHTS OF BLOOD',
     currency: 'BLOOD', accent: C.gold, ownPhaseHud: true,
+    titleFont: "Georgia, 'Times New Roman', serif", // engraved gothic display for the 16-bit title cards
     credit: 'A 16-BIT TRIBUTE · B. STOKER, 1897',
     bootCta: 'TAP TO ENTER', bootLine: 'A CHRONICLE IN BLOOD',
     width: 270, height: 480, parent: '#game',

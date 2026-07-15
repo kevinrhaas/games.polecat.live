@@ -4,8 +4,9 @@
  * A richer, more dynamic shell than the flat 5-chapter RetroSaga. Built on
  * RetroEngine + RetroGfx2 (js/retro-gfx2.js). A Gen-2 game is:
  *
- *   - a navigable HUB MAP you explore (nodes unlock via prerequisites, so the
- *     path can branch and carry optional side-challenges) — the hub IS the menu
+ *   - a navigable HUB MAP you explore — every node is playable from the start
+ *     (needs[] only orders the suggested path unless cfg.gateNodes), the hub IS
+ *     the menu, with optional side-challenges
  *   - each node is a CHAPTER of multiple escalating PHASES ending in a mini-boss
  *   - PERSISTENT upgrades + currency carried across the whole run
  *   - CHOICES that set flags, and MULTIPLE ENDINGS chosen from those flags
@@ -47,7 +48,9 @@
     const CUR = cfg.currency || 'SCORE';
     const SAVE_KEY = 'saga2.' + (cfg.id || cfg.title || 'game');
 
-    const engine = new Retro.Engine({ width: W, height: H, parent: cfg.parent || '#game', touch: false });
+    // 16-bit tier: super-sample the buffer so type & lighting render crisp
+    // (higher-resolution than the 8-bit grid) while pixel art stays hard-edged.
+    const engine = new Retro.Engine({ width: W, height: H, parent: cfg.parent || '#game', touch: false, superSample: cfg.superSample || 3 });
     const ctx = engine.ctx, gfx = engine.gfx, input = engine.input, audio = engine.audio;
     const g2 = new Retro.Gfx2(ctx, W, H);
 
@@ -57,7 +60,10 @@
     const persist = () => { try { localStorage.setItem(SAVE_KEY, JSON.stringify(save)); } catch (e) {} };
     const banked = () => save.cur || 0;
     const allDone = () => nodes.filter((n) => !n.optional).every((n) => save.done[n.id]);
-    const nodeAvailable = (n) => !n.needs || n.needs.every((id) => save.done[id]);
+    // 16-bit tier is an open journey — every level is reachable from the hub so
+    // nothing blocks play. A game can opt back into prerequisite gating with
+    // cfg.gateNodes:true (then node.needs locks apply as before).
+    const nodeAvailable = (n) => !cfg.gateNodes || !n.needs || n.needs.every((id) => save.done[id]);
 
     /* ----------------------------- pointer -------------------------------- */
     const ptr = { x: W / 2, y: H / 2, down: false, justDown: false, justUp: false, dx: 0, dy: 0 };
@@ -79,9 +85,19 @@
     const confirmPressed = () => ptr.justDown || input.pressed('a') || input.pressed('start') || input.pressed('b');
 
     /* --------------------------- text helpers ----------------------------- */
+    // Three type roles for the 16-bit tier (all render crisp thanks to the
+    // super-sampled buffer): pixel=true → chunky 8-bit face; pixel==='title' →
+    // the game's higher-res display face (cfg.titleFont, e.g. an engraved serif)
+    // for hero titles; else a clean high-res UI face for body/labels.
+    const UIFONT = cfg.uiFont || "'Inter','Segoe UI',system-ui,sans-serif";
+    function fontFor(pixel, size) {
+      if (pixel === 'title') return cfg.titleFont ? ('bold ' + size + "px " + cfg.titleFont) : (size + "px 'Press Start 2P'");
+      if (pixel) return size + "px 'Press Start 2P'";
+      return 'bold ' + size + 'px ' + UIFONT;
+    }
     function txt(str, x, y, size, color, align, pixel) {
       ctx.fillStyle = color;
-      ctx.font = (pixel ? size + "px 'Press Start 2P'" : 'bold ' + size + "px 'Courier New',monospace");
+      ctx.font = fontFor(pixel, size);
       ctx.textAlign = align || 'left'; ctx.textBaseline = 'top';
       ctx.fillText(str, x, y); ctx.textAlign = 'left';
     }
@@ -90,7 +106,7 @@
       arr.forEach((l, i) => txt(l, x, y + i * (lh || size + 4), size, color, align || 'center'));
     }
     function measure(str, size, pixel) {
-      ctx.font = (pixel ? size + "px 'Press Start 2P'" : 'bold ' + size + "px 'Courier New',monospace");
+      ctx.font = fontFor(pixel, size);
       return ctx.measureText(str).width;
     }
     function fitSize(str, size, maxW, pixel) { let s = size; while (s > 6 && measure(str, s, pixel) > maxW) s--; return s; }
@@ -272,7 +288,7 @@
       // animated gleaming logo (16-bit standard) instead of flat pixel text
       const title = (cfg.title || '').toUpperCase();
       const tsize = fitSize(title, 24, W - 24, true);
-      g2.gleamText(title, cx, H * 0.44, tsize, PAL.gold, sceneT, { bevel: g2.mix(PAL.gold, '#ffffff', 0.4), shadow: 'rgba(0,0,0,.7)' });
+      g2.gleamText(title, cx, H * 0.44, tsize, PAL.gold, sceneT, { bevel: g2.mix(PAL.gold, '#ffffff', 0.4), shadow: 'rgba(0,0,0,.7)', font: cfg.titleFont });
       txtCFit(cfg.subtitle || 'A 16-BIT EPIC', cx, H * 0.44 + tsize + 10, 10, PAL.cream, true);
       if (Math.floor(sceneT * 1.5) % 2 === 0) txtCFit(cfg.bootCta || 'TAP TO BEGIN', cx, H * 0.66, 12, PAL.cream);
       txtCFit(cfg.credit || 'A 16-BIT TRIBUTE', cx, H - 40, 8, PAL.dim);
@@ -296,7 +312,7 @@
     function drawHub() {
       backdrop('hub');
       if (cfg.map && cfg.map.title) cfg.map.title(api, save, sceneT);
-      else { txtCFit((cfg.title || '').toUpperCase(), W / 2, 20, 16, PAL.gold, true); txtCFit(CUR + '  ' + banked(), W / 2, 46, 9, PAL.cream); }
+      else { txtCFit((cfg.title || '').toUpperCase(), W / 2, 20, 16, PAL.gold, 'title'); txtCFit(CUR + '  ' + banked(), W / 2, 46, 9, PAL.cream); }
       const rects = hubRects();
       for (let i = 0; i < nodes.length; i++) {
         const n = nodes[i], r = rects[i];
@@ -318,7 +334,7 @@
 
     function drawChoice() {
       backdrop('intro');
-      txtCFit((curNode.name || '').toUpperCase(), W / 2, 60, 13, ST.name, true);
+      txtCFit((curNode.name || '').toUpperCase(), W / 2, 60, 13, ST.name, 'title');
       txtCHead(pendingChoice.prompt, W / 2, 110, 11, ST.intro, false, 16);
       const rects = choiceRects();
       pendingChoice.options.forEach((o, i) => {
@@ -342,7 +358,7 @@
       const ph = curNode.phases[phaseIdx];
       const many = curNode.phases.length > 1;
       txtCFit(LBL.chapter + ' ' + (curNodeIdx + 1) + (many ? (' · ' + (ph.boss ? LBL.boss : LBL.phase + ' ' + (phaseIdx + 1))) : ''), W / 2, 52, 9, ST.chapterLabel);
-      txtCFit(ph.name || curNode.name, W / 2, 72, 15, ST.name, true);
+      txtCFit(ph.name || curNode.name, W / 2, 72, 15, ST.name, 'title');
       txtCFit(curNode.sub || '', W / 2, 98, 9, ST.sub);
       const intro = phaseIdx === 0 ? (curNode.intro || []) : [];
       const introLines = intro.flatMap((l) => wrapFit(l, 11, W - 24, false));
@@ -371,7 +387,7 @@
       gfx.rect(0, 0, W, H, ST.overlay);
       const won = result.won;
       let header = won ? (result.nodeDone ? LBL.win : (LBL.nextPhaseWin || 'PHASE CLEARED')) : LBL.lose;
-      const headLines = txtCHead(header, W / 2, H * 0.28, 14, won ? ST.win : ST.lose, true, 18);
+      const headLines = txtCHead(header, W / 2, H * 0.28, 14, won ? ST.win : ST.lose, 'title', 18);
       const outcome = won ? (result.nodeDone ? (curNode.winText || '') : (ph.winText || '')) : (ph.loseText || curNode.loseText || '');
       if (outcome) lines(wrapFit(outcome, 10, W - 40, false), W / 2, H * 0.28 + headLines * 18 + 10, 10, ST.intro, 15);
       if (won && result.nodeDone && curNode.grant && cfg.upgrades && cfg.upgrades[curNode.grant]) {
@@ -388,7 +404,7 @@
       backdrop('finale');
       const e = endingChosen || pickEnding();
       if (cfg.emblem) cfg.emblem(api, W / 2, H * 0.26);
-      txtCFit(e.title || 'THE END', W / 2, H * 0.42, 15, ST.win, true);
+      txtCFit(e.title || 'THE END', W / 2, H * 0.42, 15, ST.win, 'title');
       lines((e.lines || []).flatMap((l) => wrapFit(l, 11, W - 30, false)), W / 2, H * 0.50, 11, ST.intro, 18);
       txtCFit('FINAL ' + CUR + '  ' + banked(), W / 2, H * 0.72, 11, ST.score);
       if (Math.floor(sceneT * 1.5) % 2 === 0 && sceneT > 0.6) txtCFit(LBL.toMap, W / 2, H - 40, 11, ST.cta);

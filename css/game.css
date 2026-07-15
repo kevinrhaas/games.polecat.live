@@ -61,6 +61,9 @@
   overflow: hidden; position: relative;
 }
 .re-canvas { display: block; image-rendering: pixelated; image-rendering: crisp-edges; touch-action: none; }
+/* 16-bit tier renders a super-sampled buffer — let the browser scale it smoothly
+   so higher-resolution type & lighting stay crisp instead of being re-blocked. */
+.re-canvas.re-hires { image-rendering: auto; }
 
 /* floating "exit full screen" button — hidden until immersive so it never
    covers the in-game HUD during normal windowed play */

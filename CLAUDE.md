@@ -122,8 +122,11 @@ structure while keeping their story.
 - **Gen 4 — 16-bit (SNES/Genesis):** `RetroSaga2` (`js/saga2.js`) + the 16-bit
   graphics layer `RetroGfx2` (`js/retro-gfx2.js`, exposed as `api.g2`). A Gen-4
   game is **richer & more dynamic than 5 flat chapters**: a navigable **hub map**
-  (nodes unlock via `needs:[ids]` → branching + `optional` side-nodes; the hub
-  IS the menu, themed via `map.layout/node/title`), each node a run of escalating
+  (the hub IS the menu, themed via `map.layout/node/title`; **every node is
+  playable from the start — do NOT lock levels**. `needs:[ids]` still declares
+  the *intended* order for the default cursor & the connector art, but nothing is
+  gated unless a game opts in with `cfg.gateNodes:true`. Keep it easy to jump in),
+  each node a run of escalating
   **phases** ending in a **mini-boss** (`boss:true`), **persistent upgrades**
   (`upgrades{}` + node `grant`, read with `api.has(key)`) and banked `currency`,
   a per-node `choice` that sets `flags`, and multiple `endings` chosen by those
@@ -146,6 +149,14 @@ structure while keeping their story.
   particles) and a DETAILED ANIMATED menu/hub (ornate framed node medallions
   with per-location vignettes, a flowing connector, torch flames, a selection
   glow/cursor — `cfg.map.title/node` receive `sceneT`). Static screens are a fail.
+  **Higher-resolution rendering is part of the leap.** `RetroSaga2` super-samples
+  the canvas (`superSample:3`, opt down via `cfg.superSample`) so type & lighting
+  render CRISP, not re-blocked — the 16-bit tier is NOT the 8-bit pixel grid.
+  Give the framed screens a **higher-res display face** with `cfg.titleFont` (an
+  on-property display font — e.g. Dracula's engraved `Georgia, serif`); hero
+  titles then render in it (via the `'title'` text role) while body/labels use a
+  clean UI face (`cfg.uiFont`, default Inter) instead of the chunky 8-bit font.
+  Pixel-art sprites stay hard-edged; only the type/lighting go hi-res.
 
 **NORTH STAR: every property gets BOTH a Gen-3 (8-bit) and a Gen-4 (16-bit)
 version.** They coexist — a Gen-4 is **ADDITIVE, never a replacement** for the

@@ -301,6 +301,11 @@
     constructor(opts = {}) {
       this.W = opts.width || 256;
       this.H = opts.height || 240;
+      // Super-sampling: render the backing buffer at an integer multiple of the
+      // logical resolution so text & lighting are crisp (16-bit tier), while the
+      // pixel-art rects stay hard-edged. Logical draw coords are unchanged — the
+      // context is pre-scaled. Defaults to 1 (classic 8-bit look untouched).
+      this.superSample = Math.max(1, Math.floor(opts.superSample || 1));
       this.audio = new Audio();
       this.gfx = null;
       this.input = null;
@@ -329,11 +334,14 @@
       const stage = document.createElement('div');
       stage.className = 're-stage';
       const canvas = document.createElement('canvas');
-      canvas.width = this.W;
-      canvas.height = this.H;
+      const ss = this.superSample;
+      canvas.width = this.W * ss;
+      canvas.height = this.H * ss;
       canvas.className = 're-canvas';
+      if (ss > 1) canvas.classList.add('re-hires'); // opt out of nearest-neighbor upscaling so text stays smooth
       const ctx = canvas.getContext('2d');
       ctx.imageSmoothingEnabled = false;
+      if (ss > 1) ctx.setTransform(ss, 0, 0, ss, 0, 0); // draw in logical coords, render at ss× resolution
       this.canvas = canvas;
       this.ctx = ctx;
       this.gfx = new Graphics(ctx);

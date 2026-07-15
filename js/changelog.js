@@ -10,6 +10,18 @@
 // format stays identical to the rest of the fleet.
 export const CHANGELOG = [
   {
+    v: 110,
+    title: '16-bit games get a universal upgrade: crisp type, open levels',
+    kind: 'feature',
+    ts: '2026-07-15T19:10:08.627Z',
+    items: [
+      'The 16-bit tier now renders on a super-sampled canvas, so text and lighting are genuinely higher-resolution — no longer the same chunky grid as 8-bit — while the pixel-art sprites stay hard-edged.',
+      'Title cards, chapter intros and results now use a higher-res display face (Dracula gets an engraved gothic serif) with clean body text, instead of the 8-bit pixel font everywhere.',
+      'The 16-bit hub no longer locks levels — every night is playable from the moment you arrive, so you can jump straight to any part of the story.',
+      '8-bit games are untouched — this is the 16-bit generation stepping forward.',
+    ],
+  },
+  {
     v: 109,
     title: 'Fixed: Jekyll & Hyde “The Carew Night” wouldn’t start',
     kind: 'fix',
