@@ -90,8 +90,9 @@ async function auditGame(browser, id) {
 (async () => {
   const games = liveGames();
   console.log(`Auditing ${games.length} live 8-bit games (idle pacing/crash pass)...\n`);
-  const browser = await chromium.launch({ executablePath: EXEC });
+  let browser = await chromium.launch({ executablePath: EXEC });
   const out = [];
+  let sinceRecycle = 0;
   for (let i = 0; i < games.length; i += CONCURRENCY) {
     const batch = games.slice(i, i + CONCURRENCY);
     const res = await Promise.all(batch.map((g) => auditGame(browser, g.id).catch((e) => ({ id: g.id, flags: ['HARNESS-ERR'], err: String(e) }))));
@@ -99,6 +100,12 @@ async function auditGame(browser, id) {
       out.push(r);
       const tag = r.flags.length ? '⚠ ' + r.flags.join(',') : 'ok';
       process.stdout.write(`${tag === 'ok' ? '·' : '⚠'} ${r.id.padEnd(24)} ${tag}\n`);
+    }
+    // recycle the browser periodically — long runs leak GPU/audio contexts and
+    // the browser eventually dies, which would mis-flag the tail as failures.
+    sinceRecycle += batch.length;
+    if (sinceRecycle >= 18 && i + CONCURRENCY < games.length) {
+      await browser.close(); browser = await chromium.launch({ executablePath: EXEC }); sinceRecycle = 0;
     }
   }
   await browser.close();
