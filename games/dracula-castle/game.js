@@ -16,6 +16,9 @@
     blood: '#c8102e', bloodL: '#e23b4a', rose: '#e8c0c0',
     gold: '#e3c567', bone: '#cdbfe0', stone: '#3a2f44', shadow: '#080410',
   };
+  // pixel-blackletter display face for every hero title (boot logo, hub header,
+  // framed screens) — period-correct 16-bit, not a modern vector serif.
+  const TITLE = "'Jacquard 24','Press Start 2P',serif";
 
   /* ─── heraldic bat crest (title + finale) ─── */
   function emblem(api, cx, cy) {
@@ -116,7 +119,7 @@
       g2.flame(W - 16, 74, t, 1.2, { glow: 'rgba(255,140,40,.9)' });
       // ornate header plaque
       g2.ornateFrame(24, 12, W - 48, 38, 8, 'rgba(12,4,10,.92)', '#8a1824');
-      g2.gleamText("THE COUNT'S CHRONICLE", W / 2, 18, api.fitSize("THE COUNT'S CHRONICLE", 10, W - 70, true), C.bloodL, t, { shadow: 'rgba(0,0,0,.7)', gleamSpeed: 60 });
+      g2.gleamText("THE COUNT'S CHRONICLE", W / 2, 18, api.fitSize("THE COUNT'S CHRONICLE", 12, W - 60, 'title'), C.bloodL, t, { shadow: 'rgba(0,0,0,.7)', gleamSpeed: 60, font: TITLE });
       g2.glow(W / 2 - 34, 40, 6, C.blood, 0.7); c.fillStyle = C.blood; c.beginPath(); c.arc(W / 2 - 34, 40, 3, 0, 7); c.fill();
       api.txtCFit('BLOOD  ' + (save.cur || 0), W / 2 + 6, 36, 9, C.rose);
     },
@@ -155,8 +158,8 @@
     const g2 = api.g2, W = api.W, H = api.H, t = info.sceneT;
     nightScene(api, t, 0);
     emblem(api, W / 2, H * 0.22);
-    const ts = api.fitSize('DRACULA', 30, W - 20, true);
-    g2.gleamText('DRACULA', W / 2, H * 0.37, ts, C.bloodL, t, { bevel: '#ff9aa6', shadow: 'rgba(0,0,0,.8)', gleamSpeed: 55 });
+    const ts = api.fitSize('DRACULA', 30, W - 20, 'title');
+    g2.gleamText('DRACULA', W / 2, H * 0.37, ts, C.bloodL, t, { bevel: '#ff9aa6', shadow: 'rgba(0,0,0,.8)', gleamSpeed: 55, font: TITLE });
     bloodDrips(api, H * 0.37 + ts, t);
     api.txtCFit('NIGHTS OF BLOOD', W / 2, H * 0.37 + ts + 16, 11, C.rose, true);
     if (info.blink) api.txtCFit('▸ TAP TO ENTER ◂', W / 2, H * 0.70, 12, '#f0d6d6');
@@ -584,7 +587,8 @@
   RetroSaga2.create({
     id: 'dracula', title: 'Dracula', subtitle: 'NIGHTS OF BLOOD',
     currency: 'BLOOD', accent: C.gold, ownPhaseHud: true,
-    titleFont: "Georgia, 'Times New Roman', serif", // engraved gothic display for the 16-bit title cards
+    titleFont: TITLE, // pixel-blackletter — gothic + period-correct 16-bit
+    uiFont: "'Pixelify Sans','Press Start 2P',monospace",
     credit: 'A 16-BIT TRIBUTE · B. STOKER, 1897',
     bootCta: 'TAP TO ENTER', bootLine: 'A CHRONICLE IN BLOOD',
     width: 270, height: 480, parent: '#game',

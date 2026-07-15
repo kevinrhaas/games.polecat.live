@@ -89,7 +89,9 @@
     // super-sampled buffer): pixel=true → chunky 8-bit face; pixel==='title' →
     // the game's higher-res display face (cfg.titleFont, e.g. an engraved serif)
     // for hero titles; else a clean high-res UI face for body/labels.
-    const UIFONT = cfg.uiFont || "'Inter','Segoe UI',system-ui,sans-serif";
+    // Period-correct default: a clean higher-res PIXEL face (not a modern vector
+    // sans) — crisp on the super-sampled buffer but unmistakably 16-bit-era.
+    const UIFONT = cfg.uiFont || "'Pixelify Sans','Press Start 2P',monospace";
     function fontFor(pixel, size) {
       if (pixel === 'title') return cfg.titleFont ? ('bold ' + size + "px " + cfg.titleFont) : (size + "px 'Press Start 2P'");
       if (pixel) return size + "px 'Press Start 2P'";
