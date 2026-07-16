@@ -10,6 +10,15 @@
 // format stays identical to the rest of the fleet.
 export const CHANGELOG = [
   {
+    v: 120,
+    title: 'Tidier game top bar on phones',
+    kind: 'improvement',
+    ts: '2026-07-16T20:43:55.977Z',
+    items: [
+      'The ◀ ARCADE back button was wrapping onto two lines on narrow screens, so it looked off-centre. It’s now a clean single-line button that matches the other top-bar buttons, and the bar no longer crowds on small phones.',
+    ],
+  },
+  {
     v: 119,
     title: '16-bit polish: clearer story choices + a distinct look per game',
     kind: 'improvement',
