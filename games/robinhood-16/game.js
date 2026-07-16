@@ -575,7 +575,16 @@
         icon(api, x, y) { const g = api.gfx; g.circle(x, y, 7, '#f6f0dc'); g.circle(x, y, 4, '#3a6abf'); g.circle(x, y, 2, '#e03030'); },
         intro: ['The Sheriff sets a golden arrow', 'for the finest bow in England —', 'a trap to snare Robin Hood.'],
         quote: 'He notched his shaft and loosed — and split his rival\'s arrow clean down the middle.',
-        choice: { prompt: 'How will you enter the lists?', options: [{ label: 'Openly, as Robin Hood', flag: 'bold' }, { label: 'Disguised as a tattered beggar', flag: 'disguise' }] },
+        choice: {
+          prompt: 'The Sheriff\'s contest is a snare. How do you enter the lists?',
+          hint: 'HOW SHERWOOD\'S HERO IS MADE',
+          options: [
+            { label: 'Openly, as Robin Hood', sub: 'Bold — the whole shire will know your face', flag: 'bold',
+              icon(api, x, y) { const g = api.gfx, c = api.ctx; c.fillStyle = G.barkD; c.fillRect(x - 1, y - 10, 2, 20); c.fillStyle = G.blood; c.beginPath(); c.moveTo(x + 1, y - 10); c.lineTo(x + 11, y - 6); c.lineTo(x + 1, y - 2); c.closePath(); c.fill(); g.sprite(['f.', 'ff', 'f.'], x - 6, y - 9, { f: G.gold }, 2); } },
+            { label: 'Disguised as a tattered beggar', sub: 'Cunning — strike from among the crowd', flag: 'disguise',
+              icon(api, x, y) { const c = api.ctx; c.fillStyle = '#5a5240'; c.beginPath(); c.moveTo(x, y - 10); c.lineTo(x + 9, y + 8); c.lineTo(x - 9, y + 8); c.closePath(); c.fill(); c.fillStyle = '#2a2620'; c.beginPath(); c.arc(x, y - 3, 4, 0, 7); c.fill(); c.fillStyle = '#d8b088'; c.fillRect(x - 2, y - 1, 4, 3); } },
+          ],
+        },
         winText: 'The golden arrow is yours — and the Sheriff knows he has been mocked.',
         phases: [archery(), duelBoss({ name: 'SIR GUY OF GISBORNE', help: 'DRAG to dodge · LOOSE when he lowers his shield', hp: 3, hpLabel: 'GUY', winText: 'Gisborne yields the field, his horse-hide cloak in the mud.', loseText: 'Gisborne\'s bolt finds its mark.', sprite: GISBORNE, pal: GPAL, sc: 3, aura: '#5a1418', bg: forestClearingBg })],
       },

@@ -10,6 +10,16 @@
 // format stays identical to the rest of the fleet.
 export const CHANGELOG = [
   {
+    v: 119,
+    title: '16-bit polish: clearer story choices + a distinct look per game',
+    kind: 'improvement',
+    ts: '2026-07-16T20:25:50.942Z',
+    items: [
+      'The branching story choice now appears AFTER the tale sets the scene, not cold before it — and each option is a themed card that spells out what it means for how your story ends (with an icon), instead of a bare two-button menu you had to guess at.',
+      'Each 16-bit game now has its own period-correct lettering: Dracula reads in an austere dot-gothic, Robin Hood in a bolder folk hand — so the two no longer feel like the same game in different colors. New 16-bit games will each get their own font pairing.',
+    ],
+  },
+  {
     v: 118,
     title: 'New 16-bit legend: King Arthur — The Once and Future King',
     kind: 'game',
