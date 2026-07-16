@@ -10,6 +10,17 @@
 // format stays identical to the rest of the fleet.
 export const CHANGELOG = [
   {
+    v: 117,
+    title: 'New 16-bit invasion: The War of the Worlds',
+    kind: 'game',
+    ts: '2026-07-16T03:04:59.132Z',
+    items: [
+      'The fifth 16-bit game: answer dispatches on a phosphor war-map of Surrey and London — watch the pit at Horsell without getting caught watching, flee the sweeping heat-ray, lay artillery arcs at Weybridge, duel a hood through the black smoke, out-wait the searching tentacle in the ruined house, ride the exodus past the Thunder Child’s last stand, burn back the red weed, and creep cover-to-cover through dead London.',
+      'The field-glass, shrapnel shells, a still nerve and the crew’s cheer carry between dispatches; one wire home from Horsell changes the ending.',
+      'One home card now offers both the 8-bit and 16-bit invasions.',
+    ],
+  },
+  {
     v: 116,
     title: 'New 16-bit epic: The Odyssey — The Long Way Home',
     kind: 'game',
