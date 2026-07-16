@@ -10,6 +10,15 @@
 // format stays identical to the rest of the fleet.
 export const CHANGELOG = [
   {
+    v: 121,
+    title: 'Crisper in-game buttons — fleet icons instead of emoji',
+    kind: 'improvement',
+    ts: '2026-07-16T20:55:48.479Z',
+    items: [
+      'The in-game top bar (back, full screen, sound, and restart) and the full-screen exit button now use the shared Polecat icon set — clean single-colour line icons that follow the theme — instead of emoji that looked inconsistent across devices.',
+    ],
+  },
+  {
     v: 120,
     title: 'Tidier game top bar on phones',
     kind: 'improvement',

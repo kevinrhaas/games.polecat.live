@@ -391,7 +391,7 @@
 
     /* ------------------------- bar buttons -------------------------- */
     const muteBtn = document.getElementById('muteBtn');
-    if (muteBtn) muteBtn.addEventListener('click', () => { muteBtn.textContent = audio.toggleMute() ? '🔇' : '🔊'; });
+    if (muteBtn) muteBtn.addEventListener('click', () => { muteBtn.classList.toggle('is-muted', audio.toggleMute()); }); // icon swap via css (js/game-chrome.js)
     const restartBtn = document.getElementById('restartBtn');
     if (restartBtn) restartBtn.addEventListener('click', () => { setScene('menu'); });
 
