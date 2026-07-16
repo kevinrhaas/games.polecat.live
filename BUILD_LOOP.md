@@ -152,6 +152,9 @@ capture console errors, screenshot.
   row, better empty states, genre landing, share links, SEO/meta polish.
 - Add a **style variant** to an existing strong game (e.g. a 16-bit or
   monochrome "Game Boy" palette) and surface it through the style filter.
+- Build the next **Gen-4 (16-bit) version** from the top of **GEN4_QUEUE.md** —
+  the status board of shipped 16-bit games, the hub concepts/typefaces/mechanics
+  already claimed (don't repeat them), and the prioritized property queue.
 - Audit older games for bugs, **mobile feel & touch play**, fullscreen scaling,
   and difficulty curve. Treat mobile regressions as bugs to fix, not polish.
 - Consider an **ad-slot** refinement or a small site-wide feature.
