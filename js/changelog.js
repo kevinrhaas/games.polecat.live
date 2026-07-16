@@ -10,6 +10,17 @@
 // format stays identical to the rest of the fleet.
 export const CHANGELOG = [
   {
+    v: 118,
+    title: 'New 16-bit legend: King Arthur — The Once and Future King',
+    kind: 'game',
+    ts: '2026-07-16T03:38:54.345Z',
+    items: [
+      'The sixth 16-bit game — and the Round Table IS the menu: take any seat, in any order. Heave the sword from the stone with alternating taps, keep the skiff inside the Lady of the Lake’s drifting calm, shatter lances in a perspective joust, duel Lancelot and Mordred in high/low parry combat, catch grail-light while letting gold fall past, and hold the dragon standard at Camlann.',
+      'Excalibur, the true name, Lancelot’s oath and the Grail’s grace carry between quests; how the boy claims the crown decides how the legend is remembered.',
+      'One home card now offers both the 8-bit and 16-bit legends.',
+    ],
+  },
+  {
     v: 117,
     title: 'New 16-bit invasion: The War of the Worlds',
     kind: 'game',

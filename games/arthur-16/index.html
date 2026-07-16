@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <title>King Arthur — games.polecat.live</title>
+  <meta name="theme-color" content="#16307a" />
+  <link rel="icon" href="../../assets/logo.svg" type="image/svg+xml" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Pixelify+Sans:wght@400;500;600;700&family=Jacquarda+Bastarda+9&family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/site.css" />
+  <link rel="stylesheet" href="../../css/game.css" />
+  <style id="game-theme">:root{--g-bg1:#14285e;--g-bg2:#070d20;--g-bar:rgba(14,26,58,.95);--g-accent:#f0c860;--g-title:#f4ecd8;--g-panel:rgba(16,28,64,.82);--g-border:#2a3a7a;--g-text:#8a96b8;--g-key:#21e6ff;--g-stage:#2a3a7a;--g-glow:rgba(240,200,96,.28)}</style>
+</head>
+<body class="game-page">
+  <div class="game-bar">
+    <a class="back" href="../../index.html">◀ ARCADE</a>
+    <span class="title">King Arthur</span>
+    <span class="src">· Arthurian legend</span>
+    <span class="spacer"></span>
+    <button class="icon-btn" id="fullscreenBtn" title="Full screen">⛶</button>
+    <button class="icon-btn" id="muteBtn" title="Mute">🔊</button>
+    <button class="icon-btn" id="restartBtn" title="Restart">↻</button>
+  </div>
+  <div class="game-main">
+    <div id="game"></div>
+    <div class="game-help">
+      <b>King Arthur — The Once and Future King.</b> A 16-bit legend: take any seat at the Round Table — heave the sword from the stone, hold the skiff steady for the Lady of the Lake, shatter lances in the joust, duel the stranger knight, pass the trials of the Chapel Perilous, and hold the line at Camlann — with Excalibur, Lancelot's oath and the Grail's grace carried between quests. Tap <b>⛶ Full screen</b> for the full experience.
+      <span class="keys">TAP / DRAG · ARROW KEYS · any quest, any order · how you claim the crown changes the ending</span>
+    </div>
+  </div>
+  <script src="../../js/retro-engine.js"></script>
+  <script src="../../js/retro-gfx2.js"></script>
+  <script src="../../js/saga2.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
