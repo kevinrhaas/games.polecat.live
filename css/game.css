@@ -42,7 +42,7 @@
   background: var(--g-panel); border: 2px solid var(--g-border);
   border-radius: 8px; padding: 8px 11px;
 }
-.game-bar .back .ar { font-size: 8px; line-height: 1; transform: translateY(-0.5px); }
+.game-bar .back .ar { display: inline-flex; align-items: center; }
 .game-bar .back:hover { border-color: var(--g-accent); }
 .game-bar .back:active { transform: translateY(1px); }
 /* title truncates instead of wrapping when the bar gets tight */
@@ -59,10 +59,19 @@
 }
 .game-bar .icon-btn {
   font-family: var(--font-pixel); font-size: 10px; cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center;
   background: var(--g-panel); color: var(--g-title); border: 2px solid var(--g-border);
-  border-radius: 8px; padding: 8px 10px;
+  border-radius: 8px; padding: 7px;
 }
+.game-bar .icon-btn:hover { border-color: var(--g-accent); }
 .game-bar .icon-btn:active { transform: translateY(1px); }
+/* Polecat inline-SVG icons (stroke/currentColor) in the chrome */
+.game-bar .ic, .re-fs-btn .ic { display: block; }
+.game-bar .icon-btn .ic-on, .game-bar .icon-btn .ic-off { display: inline-flex; }
+#muteBtn .ic-off { display: none; }              /* sound on by default */
+#muteBtn.is-muted .ic-on { display: none; }
+#muteBtn.is-muted .ic-off { display: inline-flex; }
+#muteBtn.is-muted { color: var(--g-text); }      /* dim the glyph when muted */
 
 .game-main { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 14px; gap: 10px; }
 /* the mount point must fill the column width so the stage can use the full

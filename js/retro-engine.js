@@ -364,7 +364,8 @@
       fb.type = 'button';
       fb.className = 're-fs-btn';
       fb.setAttribute('aria-label', 'Exit full screen');
-      fb.innerHTML = '✕';
+      // Polecat close glyph (stroke/currentColor, fleet icon standard) — not an emoji
+      fb.innerHTML = '<svg class="ic" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>';
       fb.addEventListener('click', () => this.toggleImmersive());
       stage.appendChild(fb);
       this.fsBtn = fb;
