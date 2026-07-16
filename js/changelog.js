@@ -10,6 +10,17 @@
 // format stays identical to the rest of the fleet.
 export const CHANGELOG = [
   {
+    v: 116,
+    title: 'New 16-bit epic: The Odyssey — The Long Way Home',
+    kind: 'game',
+    ts: '2026-07-16T02:43:54.830Z',
+    items: [
+      'The fourth 16-bit game: sail an open chart of the wine-dark sea — drive the olive stake and flee the Cyclops’ boulders (taunt him by name for extra glory, if you dare), guard the bag of winds, repeat Circe’s potion rite from memory, row past the Sirens in rhythm, thread Scylla and Charybdis, then string the great bow and clear the hall at Ithaca.',
+      'Maron’s wine, the bag of winds, the moly herb and a loyal crew carry between islands; the shout at the Cyclops changes the ending.',
+      'One home card now offers both the 8-bit and 16-bit voyages home.',
+    ],
+  },
+  {
     v: 115,
     title: 'New 16-bit mystery: Sherlock Holmes — The Hound of the Baskervilles',
     kind: 'game',
