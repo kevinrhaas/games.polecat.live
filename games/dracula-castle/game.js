@@ -588,7 +588,7 @@
     id: 'dracula', title: 'Dracula', subtitle: 'NIGHTS OF BLOOD',
     currency: 'BLOOD', accent: C.gold, ownPhaseHud: true,
     titleFont: TITLE, // pixel-blackletter — gothic + period-correct 16-bit
-    uiFont: "'Pixelify Sans','Press Start 2P',monospace",
+    uiFont: "'DotGothic16','Press Start 2P',monospace", // dense dot-gothic body — austere & period, distinct from other properties
     credit: 'A 16-BIT TRIBUTE · B. STOKER, 1897',
     bootCta: 'TAP TO ENTER', bootLine: 'A CHRONICLE IN BLOOD',
     width: 270, height: 480, parent: '#game',
@@ -617,7 +617,16 @@
         icon(api, x, y) { const g = api.gfx; g.rect(x - 8, y - 6, 16, 12, '#4a3f5a'); g.rect(x - 2, y - 6, 1, 12, '#1b1726'); },
         intro: ['Harker is a prisoner in the', "Count's crumbling castle.", 'He must escape by nightfall.'],
         quote: 'Welcome to my house. Enter freely and of your own will.',
-        choice: { prompt: 'How will you flee the castle?', options: [{ label: 'Scale the sheer outer wall', flag: 'wall' }, { label: 'Steal through the chapel crypt', flag: 'chapel' }] },
+        choice: {
+          prompt: 'Nightfall is close. Which way out of the castle?',
+          hint: 'YOUR ROUTE DECIDES HOW THE HUNT ENDS',
+          options: [
+            { label: 'Scale the sheer outer wall', sub: 'The bold way down — you\'ll meet him head-on', flag: 'wall',
+              icon(api, x, y) { const g = api.gfx; for (let r = 0; r < 3; r++) for (let c = 0; c < 2; c++) g.rect(x - 10 + c * 10 + (r & 1 ? 4 : 0), y - 9 + r * 6, 8, 5, r === 1 ? '#4a3f5a' : '#2a2436'); api.g2.glow(x + 8, y - 8, 5, C.blood, 0.5); } },
+            { label: 'Steal through the chapel crypt', sub: 'The quiet way — past his coffins in the dark', flag: 'chapel',
+              icon(api, x, y) { const g = api.gfx, c = api.ctx; g.rect(x - 8, y - 8, 16, 16, '#1a1420'); c.fillStyle = C.rose; c.fillRect(x - 1, y - 6, 2, 12); c.fillRect(x - 5, y - 2, 10, 2); } },
+          ],
+        },
         winText: 'Harker is free — and the Count is bound for England.',
         phases: [climb(), countBoss(false)],
       },

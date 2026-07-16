@@ -18,10 +18,15 @@
  *     map: { layout(api,nodes)->rects, node(api,info), title(api,st), links... },
  *     upgrades: { key:{name,icon,desc} },
  *     nodes: [ { id,name,sub,icon,intro,quote,help, needs:[ids], optional,
- *                choice:{prompt,options:[{label,flag}]}, grant:'key', reward:n,
+ *                // choice is offered AFTER the node's first-phase intro (context
+ *                // first). Give each option a `sub` consequence hint + `icon`; a
+ *                // `hint` frames the stakes. Or supply cfg.renderChoice for a
+ *                // fully bespoke screen.
+ *                choice:{prompt,hint,options:[{label,sub,icon(api,x,y),flag}]},
+ *                grant:'key', reward:n,
  *                phases:[ {name,help,boss,init,update,draw,winText,loseText} ] } ],
  *     endings: [ { when(flags,save)->bool, title, lines:[...] } ],
- *     screens, labels, bootCta, ...
+ *     screens, labels, bootCta, renderChoice(api,{node,choice,sel,sceneT}), ...
  *   })
  * Each phase's init/update/draw gets the same `api` as RetroSaga PLUS:
  *   api.g2 (Gfx2), api.up (upgrades owned), api.has(key), api.flags,
@@ -174,6 +179,7 @@
     /* ----------------------- scene state machine -------------------------- */
     let scene = 'boot', sceneT = 0, curNode = null, curNodeIdx = 0, phaseIdx = 0;
     let sel = 0, result = null, pendingChoice = null, endingChosen = null;
+    let choiceSel = 0, choiceResolved = false;
     function setScene(s) { scene = s; sceneT = 0; parts = []; }
 
     function firstAvailableIndex() {
@@ -183,8 +189,9 @@
     function openNode(i) {
       const n = nodes[i]; if (!n || !nodeAvailable(n)) { audio.sfx('hurt'); return; }
       curNode = n; curNodeIdx = i; api.node = n;
-      if (n.choice && !save.done[n.id]) { pendingChoice = n.choice; setScene('choice'); }
-      else { phaseIdx = 0; setScene('intro'); }
+      // The story intro plays FIRST; a node's choice (if any) is offered after it,
+      // so the player decides with the tale's context in hand — not cold.
+      choiceResolved = false; phaseIdx = 0; setScene('intro');
     }
     function startPhase() {
       api.t = 0; api.score = 0; api.dt = 0; api.phase = phaseIdx; api.node = curNode;
@@ -252,16 +259,28 @@
         if (ptr.justDown) { const idx = hubHit(ptr.x, ptr.y); if (idx >= 0) { sel = idx; openNode(idx); } }
         if (input.pressed('a') || input.pressed('start')) openNode(sel);
       } else if (scene === 'choice') {
-        if (ptr.justDown) {
-          const idx = choiceHit(ptr.x, ptr.y);
-          if (idx >= 0) {
-            const opt = pendingChoice.options[idx];
-            if (opt.flag) save.flags[opt.flag] = true; persist();
-            pendingChoice = null; phaseIdx = 0; audio.sfx('select'); setScene('intro');
-          }
+        const n = pendingChoice.options.length;
+        if (input.pressed('down') || input.pressed('right')) { choiceSel = (choiceSel + 1) % n; audio.sfx('blip'); }
+        if (input.pressed('up') || input.pressed('left')) { choiceSel = (choiceSel + n - 1) % n; audio.sfx('blip'); }
+        let pick = -1;
+        if (ptr.justDown) { const idx = choiceHit(ptr.x, ptr.y); if (idx >= 0) pick = idx; }
+        if ((input.pressed('a') || input.pressed('start')) && sceneT > 0.2) pick = choiceSel;
+        if (pick >= 0) {
+          const opt = pendingChoice.options[pick];
+          // only one of this choice's flags is ever set — clear its siblings first
+          // so re-deciding after a loss can't leave two paths flagged at once
+          pendingChoice.options.forEach((o) => { if (o.flag) delete save.flags[o.flag]; });
+          if (opt.flag) save.flags[opt.flag] = true;
+          persist();
+          pendingChoice = null; choiceResolved = true; audio.sfx('select'); startPhase();
         }
       } else if (scene === 'intro') {
-        if (confirmPressed() && sceneT > 0.3) startPhase();
+        if (confirmPressed() && sceneT > 0.3) {
+          // offer the node's choice AFTER its first-phase intro (context first)
+          if (phaseIdx === 0 && curNode.choice && !save.done[curNode.id] && !choiceResolved) {
+            pendingChoice = curNode.choice; choiceSel = 0; setScene('choice');
+          } else startPhase();
+        }
       } else if (scene === 'play') {
         api.dt = dt; api.t += dt;
         const ph = curNode.phases[phaseIdx];
@@ -350,22 +369,30 @@
     }
 
     function drawChoice() {
+      if (cfg.renderChoice) { cfg.renderChoice(api, { node: curNode, choice: pendingChoice, sel: choiceSel, sceneT }); return; }
       backdrop('intro');
-      txtCFit((curNode.name || '').toUpperCase(), W / 2, 60, 13, ST.name, 'title');
-      txtCHead(pendingChoice.prompt, W / 2, 110, 11, ST.intro, false, 16);
+      txtCFit((curNode.name || '').toUpperCase(), W / 2, 44, 13, ST.name, 'title');
+      const pl = txtCHead(pendingChoice.prompt, W / 2, 72, 10, ST.intro, false, 14);
       const rects = choiceRects();
       pendingChoice.options.forEach((o, i) => {
-        const r = rects[i];
-        g2.roundRect(r.x, r.y, r.w, r.h, 8, 'rgba(20,16,34,.9)', ST.cta, 2);
-        txtCHead(o.label, r.x + r.w / 2, r.y + r.h / 2 - 8, 9, ST.cta, false, 13, r.w - 14);
+        const r = rects[i], selq = i === choiceSel;
+        if (selq) g2.glow(r.x + r.w / 2, r.y + r.h / 2, r.w * 0.46, ST.cta, 0.24 + 0.12 * Math.sin(sceneT * 4));
+        g2.roundRect(r.x, r.y, r.w, r.h, 8, selq ? 'rgba(30,24,46,.96)' : 'rgba(14,11,24,.9)', selq ? PAL.gold : (ST.chapterLabel || PAL.dim), selq ? 2 : 1);
+        // thematic icon on the left
+        const ix = r.x + 24, iy = r.y + r.h / 2;
+        if (o.icon) o.icon(api, ix, iy); else txtC('◆', ix, iy - 6, 12, selq ? PAL.gold : ST.cta);
+        // label + consequence hint, in the space right of the icon
+        const tcx = r.x + 46 + (r.w - 58) / 2, tw = r.w - 62;
+        txtCFit(o.label, tcx, r.y + (o.sub ? 9 : r.h / 2 - 6), 10, selq ? PAL.gold : ST.cta, false, tw);
+        if (o.sub) txtCHead(o.sub, tcx, r.y + 27, 8, ST.intro, false, 10, tw);
       });
-      txtCFit('CHOOSE YOUR PATH', W / 2, H - 40, 9, ST.chapterLabel);
-      vignette(); scanlines();
+      txtCFit(pendingChoice.hint || 'YOUR CHOICE SHAPES HOW THE TALE ENDS', W / 2, H - 32, 8, ST.chapterLabel);
+      vignette();
     }
     function choiceRects() {
-      const n = pendingChoice.options.length, out = [], bw = W - 60, bh = 54, gap = 14;
-      const total = n * bh + (n - 1) * gap, y0 = H / 2 - total / 2 + 20;
-      for (let i = 0; i < n; i++) out.push({ x: 30, y: y0 + i * (bh + gap), w: bw, h: bh });
+      const n = pendingChoice.options.length, out = [], bw = W - 36, bh = 58, gap = 14;
+      const total = n * bh + (n - 1) * gap, y0 = Math.max(120, H / 2 - total / 2 + 26);
+      for (let i = 0; i < n; i++) out.push({ x: 18, y: y0 + i * (bh + gap), w: bw, h: bh });
       return out;
     }
     function choiceHit(px, py) { const r = choiceRects(); for (let i = 0; i < r.length; i++) { const q = r[i]; if (px >= q.x && px <= q.x + q.w && py >= q.y && py <= q.y + q.h) return i; } return -1; }

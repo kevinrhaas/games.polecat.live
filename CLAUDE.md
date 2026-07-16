@@ -152,11 +152,26 @@ structure while keeping their story.
   **Higher-resolution rendering is part of the leap.** `RetroSaga2` super-samples
   the canvas (`superSample:3`, opt down via `cfg.superSample`) so type & lighting
   render CRISP, not re-blocked — the 16-bit tier is NOT the 8-bit pixel grid.
-  Give the framed screens a **higher-res display face** with `cfg.titleFont` (an
-  on-property display font — e.g. Dracula's engraved `Georgia, serif`); hero
-  titles then render in it (via the `'title'` text role) while body/labels use a
-  clean UI face (`cfg.uiFont`, default Inter) instead of the chunky 8-bit font.
-  Pixel-art sprites stay hard-edged; only the type/lighting go hi-res.
+  Give the framed screens a **higher-res display face** with `cfg.titleFont` for
+  hero titles (via the `'title'` text role) and a `cfg.uiFont` for body/labels,
+  instead of the chunky 8-bit font. Pixel-art sprites stay hard-edged; only the
+  type/lighting go hi-res.
+  **Fonts are PERIOD-CORRECT PIXEL faces, and EVERY property gets its OWN pairing
+  — never reuse another game's fonts.** Not smooth modern vector faces (a plain
+  serif/Inter reads too new); pick pixel/bitmap webfonts whose feel matches the
+  property's era & story, a *distinct* titleFont+uiFont per property, and load
+  them in that game's `index.html`. Reference: Dracula = `'Jacquard 24'`
+  (pixel-blackletter) + `'DotGothic16'` (austere dot-gothic); Robin Hood =
+  `'Jersey 25'` (bold pixel banner) + `'Pixelify Sans'` (friendly folk). Other
+  good pixel faces to draw from: `VT323`/`Silkscreen` (CRT/techy — War of the
+  Worlds, Metropolis), `Handjet`, `Micro 5`, `Jacquard 12`. Two 16-bit games
+  should never share a font pairing.
+  **The per-node `choice` is offered AFTER that node's first-phase intro (story
+  context first), never cold before it.** Don't ship a bare two-button menu:
+  give each option a `sub` consequence hint + a themed `icon(api,x,y)`, and a
+  `choice.hint` line that frames the stakes (it sets `flags` → the ending). For
+  a bespoke screen use `cfg.renderChoice(api,{node,choice,sel,sceneT})`. Vary it
+  per property — not the same two-button pattern every game.
 
 **NORTH STAR: every property gets BOTH a Gen-3 (8-bit) and a Gen-4 (16-bit)
 version.** They coexist — a Gen-4 is **ADDITIVE, never a replacement** for the
