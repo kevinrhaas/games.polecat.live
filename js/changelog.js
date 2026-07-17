@@ -10,6 +10,16 @@
 // format stays identical to the rest of the fleet.
 export const CHANGELOG = [
   {
+    v: 122,
+    title: 'Pride & Prejudice rebuilt as a proper Regency dating-sim',
+    kind: 'game',
+    ts: '2026-07-17T17:01:42.825Z',
+    items: [
+      'The arcade\'s most repetitive game got a full genre-shift rebuild: trade branching banter with Mr. Darcy at the Meryton Assembly, step a minuet in time with his lead, complete his letter of explanation as a word puzzle, then answer his second proposal at Pemberley — the ending you get depends on the choices you made.',
+      'New AFFECTION and REPUTATION meters track your relationship across all four scenes and shape how the story closes.',
+    ],
+  },
+  {
     v: 121,
     title: 'Crisper in-game buttons — fleet icons instead of emoji',
     kind: 'improvement',
