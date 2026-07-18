@@ -11,7 +11,6 @@ shift** (not a reskin — new verbs, and vary the structure/opening per CLAUDE.m
 queue** in the same commit. Promote to Gen-4 (hub + branches) where noted.
 
 ## Queue
-6. **invisibleman-fade** — 3 repeated sight-cone dodges → **dedicated stealth game**: one contiguous manhunt with a persistent exposure/visibility economy (footprints, snow, smoke reveal you); fewer, deeper levels.
 7. **sleepyhollow-ride** — 4/5 steer-dodge → **hide-from-the-Horseman stealth-horror** (one escalating chase) + a schoolmaster courting social-sim.
 8. **timemachine-eloi** — 4/5 dodge, only plain-list menu left → **machine-assembly + resource roguelite** (ration parts, tune circuits, branching eras, inventory); Gen-4 candidate.
 9. **whitefang-wild** — 4/5 move/chase → **Yukon survival-sim** (hunger/cold/pack-dominance meters, branching trek) + a pack-hierarchy strategy chapter.
