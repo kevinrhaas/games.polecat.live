@@ -10,6 +10,17 @@
 // format stays identical to the rest of the fleet.
 export const CHANGELOG = [
   {
+    v: 124,
+    title: 'The Invisible Man rebuilt: one unbroken manhunt replaces three near-identical dodges',
+    kind: 'game',
+    ts: '2026-07-18T20:33:37.750Z',
+    items: [
+      'Iping Village, Snow Betrayal and the Dark Commons — three separate timed dodge chapters that all played the same — are now ONE contiguous manhunt run on a persistent EXPOSURE meter instead of lives: sight cones, footprints and torch glow raise it, and shadow/mist havens along the route bleed it back down.',
+      'Griffin himself now visibly fades in and out with your exposure level, so you can read the danger at a glance instead of watching a life counter.',
+      'The saga is down to three deeper encounters (the formula, the long night, Kemp\'s house) instead of five, cutting the repetition the arcade\'s worst-offenders audit flagged.',
+    ],
+  },
+  {
     v: 123,
     title: 'Beneath the Opera rebuilt: sing across a real staff, outrun the mob by staying quiet',
     kind: 'game',
