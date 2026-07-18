@@ -10,6 +10,16 @@
 // format stays identical to the rest of the fleet.
 export const CHANGELOG = [
   {
+    v: 123,
+    title: 'Beneath the Opera rebuilt: sing across a real staff, outrun the mob by staying quiet',
+    kind: 'game',
+    ts: '2026-07-18T01:05:16.248Z',
+    items: [
+      'The Music Lesson scene is a proper rhythm game now: notes drift in along a genuine five-line staff and you sing each one back by touching its height (or UP/LEFT/A/RIGHT/DOWN for the five lines) as it crosses the gold bar, instead of the old three-lane catch.',
+      'The Lake scene traded its dodge-the-rocks mechanic for tension: every oar stroke advances you but carries across the water, and the mob\'s lanterns close in if you stay loud too long — steer into the rock shadows to go quiet and pull ahead.',
+    ],
+  },
+  {
     v: 122,
     title: 'Pride & Prejudice rebuilt as a proper Regency dating-sim',
     kind: 'game',

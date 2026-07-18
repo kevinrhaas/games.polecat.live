@@ -2,10 +2,10 @@
  * THE PHANTOM OF THE OPERA — BENEATH THE GARNIER
  * Five scenes through Gaston Leroux, 1910:
  *   1. THE CATACOMBS    — stealth: slip through torch beams to the underground lair
- *   2. THE MUSIC LESSON — rhythm: catch the falling notes of Erik's aria
+ *   2. THE MUSIC LESSON — rhythm: sing Erik's aria across a real five-line staff
  *   3. THE ROOFTOP      — intercept: block searchlights before they reach Christine
  *   4. THE CHANDELIER   — timing: cut the ropes at the perfect moment
- *   5. THE LAKE         — dodge: steer the gondola to freedom through the dark
+ *   5. THE LAKE         — pursuit: row quietly, hide in shadow, outrun the mob's lanterns
  * Built on RetroSaga (js/saga.js) + RetroEngine.
  * ============================================================================ */
 (function () {
@@ -319,95 +319,107 @@
         },
         intro: ['IN HIS UNDERGROUND LAIR', 'ERIK TEACHES CHRISTINE', 'THE ARIA THAT WILL MAKE', 'HER THE STAR OF THE OPERA.'],
         quote: '"His voice... it did not seem to come from any one place." — Gaston Leroux',
-        help: 'Catch the falling notes! Tap the LEFT, CENTER, or RIGHT zone as each note drops to your line. Hit all notes — don\'t miss more than four!',
+        help: 'Notes drift in from the right along five staff lines. When one nears the gold bar, touch that line\'s height (or use UP/LEFT/A/RIGHT/DOWN, top line to bottom) to sing it true. Don\'t miss more than five!',
         winText: 'THE ARIA SOARS',
         loseText: 'THE MELODY BREAKS',
         init(api) {
-          this.cols   = [45, 135, 225];
-          this.lineY  = 368;
+          this.staffTop = 132;
+          this.gap      = 26;
+          this.lineY    = [];
+          for (var li0 = 0; li0 < 5; li0++) this.lineY.push(this.staffTop + li0 * this.gap);
+          this.hitX   = 44;
           this.notes  = [];
           this.spawnT = 0;
           this.spawnI = 1.05;
           this.hits   = 0;
           this.misses = 0;
           this.goal   = 18;
-          this.flashC = [0, 0, 0];
-          this.nspd   = 88;
+          this.flashL = [0, 0, 0, 0, 0];
+          this.nspd   = 78;
           this.combo  = 0;
         },
         update(api, dt) {
-          var W = api.W;
-          this.flashC = this.flashC.map(function(v) { return Math.max(0, v - dt * 3); });
+          var W = api.W, H = api.H;
+          this.flashL = this.flashL.map(function(v) { return Math.max(0, v - dt * 3); });
           this.spawnT -= dt;
           if (this.spawnT <= 0) {
             this.spawnT = this.spawnI;
-            this.spawnI = Math.max(0.46, this.spawnI - 0.018);
-            var col = Math.floor(Math.random() * 3);
-            this.notes.push({ col: col, y: -14, hit: false, miss: false, fv: 0 });
-            if (this.hits > 8 && Math.random() < 0.28) {
-              var c2 = (col + 1 + Math.floor(Math.random() * 2)) % 3;
-              this.notes.push({ col: c2, y: -14, hit: false, miss: false, fv: 0 });
+            this.spawnI = Math.max(0.42, this.spawnI - 0.017);
+            var line = Math.floor(Math.random() * 5);
+            this.notes.push({ line: line, x: W + 14, hit: false, miss: false, fv: 0 });
+            if (this.hits > 8 && Math.random() < 0.24) {
+              var l2 = (line + 1 + Math.floor(Math.random() * 3)) % 5;
+              this.notes.push({ line: l2, x: W + 44, hit: false, miss: false, fv: 0 });
             }
           }
 
           var tapped = -1;
-          if (api.pointer.justDown) {
-            tapped = api.pointer.x < W / 3 ? 0 : (api.pointer.x < W * 2 / 3 ? 1 : 2);
-          } else if (api.keyPressed('left')  || api.keyPressed('a'))     { tapped = 0; }
-          else if   (api.keyPressed('up')    || api.keyPressed('start')) { tapped = 1; }
-          else if   (api.keyPressed('right') || api.keyPressed('b'))     { tapped = 2; }
+          if (api.pointer.justDown && api.pointer.y > this.staffTop - 20 && api.pointer.y < this.staffTop + this.gap * 4 + 20) {
+            tapped = clamp(Math.round((api.pointer.y - this.staffTop) / this.gap), 0, 4);
+          } else if (api.keyPressed('up'))    { tapped = 0; }
+          else if   (api.keyPressed('left'))  { tapped = 1; }
+          else if   (api.keyPressed('a'))     { tapped = 2; }
+          else if   (api.keyPressed('right')) { tapped = 3; }
+          else if   (api.keyPressed('down'))  { tapped = 4; }
 
           for (var i = this.notes.length - 1; i >= 0; i--) {
             var n = this.notes[i];
-            n.y += this.nspd * dt;
+            n.x -= this.nspd * dt;
             n.fv = Math.max(0, n.fv - dt * 3);
             if (!n.hit && !n.miss) {
-              if (tapped === n.col && Math.abs(n.y - this.lineY) < 30) {
+              if (tapped === n.line && Math.abs(n.x - this.hitX) < 22) {
                 n.hit = true; n.fv = 1;
                 this.hits++; this.combo++;
                 api.addScore(10 + Math.min(this.combo, 6) * 10);
-                this.flashC[n.col] = 1;
-                api.audio.sfx('coin'); api.burst(this.cols[n.col], this.lineY, '#e0c050', 5);
-              } else if (n.y > this.lineY + 36) {
+                this.flashL[n.line] = 1;
+                api.audio.sfx('coin'); api.burst(this.hitX, this.lineY[n.line], '#e0c050', 5);
+              } else if (n.x < this.hitX - 26) {
                 n.miss = true; this.misses++; this.combo = 0;
                 api.audio.sfx('blip'); api.flash('#6a1020', 0.15);
               }
             }
-            if (n.y > 520) this.notes.splice(i, 1);
+            if (n.x < -30) this.notes.splice(i, 1);
           }
           if (this.hits >= this.goal) { api.addScore(160); api.win(); }
-          if (this.misses >= 5) api.lose();
+          if (this.misses >= 6) api.lose();
         },
         draw(api) {
           var g = api.gfx, c = api.ctx, W = api.W, H = api.H;
           var bg = c.createLinearGradient(0, 0, 0, H);
           bg.addColorStop(0, '#04000c'); bg.addColorStop(1, '#0c001e');
           c.fillStyle = bg; c.fillRect(0, 0, W, H);
-          c.globalAlpha = 0.07;
-          for (var pi = 0; pi < 9; pi++) { c.fillStyle = '#7060a0'; c.fillRect(6 + pi * 28, 20, 9 + pi * 4, 50 + pi * 18); }
+
+          var staffBot = this.lineY[4];
+          c.globalAlpha = 0.06; c.fillStyle = '#9080c0';
+          c.fillRect(14, this.staffTop - 14, W - 28, staffBot - this.staffTop + 28);
           c.globalAlpha = 1;
 
-          for (var ci = 0; ci < 3; ci++) {
-            c.globalAlpha = 0.05; c.fillStyle = '#9080c0'; c.fillRect(this.cols[ci] - 22, 0, 44, H); c.globalAlpha = 1;
-            var lc = this.flashC[ci] > 0 ? '#e0c050' : '#3a1850';
-            g.rect(this.cols[ci] - 22, this.lineY, 44, 3, lc);
-            if (this.flashC[ci] > 0) { c.globalAlpha = this.flashC[ci] * 0.2; c.fillStyle = '#e0c050'; c.fillRect(this.cols[ci] - 22, this.lineY - 10, 44, 24); c.globalAlpha = 1; }
+          for (var li = 0; li < 5; li++) {
+            var lc = this.flashL[li] > 0 ? '#e0c050' : '#4a2858';
+            g.rect(18, this.lineY[li], W - 36, 2, lc);
+            if (this.flashL[li] > 0) { c.globalAlpha = this.flashL[li] * 0.18; c.fillStyle = '#e0c050'; c.fillRect(18, this.lineY[li] - 9, W - 36, 20); c.globalAlpha = 1; }
           }
 
+          var hitCol = '#e0c050';
+          c.globalAlpha = 0.7; c.strokeStyle = hitCol; c.lineWidth = 2;
+          c.beginPath(); c.moveTo(this.hitX, this.staffTop - 16); c.lineTo(this.hitX, staffBot + 16); c.stroke();
+          c.globalAlpha = 1;
+          c.globalAlpha = 0.10; c.fillStyle = hitCol; c.fillRect(this.hitX - 12, this.staffTop - 16, 24, staffBot - this.staffTop + 32); c.globalAlpha = 1;
+
           for (var i = 0; i < this.notes.length; i++) {
-            var n = this.notes[i], nx = this.cols[n.col], ny = n.y;
+            var n = this.notes[i], nx = n.x, ny = this.lineY[n.line];
             if (n.hit) {
               c.globalAlpha = n.fv; g.circle(nx, ny, 13, '#f0e070'); g.circle(nx, ny, 9, '#e0c050'); c.globalAlpha = 1;
             } else if (n.miss) {
-              c.globalAlpha = Math.max(0, 1 - (n.y - this.lineY) / 90); g.circle(nx, ny, 11, '#4a1020'); c.globalAlpha = 1;
+              c.globalAlpha = Math.max(0, 1 - (this.hitX - n.x) / 90); g.circle(nx, ny, 11, '#4a1020'); c.globalAlpha = 1;
             } else {
-              g.circle(nx, ny, 13, '#2a0c38'); g.circle(nx, ny, 13, '#cc2233'); g.circle(nx, ny, 10, '#1c0828');
-              c.fillStyle = '#e0c050'; c.beginPath(); c.ellipse(nx - 1, ny + 3, 7, 5, -0.28, 0, Math.PI * 2); c.fill();
-              g.rect(nx + 5, ny - 14, 2, 18, '#e0c050'); g.rect(nx + 5, ny - 14, 9, 2, '#e0c050');
+              g.circle(nx, ny, 10, '#2a0c38'); g.circle(nx, ny, 10, '#cc2233'); g.circle(nx, ny, 7, '#1c0828');
+              c.fillStyle = '#e0c050'; c.beginPath(); c.ellipse(nx - 1, ny + 2, 5, 4, -0.28, 0, Math.PI * 2); c.fill();
+              g.rect(nx + 4, ny - 12, 2, 14, '#e0c050');
             }
           }
 
-          for (var mi = 0; mi < 5; mi++) g.rect(W - 14 - mi * 14, 19, 10, 8, mi < this.misses ? '#6a1020' : '#1e0c2a');
+          for (var mi = 0; mi < 6; mi++) g.rect(W - 14 - mi * 12, 19, 8, 8, mi < this.misses ? '#6a1020' : '#1e0c2a');
           api.topBar('THE MUSIC LESSON');
           drawProg(api, this.hits / this.goal, '#e0c050');
           api.txtC('NOTES ' + this.hits + '/' + this.goal, 6, 5, 6, '#8a6080');
@@ -632,57 +644,74 @@
         },
         intro: ['CHRISTINE TEARS THE MASK', "FROM ERIK'S FACE.", 'RAOUL AND THE MOB PURSUE.', 'FLEE ACROSS THE LAKE.'],
         quote: '"Ah, you wanted to see! See! Feast your eyes, glut your soul on my cursed ugliness!" — Gaston Leroux',
-        help: 'Steer the gondola left and right to dodge the rocks and Raoul\'s lanterns. Tap LEFT or RIGHT side. Reach the far shore! Watch your three lives.',
+        help: 'Row to advance — but every stroke of the oar carries across the water. Tap/UP/A/START to row, LEFT/RIGHT to steer into the rock shadows and go quiet. Row too loud too long and the mob\'s lanterns close in.',
         winText: 'FREEDOM IN THE DARK',
         loseText: 'CAPTURED AT THE LAKE',
         init(api) {
           this.boatX   = api.W / 2;
           this.boatY   = 370;
           this.dist    = 0;
-          this.goal    = 680;
-          this.obs     = [];
-          this.spawnT  = 0.6;
-          this.lives   = 3;
-          this.hitCD   = 0;
+          this.goal    = 620;
+          this.noise   = 0;
+          this.maxNoise = 100;
+          this.gap     = 240;
+          this.maxGap  = 300;
+          this.rocks   = [];
+          this.spawnT  = 1.0;
           this.ripples = [];
           this.bspd    = 110;
+          this.caught  = false;
+          this.cFlash  = 0;
         },
         update(api, dt) {
           var W = api.W, H = api.H;
-          this.dist  += 78 * dt;
-          this.hitCD  = Math.max(0, this.hitCD - dt);
+          this.cFlash = Math.max(0, this.cFlash - dt * 4);
+          if (this.caught) { if (this.cFlash <= 0) api.lose(); return; }
+
           if (api.keyDown('left')  || (api.pointer.down && api.pointer.x < W / 2))  this.boatX -= this.bspd * dt;
           if (api.keyDown('right') || (api.pointer.down && api.pointer.x >= W / 2)) this.boatX += this.bspd * dt;
           this.boatX = clamp(this.boatX, 22, W - 22);
 
+          var rowed = api.pointer.justDown || api.keyPressed('a') || api.keyPressed('up') || api.keyPressed('start');
+
           this.spawnT -= dt;
           if (this.spawnT <= 0) {
-            this.spawnT = Math.max(0.44, 0.86 - this.dist / 2000);
-            var isL = this.dist > 300 && Math.random() < 0.32;
-            this.obs.push({ x: 22 + Math.random() * (W - 44), y: -22, vy: 68 + this.dist * 0.035, type: isL ? 'l' : 'r', r: isL ? 12 : 10 });
+            this.spawnT = 1.4 + Math.random() * 0.8;
+            this.rocks.push({ x: 24 + Math.random() * (W - 48), y: -30, vy: 62, r: 20 + Math.random() * 10 });
+          }
+          var hiding = false;
+          for (var i = this.rocks.length - 1; i >= 0; i--) {
+            var rk = this.rocks[i];
+            rk.y += rk.vy * dt;
+            if (rk.y > H + 40) { this.rocks.splice(i, 1); continue; }
+            var rdx = rk.x - this.boatX, rdy = rk.y - this.boatY;
+            if (Math.sqrt(rdx * rdx + rdy * rdy) < rk.r + 10) hiding = true;
           }
 
-          for (var i = this.obs.length - 1; i >= 0; i--) {
-            var o = this.obs[i];
-            o.y += o.vy * dt;
-            if (o.y > H + 30) { this.obs.splice(i, 1); continue; }
-            if (this.hitCD <= 0) {
-              var ddx = o.x - this.boatX, ddy = o.y - this.boatY;
-              if (Math.sqrt(ddx * ddx + ddy * ddy) < o.r + 13) {
-                this.obs.splice(i, 1); this.lives--; this.hitCD = 1.3;
-                api.shake(6, 0.45); api.flash('#cc2233', 0.3); api.audio.sfx('hurt');
-                continue;
-              }
-            }
+          if (rowed) {
+            this.dist += 30;
+            this.noise = Math.min(this.maxNoise, this.noise + 22);
+            this.ripples.push({ x: this.boatX, y: this.boatY + 12, r: 3, life: 0.55 });
+            api.audio.sfx('blip');
           }
+          this.dist += 15 * dt;
+          var decay = hiding ? 62 : 26;
+          this.noise = Math.max(0, this.noise - decay * dt);
 
-          this.ripples.push({ x: this.boatX, y: this.boatY + 12, r: 3, life: 0.55 });
+          if (this.noise > 34) this.gap -= (this.noise - 34) * 0.55 * dt;
+          else this.gap += (34 - this.noise) * (hiding ? 0.55 : 0.32) * dt;
+          this.gap = clamp(this.gap, 0, this.maxGap);
+
           for (var i = this.ripples.length - 1; i >= 0; i--) {
             this.ripples[i].life -= dt; this.ripples[i].r += 7 * dt;
             if (this.ripples[i].life <= 0) this.ripples.splice(i, 1);
           }
+
+          if (this.gap <= 0 && !this.caught) {
+            this.caught = true; this.cFlash = 0.7;
+            api.shake(7, 0.5); api.flash('#cc2233', 0.3); api.audio.sfx('hurt');
+          }
           if (this.dist >= this.goal) { api.addScore(260); api.win(); }
-          if (this.lives <= 0) api.lose();
         },
         draw(api) {
           var g = api.gfx, c = api.ctx, W = api.W, H = api.H;
@@ -700,6 +729,10 @@
             c.fillStyle = '#100020'; c.beginPath(); c.moveTo(stx, 0); c.lineTo(stx + 11, 0); c.lineTo(stx + 5, sth); c.closePath(); c.fill();
           }
 
+          var pGlow = 1 - this.gap / this.maxGap;
+          c.globalAlpha = 0.10 + pGlow * 0.22; c.fillStyle = '#f0c030';
+          c.beginPath(); c.arc(W / 2, H + 30, 60 + pGlow * 90, 0, Math.PI * 2); c.fill(); c.globalAlpha = 1;
+
           c.strokeStyle = '#6050a0'; c.lineWidth = 1;
           for (var i = 0; i < this.ripples.length; i++) {
             var rip = this.ripples[i];
@@ -707,19 +740,17 @@
           }
           c.globalAlpha = 1;
 
-          for (var i = 0; i < this.obs.length; i++) {
-            var o = this.obs[i];
-            if (o.type === 'r') {
-              c.fillStyle = '#22103a'; c.beginPath(); c.arc(o.x, o.y, o.r, 0, Math.PI * 2); c.fill();
-              c.fillStyle = '#160828'; c.beginPath(); c.arc(o.x - 3, o.y - 3, o.r * 0.45, 0, Math.PI * 2); c.fill();
-            } else {
-              g.circle(o.x, o.y, o.r, '#6a3a08'); g.circle(o.x, o.y, o.r - 4, '#c87020');
-              c.globalAlpha = 0.14; c.fillStyle = '#f0c030'; c.beginPath(); c.arc(o.x, o.y, o.r + 14, 0, Math.PI * 2); c.fill(); c.globalAlpha = 1;
-            }
+          for (var i = 0; i < this.rocks.length; i++) {
+            var rk = this.rocks[i];
+            var rdx2 = rk.x - this.boatX, rdy2 = rk.y - this.boatY;
+            var near = Math.sqrt(rdx2 * rdx2 + rdy2 * rdy2) < rk.r + 10;
+            c.fillStyle = '#22103a'; c.beginPath(); c.arc(rk.x, rk.y, rk.r, 0, Math.PI * 2); c.fill();
+            c.fillStyle = '#160828'; c.beginPath(); c.arc(rk.x - 4, rk.y - 4, rk.r * 0.5, 0, Math.PI * 2); c.fill();
+            if (near) { c.globalAlpha = 0.22; c.fillStyle = '#3a2860'; c.beginPath(); c.arc(rk.x, rk.y, rk.r + 8, 0, Math.PI * 2); c.fill(); c.globalAlpha = 1; }
           }
 
           var bx = this.boatX, by = this.boatY;
-          var blink = this.hitCD > 0 && Math.floor(api.t * 10) % 2 === 0;
+          var blink = this.caught && Math.floor(api.t * 12) % 2 === 0;
           c.fillStyle = blink ? '#cc2233' : '#20100c';
           c.beginPath(); c.moveTo(bx - 20, by); c.lineTo(bx + 20, by);
           c.lineTo(bx + 15, by + 14); c.lineTo(bx - 15, by + 14); c.closePath(); c.fill();
@@ -732,10 +763,12 @@
           g.rect(bx - 3, by - 18, 2,  2, '#0a0008');
           g.rect(bx + 2, by - 18, 2,  2, '#cc2233');
 
-          for (var li = 0; li < 3; li++) heart(api, 8 + li * 18, 19, li < this.lives);
+          g.rect(W - 66, 18, 54, 7, '#1e0c2a');
+          g.rect(W - 66, 18, Math.floor(54 * clamp(this.noise / this.maxNoise, 0, 1)), 7, this.noise > 60 ? '#cc2233' : '#e0c050');
+          api.txtC('NOISE', W - 68, 5, 6, '#8a6080', false);
           api.topBar('THE LAKE');
           drawProg(api, this.dist / this.goal, '#e0c050');
-          api.txtC('ESCAPE', W - 4, 5, 6, '#8a6080', false);
+          api.txtC('PURSUER ' + Math.round(pGlow * 100) + '%', 6, 5, 6, '#8a6080');
         },
       },
     ],
