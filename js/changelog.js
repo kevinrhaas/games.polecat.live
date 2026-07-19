@@ -10,6 +10,16 @@
 // format stays identical to the rest of the fleet.
 export const CHANGELOG = [
   {
+    v: 125,
+    title: 'Browse by story, not by mechanic',
+    kind: 'improvement',
+    ts: '2026-07-19T03:50:09.497Z',
+    items: [
+      'The left menu and filter chips now group the arcade by the kind of story — Horror, Mystery, Myth & Legend, Fairy Tale, Sci-Fi, Swashbuckler, Adventure, and Classics — so Dracula and Frankenstein sit together under Horror.',
+      'Each card still shows its gameplay genre badge, and search still matches genres, so nothing is lost — it’s just easier to find “something spooky”.',
+    ],
+  },
+  {
     v: 124,
     title: 'The Invisible Man rebuilt: one unbroken manhunt replaces three near-identical dodges',
     kind: 'game',

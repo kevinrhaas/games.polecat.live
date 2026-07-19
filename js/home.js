@@ -33,23 +33,24 @@ import { FLEET } from '../vendor/polecat-shell/catalog.js';
   // Console-history generation for the card badge (8-bit = Gen 3, 16-bit = Gen 4).
   const genOf = (g) => g.gen || (g.style === '16-bit' ? 4 : g.style === '3d' ? 5 : 3);
 
-  /* ----------- genre FAMILIES -----------
-   * The catalog carries ~70 bespoke genre strings (great flavor on cards,
-   * hopeless as navigation). The rail and chips filter by ~10 curated
-   * families instead; first matching rule wins, so order matters. */
+  /* ----------- story FAMILIES -----------
+   * The rail and chips browse by the KIND OF STORY (horror, myth, fairy
+   * tale…), not by gameplay mechanic — players come for "something spooky",
+   * and the per-card genre badge + search still cover mechanics. Families
+   * are matched against the property (source + title + tags), which is
+   * canonical in the catalog; first matching rule wins, so order matters. */
   const FAMILIES = [
-    { key: 'Horror',    icon: 'eyeOff',  re: /horror|dark descent|sanity|decay/i },
-    { key: 'Stealth',   icon: 'eye',     re: /stealth|pickpocket|heist|night chase/i },
-    { key: 'Puzzle',    icon: 'grid',    re: /puzzle|swap|mining|garden|spell|transformation|collect/i },
-    { key: 'Rhythm',    icon: 'activity', re: /rhythm/i },
-    { key: 'Racing',    icon: 'bolt',    re: /racing|driving|race|sled|flight|joust|runner|time attack|chase/i },
-    { key: 'Combat',    icon: 'target',  re: /brawler|boss|combat|duel|shooter|shmup|harpoon|cannon|aim|archery|fencing|swashbuckler|battle/i },
-    { key: 'Survival',  icon: 'fire',    re: /survival|convoy|island|climb/i },
-    { key: 'Strategy',  icon: 'layers',  re: /strategy|tactics|defense|manager|sim\b|tycoon/i },
-    { key: 'Story',     icon: 'book',    re: /narrative|drama|mystery|romance|story|dialogue|journey|tragedy/i },
-    { key: 'Adventure', icon: 'compass', re: /./ },   // everything else
+    { key: 'Horror',        icon: 'eyeOff',  re: /dracula|frankenstein|jekyll|nosferatu|living dead|cthulhu|sleepy hollow|phantom of the opera|dorian gray|metamorphosis|king kong/i },
+    { key: 'Mystery',       icon: 'search',  re: /sherlock|baskervilles/i },
+    { key: 'Myth & Legend', icon: 'bolt',    re: /mytholog|arthur|merlin|hercules|odysse|iliad|beowulf|\bthor\b|mulan|divine comedy|robin hood/i },
+    { key: 'Fairy Tale',    icon: 'sparkle', re: /cinderella|snow white|grimm|mermaid|pied piper|pinocchio|alice|wizard of oz|peter pan|pooh|willows|mickey|thousand and one nights|ali baba|rip van winkle/i },
+    { key: 'Sci-Fi',        icon: 'rocket',  re: /war of the worlds|time machine|invisible man|metropolis|trip to the moon|nemo|center of the earth/i },
+    { key: 'Swashbuckler',  icon: 'shield',  re: /zorro|musketeer|monte cristo|pimpernel|ivanhoe|quixote/i },
+    { key: 'Adventure',     icon: 'compass', re: /treasure island|moby|crusoe|swiss family|gulliver|around the world|call of the wild|white fang|jungle book|tarzan|huckleberry|tom sawyer/i },
+    { key: 'Classics',      icon: 'book',    re: /./ },   // Dickens, Shakespeare, Austen, … — everything else
   ];
-  const familyOf = (g) => FAMILIES.find((f) => f.re.test(g.genre || '')).key;
+  const familyOf = (g) =>
+    FAMILIES.find((f) => f.re.test(g.source + ' ' + g.title + ' ' + (g.tags || []).join(' '))).key;
   const familyCount = (key) => shownGames().filter((g) => familyOf(g) === key).length;
 
   /* ----------- tiny seeded RNG so each thumbnail is stable ----------- */
@@ -341,7 +342,7 @@ import { FLEET } from '../vendor/polecat-shell/catalog.js';
     { group: 'Arcade' },
     { key: 'all', label: 'All Games', icon: icon('gamepad', 18) },
     { key: 'surprise', label: 'Surprise Me', icon: icon('sparkle', 18) },
-    { group: 'Genres' },
+    { group: 'Stories' },
     ...FAMILIES.filter((f) => familyCount(f.key) > 0).map((f) => ({ key: f.key, label: f.key, icon: icon(f.icon, 18) })),
     { group: 'More' },
     { key: 'about', label: 'About', icon: icon('info', 18) },
