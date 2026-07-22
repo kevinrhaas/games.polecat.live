@@ -10,6 +10,17 @@
 // format stays identical to the rest of the fleet.
 export const CHANGELOG = [
   {
+    v: 125,
+    title: 'The Headless Horseman rebuilt: memory wards, a courting social-sim, and a stealth-horror chase replace three near-identical dodges',
+    kind: 'game',
+    ts: '2026-07-22T16:49:20.337Z',
+    items: [
+      'Arrival is now a memory game — watch the old wives\' ward-signs light up and tap them back in the same order, instead of steering to collect falling lanterns.',
+      'The harvest feast is a proper courting social-sim: pick charming or bold moves on Katrina while keeping Brom\'s suspicion meter in check.',
+      'The midnight ride and the covered bridge are now ONE escalating stealth-horror chase — duck into the shadow lane when the Horseman\'s gaze sweeps, then dodge his thrown pumpkins in the final sprint.',
+    ],
+  },
+  {
     v: 124,
     title: 'The Invisible Man rebuilt: one unbroken manhunt replaces three near-identical dodges',
     kind: 'game',
