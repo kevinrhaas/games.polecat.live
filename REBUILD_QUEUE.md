@@ -12,7 +12,7 @@ queue** in the same commit. Promote to Gen-4 (hub + branches) where noted.
 
 ## Queue
 8. **timemachine-eloi** — already has a custom dial menu + a timing-bar / catch-dodge / stealth-cones / matchlight-gather / dodge-debris spread (this line's old "4/5 dodge, only plain-list menu" description no longer matches the file — checked 2026-07-22). Still a **Gen-4 candidate** (machine-assembly + resource roguelite, branching eras, inventory) if someone wants to build its 16-bit hub version, but not a worst-offender rebuild.
-10. **greatexpect-pip** — 4/5 move-dodge → **class-ladder branching life-RPG**: money/status stats, gentleman-vs-blacksmith choices grow the ending.
+10. **greatexpect-pip** — PARTIAL (2026-07-22): Satis House rebuilt as the gentleman-vs-blacksmith class-ladder chapter (STATUS/LOYALTY stats pick one of three endings). Still 3/4 remaining chapters are move-dodge (marshes, thames, wharf) — the rest of "money/status stats, branching trek" is still open.
 11. **scrooge-carol** — 4/5 catch/dodge/runner → **branching time-travel narrative**: Past/Present/Future choices rewrite a redemption ledger + a coin-sorting puzzle.
 12. **olivertwist-dodge** — 3 side-dodges → **stealth pickpocket sim**: grid lift-timing + a suspicion/heat meter under Fagin.
 13. **littlemermaid-sea** — 4/5 dodge → **potion-brewing ingredient-memory** at the witch's cave + a branching courtship dialogue; keep only the dance as action.

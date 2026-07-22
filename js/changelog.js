@@ -10,6 +10,16 @@
 // format stays identical to the rest of the fleet.
 export const CHANGELOG = [
   {
+    v: 127,
+    title: 'Great Expectations: Satis House rebuilt as a class-ladder life-choice chapter',
+    kind: 'game',
+    ts: '2026-07-22T17:06:38.320Z',
+    items: [
+      'The cake-catching minigame at Satis House is now five encounters with Estella — pick a Gentleman or Blacksmith response each round, building STATUS and LOYALTY stats.',
+      'No fail state here: your accumulated choices decide which of three endings Pip lives, ambitious, unashamed, or torn between two lives.',
+    ],
+  },
+  {
     v: 126,
     title: 'White Fang rebuilt: a hunger/cold survival-sim and a pack-dominance strategy chapter replace two near-identical dodges',
     kind: 'game',

@@ -2,7 +2,8 @@
  * GREAT EXPECTATIONS — RISE FROM THE FORGE
  * Five acts from Dickens' 1861 novel:
  *   1. THE MARSHES     — free-move stealth: bring provisions to Magwitch (26s)
- *   2. SATIS HOUSE     — fall-catcher: catch cake, dodge rot (collect 12)
+ *   2. SATIS HOUSE     — class-ladder life-choices: Gentleman vs Blacksmith
+ *      picks build STATUS/LOYALTY stats that pick one of three endings
  *   3. JAGGERS' LAW    — pendulum: tap the gavel into the zone 8 times
  *   4. DOWN THE THAMES — runner/dodge: row to the waiting ship (26s)
  *   5. THE CONFRONTATION — dodge + tap: strike Compeyson 5 times
@@ -743,103 +744,90 @@
 
       /* ───────────────────────────────────────────────────────────────
        * ACT 2 — SATIS HOUSE
-       * Fall-catcher: catch good wedding cake pieces (12 needed),
-       * dodge rotten ones (3 rotten = lose). Pip moves left/right.
+       * Class-ladder life-choices: five encounters with Estella, each a
+       * Gentleman (STATUS) vs Blacksmith (LOYALTY) pick. No fail state —
+       * the accumulated stats pick which of three endings Pip lives.
        * ─────────────────────────────────────────────────────────────── */
       {
         id:   'satis',
         name: 'SATIS HOUSE',
-        sub:  'THE ROTTING WEDDING FEAST',
+        sub:  'SHE TEACHES HIM TO WANT MORE',
         icon: function (api, ix, iy) { drawChapterIcon(api, 1, ix, iy); },
         intro: [
           'MISS HAVISHAM STOPPED',
           'ALL THE CLOCKS AT NINE',
           'TWENTY ON HER WEDDING',
-          'MORNING. THE FEAST HAS',
-          'ROTTED FOR DECADES.',
-          'PIP MUST CATCH WHAT',
-          'REMAINS BEFORE IT FALLS.',
+          'MORNING. ESTELLA WATCHES',
+          'PIP WITH COOL CONTEMPT.',
+          'Every answer he gives',
+          'teaches him to want more —',
+          'or to stay who he is.',
         ],
         quote: '"She seemed to have stopped... her own heart." — Dickens, 1861',
-        help:  'Tap LEFT or RIGHT half to move. Catch GOLDEN cake pieces (need 12). Avoid the ROTTEN dark pieces — 3 caught = over!',
-        winText:  'Pip catches enough. Miss Havisham watches from her throne of cobwebs, unmoved.',
-        loseText: 'The rotten feast overwhelms Pip. He retreats from the rotting room.',
+        help:  'TAP a choice each round · lean GENTLEMAN (status) or BLACKSMITH (loyalty) — there is no wrong answer, only an ending',
+        winText:  '',
+        loseText: '',
 
         init: function (api) {
-          var W = api.W;
-          this.px = W / 2;
-          this.speed = 130;
-          this.lives = 3;
-          this.caught = 0;
-          this.need = 12;
-          this.pieces = [];
-          this.spawnT = 0.9;
-          this.elapsed = 0;
-          this.hitCD = 0;
+          this.status = 0; this.loyalty = 0;
+          this.round = 0;
+          this.encounters = [
+            { title: 'ESTELLA CALLS HIS BOOTS "COARSE"', a: { label: 'Look away, ashamed', sub: '(gentleman)', status: 20, loyalty: 0 },
+              b: { label: '"Joe made them himself"', sub: '(blacksmith)', status: 0, loyalty: 20 } },
+            { title: 'SHE OFFERS CARDS — "BEGGAR MY NEIGHBOUR"', a: { label: 'Play to impress her', sub: '(gentleman)', status: 18, loyalty: 0 },
+              b: { label: 'Play like it\'s the forge yard', sub: '(blacksmith)', status: 0, loyalty: 18 } },
+            { title: 'MISS HAVISHAM ASKS: "DO YOU LOVE HER?"', a: { label: 'Yes — desperately', sub: '(gentleman)', status: 24, loyalty: 0 },
+              b: { label: 'I love who I already have', sub: '(blacksmith)', status: 0, loyalty: 24 } },
+            { title: 'ESTELLA STRIKES HIM AND WALKS AWAY', a: { label: 'Vow to become worthy of her', sub: '(gentleman)', status: 22, loyalty: 0 },
+              b: { label: 'Vow never to return', sub: '(blacksmith)', status: 0, loyalty: 22 } },
+            { title: 'THE GATE CLOSES BEHIND HIM', a: { label: 'Dream of a gentleman\'s life', sub: '(gentleman)', status: 20, loyalty: 0 },
+              b: { label: 'Walk home to the forge, glad of it', sub: '(blacksmith)', status: 0, loyalty: 20 } },
+          ];
+          this.active = this.encounters[0];
+          this.feedback = null; this.feedbackT = 0;
+        },
+
+        choiceRects: function (api) {
+          var W = api.W, H = api.H;
+          return [
+            { x: 20, y: H - 130, w: W - 40, h: 44 },
+            { x: 20, y: H - 78, w: W - 40, h: 44 },
+          ];
         },
 
         update: function (api, dt) {
-          var W = api.W, H = api.H;
-          this.elapsed += dt;
-          this.hitCD = Math.max(0, this.hitCD - dt);
-
-          // Move Pip
-          var mv = 0;
-          if (api.keyDown('left')  || (api.pointer.down && api.pointer.x < W / 2)) mv = -1;
-          if (api.keyDown('right') || (api.pointer.down && api.pointer.x > W / 2)) mv =  1;
-          this.px = clamp(this.px + mv * 192 * dt, 22, W - 22);
-
-          // Spawn pieces
-          this.spawnT -= dt;
-          if (this.spawnT <= 0) {
-            // Roughly 60% good, 40% rotten
-            var isGood = Math.random() < 0.6;
-            this.pieces.push({
-              x: 20 + Math.random() * (W - 40),
-              y: -20,
-              good: isGood,
-              spd: this.speed + this.elapsed * 4 + Math.random() * 30,
-            });
-            this.spawnT = 0.70 - Math.min(0.35, this.elapsed * 0.018) + Math.random() * 0.25;
-          }
-
-          // Move pieces down
-          for (var pi = 0; pi < this.pieces.length; pi++) {
-            this.pieces[pi].y += this.pieces[pi].spd * dt;
-          }
-
-          // Catch check (catcher at bottom of screen)
-          var catchY = api.H * 0.85, catchW = 40;
-          for (var pi2 = this.pieces.length - 1; pi2 >= 0; pi2--) {
-            var piece = this.pieces[pi2];
-            if (piece.y >= catchY - 8 && piece.y <= catchY + 8) {
-              if (Math.abs(piece.x - this.px) < catchW) {
-                this.pieces.splice(pi2, 1);
-                if (piece.good) {
-                  this.caught++;
-                  api.addScore(10);
-                  api.audio.sfx('coin');
-                  api.burst(piece.x, catchY, C.cake, 7);
-                } else if (this.hitCD <= 0) {
-                  this.lives--;
-                  this.hitCD = 1.2;
-                  api.shake(6, 0.35);
-                  api.flash(C.rot, 0.3);
-                  api.audio.sfx('hurt');
-                  if (this.lives <= 0) { api.lose(); return; }
+          this.feedbackT = Math.max(0, this.feedbackT - dt);
+          if (this.feedbackT > 0) return;
+          if (!api.pointer.justDown) return;
+          var rects = this.choiceRects(api);
+          var opts = [this.active.a, this.active.b];
+          for (var i = 0; i < 2; i++) {
+            var r = rects[i];
+            if (api.pointer.x >= r.x && api.pointer.x <= r.x + r.w &&
+                api.pointer.y >= r.y && api.pointer.y <= r.y + r.h) {
+              var pick = opts[i];
+              this.status += pick.status;
+              this.loyalty += pick.loyalty;
+              api.addScore(pick.status + pick.loyalty);
+              api.audio.sfx(i === 0 ? 'select' : 'coin');
+              api.burst(api.W / 2, api.H * 0.4, i === 0 ? C.parch : C.amber, 8);
+              this.feedback = pick.label;
+              this.feedbackT = 0.9;
+              this.round++;
+              if (this.round >= this.encounters.length) {
+                if (this.status > this.loyalty + 10) {
+                  this.winText = 'Pip walks out wanting to be a gentleman more than anything in the world. Ambition has him now.';
+                } else if (this.loyalty > this.status + 10) {
+                  this.winText = 'Pip walks out unashamed of the forge. Estella\'s scorn slides off him like rain.';
+                } else {
+                  this.winText = 'Pip walks out torn between two lives — the one he has, and the one he now wants.';
                 }
-                continue;
+                api.win();
+                return;
               }
+              this.active = this.encounters[this.round];
+              break;
             }
-            // Remove pieces that fell off
-            if (piece.y > api.H + 20) {
-              this.pieces.splice(pi2, 1);
-            }
-          }
-
-          if (this.caught >= this.need) {
-            api.addScore(25);
-            api.win();
           }
         },
 
@@ -853,70 +841,60 @@
           c.fillStyle = bg; c.fillRect(0, 0, W, H);
 
           // Long table silhouette at mid-height
-          g.rect(0, H*0.46, W, 12, '#2a1a12');
-          g.rect(8, H*0.46+12, 12, H*0.35, '#1e1208');
-          g.rect(W-20, H*0.46+12, 12, H*0.35, '#1e1208');
+          g.rect(0, H*0.30, W, 12, '#2a1a12');
+          g.rect(8, H*0.30+12, 12, H*0.16, '#1e1208');
+          g.rect(W-20, H*0.30+12, 12, H*0.16, '#1e1208');
 
           // Stopped clock on wall
           c.strokeStyle = '#3a2a1a'; c.lineWidth = 2;
-          c.beginPath(); c.arc(W/2, H*0.16, 22, 0, Math.PI*2); c.stroke();
+          c.beginPath(); c.arc(W/2, H*0.12, 18, 0, Math.PI*2); c.stroke();
           c.strokeStyle = C.brownL; c.lineWidth = 2;
-          // Hands stopped at 9:20
-          c.beginPath(); c.moveTo(W/2, H*0.16); c.lineTo(W/2 - 12, H*0.16 - 8); c.stroke(); // hour 9
-          c.beginPath(); c.moveTo(W/2, H*0.16); c.lineTo(W/2 + 6, H*0.16 - 18); c.stroke(); // min 4
+          c.beginPath(); c.moveTo(W/2, H*0.12); c.lineTo(W/2 - 10, H*0.12 - 6); c.stroke();
+          c.beginPath(); c.moveTo(W/2, H*0.12); c.lineTo(W/2 + 5, H*0.12 - 14); c.stroke();
 
           // Cobwebs in corners
           c.strokeStyle = 'rgba(180,170,150,0.18)'; c.lineWidth = 1;
-          for (var cw = 0; cw < 6; cw++) {
-            c.beginPath(); c.moveTo(0, 0); c.lineTo(cw*12, cw*8); c.stroke();
-          }
-          for (var cw2 = 0; cw2 < 6; cw2++) {
-            c.beginPath(); c.moveTo(W, 0); c.lineTo(W-cw2*12, cw2*8); c.stroke();
-          }
+          for (var cw = 0; cw < 6; cw++) { c.beginPath(); c.moveTo(0, 0); c.lineTo(cw*12, cw*8); c.stroke(); }
+          for (var cw2 = 0; cw2 < 6; cw2++) { c.beginPath(); c.moveTo(W, 0); c.lineTo(W-cw2*12, cw2*8); c.stroke(); }
 
-          // Miss Havisham silhouette (seated in chair)
-          c.fillStyle = '#0a0608';
-          // Chair
-          g.rect(W-52, H*0.54, 32, 40, '#120a08');
-          g.rect(W-56, H*0.42, 40, 12, '#120a08');
-          // Figure
-          g.rect(W-48, H*0.34, 22, 24, '#0a0608');
-          g.circle(W-37, H*0.30, 10, '#0a0608');
-          // Wedding veil (rough drape)
-          c.fillStyle = 'rgba(200,190,170,0.08)';
-          c.fillRect(W-52, H*0.26, 36, 40);
+          // Miss Havisham (left) + Estella (right) flanking the table
+          g.rect(28, H*0.20, 22, 24, '#0a0608');
+          g.circle(39, H*0.17, 10, '#0a0608');
+          c.fillStyle = 'rgba(200,190,170,0.10)'; c.fillRect(24, H*0.13, 30, 34);
+          g.rect(W-50, H*0.20, 20, 24, '#2a1622');
+          g.circle(W-40, H*0.17, 9, '#3a2030');
 
-          // Falling pieces
-          for (var pi = 0; pi < this.pieces.length; pi++) {
-            var piece = this.pieces[pi];
-            var px2 = piece.x, py2 = piece.y;
-            if (piece.good) {
-              // Golden cake slice
-              c.fillStyle = C.cake;
-              c.beginPath();
-              c.moveTo(px2, py2 - 9);
-              c.lineTo(px2 + 8, py2 + 7);
-              c.lineTo(px2 - 8, py2 + 7);
-              c.closePath(); c.fill();
-              c.fillStyle = C.cakeD;
-              c.fillRect(px2 - 8, py2 + 5, 16, 3);
-            } else {
-              // Rotten piece (dark green)
-              c.fillStyle = C.rot;
-              c.fillRect(px2 - 7, py2 - 7, 14, 14);
-              c.fillStyle = C.rotL;
-              c.fillRect(px2 - 4, py2 - 4, 8, 8);
+          // Pip, small, between them
+          drawPip(g, c, W/2, H*0.34);
+
+          // encounter card
+          var cardY = H * 0.42;
+          g.rect(16, cardY, W - 32, 46, '#241614');
+          c.strokeStyle = C.brownL; c.lineWidth = 1; c.strokeRect(16, cardY, W - 32, 46);
+          api.txtCFit(this.active ? this.active.title : '', W / 2, cardY + 8, 9, C.cream, true, W - 44);
+          if (this.feedbackT > 0) api.txtCFit('"' + this.feedback + '"', W / 2, cardY + 26, 8, C.amberL, false, W - 44);
+
+          // choice buttons
+          if (this.feedbackT <= 0 && this.active) {
+            var rects = this.choiceRects(api);
+            var opts = [this.active.a, this.active.b];
+            for (var i = 0; i < 2; i++) {
+              var r = rects[i], o = opts[i];
+              g.rect(r.x, r.y, r.w, r.h, i === 0 ? '#241614' : '#1a2418');
+              c.strokeStyle = i === 0 ? C.parchD : C.green; c.lineWidth = 1; c.strokeRect(r.x, r.y, r.w, r.h);
+              api.txtCFit(o.label, r.x + r.w / 2, r.y + 8, 9, C.cream, false, r.w - 12);
+              api.txtCFit(o.sub, r.x + r.w / 2, r.y + 26, 7, i === 0 ? C.parch : C.greenL, false, r.w - 12);
             }
           }
 
-          // Catcher (Pip's tray)
-          var catchY = H * 0.85;
-          g.rect(this.px - 40, catchY - 4, 80, 8, C.brownL);
-          // Pip above the tray
-          drawPip(g, c, this.px, catchY - 18);
+          // stat bars
+          api.txt('GENTLEMAN', 6, 20, 7, C.amberL, false, true);
+          g.rect(76, 20, W - 130, 6, '#241408');
+          g.rect(76, 20, Math.floor((W - 130) * clamp(this.status / 100, 0, 1)), 6, C.amberL);
+          api.txt('FORGE', 6, 30, 7, C.greenL, false, true);
+          g.rect(56, 30, W - 110, 6, '#0e1a0e');
+          g.rect(56, 30, Math.floor((W - 110) * clamp(this.loyalty / 100, 0, 1)), 6, C.greenL);
 
-          // HUD
-          api.topBar('SATIS HOUSE', this.caught + '/' + this.need, this.lives);
           api.vignette();
           api.scanlines();
         },
