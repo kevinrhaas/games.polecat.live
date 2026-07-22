@@ -11,8 +11,7 @@ shift** (not a reskin — new verbs, and vary the structure/opening per CLAUDE.m
 queue** in the same commit. Promote to Gen-4 (hub + branches) where noted.
 
 ## Queue
-8. **timemachine-eloi** — 4/5 dodge, only plain-list menu left → **machine-assembly + resource roguelite** (ration parts, tune circuits, branching eras, inventory); Gen-4 candidate.
-9. **whitefang-wild** — 4/5 move/chase → **Yukon survival-sim** (hunger/cold/pack-dominance meters, branching trek) + a pack-hierarchy strategy chapter.
+8. **timemachine-eloi** — already has a custom dial menu + a timing-bar / catch-dodge / stealth-cones / matchlight-gather / dodge-debris spread (this line's old "4/5 dodge, only plain-list menu" description no longer matches the file — checked 2026-07-22). Still a **Gen-4 candidate** (machine-assembly + resource roguelite, branching eras, inventory) if someone wants to build its 16-bit hub version, but not a worst-offender rebuild.
 10. **greatexpect-pip** — 4/5 move-dodge → **class-ladder branching life-RPG**: money/status stats, gentleman-vs-blacksmith choices grow the ending.
 11. **scrooge-carol** — 4/5 catch/dodge/runner → **branching time-travel narrative**: Past/Present/Future choices rewrite a redemption ledger + a coin-sorting puzzle.
 12. **olivertwist-dodge** — 3 side-dodges → **stealth pickpocket sim**: grid lift-timing + a suspicion/heat meter under Fagin.
