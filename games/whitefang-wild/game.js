@@ -1,8 +1,11 @@
 /* ============================================================================
  * WHITE FANG — WILD BORN · FIRE TAMED
  * Five chapters of Jack London's 1906 tale:
- *   1. BORN OF THE WILD   — wolf cub dodges eagle strikes in the Yukon wild
- *   2. GRAY BEAVER'S CAMP — collect fish while sled dogs hunt you
+ *   1. SURVIVAL OF THE FITTEST — resource-sim: forage fish/wood against dual
+ *      HUNGER/COLD meters, dodge the eagle's telegraphed swoop, pick a route
+ *      at a mid-trail fork
+ *   2. THE LAW OF THE PACK — social-strategy: choose safe or bold responses to
+ *      rise in DOMINANCE without maxing Gray Beaver's PUNISHMENT meter
  *   3. BEAUTY SMITH'S PIT — dodge lunges, counter in the red window
  *   4. THE LOVE-MASTER    — earn Weedon Scott's trust through a timing meter
  *   5. NIGHT OF JIM HALL  — chase the escaped convict to protect the judge
@@ -241,85 +244,116 @@
 
     chapters: [
 
-      /* ═══════════════════════════ 1. BORN OF THE WILD ═══════════════════ */
+      /* ═══════════════════════════ 1. SURVIVAL OF THE FITTEST ═══════════ */
       {
-        id: 'born', name: 'BORN OF THE WILD', sub: 'THE LONE CUB',
+        id: 'survival', name: 'SURVIVAL OF THE FITTEST', sub: 'HUNGER AND COLD',
         icon(api, x, y) {
           var g = api.gfx;
-          /* snowflake */
-          g.rect(x - 8, y - 1, 16, 2, '#7ac8ff');
-          g.rect(x - 1, y - 8, 2, 16, '#7ac8ff');
-          g.rect(x - 6, y - 6, 2, 2,  '#7ac8ff');
-          g.rect(x + 4, y - 6, 2, 2,  '#7ac8ff');
-          g.rect(x - 6, y + 4, 2, 2,  '#7ac8ff');
-          g.rect(x + 4, y + 4, 2, 2,  '#7ac8ff');
+          g.rect(x - 1, y - 8, 2, 13, '#7ac8ff');
+          g.circle(x, y + 6, 3, '#cc4422');
         },
         intro: [
           'A SHE-WOLF WATCHES',
           'HER CUB TAKE HIS',
           'FIRST STEPS INTO',
           'the Yukon wild.',
-          'Eagles circle above.',
+          'Hunger and cold stalk him',
+          'as surely as the eagle above.',
         ],
         quote: '"He did not know the word, but fear was the motif of his life."',
-        help: 'DRAG left and right · dodge eagle strikes · survive 24 seconds',
-        winText: 'The cub slips into a rock crevice. The eagle screams and wheels away empty.',
-        loseText: 'The eagle\'s talons find him. The forest grows very quiet and cold.',
+        help: 'DRAG to forage FISH (hunger) and WOOD (cold) · dodge the eagle\'s swoop · pick a route at the fork',
+        winText: 'The cub endures the trail, fed and warm enough. The wild has not claimed him yet.',
+        loseText: 'Hunger and cold close in together. The cub curls small in the snow, and does not rise.',
         init(api) {
-          this.px    = api.W / 2;
-          this.timer = 24; this.lives = 3;
-          this.eagles = []; this.spawnT = 1.3;
-          this.spd   = 155; this.hurt = 0;
+          this.px = api.W / 2; this.py = api.H - 90;
+          this.hunger = 22; this.cold = 22; this.cap = 100;
+          this.hungerRate = 1.55; this.coldRate = 1.55;
+          this.timer = 0; this.duration = 27;
+          this.forages = []; this.spawnT = 1.0;
+          this.eagleState = 'wait'; this.eagleT = 2.6; this.eagleX = api.W / 2;
+          this.hurt = 0;
+          this.forkAt = 12; this.forked = false; this.showFork = false; this.fork = null;
+          this.done = false;
         },
         update(api, dt) {
-          var f = dt * 60, W = api.W, H = api.H;
-          this.timer -= dt;
+          if (this.done) return;
+          var W = api.W, H = api.H, f = dt * 60;
+          this.timer += dt;
+          this.hurt = Math.max(0, this.hurt - dt);
 
-          /* move cub */
+          if (!this.forked && this.timer >= this.forkAt) this.showFork = true;
+          if (this.showFork) {
+            if (api.pointer.justDown && api.pointer.y > H - 140) {
+              if (api.pointer.x < W / 2) { this.fork = 'river'; this.coldRate += 0.9; this.hungerRate = Math.max(0.6, this.hungerRate - 0.35); }
+              else { this.fork = 'snow'; this.hungerRate += 0.9; this.coldRate = Math.max(0.6, this.coldRate - 0.35); }
+              this.forked = true; this.showFork = false;
+              api.audio.sfx('select');
+            }
+            return; // meters pause while the choice is up
+          }
+
+          this.hunger = Math.min(this.cap, this.hunger + this.hungerRate * dt);
+          this.cold = Math.min(this.cap, this.cold + this.coldRate * dt);
+          if (this.hunger >= this.cap || this.cold >= this.cap) { this.done = true; api.lose(); return; }
+          if (this.timer >= this.duration) {
+            this.done = true;
+            api.score += Math.floor((this.cap - this.hunger) + (this.cap - this.cold));
+            api.win(); return;
+          }
+
           if (api.pointer.down) {
             var dx = api.pointer.x - this.px;
-            this.px += Math.sign(dx) * Math.min(Math.abs(dx), 215 * dt);
+            this.px += Math.sign(dx) * Math.min(Math.abs(dx), 200 * dt);
           }
-          if (api.keyDown('left'))  this.px -= 3.5 * f;
-          if (api.keyDown('right')) this.px += 3.5 * f;
+          if (api.keyDown('left'))  this.px -= 3.4 * f;
+          if (api.keyDown('right')) this.px += 3.4 * f;
           this.px = clamp(this.px, 16, W - 16);
 
-          /* spawn eagles */
           this.spawnT -= dt;
-          if (this.spawnT <= 0) {
-            this.spawnT = 0.6 + Math.random() * 0.55;
-            this.eagles.push({ x: 20 + Math.random() * (W - 40), y: -22, hit: false });
+          if (this.spawnT <= 0 && this.forages.length < 4) {
+            this.spawnT = 0.85 + Math.random() * 0.7;
+            this.forages.push({
+              x: 22 + Math.random() * (W - 44),
+              y: H - 90 + (Math.random() * 44 - 22),
+              kind: Math.random() < 0.5 ? 'fish' : 'wood', t: 0,
+            });
           }
-
-          /* move eagles down */
-          for (var i = 0; i < this.eagles.length; i++) this.eagles[i].y += this.spd * dt;
-          this.spd = Math.min(260, 155 + (24 - Math.max(0, this.timer)) * 4.5);
-
-          /* collision */
-          this.hurt -= dt;
-          for (var j = 0; j < this.eagles.length; j++) {
-            var e = this.eagles[j];
-            if (!e.hit && this.hurt <= 0 && Math.abs(e.x - this.px) < 22 && e.y > H - 100 && e.y < H - 52) {
-              e.hit = true; this.lives--;
-              api.shake(7, 0.3); api.flash('#cc2200', 0.2); api.audio.sfx('hurt');
-              this.hurt = 0.9;
-              if (this.lives <= 0) { api.lose(); return; }
+          for (var i = this.forages.length - 1; i >= 0; i--) {
+            var it = this.forages[i];
+            it.t += dt;
+            if (Math.abs(it.x - this.px) < 20 && Math.abs(it.y - this.py) < 20) {
+              if (it.kind === 'fish') this.hunger = Math.max(0, this.hunger - 16);
+              else this.cold = Math.max(0, this.cold - 16);
+              api.score += 15; api.audio.sfx('coin'); api.burst(it.x, it.y, '#7ac8ff', 6);
+              this.forages.splice(i, 1); continue;
             }
+            if (it.t > 6) this.forages.splice(i, 1);
           }
-          this.eagles = this.eagles.filter(function (e) { return e.y < H + 24 && !e.hit; });
 
-          api.score = Math.floor((24 - Math.max(0, this.timer)) * 8);
-          if (this.timer <= 0) { api.score += 100; api.win(); }
+          // eagle: telegraphed swoop that spikes BOTH meters if it catches the cub
+          this.eagleT -= dt;
+          if (this.eagleState === 'wait' && this.eagleT <= 0) {
+            this.eagleState = 'warn'; this.eagleT = 0.7;
+            this.eagleX = clamp(this.px + (Math.random() * 70 - 35), 24, W - 24);
+          } else if (this.eagleState === 'warn' && this.eagleT <= 0) {
+            this.eagleState = 'strike'; this.eagleT = 0.18;
+            if (this.hurt <= 0 && Math.abs(this.eagleX - this.px) < 24) {
+              this.hunger = Math.min(this.cap, this.hunger + 12);
+              this.cold = Math.min(this.cap, this.cold + 12);
+              this.hurt = 1.0;
+              api.shake(7, 0.3); api.flash('#cc2200', 0.2); api.audio.sfx('hurt');
+            }
+          } else if (this.eagleState === 'strike' && this.eagleT <= 0) {
+            this.eagleState = 'wait'; this.eagleT = Math.max(1.6, 2.8 - this.timer * 0.04);
+          }
         },
         draw(api) {
           var g = api.gfx, c = api.ctx, W = api.W, H = api.H;
 
-          /* snowy sky */
           var sky = c.createLinearGradient(0, 0, 0, H);
           sky.addColorStop(0, '#060c1c'); sky.addColorStop(1, '#1a2840');
           c.fillStyle = sky; c.fillRect(0, 0, W, H);
 
-          /* drifting snow particles */
           for (var i = 0; i < 22; i++) {
             var sx = ((i * 73 + api.t * 15) % (W + 20)) - 5;
             var sy = ((i * 51 + api.t * 19 * (i % 3 === 0 ? 1 : 0.6)) % (H - 60));
@@ -328,7 +362,6 @@
           }
           c.globalAlpha = 1;
 
-          /* pine trees */
           var treeX = [22, 80, 150, 215, 258];
           for (var ti = 0; ti < treeX.length; ti++) {
             var tx = treeX[ti], th = 55 + (ti * 13) % 26;
@@ -342,200 +375,170 @@
             c.fillStyle = '#c8dcf0'; c.fillRect(tx - 8, H - 64 - th - 2, 16, 3);
           }
 
-          /* snow ground */
           c.fillStyle = '#c0d4e8'; c.fillRect(0, H - 64, W, 64);
           c.fillStyle = '#deeeff'; c.fillRect(0, H - 66, W, 4);
 
-          /* eagle sprites */
-          for (var ei = 0; ei < this.eagles.length; ei++) {
-            var en = this.eagles[ei];
-            if (en.hit) continue;
-            var fw = 26 + Math.sin(api.t * 5 + en.x * 0.1) * 4;
-            c.fillStyle = '#5a4830';
-            /* wings */
-            c.beginPath(); c.moveTo(en.x, en.y); c.lineTo(en.x - fw, en.y - 10); c.lineTo(en.x - fw + 8, en.y + 7); c.closePath(); c.fill();
-            c.beginPath(); c.moveTo(en.x, en.y); c.lineTo(en.x + fw, en.y - 10); c.lineTo(en.x + fw - 8, en.y + 7); c.closePath(); c.fill();
-            /* body */
-            g.circle(en.x, en.y, 7, '#3a2c18');
-            /* white head */
-            g.circle(en.x, en.y - 10, 5, '#d8e8f0');
-            /* talons */
-            g.rect(en.x - 5, en.y + 6, 2, 9, '#8a7030');
-            g.rect(en.x + 3, en.y + 6, 2, 9, '#8a7030');
-          }
+          // forage nodes
+          this.forages.forEach(function (it) {
+            if (it.kind === 'fish') g.sprite(['.ff.', 'fffb', '.ff.'], it.x - 6, it.y - 6, { f: '#48b0e0', b: '#0078b0' }, 4);
+            else { g.rect(it.x - 6, it.y - 3, 12, 6, '#5a3a1a'); g.rect(it.x - 6, it.y - 3, 12, 2, '#7a5228'); }
+          });
 
-          /* shadow on snow */
-          for (var si = 0; si < this.eagles.length; si++) {
-            var ee = this.eagles[si];
-            if (ee.hit || ee.y < H * 0.5) continue;
-            var sa = (ee.y / H - 0.5) * 0.5;
-            var sr = (ee.y / H) * 18;
-            c.globalAlpha = sa;
-            g.circle(ee.x, H - 60, sr, '#334455');
+          // eagle telegraph + strike
+          if (this.eagleState !== 'wait') {
+            var warn = this.eagleState === 'warn';
+            c.globalAlpha = warn ? 0.35 + 0.25 * Math.sin(api.t * 12) : 0.55;
+            g.circle(this.eagleX, H - 60, warn ? 22 : 30, '#cc2200');
             c.globalAlpha = 1;
+            var fw = 22;
+            c.fillStyle = '#5a4830';
+            c.beginPath(); c.moveTo(this.eagleX, 50); c.lineTo(this.eagleX - fw, 40); c.lineTo(this.eagleX - fw + 8, 57); c.closePath(); c.fill();
+            c.beginPath(); c.moveTo(this.eagleX, 50); c.lineTo(this.eagleX + fw, 40); c.lineTo(this.eagleX + fw - 8, 57); c.closePath(); c.fill();
+            g.circle(this.eagleX, 50, 7, '#3a2c18');
           }
 
-          /* wolf cub */
           var bob = Math.sin(api.t * 7) * 2;
+          c.globalAlpha = this.hurt > 0 ? 0.5 : 1;
           drawWolf(g, this.px - 10, H - 90 + bob, 4);
+          c.globalAlpha = 1;
 
-          api.topBar('BORN OF THE WILD');
-          api.txt('TIME ' + Math.ceil(Math.max(0, this.timer)), 6, 20, 9, '#7ac8ff');
-          for (var li = 0; li < 3; li++) g.circle(W - 20 - li * 17, 22, 5, li < this.lives ? '#7ac8ff' : '#0e1a28');
+          api.topBar('SURVIVAL OF THE FITTEST');
+          api.txt('HUNGER', 6, 4, 6, '#ff8866');
+          g.rect(46, 5, W - 96, 6, '#1a0e0e');
+          g.rect(46, 5, Math.floor((W - 96) * clamp(this.hunger / this.cap, 0, 1)), 6, '#ff5533');
+          api.txt('COLD', 6, 14, 6, '#7ac8ff');
+          g.rect(46, 15, W - 96, 6, '#0e1a2a');
+          g.rect(46, 15, Math.floor((W - 96) * clamp(this.cold / this.cap, 0, 1)), 6, '#4499ee');
+
+          if (this.showFork) {
+            c.fillStyle = 'rgba(3,8,16,.86)'; c.fillRect(0, 0, W, H);
+            api.txtCFit('A FORK IN THE TRAIL', W / 2, H * 0.28, 11, '#deeeff', true);
+            var by = H - 140;
+            g.rect(16, by, W / 2 - 24, 60, '#0c1e34'); g.rectO(16, by, W / 2 - 24, 60, '#4499ee', 1);
+            api.txtCFit('THE FROZEN RIVER', 16 + (W / 2 - 24) / 2, by + 8, 8, '#deeeff', false, W / 2 - 34);
+            api.txtCFit('faster, colder', 16 + (W / 2 - 24) / 2, by + 40, 6, '#7ac8ff', false, W / 2 - 34);
+            g.rect(W / 2 + 8, by, W / 2 - 24, 60, '#1e2c14'); g.rectO(W / 2 + 8, by, W / 2 - 24, 60, '#88cc66', 1);
+            api.txtCFit('THE DEEP SNOW', W / 2 + 8 + (W / 2 - 24) / 2, by + 8, 8, '#deeeff', false, W / 2 - 34);
+            api.txtCFit('slower, hungrier', W / 2 + 8 + (W / 2 - 24) / 2, by + 40, 6, '#aaddaa', false, W / 2 - 34);
+          } else {
+            api.txtC(Math.ceil(Math.max(0, this.duration - this.timer)) + 's', W / 2, H - 22, 8, '#9bbccc');
+          }
           api.vignette();
         },
       },
 
-      /* ═══════════════════════════ 2. GRAY BEAVER'S CAMP ═════════════════ */
+      /* ═══════════════════════════ 2. THE LAW OF THE PACK ════════════════ */
       {
-        id: 'camp', name: "GRAY BEAVER'S CAMP", sub: 'THE LAW OF HUNGER',
+        id: 'pack', name: 'THE LAW OF THE PACK', sub: 'EARN YOUR PLACE',
         icon(api, x, y) {
           var g = api.gfx;
-          /* campfire */
-          g.circle(x, y + 2, 6, '#c07820');
-          g.circle(x, y - 2, 4, '#f0a030');
-          g.circle(x, y - 6, 2, '#ffee88');
-          g.rect(x - 7, y + 6, 14, 3, '#5a3a1a');
+          g.rect(x - 8, y - 3, 3, 8, '#e0a020');
+          g.rect(x + 5, y - 3, 3, 8, '#e0a020');
+          g.rect(x - 8, y + 3, 16, 3, '#e0a020');
         },
         intro: [
           'WHITE FANG IS CAUGHT',
           'BY GRAY BEAVER.',
-          'THE SLED DOGS BULLY.',
-          'He must eat to survive.',
+          'THE SLED DOGS TEST HIM,',
+          'ONE BY ONE, AT THE CAMP\'S EDGE.',
+          'How he answers decides his rank.',
         ],
         quote: '"It is not pleasant to be lonely; it is better to knock than be knocked."',
-        help: 'DRAG to move · catch fish · avoid sled dogs · 12 fish to survive',
-        winText: 'White Fang eats his fill and holds his ground. He begins to learn the camp.',
-        loseText: 'The pack drives him back into the snow, cold and starving once more.',
+        help: 'TAP a choice each round · rise in DOMINANCE before Gray Beaver\'s PUNISHMENT boils over',
+        winText: 'White Fang holds his ground. The pack yields him a place by the fire.',
+        loseText: 'Gray Beaver\'s club falls hard. White Fang slinks back, lower than before.',
         init(api) {
-          this.px = api.W / 2; this.py = api.H - 110;
-          this.fish = []; this.fSpawn = 0.9;
-          this.dogs = []; this.dSpawn = 2.6;
-          this.caught = 0; this.need = 12;
-          this.lives = 3; this.hurt = 0; this.speed = 125;
+          this.dominance = 0; this.needDom = 60;
+          this.punish = 0; this.maxPunish = 100;
+          this.round = 0;
+          this.encounters = [
+            { title: 'LIP-CURL AT THE WATER HOLE', a: { label: 'Back down', sub: '(safe)', dom: 10, pun: 6 }, b: { label: 'Snap back', sub: '(bold)', dom: 18, pun: 22 } },
+            { title: 'A STOLEN SCRAP OF MEAT', a: { label: 'Let it go', sub: '(safe)', dom: 12, pun: 6 }, b: { label: 'Fight for it', sub: '(bold)', dom: 20, pun: 24 } },
+            { title: 'THE BIGGEST DOG BLOCKS THE PATH', a: { label: 'Go around', sub: '(safe)', dom: 10, pun: 6 }, b: { label: 'Push through', sub: '(bold)', dom: 22, pun: 26 } },
+            { title: 'A PUP CHALLENGES YOU', a: { label: 'Ignore the pup', sub: '(safe)', dom: 14, pun: 6 }, b: { label: 'Pin it down', sub: '(bold)', dom: 20, pun: 20 } },
+            { title: 'GRAY BEAVER WATCHES CLOSELY', a: { label: 'Sit and wait', sub: '(safe)', dom: 14, pun: 6 }, b: { label: 'Stare him down', sub: '(bold)', dom: 24, pun: 24 } },
+          ];
+          this.active = this.encounters[0];
+          this.feedback = null; this.feedbackT = 0;
+        },
+        choiceRects(api) {
+          var W = api.W, H = api.H;
+          return [
+            { x: 20, y: H - 130, w: W - 40, h: 44 },
+            { x: 20, y: H - 78, w: W - 40, h: 44 },
+          ];
         },
         update(api, dt) {
-          var f = dt * 60, W = api.W, H = api.H;
-
-          /* move wolf */
-          if (api.pointer.down) {
-            var dx = api.pointer.x - this.px;
-            var dy = api.pointer.y - this.py;
-            this.px += Math.sign(dx) * Math.min(Math.abs(dx), 185 * dt);
-            this.py += Math.sign(dy) * Math.min(Math.abs(dy), 185 * dt);
-          }
-          if (api.keyDown('left'))  this.px -= 3 * f;
-          if (api.keyDown('right')) this.px += 3 * f;
-          if (api.keyDown('up'))    this.py -= 3 * f;
-          if (api.keyDown('down'))  this.py += 3 * f;
-          this.px = clamp(this.px, 14, W - 14);
-          this.py = clamp(this.py, 60, H - 68);
-
-          /* spawn falling fish */
-          this.fSpawn -= dt;
-          if (this.fSpawn <= 0 && this.fish.length < 6) {
-            this.fSpawn = 0.75 + Math.random() * 0.65;
-            this.fish.push({ x: 22 + Math.random() * (W - 44), y: -14, done: false });
-          }
-          for (var fi = 0; fi < this.fish.length; fi++) this.fish[fi].y += this.speed * dt;
-
-          /* collect fish */
-          for (var ci = 0; ci < this.fish.length; ci++) {
-            var fi2 = this.fish[ci];
-            if (!fi2.done && Math.abs(fi2.x - this.px) < 22 && Math.abs(fi2.y - this.py) < 22) {
-              fi2.done = true; this.caught++;
-              api.score += 25; api.audio.sfx('coin');
-              api.burst(this.px, this.py, '#7ac8ff', 6);
-              if (this.caught >= this.need) { api.score += 100; api.win(); return; }
-            }
-          }
-          this.fish = this.fish.filter(function (fi3) { return fi3.y < H + 20 && !fi3.done; });
-
-          /* spawn sled dogs */
-          this.dSpawn -= dt;
-          if (this.dSpawn <= 0 && this.dogs.length < 2) {
-            this.dSpawn = 2.8 + Math.random();
-            var side = Math.random() < 0.5 ? 0 : W;
-            this.dogs.push({ x: side, y: 80 + Math.random() * (H - 180) });
-          }
-
-          /* move dogs toward wolf */
-          for (var di = 0; di < this.dogs.length; di++) {
-            var d = this.dogs[di];
-            var ddx = this.px - d.x, ddy = this.py - d.y;
-            var ddist = Math.sqrt(ddx * ddx + ddy * ddy);
-            if (ddist > 5) { d.x += (ddx / ddist) * 92 * dt; d.y += (ddy / ddist) * 92 * dt; }
-          }
-          this.dogs = this.dogs.filter(function (d2) { return d2.x > -30 && d2.x < W + 30; });
-
-          /* dog collision */
-          this.hurt -= dt;
-          if (this.hurt <= 0) {
-            for (var dci = 0; dci < this.dogs.length; dci++) {
-              var dc = this.dogs[dci];
-              if (Math.abs(dc.x - this.px) < 22 && Math.abs(dc.y - this.py) < 22) {
-                this.lives--;
-                api.shake(6, 0.28); api.flash('#cc2200', 0.18); api.audio.sfx('hurt');
-                this.hurt = 1.1;
-                dc.x -= (this.px - dc.x) * 0.6; dc.y -= (this.py - dc.y) * 0.6;
-                if (this.lives <= 0) { api.lose(); return; }
-                break;
+          this.feedbackT = Math.max(0, this.feedbackT - dt);
+          if (this.feedbackT > 0) return;
+          if (!api.pointer.justDown) return;
+          var rects = this.choiceRects(api);
+          var opts = [this.active.a, this.active.b];
+          for (var i = 0; i < 2; i++) {
+            var r = rects[i];
+            if (api.pointer.x >= r.x && api.pointer.x <= r.x + r.w &&
+                api.pointer.y >= r.y && api.pointer.y <= r.y + r.h) {
+              var pick = opts[i];
+              this.dominance = Math.min(100, this.dominance + pick.dom);
+              this.punish += pick.pun;
+              api.score += pick.dom;
+              api.audio.sfx(i === 0 ? 'blip' : 'select');
+              api.burst(api.W / 2, api.H * 0.4, i === 0 ? '#7ac8ff' : '#e0a020', 8);
+              this.feedback = pick.label;
+              this.feedbackT = 0.9;
+              this.round++;
+              if (this.punish >= this.maxPunish) { api.shake(6, 0.3); api.lose(); return; }
+              if (this.round >= this.encounters.length) {
+                if (this.dominance >= this.needDom) api.win(); else api.lose();
+                return;
               }
+              this.active = this.encounters[this.round];
+              break;
             }
           }
         },
         draw(api) {
           var g = api.gfx, c = api.ctx, W = api.W, H = api.H;
 
-          /* camp ground */
           c.fillStyle = '#0e1622'; c.fillRect(0, 0, W, H);
-          /* dirt/snow patches */
-          for (var pi = 0; pi < 5; pi++) {
-            c.fillStyle = '#c0d0e0'; c.fillRect(pi * 56 + 4, H - 32, 38, 20);
-          }
+          for (var pi = 0; pi < 5; pi++) { c.fillStyle = '#c0d0e0'; c.fillRect(pi * 56 + 4, H - 32, 38, 20); }
 
-          /* campfire at top center */
-          var fx = W / 2, fy = 86;
+          var fx = W / 2, fy = 70;
           c.globalAlpha = 0.28 + 0.18 * Math.sin(api.t * 5.5);
-          g.circle(fx, fy, 32, '#c07820');
+          g.circle(fx, fy, 26, '#c07820');
           c.globalAlpha = 1;
-          g.circle(fx, fy, 13, '#e09020');
-          g.circle(fx, fy - 7, 9, '#f0b030');
-          g.circle(fx, fy - 14, 5, '#ffee88');
-          /* logs */
-          g.rect(fx - 18, fy + 8, 36, 5, '#5a3a1a');
-          g.rect(fx - 12, fy + 4, 5, 12, '#4a2a0e');
-          g.rect(fx + 7,  fy + 4, 5, 12, '#4a2a0e');
+          g.circle(fx, fy, 11, '#e09020');
+          g.circle(fx, fy - 6, 7, '#f0b030');
 
-          /* fence posts */
-          for (var fpi = 0; fpi < 6; fpi++) {
-            var fpx = fpi * 52 - 6;
-            c.fillStyle = '#3a2a14'; c.fillRect(fpx, H - 58, 7, 28);
-            c.fillStyle = '#4a3820'; c.fillRect(fpx, H - 70, 7, 15);
-          }
-          c.fillStyle = '#5a4828'; c.fillRect(0, H - 54, W, 4);
+          // White Fang + the rival dog flanking the fire
+          drawWolf(g, fx - 68, fy + 24, 4);
+          g.sprite(['.dd.', 'dddd', 'd..d', 'd..d'], fx + 46, fy + 12, { d: this.punish > 60 && Math.sin(api.t * 8) > 0 ? '#ff6644' : '#aa7744' }, 4);
 
-          /* fish (falling) */
-          for (var fsi = 0; fsi < this.fish.length; fsi++) {
-            var fs = this.fish[fsi];
-            if (fs.done) continue;
-            g.sprite(['.ff.','fffb','.ff.'], fs.x - 6, fs.y - 6, { f: '#48b0e0', b: '#0078b0' }, 4);
-          }
+          var cardY = H * 0.42;
+          g.rect(16, cardY, W - 32, 46, '#0c1e34');
+          g.rectO(16, cardY, W - 32, 46, '#1e3e5e', 1);
+          api.txtCFit(this.active ? this.active.title : '', W / 2, cardY + 8, 9, '#deeeff', true, W - 44);
+          if (this.feedbackT > 0) api.txtCFit('"' + this.feedback + '"', W / 2, cardY + 26, 8, '#7ac8ff', false, W - 44);
 
-          /* sled dogs */
-          for (var ddi = 0; ddi < this.dogs.length; ddi++) {
-            var dd = this.dogs[ddi];
-            var dflash = this.hurt > 0 && api.t % 0.22 < 0.11;
-            g.sprite(['.dd.','dddd','d..d','d..d'], dd.x - 8, dd.y - 12, { d: dflash ? '#ff6644' : '#aa7744' }, 4);
+          if (this.feedbackT <= 0 && this.active) {
+            var rects = this.choiceRects(api);
+            var opts = [this.active.a, this.active.b];
+            for (var i = 0; i < 2; i++) {
+              var r = rects[i], o = opts[i];
+              g.rect(r.x, r.y, r.w, r.h, i === 0 ? '#0c1e34' : '#2a1608');
+              g.rectO(r.x, r.y, r.w, r.h, i === 0 ? '#1e3e5e' : '#e0a020', 1);
+              api.txtCFit(o.label, r.x + r.w / 2, r.y + 8, 9, '#deeeff', false, r.w - 12);
+              api.txtCFit(o.sub, r.x + r.w / 2, r.y + 26, 7, i === 0 ? '#7ac8ff' : '#e0a020', false, r.w - 12);
+            }
           }
 
-          /* white fang */
-          var wb = Math.sin(api.t * 8) * 1.5;
-          drawWolf(g, this.px - 10, this.py - 14 + wb, 4);
-
-          api.topBar("GRAY BEAVER'S CAMP");
-          api.txt('FISH ' + this.caught + '/' + this.need, 6, 20, 8, '#7ac8ff');
-          for (var lvi = 0; lvi < 3; lvi++) g.circle(W - 20 - lvi * 17, 22, 5, lvi < this.lives ? '#cc3300' : '#1a1e28');
+          api.topBar("THE LAW OF THE PACK");
+          api.txt('DOMINANCE', 6, 20, 7, '#deeeff', false, true);
+          g.rect(78, 20, W - 124, 6, '#0e1a28');
+          g.rect(78, 20, Math.floor((W - 124) * clamp(this.dominance / 100, 0, 1)), 6, '#7ac8ff');
+          api.txt('PUNISH', 6, 30, 7, '#e0a020', false, true);
+          g.rect(56, 30, W - 102, 6, '#1a0e0e');
+          g.rect(56, 30, Math.floor((W - 102) * clamp(this.punish / this.maxPunish, 0, 1)), 6, this.punish > 70 ? '#ff2200' : '#cc4422');
           api.vignette();
         },
       },

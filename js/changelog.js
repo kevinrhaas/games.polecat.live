@@ -10,6 +10,17 @@
 // format stays identical to the rest of the fleet.
 export const CHANGELOG = [
   {
+    v: 126,
+    title: 'White Fang rebuilt: a hunger/cold survival-sim and a pack-dominance strategy chapter replace two near-identical dodges',
+    kind: 'game',
+    ts: '2026-07-22T16:57:05.949Z',
+    items: [
+      'The lone cub\'s opening chapter is now a resource-sim: forage fish and firewood against dueling HUNGER and COLD meters, dodge the eagle\'s telegraphed swoop, and pick a route at a mid-trail fork.',
+      'Gray Beaver\'s camp is now a pack-hierarchy strategy chapter — choose safe or bold responses to rival sled dogs, rising in DOMINANCE without maxing out Gray Beaver\'s PUNISHMENT meter.',
+      'Beauty Smith\'s Pit, the Love-Master and the Night of Jim Hall are unchanged — already distinct mechanics.',
+    ],
+  },
+  {
     v: 125,
     title: 'The Headless Horseman rebuilt: memory wards, a courting social-sim, and a stealth-horror chase replace three near-identical dodges',
     kind: 'game',
