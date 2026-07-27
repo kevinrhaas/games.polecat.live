@@ -90,6 +90,24 @@ for (const vp of viewports) {
   const thamesWinResult = await page.evaluate(() => window.__sagaTest.last);
   console.log(vp.name, 'thames result after quiet/quiet/bold/bold:', JSON.stringify(thamesWinResult));
 
+  // exercise 'wharf': round-robin a guess across LEFT/CENTER/RIGHT each
+  // telegraph (can't know which side Compeyson picks — it's randomized) and
+  // confirm the reactive grip-read duel actually reaches a result (hit and
+  // miss both drive state; either a win or a loss is a valid outcome here).
+  const wharfIdx = ids.indexOf('wharf');
+  await page.evaluate((idx) => { window.__sagaTest.last = null; window.__sagaTest.jump(idx); }, wharfIdx);
+  await page.waitForTimeout(300);
+  const zoneFrac = [0.16, 0.5, 0.84];
+  let wharfResult = null;
+  for (let round = 0; round < 20 && !wharfResult; round++) {
+    await page.waitForTimeout(200);
+    await tapFrac(page, zoneFrac[round % 3], 0.86);
+    await page.waitForTimeout(900);
+    wharfResult = await page.evaluate(() => window.__sagaTest.last);
+  }
+  console.log(vp.name, 'wharf result after round-robin zone taps:', JSON.stringify(wharfResult));
+  if (!wharfResult) { console.error(vp.name, 'wharf chapter never reached a result'); anyFail = true; }
+
   // quick smoke of every chapter (jump + a little input, check no crash)
   for (let i = 0; i < ids.length; i++) {
     await page.evaluate((idx) => { window.__sagaTest.last = null; window.__sagaTest.jump(idx); }, i);
