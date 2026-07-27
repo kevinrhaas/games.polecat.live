@@ -10,6 +10,17 @@
 // format stays identical to the rest of the fleet.
 export const CHANGELOG = [
   {
+    v: 129,
+    title: 'Great Expectations: The Confrontation rebuilt as a reactive grip-read duel',
+    kind: 'game',
+    ts: '2026-07-27T22:54:50.543Z',
+    items: [
+      'The dodge-and-tap fight with Compeyson is now a read-and-react grapple: he telegraphs a brace side (LEFT, CENTER or RIGHT) and a shrinking ring times your response.',
+      'Five correct grapples frees Magwitch; three missed reads and the river takes Pip instead. The window shrinks and the grip changes faster with every grapple won.',
+      'Marshes is now the only chapter left on the queue\'s move-dodge list for this game.',
+    ],
+  },
+  {
     v: 128,
     title: 'Great Expectations: Down the Thames rebuilt as a branching river-escape',
     kind: 'game',

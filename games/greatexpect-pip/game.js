@@ -6,7 +6,8 @@
  *      picks build STATUS/LOYALTY stats that pick one of three endings
  *   3. JAGGERS' LAW    — pendulum: tap the gavel into the zone 8 times
  *   4. DOWN THE THAMES — runner/dodge: row to the waiting ship (26s)
- *   5. THE CONFRONTATION — dodge + tap: strike Compeyson 5 times
+ *   5. THE CONFRONTATION — reactive grip-read: brace the telegraphed
+ *      side (LEFT/CENTER/RIGHT) before the ring closes, 5 grapples to win
  * Built on RetroSaga (js/saga.js) + RetroEngine.
  * ============================================================================ */
 (function () {
@@ -1292,9 +1293,10 @@
 
       /* ───────────────────────────────────────────────────────────────
        * ACT 5 — THE CONFRONTATION
-       * Dodge + tap boss: Compeyson attacks in 3 patterns.
-       * Move away from telegraphed side, then tap when stunned.
-       * 5 hits to win. 3 lives.
+       * Reactive grip-read duel: Compeyson telegraphs a grapple side
+       * (LEFT / CENTER / RIGHT) with a shrinking ring; Pip must slap the
+       * matching zone before it closes. 5 grapples won to free Magwitch.
+       * 3 misses = lose. Window shrinks and choices quicken with wins.
        * ─────────────────────────────────────────────────────────────── */
       {
         id:   'wharf',
@@ -1307,108 +1309,108 @@
           "THEM ON THE RIVER.",
           "THE TWO CONVICTS GRAPPLE",
           "IN THE ICY THAMES.",
-          "PIP MUST HELP MAGWITCH",
-          "DEFEAT HIS FOE.",
+          "PIP MUST READ EACH GRIP",
+          "AND BRACE THE RIGHT SIDE.",
         ],
         quote: '"In the little world in which children exist... there is nothing so finely perceived as injustice." — Dickens',
-        help:  'Move to the SAFE SIDE when Compeyson\'s attack glows RED. When he staggers (GOLDEN FLASH), tap to strike! 5 hits to win. 3 lives.',
+        help:  'Compeyson telegraphs a grip — LEFT, CENTER or RIGHT. TAP the matching zone (or arrow keys / up) before the ring closes! 5 grapples to win. 3 misses and you lose.',
         winText:  'Compeyson is overcome. The Thames takes him. Magwitch is free — but badly wounded.',
         loseText: 'Compeyson overwhelms Pip. The river runs cold and dark.',
 
-        init: function (api) {
+        zoneRects: function (api) {
           var W = api.W, H = api.H;
-          this.px    = W / 2;
+          var zw = (W - 24) / 3;
+          return [
+            { x: 12,             y: H - 92, w: zw, h: 64, zone: 0, label: '← LEFT' },
+            { x: 12 + zw + 6,     y: H - 92, w: zw, h: 64, zone: 1, label: 'CENTER' },
+            { x: 12 + zw * 2 + 12, y: H - 92, w: zw, h: 64, zone: 2, label: 'RIGHT →' },
+          ];
+        },
+
+        pickZone: function () {
+          var z = Math.floor(Math.random() * 3);
+          if (z === this.zone) z = (z + 1 + Math.floor(Math.random() * 2)) % 3;
+          return z;
+        },
+
+        init: function (api) {
           this.lives = 3;
           this.hits  = 0;
           this.need  = 5;
-          this.hitCD = 0;
-          this.tapCD = 0;
-          this.phase = 'idle';   // idle | telegraph | attack | stun
-          this.phaseT = 0;
-          this.attackSide = 0;   // -1=left, 0=center, 1=right
-          this.stunT = 0;
-          this.idleT = 1.0;
-          this.compX = W / 2;
-          this.shakeIntensity = 0;
-          this.attackFlash = 0;
-          this.stunFlash = 0;
           this.victimFlash = 0;
+          this.resultFlash = 0;
+          this.resultOK = false;
+          this.phase  = 'telegraph'; // telegraph | resolve
+          this.zone   = 1;
+          this.windowDur = 1.15;
+          this.windowT   = this.windowDur;
+          this.resolveT  = 0;
+          this.compX = api.W / 2;
         },
 
         update: function (api, dt) {
           var W = api.W, H = api.H;
-          this.hitCD = Math.max(0, this.hitCD - dt);
-          this.tapCD = Math.max(0, this.tapCD - dt);
-          this.attackFlash = Math.max(0, this.attackFlash - dt);
-          this.stunFlash = Math.max(0, this.stunFlash - dt);
           this.victimFlash = Math.max(0, this.victimFlash - dt);
-          this.phaseT -= dt;
+          this.resultFlash = Math.max(0, this.resultFlash - dt);
 
-          // Move Pip left/right
-          var mv3 = 0;
-          if (api.keyDown('left')  || (api.pointer.down && api.pointer.x < W * 0.45)) mv3 = -1;
-          if (api.keyDown('right') || (api.pointer.down && api.pointer.x > W * 0.55)) mv3 =  1;
-          this.px = clamp(this.px + mv3 * 200 * dt, 24, W - 24);
+          if (this.phase === 'telegraph') {
+            this.windowT -= dt;
 
-          // State machine
-          if (this.phase === 'idle') {
-            if (this.phaseT <= 0) {
-              // Choose attack side
-              var r = Math.random();
-              if (r < 0.35) this.attackSide = -1;
-              else if (r < 0.7) this.attackSide = 1;
-              else this.attackSide = 0; // center sweep
-              this.phase = 'telegraph';
-              this.phaseT = 1.2 - Math.min(0.5, this.hits * 0.08);
-              this.attackFlash = this.phaseT;
+            var pressedZone = -1;
+            if (api.pointer.justDown) {
+              var rects = this.zoneRects(api);
+              for (var i = 0; i < rects.length; i++) {
+                var r = rects[i];
+                if (api.pointer.x >= r.x && api.pointer.x <= r.x + r.w &&
+                    api.pointer.y >= r.y && api.pointer.y <= r.y + r.h) { pressedZone = r.zone; break; }
+              }
             }
-          } else if (this.phase === 'telegraph') {
-            if (this.phaseT <= 0) {
-              this.phase = 'attack';
-              this.phaseT = 0.5;
+            if (pressedZone < 0) {
+              if (api.keyPressed('left')) pressedZone = 0;
+              else if (api.keyPressed('up') || api.keyPressed('a') || api.keyPressed('start')) pressedZone = 1;
+              else if (api.keyPressed('right')) pressedZone = 2;
             }
-          } else if (this.phase === 'attack') {
-            // Deal damage if Pip is on wrong side
-            if (this.hitCD <= 0) {
-              var danger = false;
-              if (this.attackSide === -1 && this.px < W * 0.5)  danger = true;
-              if (this.attackSide ===  1 && this.px > W * 0.5)  danger = true;
-              if (this.attackSide ===  0) danger = true; // center sweep always dangerous unless at edges
-              if (this.attackSide === 0 && (this.px < W * 0.18 || this.px > W * 0.82)) danger = false;
-              if (danger) {
+
+            if (pressedZone >= 0) {
+              if (pressedZone === this.zone) {
+                this.hits++;
+                this.resultFlash = 0.4; this.resultOK = true;
+                api.addScore(20);
+                api.audio.sfx('coin');
+                api.burst(this.compX, H * 0.32, C.amberL, 10);
+                api.shake(5, 0.25);
+                if (this.hits >= this.need) { api.addScore(40); api.win(); return; }
+              } else {
                 this.lives--;
-                this.hitCD = 1.2;
+                this.resultFlash = 0.4; this.resultOK = false;
                 this.victimFlash = 0.5;
                 api.shake(8, 0.35);
                 api.audio.sfx('hurt');
                 if (this.lives <= 0) { api.lose(); return; }
               }
+              this.phase = 'resolve';
+              this.resolveT = 0.5;
+              return;
             }
-            if (this.phaseT <= 0) {
-              this.phase = 'stun';
-              this.phaseT = 1.0;
-              this.stunFlash = 1.0;
-              api.audio.sfx('blip');
+
+            if (this.windowT <= 0) {
+              // Missed the window entirely — the grip lands
+              this.lives--;
+              this.resultFlash = 0.4; this.resultOK = false;
+              this.victimFlash = 0.5;
+              api.shake(8, 0.35);
+              api.audio.sfx('hurt');
+              if (this.lives <= 0) { api.lose(); return; }
+              this.phase = 'resolve';
+              this.resolveT = 0.5;
             }
-          } else if (this.phase === 'stun') {
-            // Player can tap to hit
-            var tapped2 = api.pointer.justDown || api.keyPressed('a') || api.keyPressed('start');
-            if (tapped2 && this.tapCD <= 0) {
-              this.hits++;
-              this.tapCD = 0.18;
-              api.addScore(20);
-              api.audio.sfx('shoot');
-              api.burst(this.compX, H * 0.35, C.amber, 10);
-              api.shake(5, 0.28);
-              if (this.hits >= this.need) {
-                api.addScore(40);
-                api.win();
-                return;
-              }
-            }
-            if (this.phaseT <= 0) {
-              this.phase = 'idle';
-              this.phaseT = 0.6;
+          } else {
+            this.resolveT -= dt;
+            if (this.resolveT <= 0) {
+              this.zone = this.pickZone();
+              this.windowDur = Math.max(0.55, 1.15 - this.hits * 0.11);
+              this.windowT = this.windowDur;
+              this.phase = 'telegraph';
             }
           }
         },
@@ -1424,32 +1426,21 @@
           c.fillStyle = bg3; c.fillRect(0, 0, W, H);
 
           // River at bottom
-          g.rect(0, H*0.76, W, H*0.24, C.river);
-          // Ripple
+          g.rect(0, H * 0.60, W, H * 0.16, C.river);
           c.strokeStyle = C.riverL; c.lineWidth = 1; c.globalAlpha = 0.3;
           for (var rp = 0; rp < 5; rp++) {
-            var rpY = H*0.78 + rp*16 + api.t % 16;
+            var rpY = H * 0.62 + rp * 12 + api.t % 12;
             c.beginPath(); c.moveTo(0, rpY); c.lineTo(W, rpY + 3); c.stroke();
           }
           c.globalAlpha = 1;
 
-          // Wharf planks at bottom
-          c.fillStyle = '#2a1808';
-          c.fillRect(0, H*0.76, W, 10);
-          // Plank lines
-          c.strokeStyle = '#1a0e04'; c.lineWidth = 1;
-          for (var pl = 0; pl < 9; pl++) {
-            c.beginPath(); c.moveTo(pl * 30 + 8, H*0.76); c.lineTo(pl * 30, H*0.82); c.stroke();
-          }
-
           // Background warehouse silhouettes
           c.fillStyle = '#060808';
-          c.fillRect(0, H*0.22, 40, H*0.54);
-          c.fillRect(W-44, H*0.18, 44, H*0.58);
+          c.fillRect(0, H * 0.20, 40, H * 0.42);
+          c.fillRect(W - 44, H * 0.16, 44, H * 0.46);
 
           // Compeyson — large menacing figure at top
-          var ex = this.compX;
-          var ey = H * 0.30;
+          var ex = this.compX, ey = H * 0.30;
           c.fillStyle = '#08060c';
           g.rect(ex - 14, ey - 2, 28, 36, '#08060c');
           g.circle(ex, ey - 10, 14, '#08060c');
@@ -1461,61 +1452,55 @@
             c.lineTo(ex - 14 + h2 * 6, ey - 36);
             c.stroke();
           }
-          // Attack glow
-          if (this.phase === 'telegraph' || (this.phase === 'attack' && this.attackFlash > 0)) {
-            var aCol = this.attackSide === 0 ? C.red : C.red;
-            var aAlpha = this.phase === 'attack' ? 0.7 : (0.3 + 0.4 * Math.sin(api.t * 6));
-            c.globalAlpha = aAlpha;
-            if (this.attackSide === -1) {
-              c.fillStyle = aCol;
-              c.fillRect(0, H * 0.20, W / 2, H * 0.56);
-            } else if (this.attackSide === 1) {
-              c.fillStyle = aCol;
-              c.fillRect(W / 2, H * 0.20, W / 2, H * 0.56);
-            } else {
-              // Center sweep
-              c.fillStyle = aCol;
-              c.fillRect(W * 0.18, H * 0.20, W * 0.64, H * 0.56);
-            }
-            c.globalAlpha = 1;
-          }
-          // Stun glow (golden)
-          if (this.phase === 'stun') {
-            c.globalAlpha = 0.4 + 0.3 * Math.sin(api.t * 8);
-            c.fillStyle = C.amberL;
-            c.beginPath(); c.arc(ex, ey, 40, 0, Math.PI * 2); c.fill();
-            c.globalAlpha = 1;
-            // "STRIKE!" prompt
-            api.txtCFit('STRIKE!', W / 2, H * 0.56, 13, C.amberL, true, W - 20);
-          }
-          // Attack side arrow indicator
+
           if (this.phase === 'telegraph') {
-            var safeX = this.attackSide === -1 ? W * 0.78 : (this.attackSide === 1 ? W * 0.22 : W * 0.08);
-            var safeStr = this.attackSide === -1 ? '→ MOVE RIGHT' : (this.attackSide === 1 ? '← MOVE LEFT' : '→ EDGE ←');
-            api.txtCFit(safeStr, W / 2, H * 0.56, 9, C.cream, false, W - 20);
+            // Lean toward the telegraphed side + a pulsing warning glow
+            var lean = this.zone === 0 ? -10 : (this.zone === 2 ? 10 : 0);
+            c.globalAlpha = 0.5 + 0.3 * Math.sin(api.t * 8);
+            g.circle(ex + lean, ey - 30, 6, C.red);
+            c.globalAlpha = 1;
+
+            var label = this.zone === 0 ? 'GRIPS LEFT!' : (this.zone === 2 ? 'GRIPS RIGHT!' : 'GRIPS CENTER!');
+            api.txtCFit(label, W / 2, H * 0.42, 11, C.cream, true, W - 20);
+
+            // Shrinking countdown ring — the reaction window
+            var ringR = 16, ringX = W / 2, ringY = H * 0.52;
+            c.strokeStyle = '#241408'; c.lineWidth = 4;
+            c.beginPath(); c.arc(ringX, ringY, ringR, 0, Math.PI * 2); c.stroke();
+            var frac = clamp(this.windowT / this.windowDur, 0, 1);
+            c.strokeStyle = frac > 0.3 ? C.amberL : C.red; c.lineWidth = 4;
+            c.beginPath(); c.arc(ringX, ringY, ringR, -Math.PI / 2, -Math.PI / 2 + frac * Math.PI * 2); c.stroke();
           }
 
-          // Victim flash when Pip is hit
-          if (this.victimFlash > 0) {
-            c.globalAlpha = this.victimFlash * 0.6;
-            c.fillStyle = C.red;
+          // Result / victim flash
+          if (this.resultFlash > 0) {
+            c.globalAlpha = this.resultFlash * (this.resultOK ? 0.5 : 0.35);
+            c.fillStyle = this.resultOK ? C.amberL : C.red;
             c.fillRect(0, 0, W, H);
             c.globalAlpha = 1;
           }
 
-          // Pip at bottom
-          if (this.hitCD > 0 && Math.floor(this.hitCD * 8) % 2 === 0) {
-            // Blink when invincible
-          } else {
-            drawPip(g, c, this.px, H * 0.70);
+          // Pip braced at the water's edge
+          drawPip(g, c, W / 2, H * 0.58);
+
+          // Zone buttons — the reaction targets
+          var rects = this.zoneRects(api);
+          for (var zi = 0; zi < rects.length; zi++) {
+            var r = rects[zi];
+            var isTarget = this.phase === 'telegraph' && r.zone === this.zone;
+            g.rect(r.x, r.y, r.w, r.h, isTarget ? '#3a2408' : '#181008');
+            c.strokeStyle = isTarget ? C.amberL : C.stone;
+            c.lineWidth = isTarget ? 3 : 1.5;
+            c.strokeRect(r.x, r.y, r.w, r.h);
+            api.txtCFit(r.label, r.x + r.w / 2, r.y + r.h / 2 - 5, 8, isTarget ? C.amberL : C.stonD, false, r.w - 8);
           }
 
-          // Hit counter (health dots)
+          // Hit counter (grapples won)
           for (var hi = 0; hi < this.need; hi++) {
             var hcol = hi < this.hits ? C.amber : C.dark;
-            g.circle(W / 2 - (this.need * 10) / 2 + hi * 10 + 5, H * 0.88, 4, hcol);
+            g.circle(W / 2 - (this.need * 10) / 2 + hi * 10 + 5, H * 0.16, 4, hcol);
             c.strokeStyle = C.stone; c.lineWidth = 1;
-            c.beginPath(); c.arc(W / 2 - (this.need * 10) / 2 + hi * 10 + 5, H * 0.88, 4, 0, Math.PI * 2); c.stroke();
+            c.beginPath(); c.arc(W / 2 - (this.need * 10) / 2 + hi * 10 + 5, H * 0.16, 4, 0, Math.PI * 2); c.stroke();
           }
 
           api.topBar('THE WHARF', '★ ' + this.hits + '/' + this.need, this.lives);
