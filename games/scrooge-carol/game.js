@@ -3,7 +3,7 @@
  * Five chapters through Dickens' 1843 novella, each a distinct mini-game:
  *   1. MARLEY'S CHAINS    — dodge flying chains, collect shillings (vertical dodge)
  *   2. CHRISTMAS PAST     — tap glowing memory wisps before they fade (tap-collect)
- *   3. CHRISTMAS PRESENT  — catch the Cratchit feast on a sliding table (catch)
+ *   3. CHRISTMAS PRESENT  — grab & sort gifts to Tiny Tim / the table / the hearth (route)
  *   4. YET TO COME        — dodge the Shadow's lane-pointing finger (lane dodge)
  *   5. CHRISTMAS MORNING  — run & jump through London on a changed Christmas day
  * Built on RetroSaga (js/saga.js).
@@ -588,7 +588,7 @@
       {
         id: 'present',
         name: 'CHRISTMAS PRESENT',
-        sub: "THE CRATCHIT FEAST",
+        sub: 'THE CRATCHIT LEDGER',
 
         icon(api, x, y) {
           const g = api.gfx;
@@ -600,76 +600,112 @@
         intro: [
           'THE JOLLY GIANT SPIRIT',
           'SHOWS THE CRATCHIT HOME.',
-          "TINY TIM BEAMS:",
-          "'God bless us, every one!'",
+          'GRAB EACH GIFT AND CARRY',
+          'IT WHERE IT IS NEEDED.',
         ],
         quote: 'God bless us, every one! said Tiny Tim, the last of all.',
-        help: 'DRAG the table to catch the feast!',
-        winText: "The Cratchit table groans with plenty. Tiny Tim beams with delight.",
-        loseText: 'Too many treats tumble to the floor. The family looks downcast.',
+        help: 'DRAG each gift to TINY TIM, THE TABLE, or THE HEARTH — sort them right!',
+        winText: 'The Cratchit table groans with plenty. Tiny Tim beams with delight.',
+        loseText: "Too much drifts into Scrooge's old counting-house habits. The family goes without.",
 
         init(api) {
-          this.tableX   = api.W / 2;
-          this.items    = [];
-          this.caught   = 0;
-          this.dropped  = 0;
-          this.need     = 22;
-          this.maxDrop  = 5;
-          this.spawnT   = 0.55;
-          this.timer    = 32;
-          this.types    = [
-            { col: '#c07030', col2: '#e09040', r: 9 },  // goose
-            { col: '#8a5020', col2: '#a06830', r: 8 },  // plum pudding
-            { col: '#9a9040', col2: '#c0b858', r: 7 },  // potato
-            { col: '#2a8038', col2: '#50a050', r: 7 },  // holly
+          const bw = api.W / 3;
+          this.bins = [
+            { key: 'tim',    label: 'TINY TIM',  x: bw * 0 + bw / 2, col: '#5ac0d8' },
+            { key: 'table',  label: 'THE TABLE', x: bw * 1 + bw / 2, col: '#c07030' },
+            { key: 'hearth', label: 'THE HEARTH', x: bw * 2 + bw / 2, col: '#e0a028' },
           ];
+          this.binY   = api.H - 46;
+          this.binW   = bw - 8;
+          this.kinds  = [
+            { kind: 'tim',    col: '#8adcf0', col2: '#d0f4ff' },
+            { kind: 'table',  col: '#c07030', col2: '#e8a860' },
+            { kind: 'hearth', col: '#3a2818', col2: '#e07020' },
+          ];
+          this.items    = [];
+          this.held     = null;
+          this.sorted   = 0;
+          this.need     = 14;
+          this.hoarded  = 0;
+          this.maxHoard = 5;
+          this.spawnT   = 0.9;
+          this.timer    = 42;
         },
 
         update(api, dt) {
-          const f = dt * 60;
+          const f = dt * 60, W = api.W, H = api.H;
           this.timer -= dt;
 
-          // Slide table
-          if (api.pointer.down) this.tableX = api.pointer.x;
-          if (api.keyDown('left'))  this.tableX -= 4.5 * f;
-          if (api.keyDown('right')) this.tableX += 4.5 * f;
-          this.tableX = clamp(this.tableX, 42, api.W - 42);
-
-          // Spawn food
+          // Spawn a drifting gift
           this.spawnT -= dt;
           if (this.spawnT <= 0) {
-            this.spawnT = Math.max(0.28, 0.55 - (32 - Math.max(0, this.timer)) / 80);
-            const tp = this.types[Math.floor(Math.random() * this.types.length)];
+            this.spawnT = Math.max(0.62, 0.95 - (42 - Math.max(0, this.timer)) / 90);
+            const k = this.kinds[Math.floor(Math.random() * this.kinds.length)];
             this.items.push({
-              x: 22 + Math.random() * (api.W - 44),
-              y: -10,
-              vy: 2.2 + Math.random() * 1.4,
-              col: tp.col, col2: tp.col2, r: tp.r,
+              x: 26 + Math.random() * (W - 52), y: -12,
+              vy: 14 + Math.random() * 8, sway: Math.random() * Math.PI * 2,
+              kind: k.kind, col: k.col, col2: k.col2, held: false,
             });
           }
 
-          // Move + catch
-          const tableY = api.H - 54, tableW = 84;
-          for (const it of this.items) {
-            if (it.done) continue;
-            it.y += it.vy * f;
-            if (it.y >= tableY - 4) {
-              it.done = true;
-              if (Math.abs(it.x - this.tableX) < tableW / 2 + 6) {
-                this.caught++;
-                api.addScore(12);
-                api.audio.sfx('coin');
-                api.burst(it.x, tableY, '#d4a020', 6);
-                if (this.caught >= this.need) { api.addScore(90); api.win(); return; }
-              } else {
-                this.dropped++;
-                api.shake(3, 0.15); api.audio.sfx('blip');
-                if (this.dropped >= this.maxDrop) { api.lose(); return; }
+          // Grab the nearest ungrabbed item on tap
+          if (api.pointer.justDown && !this.held) {
+            let best = null, bestD = 26;
+            for (const it of this.items) {
+              const d = Math.hypot(it.x - api.pointer.x, it.y - api.pointer.y);
+              if (d < bestD) { bestD = d; best = it; }
+            }
+            if (best) { best.held = true; this.held = best; }
+          }
+
+          // Carry the held item to the pointer
+          if (this.held) {
+            if (api.pointer.down) {
+              this.held.x += (api.pointer.x - this.held.x) * 0.4 * f;
+              this.held.y += (api.pointer.y - this.held.y) * 0.4 * f;
+            }
+            if (api.pointer.justUp) {
+              const it = this.held;
+              let bin = null;
+              if (it.y > this.binY - 30) {
+                for (const b of this.bins) {
+                  if (Math.abs(it.x - b.x) < this.binW / 2) { bin = b; break; }
+                }
               }
+              if (bin) {
+                it.gone = true;
+                if (bin.key === it.kind) {
+                  this.sorted++;
+                  api.addScore(14);
+                  api.audio.sfx('coin');
+                  api.burst(bin.x, this.binY, bin.col, 8);
+                  if (this.sorted >= this.need) { api.addScore(90); api.win(); return; }
+                } else {
+                  this.hoarded++;
+                  api.shake(4, 0.18); api.audio.sfx('blip'); api.flash('#3a2818', 0.16);
+                  if (this.hoarded >= this.maxHoard) { api.lose(); return; }
+                }
+              } else {
+                it.held = false; // dropped mid-air — keeps drifting
+              }
+              this.held = null;
             }
           }
-          this.items = this.items.filter(it => !it.done);
-          if (this.timer <= 0 && this.caught < this.need) api.lose();
+
+          // Drift ungrabbed items down; missing the bin row hoards them
+          for (const it of this.items) {
+            if (it.gone || it.held) continue;
+            it.y += it.vy * dt;
+            it.x += Math.sin(api.t * 1.4 + it.sway) * 0.35 * f;
+            if (it.y > this.binY + 16) {
+              it.gone = true;
+              this.hoarded++;
+              api.audio.sfx('blip');
+              if (this.hoarded >= this.maxHoard) { api.lose(); return; }
+            }
+          }
+          this.items = this.items.filter(it => !it.gone);
+          if (this.timer <= 0 && this.sorted < this.need) api.lose();
         },
 
         draw(api) {
@@ -681,45 +717,67 @@
           g.circle(W - 20, H - 20, 90, '#f07020');
           c.globalAlpha = 1;
 
-          // Frost window (left)
-          g.rect(W / 2 - 28, 26, 56, 48, '#0a1420');
-          g.rect(W / 2 - 26, 28, 52, 44, '#0c1c30');
-          g.rect(W / 2 - 1, 26, 2, 48, '#1e1208');
-          g.rect(W / 2 - 28, 50, 56, 2, '#1e1208');
-          g.rect(W / 2 - 30, 72, 60, 5, '#c8d8e8'); // snow sill
+          // Frost window (top)
+          g.rect(W / 2 - 28, 20, 56, 44, '#0a1420');
+          g.rect(W / 2 - 26, 22, 52, 40, '#0c1c30');
+          g.rect(W / 2 - 1, 20, 2, 44, '#1e1208');
+          g.rect(W / 2 - 28, 42, 56, 2, '#1e1208');
+          g.rect(W / 2 - 30, 62, 60, 5, '#c8d8e8'); // snow sill
 
           // Ghost of Christmas Present (giant, jolly, partial)
-          c.globalAlpha = 0.28;
+          c.globalAlpha = 0.24;
           g.sprite([
             '.gggg.',
             'gggggg',
             'ggwwgg',
             'ggwwgg',
-          ], W / 2 - 12, 18, { g: '#3a8838', w: '#d0eec8' }, 4);
+          ], W / 2 - 12, 14, { g: '#3a8838', w: '#d0eec8' }, 4);
           c.globalAlpha = 1;
 
-          // Falling items
-          for (const it of this.items) {
-            g.circle(it.x, it.y, it.r, it.col);
-            g.circle(it.x - 2, it.y - 2, Math.max(2, it.r / 2), it.col2);
+          // Three bins along the bottom
+          for (const b of this.bins) {
+            const bx = b.x - this.binW / 2, by = this.binY, bw = this.binW, bh = 30;
+            const active = this.held && Math.abs(this.held.x - b.x) < this.binW / 2 && this.held.y > this.binY - 30;
+            c.fillStyle = active ? b.col : '#241a10';
+            c.globalAlpha = active ? 0.55 : 1;
+            g.rect(bx, by, bw, bh, c.fillStyle);
+            c.globalAlpha = 1;
+            c.strokeStyle = b.col; c.lineWidth = active ? 2 : 1;
+            c.strokeRect(bx, by, bw, bh);
+            // Bin glyphs
+            if (b.key === 'tim') {
+              g.rect(b.x - 1, by + 6, 2, 16, '#c0a870');   // crutch
+              g.circle(b.x, by + 6, 3, '#c0a870');
+            } else if (b.key === 'table') {
+              g.circle(b.x, by + 14, 8, '#c07030');
+              g.circle(b.x - 2, by + 12, 4, '#e09040');
+            } else {
+              g.sprite(['.f.', 'fff'], b.x - 4, by + 6, { f: '#e07020' }, 3);
+              g.rect(b.x - 6, by + 16, 12, 6, '#2a2018');
+            }
+            api.txtCFit(b.label, b.x, by + bh + 9, 6, active ? b.col : '#7a8898', false, bw + 6);
           }
 
-          // Sliding table
-          const tY = H - 54, tW = 84, tX = this.tableX;
-          g.rect(tX - tW / 2, tY, tW, 10, '#6a3a10');
-          g.rect(tX - tW / 2 + 4, tY, tW - 8, 4, '#8a5020');
-          g.rect(tX - tW / 2 + 5, tY + 10, 8, 22, '#522e08');
-          g.rect(tX + tW / 2 - 13, tY + 10, 8, 22, '#522e08');
-
-          // Tiny Tim figure (left side)
-          g.sprite(['.h.', 'hbh', '.b.', 'b.b'], 16, H - 90, { h: '#c0a870', b: '#384060' }, 3);
-          g.rect(18, H - 78, 2, 20, '#7a5820'); // crutch
+          // Falling / carried gifts
+          for (const it of this.items) {
+            const held = it === this.held;
+            if (held) { c.globalAlpha = 0.9; }
+            g.circle(it.x, it.y, held ? 10 : 8, it.col);
+            g.circle(it.x - 2, it.y - 2, held ? 5 : 4, it.col2);
+            c.globalAlpha = 1;
+            if (held) {
+              c.strokeStyle = '#f0e8cc'; c.lineWidth = 1;
+              c.globalAlpha = 0.6 + 0.3 * Math.sin(api.t * 8);
+              c.beginPath(); c.arc(it.x, it.y, 13, 0, Math.PI * 2); c.stroke();
+              c.globalAlpha = 1;
+            }
+          }
 
           // HUD
           api.topBar('CHRISTMAS PRESENT');
-          api.txt('CAUGHT ' + this.caught + '/' + this.need, 6, 20, 9, '#d4a020');
-          api.txt('DROPPED ' + this.dropped + '/' + this.maxDrop, W - 108, 20, 9,
-            this.dropped >= 3 ? '#c84040' : '#7a8898');
+          api.txt('SORTED ' + this.sorted + '/' + this.need, 6, 20, 9, '#d4a020');
+          api.txt('HOARDED ' + this.hoarded + '/' + this.maxHoard, W - 106, 20, 9,
+            this.hoarded >= 3 ? '#c84040' : '#7a8898');
           api.vignette();
         },
       },
