@@ -10,6 +10,17 @@
 // format stays identical to the rest of the fleet.
 export const CHANGELOG = [
   {
+    v: 128,
+    title: 'Great Expectations: Down the Thames rebuilt as a branching river-escape',
+    kind: 'game',
+    ts: '2026-07-27T22:39:44.494Z',
+    items: [
+      'The lane-dodge boat chase is now four reaches, each a QUIET (spend coin, stay safe) or BOLD (free, raises suspicion) route choice down the river.',
+      'Cross the suspicion cap and a police galley runs the boat down before it ever reaches the steamer — a real branching-trek stake, not just a timer to survive.',
+      'Marshes and the Wharf confrontation are still the queue\'s last two move-dodge holdouts.',
+    ],
+  },
+  {
     v: 127,
     title: 'Great Expectations: Satis House rebuilt as a class-ladder life-choice chapter',
     kind: 'game',
