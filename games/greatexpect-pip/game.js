@@ -1,7 +1,8 @@
 /* ============================================================================
  * GREAT EXPECTATIONS — RISE FROM THE FORGE
  * Five acts from Dickens' 1861 novel:
- *   1. THE MARSHES     — free-move stealth: bring provisions to Magwitch (26s)
+ *   1. THE MARSHES     — branching trek: QUIET (spend provisions) vs BOLD
+ *      (free, raises alarm) across 4 checkpoints to reach Magwitch
  *   2. SATIS HOUSE     — class-ladder life-choices: Gentleman vs Blacksmith
  *      picks build STATUS/LOYALTY stats that pick one of three endings
  *   3. JAGGERS' LAW    — pendulum: tap the gavel into the zone 8 times
@@ -520,8 +521,10 @@
 
       /* ───────────────────────────────────────────────────────────────
        * ACT 1 — THE MARSHES
-       * Free-move stealth: collect 6 provisions for Magwitch, avoid
-       * 3 soldier lantern cones. 3 lives, ~26 seconds.
+       * Branching trek: 4 checkpoints between the forge and Magwitch's
+       * hiding place, each a QUIET (spend provisions, stay hidden) vs
+       * BOLD (free, raises alarm) choice. Alarm capped at 65 — cross it
+       * and the patrol closes in.
        * ─────────────────────────────────────────────────────────────── */
       {
         id:   'marshes',
@@ -534,131 +537,91 @@
           'YARD, HE MEETS A DESPERATE',
           'ESCAPED CONVICT. MAGWITCH',
           'DEMANDS FOOD AND A FILE.',
-          'PIP STEALS FROM THE FORGE',
-          'AND CREEPS ACROSS THE MARSH.',
+          'PIP MUST CROSS FOUR MILES',
+          'OF MARSH BEFORE DAYBREAK,',
+          'PAST SOLDIERS HUNTING HIM.',
         ],
         quote: '"I was a boy whom nobody had pitied." — Charles Dickens, 1861',
-        help:  'Drag or use arrows to move Pip. Collect 6 provisions (glowing dots) for Magwitch. Dodge the soldiers\' lantern beams! 3 lives.',
-        winText:  'Pip delivers the provisions. Magwitch\'s iron grip softens for just a moment.',
-        loseText: 'The soldiers find Pip on the marsh. He is dragged back to the forge.',
+        help:  'TAP a route at each checkpoint. QUIET spends provisions to stay hidden; BOLD is free but raises the soldiers\' alarm. Let alarm max out and they catch you.',
+        winText:  '',
+        loseText: 'Lantern light sweeps the reeds. Pip is caught crossing open ground, dragged back before he ever reaches Magwitch.',
 
         init: function (api) {
+          this.provisions = 30;
+          this.alarm = 0;
+          this.maxAlarm = 65;
+          this.leg = 0;
+          this.checkpoints = [
+            { name: 'THE CHURCHYARD GATE', text: 'A DOG BARKS BEHIND THE RECTORY.',
+              quiet: { label: 'TOSS IT A SCRAP', sub: '-14 provisions · silent', cost: 14 },
+              bold:  { label: 'SLIP PAST IN THE DARK', sub: 'free · +20 alarm', gain: 20 } },
+            { name: 'THE OLD BATTERY', text: 'SOLDIERS DRILL BY THE GUN EMPLACEMENT.',
+              quiet: { label: 'CRAWL THE LONG WAY ROUND', sub: '-14 provisions · silent', cost: 14 },
+              bold:  { label: 'DASH BEHIND THE CANNON', sub: 'free · +20 alarm', gain: 20 } },
+            { name: 'THE SLUICE GATE', text: 'THE SLUICE CREAKS LOUD IN THE WIND.',
+              quiet: { label: 'EASE IT OPEN INCH BY INCH', sub: '-14 provisions · silent', cost: 14 },
+              bold:  { label: 'HAUL IT WIDE AND RUN THROUGH', sub: 'free · +20 alarm', gain: 20 } },
+            { name: 'THE GIBBET MARSH', text: "THE HANGED PIRATE'S CHAINS CREAK OVERHEAD.",
+              quiet: { label: 'KEEP LOW IN THE REEDS', sub: '-14 provisions · silent', cost: 14 },
+              bold:  { label: 'SPRINT THE OPEN GROUND', sub: 'free · +20 alarm', gain: 20 } },
+          ];
+          this.active = this.checkpoints[0];
+          this.feedback = null; this.feedbackT = 0;
+        },
+
+        choiceRects: function (api) {
           var W = api.W, H = api.H;
-          this.px = W / 2;
-          this.py = H * 0.82;
-          this.lives  = 3;
-          this.hitCD  = 0;
-          this.survive = 0;
-
-          // 6 provision items scattered across the marsh
-          this.items = [
-            { x: W*0.18, y: H*0.55, collected: false },
-            { x: W*0.72, y: H*0.48, collected: false },
-            { x: W*0.35, y: H*0.68, collected: false },
-            { x: W*0.80, y: H*0.72, collected: false },
-            { x: W*0.55, y: H*0.58, collected: false },
-            { x: W*0.22, y: H*0.76, collected: false },
+          return [
+            { x: 20, y: H - 130, w: W - 40, h: 44 },
+            { x: 20, y: H - 78, w: W - 40, h: 44 },
           ];
-          this.collected = 0;
-
-          // Magwitch position (target, top area)
-          this.magX = W * 0.82;
-          this.magY = H * 0.38;
-
-          // 3 patrolling soldiers
-          this.soldiers = [
-            { x: W*0.30, y: H*0.50, dir: 1, angle: 0, speed: 48 },
-            { x: W*0.65, y: H*0.62, dir: -1, angle: Math.PI*0.8, speed: 56 },
-            { x: W*0.50, y: H*0.75, dir: 1, angle: Math.PI*0.3, speed: 52 },
-          ];
-          this.itemGlow = 0;
         },
 
         update: function (api, dt) {
-          var W = api.W, H = api.H;
-          this.survive += dt;
-          this.itemGlow = (this.itemGlow + dt * 3) % (Math.PI * 2);
+          this.feedbackT = Math.max(0, this.feedbackT - dt);
+          if (this.feedbackT > 0 || !this.active) return;
+          if (!api.pointer.justDown) return;
 
-          // Move Pip
-          var spd = 148;
-          var mx = 0, my = 0;
-          if (api.keyDown('left')  || (api.pointer.down && api.pointer.x < W * 0.45 && Math.abs(api.pointer.x - this.px) > 14)) mx = -1;
-          if (api.keyDown('right') || (api.pointer.down && api.pointer.x > W * 0.55 && Math.abs(api.pointer.x - this.px) > 14)) mx = 1;
-          if (api.keyDown('up')    || (api.pointer.down && api.pointer.y < H * 0.45 && Math.abs(api.pointer.y - this.py) > 14)) my = -1;
-          if (api.keyDown('down')  || (api.pointer.down && api.pointer.y > H * 0.55 && Math.abs(api.pointer.y - this.py) > 14)) my = 1;
-
-          // Touch drag: move toward pointer
-          if (api.pointer.down) {
-            var dx2 = api.pointer.x - this.px;
-            var dy2 = api.pointer.y - this.py;
-            var dist = Math.sqrt(dx2*dx2 + dy2*dy2);
-            if (dist > 12) {
-              mx = dx2 / dist;
-              my = dy2 / dist;
-            }
-          }
-
-          this.px = clamp(this.px + mx * spd * dt, 14, W - 14);
-          this.py = clamp(this.py + my * spd * dt, H * 0.36, H - 18);
-
-          // Update soldiers (patrol left-right within bounds)
-          for (var si = 0; si < this.soldiers.length; si++) {
-            var sol = this.soldiers[si];
-            sol.angle += dt * 0.9;
-            sol.x += sol.dir * sol.speed * dt;
-            if (sol.x < 20 || sol.x > W - 20) {
-              sol.dir *= -1;
-              sol.x = clamp(sol.x, 20, W - 20);
-            }
-          }
-
-          // Collect items
-          for (var ii = 0; ii < this.items.length; ii++) {
-            var item = this.items[ii];
-            if (!item.collected) {
-              var ddx = this.px - item.x, ddy = this.py - item.y;
-              if (ddx*ddx + ddy*ddy < 20*20) {
-                item.collected = true;
-                this.collected++;
-                api.addScore(15);
+          var rects = this.choiceRects(api);
+          var canAffordQuiet = this.provisions >= this.active.quiet.cost;
+          var opts = [this.active.quiet, this.active.bold];
+          for (var i = 0; i < 2; i++) {
+            if (i === 0 && !canAffordQuiet) continue; // quiet route locked without provisions
+            var r = rects[i];
+            if (api.pointer.x >= r.x && api.pointer.x <= r.x + r.w &&
+                api.pointer.y >= r.y && api.pointer.y <= r.y + r.h) {
+              var pick = opts[i];
+              if (i === 0) {
+                this.provisions -= pick.cost;
+                api.audio.sfx('select');
+                api.burst(api.W / 2, api.H * 0.42, C.marshL, 8);
+              } else {
+                this.alarm += pick.gain;
+                api.addScore(pick.gain);
                 api.audio.sfx('coin');
-                api.burst(item.x, item.y, C.amberL, 8);
+                api.shake(4, 0.2);
+                api.burst(api.W / 2, api.H * 0.42, C.red, 8);
               }
-            }
-          }
+              this.feedback = pick.label;
+              this.feedbackT = 0.9;
 
-          // Check lantern hits
-          this.hitCD = Math.max(0, this.hitCD - dt);
-          if (this.hitCD <= 0) {
-            for (var si2 = 0; si2 < this.soldiers.length; si2++) {
-              var sol2 = this.soldiers[si2];
-              var coneLen = 60, coneHalf = 0.38; // cone parameters
-              // Cone direction: soldier faces the direction they're walking
-              var coneDir = sol2.dir > 0 ? 0 : Math.PI;
-              var ex = this.px - sol2.x, ey = this.py - sol2.y;
-              var eDist = Math.sqrt(ex*ex + ey*ey);
-              if (eDist < coneLen) {
-                var eAngle = Math.atan2(ey, ex);
-                var diff = eAngle - coneDir;
-                while (diff > Math.PI) diff -= Math.PI * 2;
-                while (diff < -Math.PI) diff += Math.PI * 2;
-                if (Math.abs(diff) < coneHalf) {
-                  this.lives--;
-                  this.hitCD = 1.6;
-                  api.shake(8, 0.4);
-                  api.flash('#ffffff', 0.25);
-                  api.audio.sfx('hurt');
-                  if (this.lives <= 0) { api.lose(); return; }
-                  break;
-                }
+              if (this.alarm >= this.maxAlarm) {
+                api.lose();
+                return;
               }
+              this.leg++;
+              if (this.leg >= this.checkpoints.length) {
+                this.winText = this.provisions >= 10
+                  ? 'Pip reaches Magwitch with a full sack of stolen food and the file. The convict\'s iron grip softens for just a moment.'
+                  : 'Pip reaches Magwitch, provisions nearly spent. The convict takes what little remains and the file, and is grateful all the same.';
+                api.addScore(35);
+                this.active = null;
+                api.win();
+                return;
+              }
+              this.active = this.checkpoints[this.leg];
+              break;
             }
-          }
-
-          // Win: all collected
-          if (this.collected >= 6) {
-            api.addScore(30);
-            api.win();
           }
         },
 
@@ -672,72 +635,90 @@
           sk.addColorStop(1, '#15221a');
           c.fillStyle = sk; c.fillRect(0, 0, W, H);
 
-          // Distant river strip
-          g.rect(0, H*0.43, W, 14, C.river);
           // Moon
           c.globalAlpha = 0.45;
           c.fillStyle = '#f0e8c0';
-          c.beginPath(); c.arc(W*0.78, H*0.12, 15, 0, Math.PI*2); c.fill();
+          c.beginPath(); c.arc(W*0.80, H*0.09, 13, 0, Math.PI*2); c.fill();
           c.globalAlpha = 1;
 
-          // Marsh ground
-          g.rect(0, H*0.82, W, H*0.18, C.marsh);
-          g.rect(0, H*0.68, W, H*0.14, C.marshL);
-
-          // Magwitch (crouched silhouette)
-          var mx2 = this.magX, my2 = this.magY;
-          c.fillStyle = '#08060a';
-          g.circle(mx2, my2 - 10, 9, '#08060a');
-          g.rect(mx2 - 7, my2 - 3, 14, 16, '#08060a');
-          // Glowing eyes (hint to player)
-          g.circle(mx2 - 3, my2 - 12, 2, C.red);
-          g.circle(mx2 + 3, my2 - 12, 2, C.red);
-          // Collection indicator above Magwitch
-          api.txtCFit(this.collected + '/6', mx2, my2 - 26, 7, C.amberL, false, 30);
-
-          // Provision items
-          for (var ii = 0; ii < this.items.length; ii++) {
-            var item = this.items[ii];
-            if (!item.collected) {
-              var glow = 0.6 + 0.4 * Math.sin(this.itemGlow + ii * 1.1);
-              c.globalAlpha = glow;
-              g.circle(item.x, item.y, 7, C.amberL);
-              c.globalAlpha = 0.4 * glow;
-              g.circle(item.x, item.y, 13, C.amber);
+          // Route map: waypoint dots for the 4 checkpoints
+          var mapY = H * 0.14, mapL = 30, mapR = W - 30;
+          for (var wi = 0; wi < this.checkpoints.length; wi++) {
+            var wx = mapL + wi * ((mapR - mapL) / (this.checkpoints.length - 1));
+            var passed = wi < this.leg, isCur = wi === this.leg;
+            if (wi > 0) {
+              var pwx = mapL + (wi - 1) * ((mapR - mapL) / (this.checkpoints.length - 1));
+              c.strokeStyle = (passed || isCur) ? C.amber : C.stonD;
+              c.lineWidth = 2; c.globalAlpha = 0.5;
+              c.beginPath(); c.moveTo(pwx, mapY); c.lineTo(wx, mapY); c.stroke();
               c.globalAlpha = 1;
-              g.circle(item.x, item.y, 3, C.gasYel);
+            }
+            g.circle(wx, mapY, isCur ? 6 : 4, passed ? C.greenL : (isCur ? C.amberL : C.stonD));
+          }
+
+          // Marsh ground
+          g.rect(0, H*0.78, W, H*0.22, C.marsh);
+          g.rect(0, H*0.66, W, H*0.14, C.marshL);
+          c.fillStyle = C.marshL;
+          for (var gt = 0; gt < 10; gt++) {
+            c.fillRect((gt * 137 + 20) % W, H*0.66 + (gt * 13) % 20, 6 + gt % 5, 3 + gt % 3);
+          }
+
+          // Mist wisps
+          for (var mw = 0; mw < 4; mw++) {
+            var mwx = ((t * 6 + mw * 71) % (W + 100)) - 50;
+            var mwy = H * 0.55 + mw * 22 + Math.sin(t * 0.3 + mw * 1.4) * 14;
+            c.globalAlpha = 0.05;
+            c.fillStyle = C.fogGr;
+            c.beginPath(); c.ellipse(mwx, mwy, 60, 18, 0, 0, Math.PI * 2); c.fill();
+          }
+          c.globalAlpha = 1;
+
+          // Lurking soldier + lantern, watching from the reeds — glows brighter as alarm rises
+          var solX = W * 0.78, solY = H * 0.60;
+          var alarmFrac = clamp(this.alarm / this.maxAlarm, 0, 1);
+          c.globalAlpha = 0.35 + 0.5 * alarmFrac + 0.1 * Math.sin(t * 3);
+          drawSoldier(g, c, solX, solY, false);
+          drawLantern(g, c, solX - 8, solY - 10);
+          c.globalAlpha = 1;
+
+          // Pip, mid-trek
+          drawPip(g, c, W * 0.28, H * 0.60);
+
+          // Checkpoint card
+          var cardY = H * 0.42;
+          g.rect(16, cardY, W - 32, 46, '#141c10');
+          c.strokeStyle = C.marshL; c.lineWidth = 1; c.strokeRect(16, cardY, W - 32, 46);
+          if (this.active) {
+            api.txtCFit(this.active.name, W / 2, cardY + 8, 8, C.cream, true, W - 44);
+            api.txtCFit(this.feedbackT > 0 ? ('"' + this.feedback + '"') : this.active.text,
+              W / 2, cardY + 26, 7, this.feedbackT > 0 ? C.amberL : C.fogGr, false, W - 44);
+          }
+
+          // Choice buttons
+          if (this.feedbackT <= 0 && this.active) {
+            var rects = this.choiceRects(api);
+            var canAffordQuiet = this.provisions >= this.active.quiet.cost;
+            var opts = [this.active.quiet, this.active.bold];
+            for (var i = 0; i < 2; i++) {
+              var r = rects[i], o = opts[i];
+              var locked = i === 0 && !canAffordQuiet;
+              g.rect(r.x, r.y, r.w, r.h, locked ? '#161616' : (i === 0 ? '#141c10' : '#241412'));
+              c.strokeStyle = locked ? C.stonD : (i === 0 ? C.marshL : C.red);
+              c.lineWidth = 1; c.strokeRect(r.x, r.y, r.w, r.h);
+              api.txtCFit(o.label, r.x + r.w / 2, r.y + 8, 9, locked ? C.stonD : C.cream, false, r.w - 12);
+              api.txtCFit(locked ? 'NOT ENOUGH PROVISIONS' : o.sub, r.x + r.w / 2, r.y + 26, 7,
+                locked ? C.stonD : (i === 0 ? C.greenL : C.red), false, r.w - 12);
             }
           }
 
-          // Soldiers + lantern cones
-          for (var si = 0; si < this.soldiers.length; si++) {
-            var sol = this.soldiers[si];
-            var coneDir = sol.dir > 0 ? 0 : Math.PI;
-            var coneLen = 60, coneHalf = 0.38;
+          // Stat bars
+          api.txt('ALARM', 6, 20, 7, C.red, false, true);
+          g.rect(50, 20, W - 104, 6, '#241008');
+          g.rect(50, 20, Math.floor((W - 104) * clamp(this.alarm / this.maxAlarm, 0, 1)), 6, C.red);
+          api.txt('PROVISIONS ' + this.provisions, W - 8, 20, 7, C.amberL, 'right', true);
 
-            // Draw lantern glow cone
-            c.globalAlpha = 0.14;
-            c.fillStyle = C.gasYel;
-            c.beginPath();
-            c.moveTo(sol.x, sol.y - 5);
-            c.arc(sol.x, sol.y - 5, coneLen, coneDir - coneHalf, coneDir + coneHalf);
-            c.closePath(); c.fill();
-            c.globalAlpha = 1;
-
-            drawSoldier(g, c, sol.x, sol.y, sol.dir > 0);
-            drawLantern(g, c, sol.x + (sol.dir > 0 ? 8 : -8), sol.y - 10);
-          }
-
-          // Pip
-          if (this.hitCD > 0) {
-            // Flash white when hit
-            if (Math.floor(this.hitCD * 8) % 2 === 0) drawPip(g, c, this.px, this.py);
-          } else {
-            drawPip(g, c, this.px, this.py);
-          }
-
-          // HUD
-          api.topBar('THE MARSHES', this.collected + '/6', this.lives);
+          api.topBar('THE MARSHES · CHECKPOINT ' + (Math.min(this.leg + 1, this.checkpoints.length)) + '/' + this.checkpoints.length);
           api.vignette();
           api.scanlines();
         },

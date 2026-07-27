@@ -10,6 +10,17 @@
 // format stays identical to the rest of the fleet.
 export const CHANGELOG = [
   {
+    v: 130,
+    title: 'Great Expectations: The Marshes rebuilt as a branching provisions trek',
+    kind: 'game',
+    ts: '2026-07-27T23:36:02.296Z',
+    items: [
+      'The free-move stealth-dodge opener is now four checkpoints between the forge and Magwitch\'s hideout, each a QUIET (spend stolen provisions, stay hidden) or BOLD (free, raises the soldiers\' alarm) choice.',
+      'Cross the alarm cap and the patrol catches Pip before he ever reaches Magwitch — the same branching-trek stakes as Down the Thames, reskinned for the opening act.',
+      'This clears the last move-dodge chapter on the rebuild queue for Great Expectations.',
+    ],
+  },
+  {
     v: 129,
     title: 'Great Expectations: The Confrontation rebuilt as a reactive grip-read duel',
     kind: 'game',

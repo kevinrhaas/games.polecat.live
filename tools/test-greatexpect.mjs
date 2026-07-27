@@ -90,6 +90,28 @@ for (const vp of viewports) {
   const thamesWinResult = await page.evaluate(() => window.__sagaTest.last);
   console.log(vp.name, 'thames result after quiet/quiet/bold/bold:', JSON.stringify(thamesWinResult));
 
+  // exercise 'marshes': 4 BOLD picks in a row should raise alarm past the
+  // cap and trigger a loss (20 x 4 = 80 >= 65)
+  const marshesIdx = ids.indexOf('marshes');
+  await page.evaluate((idx) => { window.__sagaTest.last = null; window.__sagaTest.jump(idx); }, marshesIdx);
+  await page.waitForTimeout(300);
+  for (let round = 0; round < 4; round++) {
+    await tapFrac(page, 0.5, 0.88);             // second (BOLD) choice rect
+    await page.waitForTimeout(1100);            // feedback holds 0.9s
+  }
+  const marshesLoseResult = await page.evaluate(() => window.__sagaTest.last);
+  console.log(vp.name, 'marshes result after 4 bold taps:', JSON.stringify(marshesLoseResult));
+
+  // then: QUIET, QUIET, BOLD, BOLD should stay under the cap (40 alarm) and win
+  await page.evaluate((idx) => { window.__sagaTest.last = null; window.__sagaTest.jump(idx); }, marshesIdx);
+  await page.waitForTimeout(300);
+  await tapFrac(page, 0.5, 0.78); await page.waitForTimeout(1100);  // QUIET
+  await tapFrac(page, 0.5, 0.78); await page.waitForTimeout(1100);  // QUIET
+  await tapFrac(page, 0.5, 0.88); await page.waitForTimeout(1100);  // BOLD
+  await tapFrac(page, 0.5, 0.88); await page.waitForTimeout(1100);  // BOLD
+  const marshesWinResult = await page.evaluate(() => window.__sagaTest.last);
+  console.log(vp.name, 'marshes result after quiet/quiet/bold/bold:', JSON.stringify(marshesWinResult));
+
   // exercise 'wharf': round-robin a guess across LEFT/CENTER/RIGHT each
   // telegraph (can't know which side Compeyson picks — it's randomized) and
   // confirm the reactive grip-read duel actually reaches a result (hit and
@@ -126,6 +148,8 @@ for (const vp of viewports) {
   if (!satisResult || !satisResult.won) { console.error(vp.name, 'satis chapter did not win after 5 valid taps'); anyFail = true; }
   if (!thamesLoseResult || thamesLoseResult.won) { console.error(vp.name, 'thames chapter did not lose after 4 bold picks'); anyFail = true; }
   if (!thamesWinResult || !thamesWinResult.won) { console.error(vp.name, 'thames chapter did not win after quiet/quiet/bold/bold'); anyFail = true; }
+  if (!marshesLoseResult || marshesLoseResult.won) { console.error(vp.name, 'marshes chapter did not lose after 4 bold picks'); anyFail = true; }
+  if (!marshesWinResult || !marshesWinResult.won) { console.error(vp.name, 'marshes chapter did not win after quiet/quiet/bold/bold'); anyFail = true; }
   await ctx.close();
 }
 
