@@ -10,6 +10,17 @@
 // format stays identical to the rest of the fleet.
 export const CHANGELOG = [
   {
+    v: 131,
+    title: 'A Christmas Carol: Christmas Present rebuilt as a gift-sorting puzzle',
+    kind: 'game',
+    ts: '2026-07-27T23:56:00.180Z',
+    items: [
+      'The catch-anything-on-a-sliding-table chapter is now a grab-and-carry sort: gifts drift down and you drag each one to where it belongs — Tiny Tim\'s medicine, the Cratchit table, or the hearth.',
+      'Route the wrong gift to the wrong place too many times and the family goes without; sort 14 correctly and Tiny Tim beams with delight.',
+      'First step on REBUILD_QUEUE #11\'s branching-narrative rework of the Christmas Carol saga.',
+    ],
+  },
+  {
     v: 130,
     title: 'Great Expectations: The Marshes rebuilt as a branching provisions trek',
     kind: 'game',
