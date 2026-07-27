@@ -1087,8 +1087,9 @@
 
       /* ───────────────────────────────────────────────────────────────
        * ACT 4 — DOWN THE THAMES
-       * Dodge runner: row the boat past obstacles for 26 seconds.
-       * Obstacles: police galley, logs, fog walls. 3 lives.
+       * Branching river-escape: 4 reaches, each a QUIET (costs coin, no
+       * risk) vs BOLD (free, raises suspicion) choice. Suspicion capped
+       * at 70 — cross it and a police galley runs the boat down.
        * ─────────────────────────────────────────────────────────────── */
       {
         id:   'thames',
@@ -1101,168 +1102,189 @@
           "HIS FORTUNE, EARNED IN",
           "AUSTRALIA, MADE PIP",
           "A GENTLEMAN.",
-          "NOW THEY MUST FLEE",
-          "DOWN THE THAMES.",
+          "NOW HERBERT ROWS THEM",
+          "DOWNRIVER TO A WAITING",
+          "STEAMER — EVERY REACH",
+          "A CHOICE: PAY FOR COVER,",
+          "OR RISK THE OPEN WATER.",
         ],
         quote: '"We spend our lives trying to find out the secret, and the secret is in this: there is no secret." — Dickens',
-        help:  'Tap LEFT or RIGHT to steer the boat. Dodge police galleys, logs, and fog banks! Survive 26 seconds to reach the ship.',
-        winText:  'The rowboat clears the last police galley. The waiting ship looms ahead.',
-        loseText: 'The Thames swallows them. The police close in from all sides.',
+        help:  'TAP a route at each reach. QUIET costs coin but stays safe; BOLD is free but raises suspicion. Let suspicion top out and the police close in.',
+        winText:  '',
+        loseText: 'A police galley runs the boat down. Magwitch is taken before the steamer ever comes in sight.',
 
         init: function (api) {
-          var W = api.W;
-          this.bx      = W / 2;
-          this.lives   = 3;
-          this.elapsed = 0;
-          this.target  = 26;
-          this.obs     = [];
-          this.spawnT  = 1.0;
-          this.speed   = 120;
-          this.hitCD   = 0;
-          this.scroll  = 0; // river scroll
+          this.coin = 40;
+          this.suspicion = 0;
+          this.maxSuspicion = 70;
+          this.leg = 0;
+          this.scroll = 0;
+          this.reaches = [
+            { name: 'BLACKWALL REACH', text: 'CRANES LOOM OVER BLACK WATER.',
+              quiet: { label: 'HUG THE WHARVES', sub: '-16 coin · silent', cost: 16 },
+              bold:  { label: 'RACE THE MIDDLE CHANNEL', sub: 'free · +22 suspicion', gain: 22 } },
+            { name: 'ERITH FLATS', text: 'FLAT MARSH, NO COVER FOR MILES.',
+              quiet: { label: 'PAY THE FERRYMAN FOR COVER', sub: '-16 coin · silent', cost: 16 },
+              bold:  { label: 'ROW THE OPEN MARSH', sub: 'free · +22 suspicion', gain: 22 } },
+            { name: 'GRAVESEND REACH', text: 'CUSTOMS BOATS WORK THIS STRETCH.',
+              quiet: { label: 'MUFFLE THE OARS, SLACK TIDE', sub: '-16 coin · silent', cost: 16 },
+              bold:  { label: 'PUSH ON IN DAYLIGHT', sub: 'free · +22 suspicion', gain: 22 } },
+            { name: 'THE NORE', text: "THE STEAMER WAITS AT THE RIVER'S MOUTH.",
+              quiet: { label: 'SIGNAL WITH A SHUTTERED LAMP', sub: '-16 coin · silent', cost: 16 },
+              bold:  { label: 'WAVE THEM DOWN IN THE OPEN', sub: 'free · +22 suspicion', gain: 22 } },
+          ];
+          this.active = this.reaches[0];
+          this.feedback = null; this.feedbackT = 0;
+        },
+
+        choiceRects: function (api) {
+          var W = api.W, H = api.H;
+          return [
+            { x: 20, y: H - 130, w: W - 40, h: 44 },
+            { x: 20, y: H - 78, w: W - 40, h: 44 },
+          ];
         },
 
         update: function (api, dt) {
-          var W = api.W, H = api.H;
-          this.elapsed += dt;
-          this.hitCD = Math.max(0, this.hitCD - dt);
-          this.scroll = (this.scroll + 180 * dt) % 120;
+          this.scroll = (this.scroll + 60 * dt) % 120;
+          this.feedbackT = Math.max(0, this.feedbackT - dt);
+          if (this.feedbackT > 0 || !this.active) return;
+          if (!api.pointer.justDown) return;
 
-          // Steer boat
-          var mv2 = 0;
-          if (api.keyDown('left')  || (api.pointer.down && api.pointer.x < W / 2)) mv2 = -1;
-          if (api.keyDown('right') || (api.pointer.down && api.pointer.x > W / 2)) mv2 =  1;
-          this.bx = clamp(this.bx + mv2 * 168 * dt, 30, W - 30);
-
-          // Spawn obstacles
-          this.spawnT -= dt;
-          if (this.spawnT <= 0) {
-            var types = ['galley', 'log', 'fog'];
-            var otype = types[Math.floor(Math.random() * 3)];
-            var ow = otype === 'galley' ? 60 : (otype === 'fog' ? 80 : 22);
-            var ox = 20 + Math.random() * (W - ow - 20);
-            this.obs.push({ type: otype, x: ox, y: -50, w: ow, h: otype === 'galley' ? 28 : (otype === 'fog' ? 36 : 14) });
-            this.spawnT = 0.80 - Math.min(0.40, this.elapsed * 0.012) + Math.random() * 0.35;
-          }
-
-          // Move obstacles
-          var oSpd = this.speed + this.elapsed * 4;
-          for (var oi = 0; oi < this.obs.length; oi++) {
-            this.obs[oi].y += oSpd * dt;
-          }
-          this.obs = this.obs.filter(function (o) { return o.y < api.H + 60; });
-
-          // Collision with boat
-          var boatY = api.H * 0.80, boatW = 28, boatH = 16;
-          if (this.hitCD <= 0) {
-            for (var oi2 = 0; oi2 < this.obs.length; oi2++) {
-              var ob = this.obs[oi2];
-              if (ob.type === 'fog') continue; // fog is visual only
-              var bLeft = this.bx - boatW/2, bRight = this.bx + boatW/2;
-              var bTop = boatY - boatH/2, bBot = boatY + boatH/2;
-              if (ob.x < bRight && ob.x + ob.w > bLeft && ob.y < bBot && ob.y + ob.h > bTop) {
-                this.lives--;
-                this.hitCD = 1.4;
-                api.shake(8, 0.4);
-                api.flash('#ffffff', 0.3);
-                api.audio.sfx('hurt');
-                if (this.lives <= 0) { api.lose(); return; }
+          var rects = this.choiceRects(api);
+          var canAffordQuiet = this.coin >= this.active.quiet.cost;
+          var opts = [this.active.quiet, this.active.bold];
+          for (var i = 0; i < 2; i++) {
+            if (i === 0 && !canAffordQuiet) continue; // quiet route locked without coin
+            var r = rects[i];
+            if (api.pointer.x >= r.x && api.pointer.x <= r.x + r.w &&
+                api.pointer.y >= r.y && api.pointer.y <= r.y + r.h) {
+              var pick = opts[i];
+              if (i === 0) {
+                this.coin -= pick.cost;
+                api.audio.sfx('select');
+                api.burst(api.W / 2, api.H * 0.42, C.riverL, 8);
+              } else {
+                this.suspicion += pick.gain;
+                api.addScore(pick.gain);
+                api.audio.sfx('coin');
+                api.shake(4, 0.2);
+                api.burst(api.W / 2, api.H * 0.42, C.red, 8);
               }
-            }
-          }
+              this.feedback = pick.label;
+              this.feedbackT = 0.9;
 
-          if (this.elapsed >= this.target) {
-            api.addScore(35);
-            api.win();
+              if (this.suspicion >= this.maxSuspicion) {
+                api.lose();
+                return;
+              }
+              this.leg++;
+              if (this.leg >= this.reaches.length) {
+                this.winText = this.coin >= 24
+                  ? 'The rowboat slips alongside the steamer with coin to spare. The waiting ship looms ahead.'
+                  : 'The rowboat clears the last reach, purse near empty. The waiting ship looms ahead.';
+                api.addScore(35);
+                this.active = null;
+                api.win();
+                return;
+              }
+              this.active = this.reaches[this.leg];
+              break;
+            }
           }
         },
 
         draw: function (api) {
           var g = api.gfx, c = api.ctx, W = api.W, H = api.H;
 
-          // Dark Thames night
-          c.fillStyle = '#080c12'; c.fillRect(0, 0, W, H);
+          // Thames at dusk
+          var sk = c.createLinearGradient(0, 0, 0, H);
+          sk.addColorStop(0, '#0a1018');
+          sk.addColorStop(1, '#16282e');
+          c.fillStyle = sk; c.fillRect(0, 0, W, H);
 
-          // Scrolling river surface
-          c.fillStyle = C.water;
-          c.fillRect(0, 0, W, H);
-          // River ripple lines
-          c.strokeStyle = C.riverL; c.lineWidth = 1; c.globalAlpha = 0.35;
-          for (var ri2 = 0; ri2 < 12; ri2++) {
-            var ry = (ri2 * 42 + this.scroll) % (H + 40) - 20;
-            c.beginPath(); c.moveTo(0, ry); c.lineTo(W, ry + 4); c.stroke();
+          // Scrolling river band
+          g.rect(0, H * 0.32, W, H * 0.30, C.water);
+          c.strokeStyle = C.riverL; c.lineWidth = 1; c.globalAlpha = 0.3;
+          for (var ri = 0; ri < 7; ri++) {
+            var ry = H * 0.32 + ((ri * 18 + this.scroll) % (H * 0.30));
+            c.beginPath(); c.moveTo(0, ry); c.lineTo(W, ry + 3); c.stroke();
           }
           c.globalAlpha = 1;
+          g.rect(0, H * 0.30, W, 4, '#060a0c');
+          g.rect(0, H * 0.62, W, 4, '#060a0c');
 
-          // Bank silhouettes (dark buildings on either side)
-          c.fillStyle = '#060808';
-          c.fillRect(0, 0, 20, H);
-          c.fillRect(W - 20, 0, 20, H);
-          // Building silhouettes on banks
-          var bankBldgs = [
-            [0, H*0.20, 20, H*0.80],
-            [W-20, H*0.15, 20, H*0.85],
-          ];
-          // Chimneys on left bank
-          g.rect(0, H*0.08, 8, 22, '#040608');
-          g.rect(12, H*0.06, 8, 28, '#040608');
+          // Route map: waypoint dots for the 4 reaches
+          var mapY = H * 0.14, mapL = 30, mapR = W - 30;
+          for (var wi = 0; wi < this.reaches.length; wi++) {
+            var wx = mapL + wi * ((mapR - mapL) / (this.reaches.length - 1));
+            var passed = wi < this.leg, isCur = wi === this.leg;
+            if (wi > 0) {
+              var pwx = mapL + (wi - 1) * ((mapR - mapL) / (this.reaches.length - 1));
+              c.strokeStyle = (passed || isCur) ? C.amber : C.stonD;
+              c.lineWidth = 2; c.globalAlpha = 0.5;
+              c.beginPath(); c.moveTo(pwx, mapY); c.lineTo(wx, mapY); c.stroke();
+              c.globalAlpha = 1;
+            }
+            g.circle(wx, mapY, isCur ? 6 : 4, passed ? C.greenL : (isCur ? C.amberL : C.stonD));
+          }
+          var boatMapX = mapL + Math.min(this.leg, this.reaches.length - 1) * ((mapR - mapL) / (this.reaches.length - 1));
+          c.fillStyle = C.boatL;
+          c.beginPath();
+          c.moveTo(boatMapX - 6, mapY - 10); c.lineTo(boatMapX + 6, mapY - 10); c.lineTo(boatMapX, mapY - 2);
+          c.closePath(); c.fill();
 
-          // Obstacles
-          for (var oi3 = 0; oi3 < this.obs.length; oi3++) {
-            var ob2 = this.obs[oi3];
-            if (ob2.type === 'galley') {
-              // Police galley boat
-              c.fillStyle = C.police;
-              c.beginPath();
-              c.moveTo(ob2.x, ob2.y + ob2.h);
-              c.lineTo(ob2.x + ob2.w, ob2.y + ob2.h);
-              c.lineTo(ob2.x + ob2.w - 6, ob2.y);
-              c.lineTo(ob2.x + 6, ob2.y);
-              c.closePath(); c.fill();
-              // Police light
-              c.globalAlpha = 0.5;
-              g.circle(ob2.x + ob2.w/2, ob2.y - 5, 7, C.gasYel);
-              c.globalAlpha = 1;
-              api.txtCFit('POLICE', ob2.x + ob2.w/2, ob2.y + 9, 5, C.cream, false, ob2.w);
-            } else if (ob2.type === 'log') {
-              g.rect(ob2.x, ob2.y, ob2.w, ob2.h, C.brown);
-              g.rect(ob2.x + 2, ob2.y + 4, ob2.w - 4, 4, C.brownL);
-            } else {
-              // Fog bank
-              c.globalAlpha = 0.28;
-              c.fillStyle = C.fogGr;
-              c.beginPath(); c.ellipse(ob2.x + ob2.w/2, ob2.y + ob2.h/2, ob2.w/2, ob2.h/2, 0, 0, Math.PI*2); c.fill();
-              c.globalAlpha = 1;
+          // Rowboat mid-scene
+          var boatY = H * 0.48;
+          c.fillStyle = C.boatL;
+          c.beginPath();
+          c.moveTo(W/2 - 30, boatY + 9);
+          c.lineTo(W/2 + 30, boatY + 9);
+          c.lineTo(W/2 + 23, boatY - 8);
+          c.lineTo(W/2 - 23, boatY - 8);
+          c.closePath(); c.fill();
+          c.strokeStyle = C.boat; c.lineWidth = 2; c.stroke();
+          c.strokeStyle = C.brownL; c.lineWidth = 3;
+          c.beginPath(); c.moveTo(W/2 - 23, boatY); c.lineTo(W/2 - 46, boatY + 11); c.stroke();
+          c.beginPath(); c.moveTo(W/2 + 23, boatY); c.lineTo(W/2 + 46, boatY + 11); c.stroke();
+          c.fillStyle = '#08060a';
+          g.circle(W/2 - 6, boatY - 4, 5, '#08060a');
+          g.circle(W/2 + 8, boatY - 5, 6, '#08060a');
+
+          // Encounter card
+          var cardY = H * 0.64;
+          g.rect(16, cardY, W - 32, 40, '#0e1a1e');
+          c.strokeStyle = C.riverL; c.lineWidth = 1; c.strokeRect(16, cardY, W - 32, 40);
+          if (this.active) {
+            api.txtCFit(this.active.name, W / 2, cardY + 6, 8, C.cream, true, W - 44);
+            api.txtCFit(this.feedbackT > 0 ? ('"' + this.feedback + '"') : this.active.text,
+              W / 2, cardY + 24, 7, this.feedbackT > 0 ? C.amberL : C.fogGr, false, W - 44);
+          }
+
+          // Choice buttons
+          if (this.feedbackT <= 0 && this.active) {
+            var rects = this.choiceRects(api);
+            var canAffordQuiet = this.coin >= this.active.quiet.cost;
+            var opts = [this.active.quiet, this.active.bold];
+            for (var i = 0; i < 2; i++) {
+              var r = rects[i], o = opts[i];
+              var locked = i === 0 && !canAffordQuiet;
+              g.rect(r.x, r.y, r.w, r.h, locked ? '#161616' : (i === 0 ? '#0e1a1e' : '#241412'));
+              c.strokeStyle = locked ? C.stonD : (i === 0 ? C.riverL : C.red);
+              c.lineWidth = 1; c.strokeRect(r.x, r.y, r.w, r.h);
+              api.txtCFit(o.label, r.x + r.w / 2, r.y + 8, 9, locked ? C.stonD : C.cream, false, r.w - 12);
+              api.txtCFit(locked ? 'NOT ENOUGH COIN' : o.sub, r.x + r.w / 2, r.y + 26, 7,
+                locked ? C.stonD : (i === 0 ? C.riverL : C.red), false, r.w - 12);
             }
           }
 
-          // Player's rowboat
-          var boatY = H * 0.80;
-          c.fillStyle = C.boatL;
-          c.beginPath();
-          c.moveTo(this.bx - 28, boatY + 8);
-          c.lineTo(this.bx + 28, boatY + 8);
-          c.lineTo(this.bx + 22, boatY - 8);
-          c.lineTo(this.bx - 22, boatY - 8);
-          c.closePath(); c.fill();
-          c.strokeStyle = C.boat; c.lineWidth = 2;
-          c.stroke();
-          // Oars
-          c.strokeStyle = C.brownL; c.lineWidth = 3;
-          c.beginPath(); c.moveTo(this.bx - 22, boatY); c.lineTo(this.bx - 48, boatY + 12); c.stroke();
-          c.beginPath(); c.moveTo(this.bx + 22, boatY); c.lineTo(this.bx + 48, boatY + 12); c.stroke();
-          // Pip + Magwitch silhouettes in boat
-          c.fillStyle = '#08060a';
-          g.circle(this.bx - 6, boatY - 4, 5, '#08060a');
-          g.circle(this.bx + 8, boatY - 5, 6, '#08060a');
+          // Stat bars
+          api.txt('SUSPICION', 6, 20, 7, C.red, false, true);
+          g.rect(76, 20, W - 130, 6, '#241008');
+          g.rect(76, 20, Math.floor((W - 130) * clamp(this.suspicion / this.maxSuspicion, 0, 1)), 6, C.red);
+          api.txt('COIN ' + this.coin, W - 8, 20, 7, C.amberL, 'right', true);
 
-          // Timer bar
-          var prog = Math.min(1, this.elapsed / this.target);
-          g.rect(0, H - 6, W * prog, 6, C.amber);
-
-          api.topBar('THE THAMES',
-            Math.ceil(Math.max(0, this.target - this.elapsed)) + 's',
-            this.lives);
+          api.topBar('THE THAMES · REACH ' + (Math.min(this.leg + 1, this.reaches.length)) + '/' + this.reaches.length);
           api.vignette();
           api.scanlines();
         },
