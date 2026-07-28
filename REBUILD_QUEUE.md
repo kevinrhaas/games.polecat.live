@@ -12,7 +12,7 @@ queue** in the same commit. Promote to Gen-4 (hub + branches) where noted.
 
 ## Queue
 8. **timemachine-eloi** — already has a custom dial menu + a timing-bar / catch-dodge / stealth-cones / matchlight-gather / dodge-debris spread (this line's old "4/5 dodge, only plain-list menu" description no longer matches the file — checked 2026-07-22). Still a **Gen-4 candidate** (machine-assembly + resource roguelite, branching eras, inventory) if someone wants to build its 16-bit hub version, but not a worst-offender rebuild.
-15. **around80days-race** — 3 interchangeable steer-dodge lanes → **time-budget travel strategy**: a route-planning board game across a world map (embodies the wager).
+15. **around80days-race** — THE MONGOLIA rebuilt as a **route-planning** leg (chart the course, coal vs. days) 2026-07-28; KIOUNI rebuilt as a **free-roam stealth rescue** (creep past patrolling priests' torchlight to save Aouda from the Pillaji pyre, then carry her back) 2026-07-28. Remaining 1 of the original 3 dodge lanes: LONDON IN TIME's carriage sprint.
 16. **odysseus-voyage** — 3 L/R dodges → **overworld voyage map** with Oregon-Trail-style crew/resource management and choice encounters.
 17. **heidi-alps** — 3 horizontal-move levels → **alpine day-cycle chore/herding sim** (Harvest-Moon-lite): seasons, foraging, caregiving stats.
 18. **merlin-spells** — 4/5 dodge → **rune-tracing spellcaster** (path-tracing) + a Simon-style incantation duel vs Nimue.
