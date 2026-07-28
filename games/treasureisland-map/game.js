@@ -2,8 +2,10 @@
  * TREASURE ISLAND — X MARKS THE SPOT
  * Five chapters through R. L. Stevenson's classic:
  *   1. THE ADMIRAL BENBOW INN — tap map pieces before pirates break in
- *   2. THE HISPANIOLA         — steer the ship past reefs and cannonballs
- *   3. THE STOCKADE           — defend the log fort: tap pirates to repel
+ *   2. THE HISPANIOLA         — crew social-deduction: from the apple barrel,
+ *                               watch the hands' tells and out Silver's men
+ *   3. THE STOCKADE           — aim & fire: drag-aim the salvaged ship's gun,
+ *                               tap to fire on a reload timer as they charge
  *   4. THE JUNGLE             — steer Jim past lantern beams to find Ben Gunn
  *   5. X MARKS THE SPOT       — dig the hoard, then fight free to the ship
  * Built on RetroSaga (js/saga.js) + RetroEngine.
@@ -502,305 +504,289 @@
 
       /* ================================================================
        *  2. THE HISPANIOLA
-       *  Mechanic: steer/dodge — drag left-right to avoid reefs & shots.
+       *  Mechanic: crew social-deduction — from the apple barrel, watch
+       *  each hand's tells and tap out Silver's secret men before landfall
+       *  (Clue-style; GRAY/HUNTER/JOYCE loyal, HANDS/MERRY/ANDERSON his men
+       *  — per the novel's own crew split).
        * ================================================================ */
       {
-        id: 'hispaniola', name: 'THE HISPANIOLA', sub: 'SET SAIL',
+        id: 'hispaniola', name: 'THE HISPANIOLA', sub: 'THE APPLE BARREL',
 
         icon(api, x, y) {
           const g = api.gfx;
-          g.rect(x - 11, y,  22, 8, '#5a3814');
-          g.rect(x - 1,  y - 12, 2, 14, '#3a2008');
-          g.rect(x + 1,  y - 10, 10, 6, '#dcd8c0');
-          g.rect(x - 1,  y - 16, 6, 4, '#c43030');
+          g.rect(x - 7, y - 2, 14, 11, '#6a4018');
+          g.rect(x - 7, y - 2, 14, 2,  '#8a5820');
+          g.rect(x - 7, y + 7, 14, 2,  '#4a2c0c');
+          g.circle(x, y - 6, 4, '#e8dcc0');
+          g.circle(x, y - 6, 2, '#1a1008');
         },
 
         intro: [
-          "SQUIRE TRELAWNEY",
-          "HIRES THE HISPANIOLA.",
-          "SILVER'S MEN LURK",
-          "below decks.",
+          "SENT BELOW FOR AN APPLE,",
+          "JIM HIDES IN THE BARREL —",
+          "AND HEARS SILVER'S MEN",
+          "plotting in whispers.",
         ],
-        quote: 'On the voyage I loved the sea … but feared the men below decks.',
-        help: 'DRAG or use arrows · dodge the reefs and cannonballs!',
-        winText:  'Treasure Island rises from the morning mist. We have arrived.',
-        loseText: 'The Hispaniola founders on the reef. The voyage ends here.',
+        quote: 'From inside the barrel I dared not breathe. Some of these hands meant murder.',
+        help: "WATCH each hand for shifty tells, then TAP Silver's secret men!",
+        winText:  "Jim slips up to warn the Captain. Now they know which hands to watch.",
+        loseText: "An accusation too many — the crew turns ugly before you're sure.",
 
         init(api) {
-          this.x = api.W / 2; this.lives = 3; this.immune = 0;
-          this.dist = 0; this.need = 320;
-          this.speed = 0.2;
-          this.obs = []; this.spawnT = 0.8;
-          this.shots = []; this.shotT = 5;
+          const ROSTER = [
+            { name: 'GRAY',     mutineer: false },
+            { name: 'HUNTER',   mutineer: false },
+            { name: 'JOYCE',    mutineer: false },
+            { name: 'HANDS',    mutineer: true  },
+            { name: 'MERRY',    mutineer: true  },
+            { name: 'ANDERSON', mutineer: true  },
+          ];
+          const order = [0, 1, 2, 3, 4, 5];
+          for (let i = order.length - 1; i > 0; i--) {
+            const j = api.rint(0, i);
+            const t = order[i]; order[i] = order[j]; order[j] = t;
+          }
+          const COLS = [api.W * 0.22, api.W * 0.5, api.W * 0.78];
+          const ROWS = [190, 300];
+          this.crew = order.map((slot, i) => {
+            const src = ROSTER[slot];
+            return {
+              name: src.name, mutineer: src.mutineer,
+              x: COLS[i % 3], y: ROWS[Math.floor(i / 3)],
+              tellT: api.rnd(0.6, 1.8), tell: 'calm', tellShow: 0,
+              sus: 0, caught: false, wrongT: 0,
+            };
+          });
+          this.timer = 30; this.strikes = 0; this.maxStrikes = 2;
+          this.caughtN = 0; this.needCatch = 3;
         },
 
         update(api, dt) {
-          const f = dt * 60;
-          this.dist += this.speed * f;
-          // slow forward voyage so there's real time to dodge (~22s crossing);
-          // obstacle fall-speed & spawn cadence are real-time and unaffected
-          this.speed = Math.min(0.34, 0.2 + this.dist / 1500);
-          this.immune = Math.max(0, this.immune - dt);
-
-          // steering
-          if (api.pointer.down) {
-            const d = api.pointer.x - this.x;
-            this.x += clamp(d * 0.24 * f, -9 * f, 9 * f);
-          }
-          if (api.keyDown('left'))  this.x -= 4 * f;
-          if (api.keyDown('right')) this.x += 4 * f;
-          this.x = clamp(this.x, 22, api.W - 22);
-
-          // spawn reefs
-          this.spawnT -= dt;
-          if (this.spawnT <= 0) {
-            const n = Math.min(3, 1 + Math.floor(this.dist / 100));
-            for (let i = 0; i < n; i++) {
-              this.obs.push({ x: api.rnd(20, api.W - 20), y: -16, spd: 1.9 + api.rnd(0, 1.0) });
+          this.timer -= dt;
+          for (const cr of this.crew) {
+            if (cr.caught) continue;
+            cr.wrongT = Math.max(0, cr.wrongT - dt);
+            cr.tellShow = Math.max(0, cr.tellShow - dt);
+            cr.tellT -= dt;
+            if (cr.tellT <= 0) {
+              const suspicious = api.chance(cr.mutineer ? 0.65 : 0.14);
+              cr.tell = suspicious ? 'shifty' : 'calm';
+              cr.tellShow = 0.7;
+              if (suspicious) cr.sus = Math.min(3, cr.sus + 1);
+              cr.tellT = api.rnd(1.4, 2.6);
             }
-            this.spawnT = api.rnd(0.65, 1.3) / (1 + this.dist / 250);
-          }
-          // spawn cannonballs from pirate ships
-          this.shotT -= dt;
-          if (this.shotT <= 0 && this.dist > 60) {
-            this.shots.push({ x: api.rnd(18, api.W - 18), y: -12, spd: 3.2 + api.rnd(0, 1.4) });
-            this.shotT = api.rnd(1.4, 3.0);
           }
 
-          for (const o of this.obs)  o.y += o.spd * f;
-          for (const s of this.shots) s.y += s.spd * f;
-          this.obs   = this.obs.filter(o => o.y < api.H + 20);
-          this.shots = this.shots.filter(s => s.y < api.H + 20);
-
-          if (this.immune <= 0) {
-            for (const o of this.obs) {
-              if (Math.abs(o.x - this.x) < 14 && Math.abs(o.y - this.x + this.x - 80) < 20 &&
-                  Math.abs(o.y - (api.H - 80)) < 22) {
-                this._hit(api); break;
+          if (api.pointer.justDown) {
+            let hit = null;
+            for (const cr of this.crew) {
+              if (!cr.caught && Math.hypot(api.pointer.x - cr.x, api.pointer.y - cr.y) < 26) { hit = cr; break; }
+            }
+            if (hit) {
+              if (hit.mutineer) {
+                hit.caught = true; this.caughtN++;
+                api.score += 30; api.audio.sfx('coin');
+                api.burst(hit.x, hit.y, GOLD, 10); api.shake(2, 0.1);
+                if (this.caughtN >= this.needCatch) { api.score += Math.floor(this.timer) * 4; api.win(); }
+              } else {
+                hit.wrongT = 0.6; this.strikes++;
+                api.audio.sfx('hurt'); api.shake(4, 0.2); api.flash(PIRATE, 0.16);
+                if (this.strikes > this.maxStrikes) api.lose();
               }
-            }
-            // simpler: direct distance check
-            const sy = api.H - 80;
-            for (const o of this.obs) {
-              if (this.immune <= 0 && Math.abs(o.x - this.x) < 14 && Math.abs(o.y - sy) < 24) {
-                this._hit(api); break;
-              }
-            }
-            for (const s of this.shots) {
-              if (Math.hypot(s.x - this.x, s.y - sy) < 16) { this._hit(api); break; }
+            } else {
+              api.audio.sfx('blip');
             }
           }
-
-          api.score = Math.floor(this.dist);
-          if (this.dist >= this.need) { api.score += 80; api.win(); }
-        },
-
-        _hit(api) {
-          this.lives--;
-          api.shake(7, 0.3); api.flash(PIRATE, 0.25); api.audio.sfx('hurt');
-          this.immune = 1.6;
-          if (this.lives <= 0) api.lose();
+          if (this.timer <= 0) api.lose();
+          api.score = this.caughtN * 30;
         },
 
         draw(api) {
           const g = api.gfx, W = api.W, H = api.H, c = api.ctx;
-          const seaG = c.createLinearGradient(0, 0, 0, H);
-          seaG.addColorStop(0, '#1a608c'); seaG.addColorStop(1, '#0d2e4a');
-          c.fillStyle = seaG; c.fillRect(0, 0, W, H);
-
-          // scrolling wave lines
-          const wOff = (this.dist * 0.55) % 40;
-          c.globalAlpha = 0.1;
-          for (let i = 0; i < 14; i++) {
-            const wy = ((i * 38 - wOff) % H + H) % H;
-            c.fillStyle = '#7adaee'; c.fillRect(0, wy, W, 2);
+          // below-decks: warm lamplight over rough planking
+          api.clear('#160f08');
+          for (let row = 0; row < 16; row++) {
+            g.rect(0, row * 30, W, 29, row % 2 === 0 ? '#1c130a' : '#170f08');
           }
-          c.globalAlpha = 1;
+          for (let i = 0; i < 4; i++) g.rect(i * 74 + 10, 0, 8, H, 'rgba(0,0,0,.25)');
+          c.globalAlpha = 0.16; c.fillStyle = '#f0c860';
+          c.beginPath(); c.arc(W / 2, 240, 130, 0, Math.PI * 2); c.fill(); c.globalAlpha = 1;
 
-          // island rising ahead at ~70% progress
-          const prog = clamp(this.dist / this.need, 0, 1);
-          if (prog > 0.65) {
-            const a = clamp((prog - 0.65) / 0.35, 0, 1);
-            c.globalAlpha = a;
-            c.fillStyle = '#2a5c18';
-            c.beginPath();
-            c.moveTo(60, 0); c.quadraticCurveTo(W / 2, -30, W - 60, 0);
-            c.lineTo(W - 40, 60); c.quadraticCurveTo(W / 2, 72, 40, 60);
-            c.closePath(); c.fill();
-            c.globalAlpha = 1;
-          }
+          // Jim's barrel (bottom corner, watching)
+          g.rect(10, H - 46, 34, 34, '#5a3814');
+          g.rect(10, H - 46, 34, 6,  '#3a2008');
+          g.circle(27, H - 40, 4, '#e8dcc0'); g.circle(27, H - 40, 2, '#1a1008');
 
-          // reefs
-          for (const o of this.obs) {
-            g.rect(o.x - 10, o.y - 7, 20, 14, '#3a586a');
-            g.rect(o.x - 8,  o.y - 5, 16, 10, '#4a7a8c');
-            g.rect(o.x - 4,  o.y - 2, 8,  5,  '#5a9aaa');
-          }
-          // cannonballs
-          for (const s of this.shots) {
-            g.circle(s.x, s.y, 5, '#2a2818');
-            g.circle(s.x - 1, s.y - 1, 2, '#6a5830');
-          }
-
-          // ship
-          const sy = H - 80;
-          const blink = this.immune > 0 && Math.floor(this.immune * 10) % 2 === 0;
-          if (!blink) {
-            // hull
-            g.rect(this.x - 17, sy - 5, 34, 14, '#6a4018');
-            g.rect(this.x - 15, sy - 9, 30, 7,  '#4a2c0e');
-            // wake
-            c.globalAlpha = 0.3; c.fillStyle = '#a0e0f0';
-            c.beginPath(); c.ellipse(this.x, sy + 12, 18, 6, 0, 0, Math.PI * 2); c.fill();
-            c.globalAlpha = 1;
-            // masts
-            g.rect(this.x - 1, sy - 34, 2, 30, '#3a2008');
-            g.rect(this.x - 8, sy - 38, 2, 26, '#3a2008');
-            // sails
-            g.rect(this.x + 1, sy - 32, 13, 20, '#dcd8c0');
-            g.rect(this.x - 6, sy - 36, 10, 16, '#dcd8c0');
-            // flag
-            g.rect(this.x - 1, sy - 42, 7, 5, '#c43030');
+          for (const cr of this.crew) {
+            if (cr.caught) {
+              c.globalAlpha = 0.35;
+              g.rect(cr.x - 6, cr.y - 12, 12, 22, '#3a3028');
+              c.globalAlpha = 1;
+              api.txtCFit('BOUND', cr.x, cr.y + 14, 5.5, '#8a8070');
+            } else {
+              const flinch = cr.wrongT > 0;
+              const fc = flinch ? PIRATE : '#c8a050';
+              g.rect(cr.x - 5, cr.y - 12, 10, 7,  fc);
+              g.rect(cr.x - 6, cr.y - 5,  12, 20, flinch ? '#8a2010' : '#5a4020');
+              g.rect(cr.x - 6, cr.y - 16, 12, 4,  '#1a1008');
+              for (let i = 0; i < 3; i++) g.rect(cr.x - 11 + i * 8, cr.y - 24, 6, 4, i < cr.sus ? PIRATE : '#3a2c1c');
+              if (cr.tellShow > 0) {
+                if (cr.tell === 'shifty') {
+                  c.strokeStyle = PIRATE; c.lineWidth = 1.6;
+                  c.beginPath(); c.moveTo(cr.x - 4, cr.y - 30); c.lineTo(cr.x + 4, cr.y - 30);
+                  c.moveTo(cr.x, cr.y - 33); c.lineTo(cr.x, cr.y - 27); c.stroke();
+                } else {
+                  c.strokeStyle = '#5dff8f'; c.lineWidth = 1.6;
+                  c.beginPath(); c.arc(cr.x, cr.y - 30, 4, 0.2, Math.PI - 0.2); c.stroke();
+                }
+              }
+              api.txtCFit(cr.name, cr.x, cr.y + 12, 5.5, '#e8d8b0', false, 60);
+            }
           }
 
-          api.topBar('THE HISPANIOLA');
-          g.rect(6, 22, W - 12, 5, '#1a3050');
-          g.rect(6, 22, (W - 12) * prog, 5, GOLD);
-          for (let i = 0; i < 3; i++) g.rect(W - 22 + i * -14, 5, 10, 10, i < this.lives ? '#5dff8f' : '#1a1008');
+          api.topBar('THE APPLE BARREL');
+          api.txt('MUTINEERS ' + this.caughtN + '/' + this.needCatch, 6, 20, 8, GOLD);
+          for (let i = 0; i < this.maxStrikes + 1; i++) g.rect(W - 16 - i * 14, 4, 10, 10, i < this.strikes ? PIRATE : '#2a1008');
+          g.rect(6, H - 12, W - 12, 5, '#2a1008');
+          g.rect(6, H - 12, (W - 12) * clamp(this.timer / 30, 0, 1), 5, GOLD);
         },
       },
 
       /* ================================================================
        *  3. THE STOCKADE
-       *  Mechanic: tap-defend — pirates charge from the edges; tap to repel.
+       *  Mechanic: aim & fire — drag to aim the salvaged ship's gun, tap
+       *  to fire on a reload timer as Silver's men charge the wall.
        * ================================================================ */
       {
-        id: 'stockade', name: 'THE STOCKADE', sub: 'HOLD THE FORT',
+        id: 'stockade', name: 'THE STOCKADE', sub: 'THE OLD GUN SPEAKS',
 
         icon(api, x, y) {
           const g = api.gfx;
-          for (let i = 0; i < 4; i++) g.rect(x - 8 + i * 5, y - 8, 4, 16, '#5a3814');
-          g.rect(x - 8, y - 8, 20, 3, '#7a5020');
-          g.rect(x - 1, y - 16, 2, 10, '#3a1808');
-          g.rect(x + 1, y - 14, 6, 6,  '#3a6028');
+          g.rect(x - 9, y + 2, 18, 6, '#5a3814');
+          g.rect(x - 3, y - 8, 12, 8, '#3a3428');
+          g.circle(x + 8, y - 4, 3, '#1a1008');
         },
 
         intro: [
-          "CAPTAIN SMOLLETT",
-          "HOLDS THE LOG STOCKADE.",
-          "SILVER'S CREW CHARGES",
-          "from all sides.",
+          "CAPTAIN SMOLLETT HAULED",
+          "THE HISPANIOLA'S OWN GUN",
+          "ashore. NOW JIM MANS IT",
+          "against the charge.",
         ],
-        quote: "Fire, and fire quickly — don't let a man set foot inside.",
-        help: 'TAP the pirates before they breach the walls!',
-        winText:  'The attack breaks off at dawn! Three cheers — the stockade holds.',
-        loseText: 'They break through the gate. The stockade falls.',
+        quote: "Fire, and fire quickly — let the old gun answer for the six of us.",
+        help: "DRAG to aim the gun · TAP to fire once it's READY!",
+        winText:  "The old gun holds the line. Silver's crew breaks off at dawn.",
+        loseText: 'The gun falls silent too long. They breach the wall.',
 
         init(api) {
           this.hp = 5; this.repelled = 0;
-          this.timer = 32; this.wave = 0;
-          this.pirates = []; this.spawnT = 1.4;
+          this.timer = 32;
+          this.rx = api.W / 2; this.reload = 0; this.reloadMax = 1.05;
+          this.pirates = []; this.spawnT = 1.0;
+          this.balls = [];
         },
 
         _spawnPirate(api) {
-          const side = api.rint(0, 3);
-          let px, py;
-          if (side === 0) { px = api.rnd(30, api.W - 30); py = 72; }
-          else if (side === 1) { px = api.W - 30;          py = api.rnd(100, api.H - 60); }
-          else if (side === 2) { px = api.rnd(30, api.W - 30); py = api.H - 50; }
-          else                 { px = 30;                   py = api.rnd(100, api.H - 60); }
-          const maxLife = Math.max(0.7, 1.4 - this.wave * 0.04);
-          this.pirates.push({ x: px, y: py, life: maxLife, maxLife, age: 0, done: false });
+          this.pirates.push({
+            x: api.rnd(24, api.W - 24), y: 76,
+            spd: api.rnd(24, 34) + (32 - this.timer) * 0.6,
+            hit: false,
+          });
         },
 
         update(api, dt) {
           this.timer -= dt;
+          this.reload = Math.max(0, this.reload - dt);
+
+          // aim
+          if (api.pointer.down) this.rx = api.pointer.x;
+          if (api.keyDown('left'))  this.rx -= 90 * dt;
+          if (api.keyDown('right')) this.rx += 90 * dt;
+          this.rx = clamp(this.rx, 16, api.W - 16);
+
           this.spawnT -= dt;
           if (this.spawnT <= 0) {
-            const n = 1 + Math.floor(this.wave / 4);
-            for (let i = 0; i < Math.min(n, 4); i++) this._spawnPirate(api);
-            this.wave++;
-            this.spawnT = Math.max(0.45, 1.6 - this.wave * 0.055);
+            this._spawnPirate(api);
+            this.spawnT = Math.max(0.7, 1.7 - (32 - this.timer) * 0.02);
           }
-          for (const p of this.pirates) { p.age += dt; p.life -= dt; }
-          const breached = this.pirates.filter(p => !p.done && p.life <= 0);
+          const breachY = api.H - 74;
+          for (const p of this.pirates) p.y += p.spd * dt;
+          const breached = this.pirates.filter(p => !p.hit && p.y >= breachY);
           for (const p of breached) {
-            p.done = true; this.hp--;
+            p.hit = true; this.hp--;
             api.shake(6, 0.25); api.flash(PIRATE, 0.15); api.audio.sfx('hurt');
             if (this.hp <= 0) { api.lose(); return; }
           }
-          this.pirates = this.pirates.filter(p => !p.done);
+          this.pirates = this.pirates.filter(p => !p.hit);
 
-          if (api.pointer.justDown) {
-            let hit = false;
+          if (api.pointer.justDown && this.reload <= 0) {
+            api.audio.sfx('shoot'); api.shake(4, 0.15);
+            this.balls.push({ x: this.rx, t: 0.3 });
+            let got = 0;
             for (const p of this.pirates) {
-              if (!p.done && Math.hypot(api.pointer.x - p.x, api.pointer.y - p.y) < 24) {
-                p.done = true; hit = true; this.repelled++;
-                api.score += 15; api.audio.sfx('shoot');
-                api.burst(p.x, p.y, GOLD, 8); api.shake(2, 0.08);
-                break;
-              }
+              if (!p.hit && Math.abs(p.x - this.rx) < 30) { p.hit = true; got++; api.burst(p.x, p.y, GOLD, 8); }
             }
-            if (!hit) api.audio.sfx('blip');
+            this.pirates = this.pirates.filter(p => !p.hit);
+            if (got > 0) { this.repelled += got; api.score += got * 15 + (got > 1 ? 20 : 0); }
+            this.reload = this.reloadMax;
           }
+          for (const b of this.balls) b.t -= dt;
+          this.balls = this.balls.filter(b => b.t > 0);
+
           api.score = this.repelled * 15 + Math.floor(32 - this.timer);
           if (this.timer <= 0) { api.score += 80; api.win(); }
         },
 
         draw(api) {
           const g = api.gfx, W = api.W, H = api.H, c = api.ctx;
-          // jungle night
           api.clear('#060e04');
           c.fillStyle = '#0a1606'; c.fillRect(0, 0, W, H);
           for (let i = 0; i < 10; i++) {
             const tx = (i * 28 + 4) % W;
             const th = 40 + (i * 19) % 60;
-            g.rect(tx, H - th, 6, th, '#2a1808');
-            g.circle(tx + 3, H - th, 14 + (i % 3) * 3, '#0a1e06');
+            g.rect(tx, H - th - 60, 6, th, '#2a1808');
+            g.circle(tx + 3, H - th - 60, 14 + (i % 3) * 3, '#0a1e06');
           }
-          // stars
-          for (let i = 0; i < 22; i++) {
-            g.rect((i * 43 + 7) % W, (i * 29 + 3) % 70, 1, 1, '#c0cca0');
-          }
+          for (let i = 0; i < 22; i++) g.rect((i * 43 + 7) % W, (i * 29 + 3) % 60, 1, 1, '#c0cca0');
 
-          // stockade (center)
-          const sw = 154, sh = 174, sxx = (W - sw) / 2, syy = (H - sh) / 2;
-          for (let i = 0; i < 9; i++) {
-            const lx = sxx + i * (sw / 9);
-            const lw = sw / 9 - 1;
-            g.rect(lx, syy, lw, sh, '#5a3814');
-            g.rect(lx, syy, lw, 6, '#7a5020');
-            g.rect(lx, syy + sh - 6, lw, 6, '#7a5020');
-          }
-          g.rectO(sxx, syy, sw, sh, '#3a2008', 2);
-          // flag
-          g.rect(W / 2 - 1, syy - 22, 2, 24, '#3a2008');
-          g.rect(W / 2 + 1, syy - 20, 14, 10, '#3a6028');
-          // cannon-smoke puffs
-          if (this.repelled > 0 && Math.floor(api.t * 6) % 3 === 0) {
-            c.globalAlpha = 0.3;
-            g.circle(api.rnd(sxx, sxx + sw), syy + 20, 8, '#a0a090');
-            c.globalAlpha = 1;
-          }
+          // stockade wall (near bottom)
+          const wallY = H - 74;
+          g.rect(0, wallY, W, 10, '#5a3814');
+          g.rectO(0, wallY, W, 10, '#3a2008', 1);
 
-          // pirates (small figures charging in)
+          // pirates advancing
           for (const p of this.pirates) {
-            const danger = p.life / p.maxLife < 0.35;
+            const danger = p.y > wallY - 60;
             const fc = danger ? PIRATE : '#c8a050';
             g.rect(p.x - 4, p.y - 9, 8, 6,  fc);
             g.rect(p.x - 5, p.y - 3, 10, 10, danger ? '#8a2010' : '#7a5028');
-            g.rect(p.x + 5, p.y - 5, 8,  2,  '#b0b0b0');
-            // hat
             g.rect(p.x - 5, p.y - 13, 10, 4, '#1a1008');
-            // life bar
-            const lw2 = 22 * clamp(p.life / p.maxLife, 0, 1);
-            g.rect(p.x - 11, p.y - 18, 22, 3, '#1a0804');
-            g.rect(p.x - 11, p.y - 18, lw2, 3, danger ? PIRATE : '#5dff8f');
           }
+
+          // cannonball impacts
+          for (const b of this.balls) {
+            c.globalAlpha = clamp(b.t / 0.3, 0, 1);
+            g.circle(b.x, wallY - 30, 14, '#c8c8c0');
+            c.globalAlpha = 1;
+          }
+
+          // the gun (bottom center, tracks aim)
+          const gy = H - 40;
+          g.rect(this.rx - 10, gy - 6, 20, 12, '#3a3428');
+          g.rect(this.rx - 4,  gy - 22, 8, 20, '#2a2620');
+          g.circle(this.rx, gy - 22, 5, '#1a1814');
+          c.globalAlpha = 0.22; c.strokeStyle = GOLD; c.lineWidth = 1;
+          c.beginPath(); c.moveTo(this.rx, gy - 22); c.lineTo(this.rx, wallY - 40); c.stroke();
+          c.globalAlpha = 1;
 
           api.topBar('THE STOCKADE');
           api.txt('REPELLED ' + this.repelled, 6, 20, 9, GOLD);
           for (let i = 0; i < 5; i++) g.rect(W - 14 - i * 14, 4, 10, 10, i < this.hp ? '#5dff8f' : '#1a0804');
+          g.rect(6, H - 58, W - 12, 6, '#1a0804');
+          g.rect(6, H - 58, (W - 12) * (1 - clamp(this.reload / this.reloadMax, 0, 1)), 6,
+                 this.reload <= 0 ? '#5dff8f' : GOLD);
+          api.txtCFit(this.reload <= 0 ? 'READY — TAP TO FIRE' : 'RELOADING…', W / 2, H - 68, 6.5,
+                      this.reload <= 0 ? '#5dff8f' : '#d4a830');
           g.rect(6, H - 12, W - 12, 5, '#1a0804');
           g.rect(6, H - 12, (W - 12) * clamp(this.timer / 32, 0, 1), 5, GOLD);
         },
