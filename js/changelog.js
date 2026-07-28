@@ -10,6 +10,17 @@
 // format stays identical to the rest of the fleet.
 export const CHANGELOG = [
   {
+    v: 138,
+    title: 'Snow White: Hi-Ho Mine rebuilt as a dwarf mine-management chapter',
+    kind: 'game',
+    ts: '2026-07-28T05:20:50.887Z',
+    items: [
+      'The catch-gems/dodge-boulders cart lane is now a foreman\'s job: send idle dwarfs into one of three shafts, then pull them back out before rising instability caves the vein in.',
+      'Richer veins mine faster but destabilize faster too — a genuine resource-management push-your-luck, not another dodge lane.',
+      'REBUILD_QUEUE #14\'s rework — 2 of the saga\'s original 3 dodge lanes remain (the Queen\'s potion-brewing chapter and a hide-in-cottage stealth chapter), so the line stays on the queue.',
+    ],
+  },
+  {
     v: 137,
     title: 'The Little Mermaid: two tides rebuilt for The Sea King\'s Daughter',
     kind: 'game',
