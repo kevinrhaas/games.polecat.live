@@ -12,7 +12,7 @@ queue** in the same commit. Promote to Gen-4 (hub + branches) where noted.
 
 ## Queue
 8. **timemachine-eloi** — already has a custom dial menu + a timing-bar / catch-dodge / stealth-cones / matchlight-gather / dodge-debris spread (this line's old "4/5 dodge, only plain-list menu" description no longer matches the file — checked 2026-07-22). Still a **Gen-4 candidate** (machine-assembly + resource roguelite, branching eras, inventory) if someone wants to build its 16-bit hub version, but not a worst-offender rebuild.
-11. **scrooge-carol** — 4/5 catch/dodge/runner → **branching time-travel narrative**: Past/Present/Future choices rewrite a redemption ledger + a coin-sorting puzzle.
+11. **scrooge-carol** — Marley's Chains (memory puzzle, #32), Christmas Present (gift-sorting, #31), Yet to Come (Old Joe's-den search, #33) and Christmas Past (branching warm/cold memory choices building a "redemption ledger", 2026-07-28) are all rebuilt. Only **Christmas Morning** (still a plain runner/jumper) remains generic — a future slice could turn it into a reunion-checklist dash or a parkour chase through changed London with distinct verbs, then this line can finally come off the queue.
 12. **olivertwist-dodge** — 3 side-dodges → **stealth pickpocket sim**: grid lift-timing + a suspicion/heat meter under Fagin.
 13. **littlemermaid-sea** — 4/5 dodge → **potion-brewing ingredient-memory** at the witch's cave + a branching courtship dialogue; keep only the dance as action.
 14. **snowwhite-apple** — 3 dodge lanes → **dwarfs mine-management/tycoon** + the Queen's potion-brewing crafting puzzle + hide-in-cottage stealth.
