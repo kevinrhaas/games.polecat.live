@@ -10,6 +10,17 @@
 // format stays identical to the rest of the fleet.
 export const CHANGELOG = [
   {
+    v: 133,
+    title: 'A Christmas Carol: Yet to Come rebuilt as an Old Joe\'s-den search',
+    kind: 'game',
+    ts: '2026-07-28T01:12:59.500Z',
+    items: [
+      'The lane-dodge chapter is now a hidden-goods hunt: Old Joe\'s den is scattered with bundled parcels, and you have to pick out the dead man\'s own things — his curtains, shirt, seals, pencil-case, sleeve-buttons — from a pile of junk before the candle gutters out.',
+      'Guess wrong three times and Old Joe pockets the last of it in the dark; the reveal ("THE BED-CURTAINS!") lands harder when you found it yourself.',
+      'Third step on REBUILD_QUEUE #11\'s branching-narrative rework of the Christmas Carol saga — only Christmas Past and Christmas Morning are still dodge/catch/runner chapters.',
+    ],
+  },
+  {
     v: 132,
     title: 'A Christmas Carol: Marley\'s Chains rebuilt as a memory puzzle',
     kind: 'game',

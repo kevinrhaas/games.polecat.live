@@ -4,7 +4,7 @@
  *   1. MARLEY'S CHAINS    — watch the chain reform link by link, tap it back (memory)
  *   2. CHRISTMAS PAST     — tap glowing memory wisps before they fade (tap-collect)
  *   3. CHRISTMAS PRESENT  — grab & sort gifts to Tiny Tim / the table / the hearth (route)
- *   4. YET TO COME        — dodge the Shadow's lane-pointing finger (lane dodge)
+ *   4. YET TO COME        — sift stolen goods from junk at Old Joe's den (deduction)
  *   5. CHRISTMAS MORNING  — run & jump through London on a changed Christmas day
  * Built on RetroSaga (js/saga.js).
  * ============================================================================ */
@@ -805,158 +805,186 @@
       {
         id: 'future',
         name: 'YET TO COME',
-        sub: 'THE SHADOW POINTS',
+        sub: "OLD JOE'S DEN",
 
         icon(api, x, y) {
-          const c = api.ctx;
-          c.fillStyle = '#1e2838';
-          c.beginPath();
-          c.moveTo(x, y - 8); c.lineTo(x - 4, y); c.lineTo(x - 2, y + 6);
-          c.lineTo(x + 2, y + 6); c.lineTo(x + 4, y); c.closePath(); c.fill();
+          const c = api.ctx, g = api.gfx;
+          g.rect(x - 7, y - 3, 14, 10, '#7a6248');
+          c.strokeStyle = '#3a2c1c'; c.lineWidth = 1.5;
+          c.beginPath(); c.moveTo(x - 7, y - 3); c.lineTo(x + 7, y + 7); c.stroke();
+          c.beginPath(); c.moveTo(x + 7, y - 3); c.lineTo(x - 7, y + 7); c.stroke();
+          g.circle(x, y - 6, 2, '#3a2c1c');
         },
 
         intro: [
           'A DARK, HOODED PHANTOM',
-          'POINTS ITS FINGER AT',
-          "SCROOGE'S GRAVESTONE.",
-          "Dodge the Shadow's gaze!",
+          'LEADS SCROOGE TO A DEN',
+          'WHERE HIS OWN THINGS',
+          'ARE SOLD BY CANDLELIGHT.',
         ],
-        quote: 'Before I draw nearer to that stone to which you point...',
-        help: 'TAP left / right to change lanes',
+        quote: 'Every person has a right to take care of themselves. He always did!',
+        help: "TAP Scrooge's own things · leave the junk be",
         winText: 'Scrooge clutches the bedpost. He is alive — and it is Christmas!',
-        loseText: 'The phantom finger finds you. The darkness closes in.',
+        loseText: 'The candle gutters out. Old Joe pockets the last of it, unseen.',
+
+        targetDefs: [
+          { key: 'curtains', label: 'CURTAINS' },
+          { key: 'shirt',    label: 'HIS SHIRT' },
+          { key: 'seals',    label: 'THE SEALS' },
+          { key: 'pencase',  label: 'PEN-CASE' },
+          { key: 'buttons',  label: 'BUTTONS' },
+        ],
+        decoyDefs: [
+          { key: 'boot',   label: 'OLD BOOT' },
+          { key: 'key',    label: 'RUSTY KEY' },
+          { key: 'cup',    label: 'CRACKED CUP' },
+          { key: 'spoon',  label: 'BENT SPOON' },
+          { key: 'rope',   label: 'FRAYED ROPE' },
+          { key: 'plate',  label: 'TIN PLATE' },
+          { key: 'comb',   label: 'BROKEN COMB' },
+        ],
+        foundFlavor: {
+          curtains: 'THE BED-CURTAINS!',
+          shirt:    'HIS OWN SHIRT!',
+          seals:    'THE SEALS FROM HIS WATCH!',
+          pencase:  'HIS PENCIL-CASE!',
+          buttons:  'HIS SLEEVE-BUTTONS!',
+        },
+
+        slotRect(i) {
+          const col = i % 3, row = Math.floor(i / 3);
+          const w = 78, h = 56, gapX = 6, gapY = 8, left = 12, top = 146;
+          return { x: left + col * (w + gapX), y: top + row * (h + gapY), w, h };
+        },
+
+        hitSlot(x, y) {
+          for (let i = 0; i < this.items.length; i++) {
+            if (this.items[i].gone) continue;
+            const r = this.slotRect(i);
+            if (x >= r.x && x <= r.x + r.w && y >= r.y && y <= r.y + r.h) return i;
+          }
+          return -1;
+        },
 
         init(api) {
-          this.lane     = 1;
-          this.tgtLane  = 1;
-          this.scrX     = 135;
-          this.laneX    = [44, 135, 226];
-          this.lives    = 3;
-          this.timer    = 28;
-          this.beams    = [];
-          this.beamT    = 1.6;
-          this.hitCool  = 0;
+          const targets = this.targetDefs.map(d => ({ ...d, isTarget: true }));
+          const decoys  = this.decoyDefs.map(d => ({ ...d, isTarget: false }));
+          const all = targets.concat(decoys);
+          for (let i = all.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [all[i], all[j]] = [all[j], all[i]];
+          }
+          this.items     = all.map(d => ({ ...d, gone: false, flash: 0, flashOk: null }));
+          this.found     = 0;
+          this.need      = targets.length;
+          this.mistakes  = 0;
+          this.maxMiss   = 3;
+          this.timer     = 34;
+          this.flavorT   = 0;
+          this.flavorTxt = '';
         },
 
         update(api, dt) {
-          const f = dt * 60;
           this.timer -= dt;
-          this.hitCool = Math.max(0, this.hitCool - dt);
+          this.flavorT = Math.max(0, this.flavorT - dt);
+          for (const it of this.items) if (it.flash > 0) it.flash -= dt;
 
-          // Tap left/right thirds, or arrow keys, to change lane
           if (api.pointer.justDown) {
-            if (api.pointer.x < api.W / 3) {
-              this.tgtLane = Math.max(0, this.lane - 1);
-            } else if (api.pointer.x > api.W * 2 / 3) {
-              this.tgtLane = Math.min(2, this.lane + 1);
-            }
-          }
-          if (api.keyPressed('left'))  this.tgtLane = Math.max(0, this.lane - 1);
-          if (api.keyPressed('right')) this.tgtLane = Math.min(2, this.lane + 1);
-
-          // Slide to target lane
-          const tX = this.laneX[this.tgtLane];
-          this.scrX += (tX - this.scrX) * 0.18 * f;
-          if (Math.abs(this.scrX - tX) < 3) { this.scrX = tX; this.lane = this.tgtLane; }
-
-          // Spawn pointing beams
-          this.beamT -= dt;
-          if (this.beamT <= 0) {
-            this.beamT = Math.max(0.72, 1.6 - (28 - Math.max(0, this.timer)) / 48);
-            const lane = Math.floor(Math.random() * 3);
-            this.beams.push({ lane, x: this.laneX[lane], t: 1.5, fired: false });
-            api.audio.sfx('blip');
-          }
-
-          // Fire and check
-          for (const b of this.beams) {
-            b.t -= dt;
-            if (b.t <= 0 && !b.fired) {
-              b.fired = true;
-              if (this.lane === b.lane && this.hitCool <= 0) {
-                this.lives--;
-                this.hitCool = 1.0;
-                api.shake(7, 0.35); api.flash('#0a1428', 0.25); api.audio.sfx('hurt');
-                if (this.lives <= 0) { api.lose(); return; }
+            const idx = this.hitSlot(api.pointer.x, api.pointer.y);
+            if (idx >= 0) {
+              const it = this.items[idx];
+              it.flash = 0.35;
+              if (it.isTarget) {
+                it.flashOk = true; it.gone = true;
+                this.found++;
+                api.addScore(20);
+                api.audio.sfx('coin');
+                const r = this.slotRect(idx);
+                api.burst(r.x + r.w / 2, r.y + r.h / 2, '#d4a020', 7);
+                this.flavorT = 1.1; this.flavorTxt = this.foundFlavor[it.key] || it.label;
+                if (this.found >= this.need) {
+                  api.addScore(60 + Math.ceil(Math.max(0, this.timer)));
+                  api.win(); return;
+                }
+              } else {
+                it.flashOk = false; it.gone = true;
+                this.mistakes++;
+                api.shake(5, 0.22); api.flash('#1a1408', 0.18); api.audio.sfx('hurt');
+                this.flavorT = 1.0; this.flavorTxt = 'JUST JUNK — OLD JOE SNORTS';
+                if (this.mistakes >= this.maxMiss) { api.lose(); return; }
               }
             }
           }
-          this.beams = this.beams.filter(b => b.t > -0.65);
 
-          if (this.timer <= 0) { api.addScore(50 + this.lives * 40); api.win(); }
+          if (this.timer <= 0 && this.found < this.need) api.lose();
         },
 
         draw(api) {
           const g = api.gfx, c = api.ctx, W = api.W, H = api.H;
-          c.fillStyle = '#040508'; c.fillRect(0, 0, W, H);
+          c.fillStyle = '#0c0906'; c.fillRect(0, 0, W, H);
 
-          // Graveyard ground
-          g.rect(0, H - 72, W, 72, '#0a0c10');
-          for (let i = 0; i < 8; i++) g.rect(i * 35 + 4, H - 60, 27, 10, '#12151a');
-
-          // Tombstones (three lanes)
-          const lX = [44, 135, 226];
-          for (let l = 0; l < 3; l++) {
-            const tx = lX[l] - 18, ty = H - 154;
-            c.fillStyle = '#181c22';
-            c.beginPath();
-            c.moveTo(tx, ty + 22);
-            c.quadraticCurveTo(tx, ty, tx + 18, ty);
-            c.quadraticCurveTo(tx + 36, ty, tx + 36, ty + 22);
-            c.lineTo(tx + 36, ty + 60); c.lineTo(tx, ty + 60); c.closePath(); c.fill();
-            c.strokeStyle = '#252c34'; c.lineWidth = 1; c.stroke();
-            api.txtC('R.I.P.', lX[l], ty + 28, 5, '#303840');
-          }
-
-          // Ghost of Christmas Yet to Come (looming, almost invisible)
-          const gx = W / 2 + Math.sin(api.t * 0.6) * 6;
-          c.globalAlpha = 0.62 + 0.12 * Math.sin(api.t * 1.6);
-          g.sprite([
-            '..ddd..',
-            '.ddddd.',
-            'ddddddd',
-            'ddddddd',
-            '..ddd..',
-            '...d...',
-            '...d...',
-          ], gx - 14, 12, { d: '#181e2c' }, 4);
+          // Guttering candlelight pool
+          const flick = 0.14 + 0.05 * Math.sin(api.t * 9) + 0.03 * Math.sin(api.t * 3.3);
+          c.globalAlpha = flick;
+          g.circle(W / 2, 60, 100, '#e0a028');
           c.globalAlpha = 1;
 
-          // Beam warnings and strikes
-          for (const b of this.beams) {
-            if (b.t > 0) {
-              const warn = 1 - b.t / 1.5;
-              c.globalAlpha = warn * 0.44;
-              c.strokeStyle = '#3a5080'; c.lineWidth = 2;
-              c.beginPath(); c.moveTo(gx + 8, 56); c.lineTo(b.x, H - 152); c.stroke();
-              c.globalAlpha = warn * 0.3;
-              c.fillStyle = '#283860';
-              c.fillRect(b.x - 18, H - 175, 36, 115);
-              c.globalAlpha = 1;
+          // Old Joe, hunched over his counter
+          c.globalAlpha = 0.7;
+          g.sprite([
+            '.hh.',
+            'hshh',
+            '.ss.',
+            'ss.s',
+          ], W / 2 - 8, 26, { h: '#4a3a28', s: '#241a10' }, 4);
+          c.globalAlpha = 1;
+          api.txtC('OLD JOE WEIGHS HIS TAKE...', W / 2, 74, 6, '#7a6248');
+
+          // The candle stub, burning down with the timer
+          const pct = clamp(this.timer / 34, 0, 1);
+          g.rect(W - 20, 12, 6, 22, '#5a4838');
+          g.rect(W - 21, 10 + (1 - pct) * 20, 8, 2 + pct * 20, '#e8d8a8');
+          c.globalAlpha = 0.5 + 0.3 * Math.sin(api.t * 10);
+          g.circle(W - 17, 9 + (1 - pct) * 20, 3, '#f8d068');
+          c.globalAlpha = 1;
+
+          // Item slots — bundled goods on the shop floor
+          for (let i = 0; i < this.items.length; i++) {
+            const it = this.items[i];
+            if (it.gone && it.flash <= 0) continue;
+            const r = this.slotRect(i);
+            let bg = '#1a140c', border = '#4a3a28';
+            if (it.flash > 0) {
+              if (it.flashOk === true)      { bg = '#284018'; border = '#6ab848'; }
+              else if (it.flashOk === false) { bg = '#401818'; border = '#c84040'; }
             }
-            if (b.fired && b.t > -0.38) {
-              c.globalAlpha = Math.max(0, (b.t + 0.38) / 0.38) * 0.72;
-              c.fillStyle = '#2a3c62';
-              c.fillRect(b.x - 18, H - 200, 36, 145);
-              c.globalAlpha = 1;
-            }
+            g.rect(r.x, r.y, r.w, r.h, bg);
+            c.strokeStyle = border; c.lineWidth = 1.5; c.strokeRect(r.x, r.y, r.w, r.h);
+            // wrapped-bundle glyph
+            const bx = r.x + r.w / 2, by = r.y + 18;
+            g.rect(bx - 12, by - 7, 24, 16, '#7a6248');
+            c.strokeStyle = '#3a2c1c'; c.lineWidth = 1;
+            c.beginPath(); c.moveTo(bx - 12, by - 7); c.lineTo(bx + 12, by + 9); c.stroke();
+            c.beginPath(); c.moveTo(bx + 12, by - 7); c.lineTo(bx - 12, by + 9); c.stroke();
+            api.txtCFit(it.label, r.x + r.w / 2, r.y + r.h - 8, 6, '#c8b898', false, r.w - 6);
           }
 
-          // Scrooge
-          const hitF = this.hitCool > 0 && Math.floor(this.hitCool * 8) % 2 === 1;
-          if (!hitF) {
-            g.sprite(['.hh.', 'hbbh', '.bb.', 'b..b'],
-              this.scrX - 8, H - 147, { h: '#c0a870', b: '#2a2838' }, 4);
+          // Flavor banner
+          if (this.flavorT > 0) {
+            c.globalAlpha = Math.min(1, this.flavorT * 2);
+            api.txtC(this.flavorTxt, W / 2, H - 58, 7, '#e8b84a', true);
+            c.globalAlpha = 1;
           }
 
-          // HUD — lane indicator arrows
+          // HUD
           api.topBar('YET TO COME');
-          api.txt('TIME ' + Math.ceil(Math.max(0, this.timer)), 6, 20, 9, '#3a4868');
-          for (let i = 0; i < 3; i++) {
-            g.circle(W - 14 - i * 18, 11, 6, i < this.lives ? '#d4a020' : '#181c28');
+          api.txt('FOUND ' + this.found + '/' + this.need, 6, 20, 9, '#d4a020');
+          api.txt('TIME ' + Math.ceil(Math.max(0, this.timer)), W - 74, 20, 9,
+            this.timer < 10 ? '#c84040' : '#7a8898');
+          for (let i = 0; i < this.maxMiss; i++) {
+            g.rect(6 + i * 14, H - 32, 10, 10, i < this.maxMiss - this.mistakes ? '#d4a020' : '#1a1a28');
           }
-          // Tiny lane arrows at bottom
-          api.txtC('◀ TAP ▶', W / 2, H - 18, 7, '#3a4868');
+          api.txt('MISTAKES LEFT', 46, H - 24, 6, '#4a5060');
           api.vignette();
         },
       },
