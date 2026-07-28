@@ -16,9 +16,11 @@
     blood: '#c8102e', bloodL: '#e23b4a', rose: '#e8c0c0',
     gold: '#e3c567', bone: '#cdbfe0', stone: '#3a2f44', shadow: '#080410',
   };
-  // pixel-blackletter display face for every hero title (boot logo, hub header,
-  // framed screens) — period-correct 16-bit, not a modern vector serif.
-  const TITLE = "'Jacquard 24','Press Start 2P',serif";
+  // gothic-flavored pixel display face for every hero title (boot logo, hub
+  // header, framed screens) — Jacquard 24's blackletter forms read as
+  // gibberish at title size (UX-sweep #34/#37 finding 1), so this stays
+  // legible while keeping an eerie, angular 16-bit feel.
+  const TITLE = "'Micro 5','Press Start 2P',serif";
 
   /* ─── heraldic bat crest (title + finale) ─── */
   function emblem(api, cx, cy) {

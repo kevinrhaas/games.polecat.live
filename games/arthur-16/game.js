@@ -18,8 +18,9 @@
     grass: '#3a7a34', cream: '#f4ecd8', ink: '#1a1408', dim: '#8a96b8',
     mist: '#b8cce0', steel: '#c8d0dc',
   };
-  // pixel-blackletter display face, distinct from Dracula's Jacquard 24.
-  const TITLE = "'Jacquarda Bastarda 9','Press Start 2P',serif";
+  // bold pixel display face, legible at title size (Jacquarda Bastarda 9's
+  // blackletter forms read as gibberish — UX-sweep #34/#37 finding 1).
+  const TITLE = "'Handjet','Press Start 2P',serif";
 
   /* ─── emblem: Excalibur upright through a gold crown ─── */
   function emblem(api, cx, cy) {

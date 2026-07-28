@@ -18,9 +18,10 @@
     phosphor: '#1aff6a', green: '#5dff8f', blood: '#a83028', tweed: '#7a6844',
     stone: '#4a4436', cream: '#efe2c2', dim: '#8f8060',
   };
-  // woven Victorian pixel face for hero titles — period-correct 16-bit, not a
-  // modern vector serif (Jacquard 12 reads like engraved newsprint).
-  const TITLE = "'Jacquard 12','Press Start 2P',serif";
+  // bold pixel display face for hero titles — period-correct 16-bit and
+  // actually legible (Jacquard 12's blackletter forms read as gibberish,
+  // UX-sweep #34/#37 finding 1: "SHERLOCK HOLMES" rendered as "SHCRLDCR").
+  const TITLE = "'Silkscreen','Press Start 2P',serif";
 
   /* ─── emblem: the lens over a giant pawprint ─── */
   function emblem(api, cx, cy) {
