@@ -10,6 +10,16 @@
 // format stays identical to the rest of the fleet.
 export const CHANGELOG = [
   {
+    v: 151,
+    title: 'A Thousand Nights rebuilt as a branching adventure',
+    kind: 'game',
+    ts: '2026-07-28T17:08:58.335Z',
+    items: [
+      'REBUILD_QUEUE #25, done — the old steer/dodge/catch set is now a genuine point-and-click branching adventure: weave story fragments into Scheherazade\'s tale, recall Sinbad\'s safe island path, spot Ali Baba\'s true gold, command Aladdin\'s Genie, and chart the flying carpet\'s course.',
+      'Every choice tags the story brave, clever, wise, or mercy — the ending you reach now reflects how you actually played.',
+    ],
+  },
+  {
     v: 150,
     title: 'They\'re Coming: The Night Siege is now real base defense',
     kind: 'game',
