@@ -10,6 +10,17 @@
 // format stays identical to the rest of the fleet.
 export const CHANGELOG = [
   {
+    v: 132,
+    title: 'A Christmas Carol: Marley\'s Chains rebuilt as a memory puzzle',
+    kind: 'game',
+    ts: '2026-07-28T00:57:28.599Z',
+    items: [
+      'The dodge-chains-and-catch-coins opener is now a Simon-Says memory game: watch Marley\'s chain of cash-boxes, ledgers, padlocks and purses light up link by link, then tap them back in the same order.',
+      'The chain grows by one link each round Scrooge recounts it correctly; three wrong taps and the spectre grows angrier. "I made it link by link" is now something you actually replay.',
+      'Second step on REBUILD_QUEUE #11\'s branching-narrative rework of the Christmas Carol saga — Christmas Past, Yet to Come and Christmas Morning still to go.',
+    ],
+  },
+  {
     v: 131,
     title: 'A Christmas Carol: Christmas Present rebuilt as a gift-sorting puzzle',
     kind: 'game',
