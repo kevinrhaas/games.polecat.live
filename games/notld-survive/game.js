@@ -4,7 +4,8 @@
  *   1. THE CEMETERY      — dodge the dead fleeing to the farmhouse (20s)
  *   2. BOARD THE WINDOWS — tap 3 windows to nail boards before breach (26s)
  *   3. GATHER SUPPLIES   — catch 15 supplies, dodge zombie hands (catcher)
- *   4. THE NIGHT SIEGE   — hold 3 breach points against the growing horde (26s)
+ *   4. THE NIGHT SIEGE   — station survivors & ration ammo to hold 3 breach
+ *                          points against the growing horde (26s)
  *   5. DAWN ESCAPE       — guide Ben through the zombie field to the light
  * Built on RetroSaga (js/saga.js) + RetroEngine.
  * ============================================================================ */
@@ -61,6 +62,19 @@
     g.circle(x + w / 2, y, w / 2, C.grey);
     g.rect(x + w * 0.35, y - 6, w * 0.3, 6, C.grey);
     g.rect(x + w * 0.1, y - 1, w * 0.8, 2, C.grey);
+  }
+
+  /* ── Helper: draw an armed survivor (Night Siege defender token) ── */
+  function drawSurvivor(g, c, x, y, held) {
+    c.globalAlpha = held ? 1 : 0.95;
+    g.circle(x, y - 18, 7, C.pale);
+    g.rect(x - 6, y - 11, 12, 14, C.wood);
+    g.rect(x - 5, y + 3, 4, 11, C.dark);
+    g.rect(x + 1, y + 3, 4, 11, C.dark);
+    g.rect(x + 4, y - 14, 14, 3, C.grey);
+    g.rect(x + 15, y - 16, 3, 3, C.amber);
+    if (held) { c.globalAlpha = 0.25; g.circle(x, y - 4, 20, C.amberL); }
+    c.globalAlpha = 1;
   }
 
   /* ── Emblem: zombie hand through a boarded window ── */
@@ -687,7 +701,8 @@
       },
 
       /* ================================================================
-       * 4. THE NIGHT SIEGE — hold 3 breach points for 26s
+       * 4. THE NIGHT SIEGE — base defense: station survivors, ration ammo,
+       *    hold 3 breach points for 26s
        * ================================================================ */
       {
         id:   'siege',
@@ -705,39 +720,51 @@
         intro: [
           'AS NIGHT DEEPENS,',
           'THE HORDE GROWS.',
-          'THREE BREACH POINTS.',
-          'TAP EACH SURGE',
-          'TO PUSH THEM BACK.',
-          'HOLD UNTIL DAWN.',
+          'STATION HARRY & TOM',
+          'AT THE WEAKEST DOOR,',
+          'AND RATION THE',
+          'RIFLE. HOLD TILL DAWN.',
         ],
         quote: '"There\'s no stopping them — more of them every hour." — Ben, 1968',
-        help:  'TAP a surging door/window to push the horde back!',
-        winText:  'The horde ebbed as the night wore on. You held every breach point.',
-        loseText: 'They broke through. The farmhouse fell to the dead.',
+        help:  'DRAG a survivor onto a breach point — TAP an open one to fire (limited ammo)!',
+        winText:  'Two men and a handful of rounds were enough. You held every breach point.',
+        loseText: 'There weren\'t enough hands — or bullets — to hold the line.',
         init(api) {
-          this.lives = 3;
-          this.timer = 0;
-          this.dur   = 26;
+          this.lives   = 3;
+          this.timer   = 0;
+          this.dur     = 26;
+          this.ammo    = 6;
+          this.ammoMax = 6;
+          this.drag    = null;
           this.pts = [
-            { x: 18,  y: 138, w: 70, h: 112, pressure: 0, bTimer: 0, label: 'WINDOW' },
-            { x: 100, y: 120, w: 70, h: 122, pressure: 0, bTimer: 0, label: 'DOOR'   },
-            { x: 182, y: 138, w: 70, h: 112, pressure: 0, bTimer: 0, label: 'WINDOW' },
+            { x: 18,  y: 138, w: 70, h: 112, pressure: 0, bTimer: 0, label: 'WINDOW', defender: -1 },
+            { x: 100, y: 120, w: 70, h: 122, pressure: 0, bTimer: 0, label: 'DOOR',   defender: -1 },
+            { x: 182, y: 138, w: 70, h: 112, pressure: 0, bTimer: 0, label: 'WINDOW', defender: -1 },
           ];
           this.zOffsets = [0, 0, 0];
+          this.defenders = [
+            { name: 'HARRY', homeX: 95,  homeY: 358, x: 95,  y: 358, station: -1 },
+            { name: 'TOM',   homeX: 175, homeY: 358, x: 175, y: 358, station: -1 },
+          ];
         },
         update(api, dt) {
           this.timer += dt;
-          if (this.timer >= this.dur) { api.addScore(120); api.win(); return; }
+          if (this.timer >= this.dur) { api.addScore(120 + this.ammo * 6); api.win(); return; }
 
           const rate = 15 + this.timer * 0.55;
           for (let i = 0; i < 3; i++) {
             const p = this.pts[i];
             if (p.bTimer > 0) { p.bTimer -= dt; continue; }
             const mult = i === 1 ? 1.25 : 1.0;
-            p.pressure = Math.min(100, p.pressure + rate * mult * dt);
+            const defended = p.defender >= 0;
+            p.pressure = Math.min(100, p.pressure + rate * mult * (defended ? 0.22 : 1) * dt);
             if (p.pressure >= 100) {
               p.pressure = 0; p.bTimer = 1.6;
               this.lives--;
+              if (defended) {
+                this.defenders[p.defender].station = -1;
+                p.defender = -1;
+              }
               api.shake(10, 0.42); api.flash(C.blood, 0.32); api.audio.sfx('hurt');
               api.burst(p.x + p.w / 2, p.y + p.h / 2, C.blood, 14);
               if (this.lives <= 0) { api.lose(); return; }
@@ -745,17 +772,68 @@
             this.zOffsets[i] = Math.sin(this.timer * 5 + i * 1.1) * 3;
           }
 
-          if (api.pointer.justDown) {
-            for (let i = 0; i < 3; i++) {
-              const p = this.pts[i];
-              if (p.bTimer > 0) continue;
-              if (api.pointer.x >= p.x && api.pointer.x <= p.x + p.w &&
-                  api.pointer.y >= p.y && api.pointer.y <= p.y + p.h) {
-                p.pressure = Math.max(0, p.pressure - 32);
-                api.audio.sfx('blip');
-                api.burst(p.x + p.w / 2, p.y + p.h * 0.5, C.amber, 7);
-                api.shake(3, 0.12);
+          // Grab a survivor to reposition, or fire a rationed shot at an open point
+          if (api.pointer.justDown && this.drag == null) {
+            let grabbed = -1;
+            for (let d = 0; d < this.defenders.length; d++) {
+              const def = this.defenders[d];
+              const dx = api.pointer.x - def.x, dy = api.pointer.y - def.y;
+              if (dx * dx + dy * dy < 22 * 22) { grabbed = d; break; }
+            }
+            if (grabbed >= 0) {
+              const def = this.defenders[grabbed];
+              if (def.station >= 0) this.pts[def.station].defender = -1;
+              def.station = -1;
+              this.drag = grabbed;
+            } else {
+              for (let i = 0; i < 3; i++) {
+                const p = this.pts[i];
+                if (p.bTimer > 0) continue;
+                if (api.pointer.x >= p.x && api.pointer.x <= p.x + p.w &&
+                    api.pointer.y >= p.y && api.pointer.y <= p.y + p.h) {
+                  if (this.ammo > 0) {
+                    this.ammo--; p.pressure = 0;
+                    api.audio.sfx('shoot'); api.shake(3, 0.12);
+                    api.burst(p.x + p.w / 2, p.y + p.h * 0.4, C.amberL, 8);
+                  } else {
+                    api.audio.sfx('blip');
+                  }
+                  break;
+                }
               }
+            }
+          }
+
+          // Carry / drop the grabbed survivor
+          if (this.drag != null) {
+            const def = this.defenders[this.drag];
+            def.x = api.pointer.x; def.y = api.pointer.y;
+            if (api.pointer.justUp) {
+              let placed = false;
+              for (let i = 0; i < 3; i++) {
+                const p = this.pts[i];
+                if (p.bTimer > 0 || p.defender >= 0) continue;
+                if (api.pointer.x >= p.x - 12 && api.pointer.x <= p.x + p.w + 12 &&
+                    api.pointer.y >= p.y - 12 && api.pointer.y <= p.y + p.h + 12) {
+                  p.defender = this.drag; def.station = i; placed = true;
+                  api.audio.sfx('coin');
+                  break;
+                }
+              }
+              this.drag = null;
+              if (!placed) def.station = -1;
+            }
+          }
+
+          // Pin idle/stationed survivors to their spot
+          for (let d = 0; d < this.defenders.length; d++) {
+            if (d === this.drag) continue;
+            const def = this.defenders[d];
+            if (def.station >= 0) {
+              const p = this.pts[def.station];
+              def.x = p.x + p.w / 2; def.y = p.y + p.h - 14;
+            } else {
+              def.x = def.homeX; def.y = def.homeY;
             }
           }
         },
@@ -778,7 +856,8 @@
               c.globalAlpha = 1;
               api.txtCFit('BREACH!', cx, cy, 8, C.crimson, true, p.w);
             } else {
-              const frameC = danger > 0.72 ? C.blood : (danger > 0.42 ? C.amber : C.wood);
+              const defended = p.defender >= 0;
+              const frameC = defended ? C.amber : (danger > 0.72 ? C.blood : (danger > 0.42 ? C.amber : C.wood));
               g.rect(p.x - 5, p.y - 5, p.w + 10, p.h + 10, frameC);
               c.fillStyle = C.pit; c.fillRect(p.x, p.y, p.w, p.h);
               // Boards (crack as pressure rises)
@@ -807,6 +886,23 @@
               api.txtCFit(p.label, cx, p.y + p.h + 11, 5, C.ash, true, p.w);
             }
           }
+
+          // Survivor home slots + tokens (idle at base, stationed at a point, or dragged)
+          for (const def of this.defenders) {
+            c.globalAlpha = 0.3; g.circle(def.homeX, def.homeY - 6, 15, C.pit); c.globalAlpha = 1;
+          }
+          for (let d = 0; d < this.defenders.length; d++) {
+            const def = this.defenders[d];
+            drawSurvivor(g, c, def.x, def.y, d === this.drag);
+          }
+          api.txtCFit('SURVIVORS', W / 2, 336, 5, C.ash, true, 120);
+
+          // Rationed ammo readout
+          api.txtCFit('AMMO', 44, 400, 5, C.ash, true, 60);
+          for (let i = 0; i < this.ammoMax; i++) {
+            g.rect(74 + i * 11, 396, 7, 11, i < this.ammo ? C.amberL : C.dark);
+          }
+
           api.topBar('TIME: ' + Math.max(0, Math.ceil(this.dur - this.timer)) + 's');
           for (let li = 0; li < 3; li++) {
             g.circle(W - 38 + li * 13, 20, 4, li < this.lives ? C.blood : C.dark);

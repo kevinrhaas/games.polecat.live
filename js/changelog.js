@@ -10,6 +10,16 @@
 // format stays identical to the rest of the fleet.
 export const CHANGELOG = [
   {
+    v: 150,
+    title: 'They\'re Coming: The Night Siege is now real base defense',
+    kind: 'game',
+    ts: '2026-07-28T16:25:30.922Z',
+    items: [
+      'REBUILD_QUEUE #24, done — the tap-to-repair siege was a near-twin of BOARD THE WINDOWS. Now: drag Harry & Tom onto whichever breach point needs them most, and fire a strictly rationed rifle (6 rounds) on whichever door you can\'t cover.',
+      'Pulling a survivor off a point instantly un-defends it, and a breach knocks its defender back to base — real-time allocation under pressure, not just faster tapping.',
+    ],
+  },
+  {
     v: 149,
     title: 'Open Sesame rebuilt for genre variety',
     kind: 'game',
