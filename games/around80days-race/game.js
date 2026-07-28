@@ -2,8 +2,8 @@
  * AROUND THE WORLD IN EIGHTY DAYS — PHILEAS FOGG'S RACE
  * Five legs of Verne's globe-trotting wager:
  *   1. THE WAGER     — clock timing, seal the bet at the Reform Club
- *   2. THE MONGOLIA  — steer the steamship to Suez, dodge rocks & waves
- *   3. KIOUNI        — ride the elephant across India, dodge jungle obstacles
+ *   2. THE MONGOLIA  — chart the Mongolia's course to Suez (route-planning)
+ *   3. KIOUNI        — free-roam stealth: rescue Aouda from the Pillaji pyre
  *   4. THE HENRIETTA — stoke the boiler: keep pressure in the green zone
  *   5. LONDON IN TIME— carriage race through night London to the Reform Club
  * Built on RetroSaga (js/saga.js) + RetroEngine.
@@ -446,107 +446,182 @@
         },
       },
 
-      /* ===== LEG 3: KIOUNI — India elephant dodge ===== */
+      /* ===== LEG 3: KIOUNI — the Pillaji rescue (free-roam stealth) ===== */
       {
-        id: 'kiouni', name: 'KIOUNI', sub: 'ACROSS INDIA',
+        id: 'kiouni', name: 'KIOUNI', sub: 'THE PILLAJI RESCUE',
         icon(api, x, y) {
-          const g = api.gfx;
-          g.rect(x - 6, y - 1, 12, 8, '#8a7060');
-          g.rect(x - 8, y + 3, 4, 5, '#7a6050'); g.rect(x + 4, y + 3, 4, 5, '#7a6050');
-          g.rect(x - 3, y - 6, 6, 7, '#8a7060');
-          g.rect(x + 2, y - 4, 6, 3, '#7a6050');
+          const g = api.gfx, c = api.ctx;
+          g.rect(x - 1, y - 1, 2, 8, '#4a2e08');
+          g.circle(x, y - 6, 3, '#e08030'); g.circle(x, y - 7, 2, '#f6d060');
+          c.strokeStyle = '#7a5010'; c.lineWidth = 1;
+          c.beginPath(); c.moveTo(x - 4, y + 6); c.lineTo(x + 4, y + 6); c.stroke();
         },
         intro: [
           'THE RAILWAY ENDS HERE.',
-          'FOGG BUYS AN ELEPHANT',
-          'FOR TWO THOUSAND POUNDS.',
-          '"Kiouni will not',
-          'fail us," says',
-          'the guide.',
+          'FOGG BUYS THE ELEPHANT',
+          'KIOUNI AND A GUIDE.',
+          'Near Pillaji, drums warn',
+          'of a young widow, Aouda,',
+          'to be burned at dawn.',
+          'Creep through the priests\'',
+          'torchlight and steal',
+          'her away before then.',
         ],
-        quote: '"The man had not one instant to lose. He must reach Bombay before nightfall." — Jules Verne',
-        help: 'DRAG up/down or press UP/DOWN — steer Kiouni past fallen logs, mud and branches',
-        winText: 'Kiouni crashes through the last vines just as the Bombay train pulls into Allahabad station.',
-        loseText: 'The jungle closes in. The path to Allahabad is hopelessly lost.',
+        quote: 'The whole party crept through the shadow of the trees, in absolute silence, toward the pyre where the young widow lay senseless, waiting for a dawn she would not see.',
+        help: 'DRAG or ARROW KEYS to creep through the grove. Stay out of the priests\' torchlight, reach Aouda, then carry her back to Kiouni before the drums call dawn.',
+        winText: 'Passepartout scoops up the drugged Aouda and melts into the trees. Kiouni waits, unseen and unheard — free.',
+        loseText: 'A torch swings round. Shouts ring through the grove — the priests raise the alarm, and the rescue is lost.',
         init(api) {
-          this.y = api.H / 2; this.dist = 0; this.need = 960;
-          this.obs = []; this.spawn = 1.1; this.vy = 0; this.hits = 0; this.scroll = 0;
+          this.startX = api.W / 2; this.startY = api.H - 46;
+          this.aoudaX = api.W / 2; this.aoudaY = 96;
+          this.px = this.startX; this.py = this.startY;
+          this.phase = 'in';        // 'in' creeping toward Aouda, 'out' carrying her back
+          this.lives = 3; this.hitCD = 0; this.timer = 30; this.glowT = 0;
+          this.g1 = { x: api.W * 0.28, y: 170, dir: 1, spd: 46 };  // horizontal patrol
+          this.g2 = { x: api.W * 0.76, y: 150, dir: 1, spd: 34 };  // vertical patrol
         },
         update(api, dt) {
-          const f = dt * 60;
-          this.dist += 50 * dt;
-          this.scroll += 95 * dt;
-          api.score = Math.floor(this.dist / 5);
-          if (api.pointer.down) this.y += (api.pointer.y - this.y) * 0.12 * f;
-          if (api.keyDown('up')) this.vy -= 7 * f;
-          if (api.keyDown('down')) this.vy += 7 * f;
-          this.vy *= Math.pow(0.88, f);
-          this.y += this.vy * dt;
-          this.y = clamp(this.y, 70, api.H - 55);
-          this.spawn -= dt;
-          if (this.spawn <= 0) {
-            this.spawn = Math.max(0.5, 1.1 - this.dist / 2800);
-            this.obs.push({ x: api.W + 24, y: api.rnd(70, api.H - 55), kind: api.rint(0, 2), hit: false });
+          const f = dt * 60, W = api.W, H = api.H;
+          this.timer -= dt;
+          this.hitCD = Math.max(0, this.hitCD - dt);
+          this.glowT += dt;
+          // Drag toward pointer
+          if (api.pointer.down) {
+            const dx = api.pointer.x - this.px, dy = api.pointer.y - this.py;
+            const d = Math.hypot(dx, dy);
+            if (d > 3) { const s = 42 * dt; this.px += dx / d * s; this.py += dy / d * s; }
           }
-          for (const o of this.obs) o.x -= 115 * dt;
-          for (const o of this.obs) {
-            if (!o.hit && Math.abs(o.x - 55) < 24 && Math.abs(o.y - this.y) < 24) {
-              o.hit = true; this.hits++;
-              api.shake(5, 0.25); api.flash('#3a2010', 0.2); api.audio.sfx('hurt');
+          // Arrow keys
+          let kx = 0, ky = 0;
+          if (api.keyDown('left')) kx = -1;
+          if (api.keyDown('right')) kx = 1;
+          if (api.keyDown('up')) ky = -1;
+          if (api.keyDown('down')) ky = 1;
+          this.px = clamp(this.px + kx * 46 * dt, 24, W - 24);
+          this.py = clamp(this.py + ky * 46 * dt, 46, H - 40);
+          this.px = clamp(this.px, 24, W - 24);
+          this.py = clamp(this.py, 46, H - 40);
+
+          // Patrols
+          this.g1.x += this.g1.dir * this.g1.spd * dt;
+          if (this.g1.x > W - 46) this.g1.dir = -1;
+          if (this.g1.x < 46) this.g1.dir = 1;
+          this.g2.y += this.g2.dir * this.g2.spd * dt;
+          if (this.g2.y > H - 90) this.g2.dir = -1;
+          if (this.g2.y < 118) this.g2.dir = 1;
+
+          if (this.hitCD <= 0) {
+            const guards = [
+              { x: this.g1.x, y: this.g1.y, angle: this.g1.dir > 0 ? 0 : Math.PI },
+              { x: this.g2.x, y: this.g2.y, angle: this.g2.dir > 0 ? Math.PI * 0.5 : Math.PI * 1.5 },
+            ];
+            for (const guard of guards) {
+              const dx = this.px - guard.x, dy = this.py - guard.y;
+              const dist = Math.hypot(dx, dy);
+              if (dist < 76) {
+                const toPlayer = Math.atan2(dy, dx);
+                let diff = toPlayer - guard.angle;
+                while (diff > Math.PI) diff -= Math.PI * 2;
+                while (diff < -Math.PI) diff += Math.PI * 2;
+                if (Math.abs(diff) < 0.5) {
+                  this.lives--;
+                  this.hitCD = 1.2;
+                  api.shake(6, 0.3); api.flash('#e08030', 0.18); api.audio.sfx('hurt');
+                  api.burst(this.px, this.py, '#e08030', 10);
+                  if (this.lives <= 0) { api.lose(); return; }
+                  const kd = dist > 0.01 ? dist : 1;
+                  this.px = clamp(this.px + (dx / kd) * 46, 24, W - 24);
+                  this.py = clamp(this.py + (dy / kd) * 46, 46, H - 40);
+                  break;
+                }
+              }
             }
           }
-          this.obs = this.obs.filter(o => o.x > -30 && !o.hit);
-          if (this.hits >= 3) { api.lose(); return; }
-          if (this.dist >= this.need) { api.score += 100; api.win(); }
+
+          api.addScore(Math.floor(dt * 6));
+          if (this.phase === 'in') {
+            if (Math.hypot(this.px - this.aoudaX, this.py - this.aoudaY) < 20) {
+              this.phase = 'out';
+              this.hitCD = Math.max(this.hitCD, 0.6);
+              api.addScore(70);
+              api.audio.sfx('coin'); api.flash('#f6d060', 0.14);
+              api.burst(this.aoudaX, this.aoudaY, '#f6d060', 14);
+            }
+          } else if (Math.hypot(this.px - this.startX, this.py - this.startY) < 20) {
+            api.score += Math.max(0, Math.floor(this.timer * 4));
+            api.win(); return;
+          }
+          if (this.timer <= 0) { api.lose(); return; }
         },
         draw(api) {
           const g = api.gfx, c = api.ctx, W = api.W, H = api.H;
-          api.clear('#0e1806');
-          g.rect(0, H - 28, W, 28, '#1a2808'); g.rect(0, H - 30, W, 4, '#2a3a0e');
-          // Far trees (slow parallax)
-          for (let i = 0; i < 10; i++) {
-            const tx = ((i * 90 - this.scroll * 0.55 + 200) % (W + 50) + W + 50) % (W + 50) - 25;
-            const th = 70 + (i * 37) % 55;
-            c.fillStyle = '#0a1406'; c.fillRect(tx, H - 28 - th, 16, th);
-            c.fillStyle = '#0e1c06'; c.beginPath(); c.arc(tx + 8, H - 28 - th, 20, 0, Math.PI * 2); c.fill();
+          api.clear('#0a1408');
+          // Canopy-filtered moonlight clearing
+          c.fillStyle = '#0e1c0c'; c.fillRect(0, 40, W, H - 40);
+          for (let i = 0; i < 14; i++) {
+            const mx = (i * 61 + 20) % W, my = 44 + (i * 97) % (H - 100);
+            c.globalAlpha = 0.05 + 0.03 * Math.sin(this.glowT * 1.3 + i);
+            g.circle(mx, my, 16, '#9ac86a');
           }
-          // Near trees (fast parallax)
-          for (let i = 0; i < 6; i++) {
-            const tx = ((i * 130 - this.scroll * 1.1 + 100) % (W + 60) + W + 60) % (W + 60) - 30;
-            c.fillStyle = '#070e04'; c.fillRect(tx, H - 28 - 110, 10, 110);
-            c.fillStyle = '#0c1604'; c.beginPath(); c.arc(tx + 5, H - 28 - 110, 26, 0, Math.PI * 2); c.fill();
+          c.globalAlpha = 1;
+          // Tree-line border
+          for (let tx = 6; tx < W; tx += 30) { c.fillStyle = '#050c04'; c.fillRect(tx, 40, 10, H - 40); }
+          c.fillStyle = '#0e1c0c'; c.fillRect(14, 40, W - 28, H - 40);
+
+          // The pyre platform (Aouda's fate, if still there)
+          g.rect(this.aoudaX - 22, this.aoudaY + 10, 44, 8, '#2a1a08');
+          for (let lx = this.aoudaX - 20; lx < this.aoudaX + 22; lx += 8) g.rect(lx, this.aoudaY + 2, 5, 9, '#3a2408');
+          if (this.phase === 'in') {
+            g.rect(this.aoudaX - 12, this.aoudaY - 8, 24, 9, '#e8ded0');
+            g.circle(this.aoudaX, this.aoudaY - 11, 5, '#c8a878');
+            c.globalAlpha = 0.55 + 0.15 * Math.sin(this.glowT * 2);
+            g.circle(this.aoudaX, this.aoudaY, 26, '#f6d060');
+            c.globalAlpha = 1;
           }
-          // Obstacles
-          for (const o of this.obs) {
-            if (o.kind === 0) {       // fallen log
-              g.rect(o.x - 20, o.y - 7, 40, 14, '#4a2e08');
-              g.rect(o.x - 18, o.y - 9, 36, 5, '#5a3a10');
-            } else if (o.kind === 1) { // mud pool
-              g.circle(o.x, o.y, 15, '#2a1e08');
-              g.circle(o.x - 2, o.y - 2, 7, '#3a2a0e');
-              api.txtC('~', o.x, o.y - 5, 9, '#6a5020');
-            } else {                   // low branch
-              g.rect(o.x - 26, o.y - 5, 52, 10, '#2a1a04');
-              g.rect(o.x - 24, o.y - 7, 48, 5, '#3a2a08');
-              for (let lx = o.x - 20; lx < o.x + 26; lx += 10) g.rect(lx, o.y + 4, 4, 6, '#1a1004');
+
+          // Patrol guards + torch cones
+          const guards = [
+            { x: this.g1.x, y: this.g1.y, angle: this.g1.dir > 0 ? 0 : Math.PI },
+            { x: this.g2.x, y: this.g2.y, angle: this.g2.dir > 0 ? Math.PI * 0.5 : Math.PI * 1.5 },
+          ];
+          for (const guard of guards) {
+            c.globalAlpha = 0.15;
+            c.fillStyle = '#f0a030';
+            c.beginPath(); c.moveTo(guard.x, guard.y);
+            c.arc(guard.x, guard.y, 76, guard.angle - 0.5, guard.angle + 0.5);
+            c.closePath(); c.fill();
+            c.globalAlpha = 1;
+            g.circle(guard.x, guard.y - 10, 7, '#4a3018');
+            g.rect(guard.x - 5, guard.y - 3, 10, 16, '#c8902a');
+            const lx = guard.x + Math.cos(guard.angle) * 16, ly = guard.y + Math.sin(guard.angle) * 16;
+            c.strokeStyle = '#5a3a14'; c.lineWidth = 1;
+            c.beginPath(); c.moveTo(guard.x, guard.y); c.lineTo(lx, ly); c.stroke();
+            g.circle(lx, ly, 4, '#e08030'); g.circle(lx, ly, 2, '#f6d060');
+          }
+
+          // Exit / Kiouni waiting in the shadows
+          c.globalAlpha = 0.5 + 0.2 * Math.sin(this.glowT * 1.6);
+          g.circle(this.startX, this.startY, 16, '#3a5a2a');
+          c.globalAlpha = 1;
+          api.txtC('K', this.startX, this.startY - 4, 8, '#9ac86a', true);
+
+          // Player (Passepartout, carrying Aouda once rescued)
+          const invis = this.hitCD > 0 && Math.floor(this.hitCD * 8) % 2 === 0;
+          if (!invis) {
+            if (this.phase === 'out') {
+              g.rect(this.px - 10, this.py - 9, 8, 15, '#e8ded0');
+              g.circle(this.px - 6, this.py - 12, 4, '#c8a878');
             }
+            g.rect(this.px - 4, this.py - 10, 8, 15, '#c8a070');
+            g.circle(this.px, this.py - 13, 4, '#8a6a4a');
+            g.rect(this.px - 3, this.py - 17, 6, 4, '#e8a030');
           }
-          // Elephant body
-          const ex = 55, ey = this.y;
-          g.rect(ex - 14, ey - 10, 28, 20, '#8a7060');
-          g.rect(ex - 18, ey + 4, 8, 10, '#7a6050'); g.rect(ex + 10, ey + 4, 8, 10, '#7a6050');
-          g.rect(ex - 6, ey - 18, 12, 10, '#8a7060');
-          g.rect(ex + 5, ey - 14, 10, 4, '#7a6050'); g.rect(ex + 13, ey - 10, 6, 2, '#7a6050');
-          g.rect(ex - 5, ey - 20, 5, 7, '#9a8070');
-          // Rider (Passepartout)
-          g.rect(ex - 4, ey - 28, 8, 10, '#c8a070');
-          g.rect(ex - 5, ey - 32, 10, 5, '#e8a030');
-          // Progress
+
+          api.topBar(this.phase === 'in' ? 'CREEP TOWARD THE PYRE' : 'CARRY HER TO KIOUNI');
+          for (let i = 0; i < 3; i++) g.circle(W - 20 - i * 16, 20, 5, i < this.lives ? '#e08030' : '#3a2a1a');
+          const tr = clamp(this.timer / 30, 0, 1);
           g.rect(8, H - 12, W - 16, 5, '#1a1208');
-          g.rect(8, H - 12, (W - 16) * clamp(this.dist / this.need, 0, 1), 5, '#d4a017');
-          api.topBar('KIOUNI — ACROSS INDIA');
-          api.txt('ALLAHABAD ' + Math.floor(this.dist / this.need * 100) + '%', 6, 20, 9, '#d4a017');
-          for (let i = 0; i < 3; i++) g.rect(W - 52 + i * 16, 19, 12, 8, i < (3 - this.hits) ? '#5dff8f' : '#2a1a06');
+          g.rect(8, H - 12, Math.floor((W - 16) * tr), 5, tr < 0.25 ? '#c8102e' : '#e08030');
           api.vignette();
         },
       },

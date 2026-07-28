@@ -10,6 +10,16 @@
 // format stays identical to the rest of the fleet.
 export const CHANGELOG = [
   {
+    v: 142,
+    title: 'Around the World in 80 Days: Kiouni rebuilt as a stealth rescue',
+    kind: 'game',
+    ts: '2026-07-28T09:17:37.958Z',
+    items: [
+      'The India elephant-dodge lane is now a free-roam stealth rescue: creep past two patrolling priests\' torchlight at the Pillaji pyre, reach the drugged Aouda, then carry her back to Kiouni before the dawn drums sound.',
+      'Second step on REBUILD_QUEUE #15\'s rework of the saga\'s three interchangeable dodge lanes; only London in Time\'s carriage sprint remains.',
+    ],
+  },
+  {
     v: 141,
     title: 'Around the World in 80 Days: The Mongolia rebuilt as a route-planning leg',
     kind: 'game',
