@@ -143,6 +143,94 @@
     c.beginPath(); c.arc(lx, ly, 3, 0, Math.PI * 2); c.fill();
   }
 
+  /* ─── Jar deduction grid (chapter 4) ─── */
+  var JAR_COLS = [55, 108, 162, 215];
+  var JAR_ROWS = [165, 255, 345];
+
+  function jarGridPositions() {
+    var pos = [];
+    for (var r = 0; r < JAR_ROWS.length; r++) {
+      for (var cc = 0; cc < JAR_COLS.length; cc++) {
+        pos.push({ x: JAR_COLS[cc], y: JAR_ROWS[r], row: r, col: cc });
+      }
+    }
+    return pos;
+  }
+
+  /* Truthful position clues — `test` is only ever chosen when it holds for
+     the actual thief, so the process of elimination can never strand the
+     player without a valid remaining jar. */
+  var CLUE_POOL = [
+    { id: 'rowBack',  text: 'The jar stands in the BACK row.',
+      test: function (p) { return p.row === 0; } },
+    { id: 'rowMid',   text: 'The jar stands in the MIDDLE row.',
+      test: function (p) { return p.row === 1; } },
+    { id: 'rowFront', text: 'The jar stands in the FRONT row, nearest the gate.',
+      test: function (p) { return p.row === 2; } },
+    { id: 'notBack',  text: 'It does NOT stand in the back row.',
+      test: function (p) { return p.row !== 0; } },
+    { id: 'notFront', text: 'It does NOT stand in the front row.',
+      test: function (p) { return p.row !== 2; } },
+    { id: 'colLeft',  text: 'It sits on the LEFT side of the courtyard.',
+      test: function (p) { return p.col < 2; } },
+    { id: 'colRight', text: 'It sits on the RIGHT side of the courtyard.',
+      test: function (p) { return p.col >= 2; } },
+    { id: 'colEndL',  text: 'It is the LEFTMOST jar in its row.',
+      test: function (p) { return p.col === 0; } },
+    { id: 'colEndR',  text: 'It is the RIGHTMOST jar in its row.',
+      test: function (p) { return p.col === 3; } },
+    { id: 'colMid',   text: 'It is one of the two INNER jars in its row.',
+      test: function (p) { return p.col === 1 || p.col === 2; } },
+    { id: 'notEnd',   text: 'It does NOT sit at either end of its row.',
+      test: function (p) { return p.col !== 0 && p.col !== 3; } },
+    { id: 'atEnd',    text: 'It sits at the END of its row.',
+      test: function (p) { return p.col === 0 || p.col === 3; } },
+    { id: 'evenN',    text: 'Counting all twelve jars in order, it is EVEN-numbered.',
+      test: function (p, idx) { return (idx + 1) % 2 === 0; } },
+    { id: 'oddN',     text: 'Counting all twelve jars in order, it is ODD-numbered.',
+      test: function (p, idx) { return (idx + 1) % 2 === 1; } },
+  ];
+
+  /* Greedily pick `count` true clues that narrow the suspect pool the most. */
+  function pickClueSet(positions, thiefIdx, count) {
+    var candidates = [];
+    for (var i = 0; i < positions.length; i++) candidates.push(i);
+    var usedIds = {}, chosen = [];
+    for (var k = 0; k < count; k++) {
+      var best = null, bestScore = -1;
+      for (var pi = 0; pi < CLUE_POOL.length; pi++) {
+        var pred = CLUE_POOL[pi];
+        if (usedIds[pred.id] || !pred.test(positions[thiefIdx], thiefIdx)) continue;
+        var elim = 0;
+        for (var ci = 0; ci < candidates.length; ci++) {
+          if (!pred.test(positions[candidates[ci]], candidates[ci])) elim++;
+        }
+        var score = elim + Math.random() * 0.4; /* jitter so replays vary */
+        if (score > bestScore) { bestScore = score; best = pred; }
+      }
+      if (!best) break;
+      usedIds[best.id] = true;
+      chosen.push(best);
+      var next = [];
+      for (var cj = 0; cj < candidates.length; cj++) {
+        if (best.test(positions[candidates[cj]], candidates[cj])) next.push(candidates[cj]);
+      }
+      candidates = next;
+    }
+    return chosen;
+  }
+
+  /* Jars still consistent with the first `n` revealed clues. */
+  function surviving(positions, clues, n) {
+    var res = [];
+    for (var i = 0; i < positions.length; i++) {
+      var ok = true;
+      for (var k = 0; k < n; k++) { if (!clues[k].test(positions[i], i)) { ok = false; break; } }
+      if (ok) res.push(i);
+    }
+    return res;
+  }
+
   function drawJar(g, c, x, y, eyeAlpha) {
     var base = y + 18;
     /* jar body */
@@ -1051,92 +1139,98 @@
         },
       },
 
-      /* ═══════════ 4. THE OIL JARS — tap the stirring thieves ═══════════ */
+      /* ═══════════ 4. THE OIL JARS — deduce which jar hides the thief ═══════════ */
       {
-        id: 'jars', name: 'THE OIL JARS', sub: 'FORTY HIDING IN PLAIN SIGHT',
+        id: 'jars', name: 'THE OIL JARS', sub: 'THE LAST JAR STANDING',
         icon: function (api, x, y) { ICONS[3](api, x, y); },
         intro: [
           'THE CAPTAIN DISGUISES',
           'himself as an oil merchant.',
-          'Thirty-eight thieves hide',
-          'in great oil jars in the courtyard.',
-          'MORGIANA MUST DISCOVER THEM',
-          'before they attack!',
+          'Forty great jars line the courtyard —',
+          'thieves crouch inside, one by one.',
+          'MORGIANA READS THE SIGNS BY LANTERN-',
+          'LIGHT: footprints, warm wax, a breath.',
         ],
-        quote: '"Vigilance is the sword that never sleeps." — Arabian Nights',
-        help: 'Tap jars that show glowing eyes before the thief inside escapes! 14 found to win. 3 misses lose.',
-        winText: 'Every hiding thief is found! Morgiana deals with them swiftly, one by one.',
-        loseText: 'Too many slipped away in the night. The thieves signal the captain to strike.',
+        quote: '"Three small truths, held together, point to one door." — Arabian Nights',
+        help: 'Watch the clues — jars that can\'t be true fade out. Tap the one jar still standing!',
+        winText: 'Clue by clue, Morgiana narrows the dark until only the guilty jar remains — every time.',
+        loseText: 'Too many jars opened wrong. The last thief slips past into the night.',
 
         init: function (api) {
-          this.found    = 0;
-          this.target   = 14;
-          this.missed   = 0;
-          this.maxMiss  = 3;
-          this.jars     = [];
-          this.spawnT   = 0.7;
-          /* Jar grid positions */
-          this.jarSlots = [];
-          var cols = [45, 95, 145, 195, 240];
-          var rows = [220, 340, 430];
-          for (var ri = 0; ri < rows.length; ri++) {
-            for (var ci = 0; ci < cols.length; ci++) {
-              this.jarSlots.push({ x: cols[ci], y: rows[ri] });
-            }
-          }
+          this.positions = jarGridPositions();
+          this.total    = this.positions.length;
+          this.round    = 0;
+          this.target   = 5;
+          this.misses   = 0;
+          this.maxMiss  = 4;
+          this.startRound(api);
+        },
+
+        startRound: function (api) {
+          this.thief        = api.rint(0, this.total - 1);
+          this.clues         = pickClueSet(this.positions, this.thief, 3);
+          this.cluesShown    = 0;
+          this.clueTimer     = 0.5;
+          this.phase         = 'reveal';
+          this.wrongThisRound = {};
+          this.resolveTimer  = 0;
         },
 
         update: function (api, dt) {
-          this.spawnT -= dt;
-          if (this.spawnT <= 0) {
-            var busy = {};
-            for (var ji = 0; ji < this.jars.length; ji++) busy[this.jars[ji].slotIdx] = true;
-            var free = [];
-            for (var si = 0; si < this.jarSlots.length; si++) if (!busy[si]) free.push(si);
-            if (free.length > 0) {
-              var slotIdx = free[Math.floor(Math.random() * free.length)];
-              var slot = this.jarSlots[slotIdx];
-              var progress = this.found / this.target;
-              var life = 2.4 - progress * 0.7;
-              this.jars.push({
-                x: slot.x, y: slot.y, slotIdx: slotIdx,
-                life: life, maxLife: life, tapped: false, eyeAnim: 0,
-              });
-            }
-            this.spawnT = 0.6 - (this.found / this.target) * 0.22;
-          }
-
-          /* Update jars */
-          for (var ji2 = this.jars.length - 1; ji2 >= 0; ji2--) {
-            var jar = this.jars[ji2];
-            if (jar.tapped) { this.jars.splice(ji2, 1); continue; }
-            jar.life -= dt;
-            jar.eyeAnim = Math.max(0, jar.life / jar.maxLife);
-            if (jar.life <= 0) {
-              this.missed++;
-              this.jars.splice(ji2, 1);
-              api.audio.sfx('hurt');
-              if (this.missed >= this.maxMiss) { api.lose(); return; }
-            }
-          }
-
-          /* Tap detection */
-          if (api.pointer.justDown) {
-            var px = api.pointer.x, py = api.pointer.y;
-            for (var ji3 = this.jars.length - 1; ji3 >= 0; ji3--) {
-              var j = this.jars[ji3];
-              if (Math.abs(px - j.x) < 18 && Math.abs(py - (j.y + 3)) < 22) {
-                j.tapped = true;
-                this.found++;
-                api.addScore(15);
-                api.burst(j.x, j.y, C.amber, 6);
-                api.audio.sfx('select');
-                if (this.found >= this.target) {
-                  api.addScore(100);
-                  api.win(); return;
+          if (this.phase === 'reveal') {
+            this.clueTimer -= dt;
+            if (this.clueTimer <= 0 && this.cluesShown < this.clues.length) {
+              var prevLive = surviving(this.positions, this.clues, this.cluesShown);
+              this.cluesShown++;
+              var nowLive = surviving(this.positions, this.clues, this.cluesShown);
+              var liveSet = {};
+              for (var nl = 0; nl < nowLive.length; nl++) liveSet[nowLive[nl]] = true;
+              for (var pl = 0; pl < prevLive.length; pl++) {
+                if (!liveSet[prevLive[pl]]) {
+                  var pos = this.positions[prevLive[pl]];
+                  api.burst(pos.x, pos.y, C.stoneL, 4);
                 }
-                break;
               }
+              api.audio.sfx('blip');
+              this.clueTimer = 1.3;
+            }
+            if (this.cluesShown >= this.clues.length) this.phase = 'guess';
+          } else if (this.phase === 'guess') {
+            if (api.pointer.justDown) {
+              var px = api.pointer.x, py = api.pointer.y;
+              var live = surviving(this.positions, this.clues, this.cluesShown);
+              for (var li = 0; li < live.length; li++) {
+                var idx = live[li];
+                if (this.wrongThisRound[idx]) continue;
+                var p = this.positions[idx];
+                if (Math.abs(px - p.x) < 20 && Math.abs(py - (p.y + 3)) < 26) {
+                  if (idx === this.thief) {
+                    var wrongCount = 0;
+                    for (var wk in this.wrongThisRound) wrongCount++;
+                    api.addScore(15 + Math.max(0, 15 - wrongCount * 5));
+                    api.audio.sfx('coin');
+                    api.burst(p.x, p.y, C.gold, 8);
+                    api.shake(2, 0.2);
+                    this.round++;
+                    this.phase = 'resolved';
+                    this.resolveTimer = 1.0;
+                  } else {
+                    this.wrongThisRound[idx] = true;
+                    this.misses++;
+                    api.audio.sfx('hurt');
+                    api.burst(p.x, p.y, C.red, 5);
+                    api.shake(3, 0.25);
+                    if (this.misses >= this.maxMiss) { api.lose(); return; }
+                  }
+                  break;
+                }
+              }
+            }
+          } else if (this.phase === 'resolved') {
+            this.resolveTimer -= dt;
+            if (this.resolveTimer <= 0) {
+              if (this.round >= this.target) { api.addScore(100); api.win(); return; }
+              this.startRound(api);
             }
           }
         },
@@ -1164,21 +1258,44 @@
             c.beginPath(); c.moveTo(fx, H * 0.25); c.lineTo(fx, H); c.stroke();
           }
 
-          /* Oil jars */
-          for (var ji = 0; ji < this.jars.length; ji++) {
-            var jar = this.jars[ji];
-            drawJar(g, c, jar.x, jar.y, jar.eyeAnim);
-            /* Urgency pulse */
-            if (jar.eyeAnim < 0.35) {
-              c.globalAlpha = 0.15 + 0.1 * Math.sin(api.t * 10);
-              c.fillStyle = C.red;
-              c.beginPath(); c.arc(jar.x, jar.y, 26, 0, Math.PI * 2); c.fill();
-              c.globalAlpha = 1;
-            }
+          /* Clue panel */
+          var panelY = 20, panelH = 92;
+          g.rect(10, panelY, W - 20, panelH, 'rgba(10,6,3,.78)');
+          c.strokeStyle = C.goldD; c.lineWidth = 1;
+          c.strokeRect(10, panelY, W - 20, panelH);
+          api.txtCFit('THE CLUES', W / 2, panelY + 6, 7, C.gold, false, W - 30);
+          for (var ci = 0; ci < this.cluesShown; ci++) {
+            var ls = api.wrapFit(this.clues[ci].text, 6, W - 38, false);
+            api.lines(ls, W / 2, panelY + 20 + ci * 22, 6, C.cream, 9);
+          }
+          if (this.phase === 'guess' && Math.floor(api.t * 2) % 2 === 0) {
+            api.txtCFit('TAP THE LAST JAR', W / 2, panelY + panelH - 14, 6, C.goldL, false, W - 30);
           }
 
-          /* Morgiana (holding a lantern) at top left */
-          var mx = 28, my = H * 0.22;
+          /* Jars — eliminated candidates fade, wrong guesses show empty */
+          var live = surviving(this.positions, this.clues, this.cluesShown);
+          var liveSet = {};
+          for (var lv = 0; lv < live.length; lv++) liveSet[live[lv]] = true;
+          for (var i = 0; i < this.positions.length; i++) {
+            var pos = this.positions[i];
+            var isLive = liveSet[i];
+            var isWrong = this.wrongThisRound[i];
+            var isRevealed = this.phase === 'resolved' && i === this.thief;
+            c.save();
+            if (!isLive && !isWrong) c.globalAlpha = 0.25;
+            drawJar(g, c, pos.x, pos.y, isRevealed ? 1 : 0);
+            if (isWrong) {
+              c.strokeStyle = C.red; c.lineWidth = 2;
+              c.beginPath();
+              c.moveTo(pos.x - 8, pos.y - 6); c.lineTo(pos.x + 8, pos.y + 10);
+              c.moveTo(pos.x + 8, pos.y - 6); c.lineTo(pos.x - 8, pos.y + 10);
+              c.stroke();
+            }
+            c.restore();
+          }
+
+          /* Morgiana (holding a lantern) at bottom left */
+          var mx = 26, my = H - 30;
           g.circle(mx, my - 18, 7, C.sand);
           g.rect(mx - 3, my - 10, 6, 4, '#6a4010');
           g.rect(mx - 6, my - 18, 4, 6, '#c04030'); /* head scarf */
@@ -1193,9 +1310,17 @@
           c.fillStyle = C.lanternL;
           c.beginPath(); c.arc(mx + 18, my - 4, 5, 0, Math.PI * 2); c.fill();
 
+          /* Round progress + lives */
+          for (var rp = 0; rp < this.target; rp++) {
+            var dotX = W / 2 - (this.target - 1) * 10 + rp * 20;
+            g.circle(dotX, H - 48, 6, rp < this.round ? C.gold : '#2a1840');
+          }
+          for (var mp = 0; mp < this.maxMiss; mp++) {
+            g.rect(W - 24 - mp * 18, H - 24, 12, 6, mp < this.misses ? C.red : '#2a1840');
+          }
+
           /* HUD */
-          api.topBar('THE OIL JARS', this.maxMiss - this.missed, this.maxMiss,
-            this.found + '/' + this.target, C.goldL);
+          api.topBar('THE OIL JARS');
         },
       },
 

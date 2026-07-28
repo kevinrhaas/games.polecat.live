@@ -10,6 +10,16 @@
 // format stays identical to the rest of the fleet.
 export const CHANGELOG = [
   {
+    v: 149,
+    title: 'Open Sesame rebuilt for genre variety',
+    kind: 'game',
+    ts: '2026-07-28T16:04:44.456Z',
+    items: [
+      'THE OIL JARS is now a deduction game: Morgiana reads three truthful clues each round, the courtyard\'s jars gray out as suspects are ruled out, and you tap the one jar still standing.',
+      'REBUILD_QUEUE #22, done — alibaba-cave had two near-identical tap-before-it-fades chapters (marked doors, oil jars); the jars are now a genuine hide-and-seek deduction, not a reflex twin of the doors.',
+    ],
+  },
+  {
     v: 148,
     title: 'Grimm\'s Path rebuilt for genre variety',
     kind: 'game',
