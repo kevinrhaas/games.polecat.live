@@ -12,8 +12,7 @@ queue** in the same commit. Promote to Gen-4 (hub + branches) where noted.
 
 ## Queue
 8. **timemachine-eloi** — already has a custom dial menu + a timing-bar / catch-dodge / stealth-cones / matchlight-gather / dodge-debris spread (this line's old "4/5 dodge, only plain-list menu" description no longer matches the file — checked 2026-07-22). Still a **Gen-4 candidate** (machine-assembly + resource roguelite, branching eras, inventory) if someone wants to build its 16-bit hub version, but not a worst-offender rebuild.
-16. **odysseus-voyage** — 3 L/R dodges → **overworld voyage map** with Oregon-Trail-style crew/resource management and choice encounters.
-17. **heidi-alps** — 3 horizontal-move levels → **alpine day-cycle chore/herding sim** (Harvest-Moon-lite): seasons, foraging, caregiving stats.
+16. ~~**odysseus-voyage**~~ — already has a bespoke chart-map menu (not a plain list) and 5 already-varied mechanics (hide-under-sheep dodge, collect-and-dodge, survive, steer, timing); this line's old "3 L/R dodges" description no longer matches the file (checked 2026-07-28). The Oregon-Trail-style crew/resource-management + choice-encounter ask is already delivered by its Gen-4 sibling `odyssey-16` (bag of winds, crew upgrades, flags/choices, branching endings) — rebuilding the Gen-3 8-bit game into the same shape would blur the CLAUDE.md Gen-3/Gen-4 split (Gen-3 = arcade action, Gen-4 = deep hub/resource sim), not fix repetition. Not a worst-offender rebuild.
 18. **merlin-spells** — 4/5 dodge → **rune-tracing spellcaster** (path-tracing) + a Simon-style incantation duel vs Nimue.
 19. **windwillows-toad** — ch1 & ch2 are the same dodge lane → swap one for **disguise-and-bluff social stealth** ("Toad as washerwoman") + make the boat a **rowing rhythm** game.
 20. **treasureisland-map** — 3 tap-to-hit chapters → a **broadside cannon-aim ship duel** + a "spot the mutineer" **crew social-deduction** chapter.

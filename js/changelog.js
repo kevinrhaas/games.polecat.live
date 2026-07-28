@@ -10,6 +10,17 @@
 // format stays identical to the rest of the fleet.
 export const CHANGELOG = [
   {
+    v: 144,
+    title: 'Heidi rebuilt as an alpine day-cycle chore sim',
+    kind: 'game',
+    ts: '2026-07-28T13:14:58.400Z',
+    items: [
+      'Heidi\'s five interchangeable tales are now a single seasonal loop: spend three chores a day — herd Peter\'s goats, forage the meadow, or tend Grandfather\'s hearth — across Spring, Summer, Autumn and Winter.',
+      'FOOD, HEALTH and BOND carry between days Oregon-Trail-style; an empty larder makes for a hard winter, and Clara\'s first steps in the finale play out warmer the better the Alm was tended.',
+      'REBUILD_QUEUE #17, done. Also corrected REBUILD_QUEUE #16 (odysseus-voyage): its crew/resource/choice ask is already covered by the Gen-4 odyssey-16 hub, so it\'s no longer a worst-offender rebuild.',
+    ],
+  },
+  {
     v: 143,
     title: 'Around the World in 80 Days: London in Time rebuilt as a rhythm sprint',
     kind: 'game',
