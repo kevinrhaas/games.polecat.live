@@ -10,6 +10,17 @@
 // format stays identical to the rest of the fleet.
 export const CHANGELOG = [
   {
+    v: 136,
+    title: 'Oliver Twist: The Workhouse rebuilt as a stealth pickpocket sim',
+    kind: 'game',
+    ts: '2026-07-28T03:22:58.437Z',
+    items: [
+      'The dodge-the-cane opener is now a grid of gruel bowls: tap a glowing bowl for a stolen second helping, but never while the beadle\'s watching eye has swept onto its column.',
+      'A suspicion meter replaces lives — get caught 4 times and it\'s the coal cellar, same forgiving 10-lift target either way.',
+      'REBUILD_QUEUE #12\'s rework — the saga now spans dodge, rhythm-tap, whack-a-mole, stealth-avoid, and grid lift-timing across its five acts, and the line comes off the queue.',
+    ],
+  },
+  {
     v: 135,
     title: 'A Christmas Carol: Christmas Morning rebuilt as a redemption dash',
     kind: 'game',

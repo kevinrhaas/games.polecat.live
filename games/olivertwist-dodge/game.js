@@ -1,7 +1,8 @@
 /* ============================================================================
  * OLIVER TWIST — PLEASE, SIR
  * Five acts from Dickens' 1837 novel:
- *   1. THE WORKHOUSE     — dodge the beadle's cane, catch falling gruel (22s)
+ *   1. THE WORKHOUSE     — grid lift-timing: steal 2nd helpings past the
+ *                          beadle's watchful eye without raising suspicion
  *   2. THE ARTFUL DODGER — pendulum tap: pick Fagin's pocket 8 times
  *   3. THE COURTROOM     — silence 10 lying witnesses before 3 testify (whack)
  *   4. THE BURGLARY      — free-move stealth past patrol guards' lanterns (26s)
@@ -384,7 +385,9 @@
 
       /* ───────────────────────────────────────────────────────────────
        * ACT 1 — THE WORKHOUSE
-       * Dodge falling canes; catch gruel bowls for points. Survive 22s.
+       * Grid lift-timing: tap a glowing bowl for a stolen second helping —
+       * but never while the beadle's eye is watching that column. A
+       * suspicion meter (not lives) tracks how many times he catches you.
        * ─────────────────────────────────────────────────────────────── */
       {
         id: 'workhouse',
@@ -394,90 +397,109 @@
         intro: [
           'OLIVER IS BORN IN THE',
           'PARISH WORKHOUSE.',
-          'FED ONLY THIN GRUEL,',
-          'he dares ask the beadle',
-          'for another portion.',
+          'STARVED ON THIN GRUEL,',
+          'he learns to snatch a',
+          'second bowl unseen.',
         ],
         quote: '"Please, sir, I want some more." — Charles Dickens, 1837',
-        help: 'Dodge the beadle\'s cane! Tap LEFT or RIGHT side to move. Catch gruel bowls for bonus shillings. Survive 22 seconds!',
-        winText: 'The beadle cannot catch you every time. Oliver runs from the workhouse gates.',
-        loseText: 'The cane finds its mark. Oliver is cast in the coal cellar.',
+        help: 'TAP a glowing bowl for extra gruel — but NOT while the beadle\'s eye watches its column! Lift 10 helpings. Get caught 4 times and it\'s over.',
+        winText: 'Ten stolen helpings, and not once did the beadle\'s eye catch him. Oliver slips from the workhouse gates.',
+        loseText: 'The beadle\'s eye catches him red-handed. Oliver is cast into the coal cellar.',
 
         init: function (api) {
-          this.olivX   = api.W / 2;
-          this.lives   = 3;
-          this.survive = 0;
-          this.target  = 22;
-          this.canes   = [];
-          this.gruel   = [];
-          this.caneT   = 0.8;
-          this.gruelT  = 1.8;
-          this.speed   = 148;
-          this.hitCD   = 0;
+          var W = api.W, H = api.H;
+          var cols = [W*0.27, W*0.5, W*0.73];
+          var rows = [H*0.42, H*0.58];
+          this.pots = [];
+          for (var r = 0; r < 2; r++) {
+            for (var cIdx = 0; cIdx < 3; cIdx++) {
+              this.pots.push({ col: cIdx, row: r, x: cols[cIdx], y: rows[r], glow: false, glowT: 0 });
+            }
+          }
+          this.cur        = 4; // keyboard cursor, starts center
+          this.lifts      = 0;
+          this.target      = 10;
+          this.suspicion   = 0;
+          this.maxSuspicion= 4;
+          this.watchCol    = Math.floor(Math.random() * 3);
+          this.watchT      = 1.7;
+          this.spawnT      = 0.7;
+          this.fxs         = [];
         },
 
         update: function (api, dt) {
-          var W = api.W, H = api.H;
+          var W = api.W, H = api.H, self = this;
 
-          // Move Oliver left/right
-          var mx = 0;
-          if (api.keyDown('left')  || (api.pointer.down && api.pointer.x < W/2))  mx = -1;
-          if (api.keyDown('right') || (api.pointer.down && api.pointer.x >= W/2)) mx =  1;
-          this.olivX = clamp(this.olivX + mx * 184 * dt, 18, W-18);
-
-          // Spawn canes
-          this.caneT -= dt;
-          if (this.caneT <= 0) {
-            this.canes.push({ x: 18 + Math.random() * (W-36), y: -30, spd: this.speed });
-            this.caneT = 0.95 + Math.random() * 0.5 - Math.min(0.4, this.survive * 0.012);
+          // Beadle's eye rotates to a new column periodically
+          this.watchT -= dt;
+          if (this.watchT <= 0) {
+            var next = Math.floor(Math.random() * 3);
+            if (next === this.watchCol) next = (next + 1) % 3;
+            this.watchCol = next;
+            this.watchT = 1.4 + Math.random() * 0.7;
           }
 
-          // Spawn gruel bowls
-          this.gruelT -= dt;
-          if (this.gruelT <= 0) {
-            this.gruel.push({ x: 18 + Math.random() * (W-36), y: -20 });
-            this.gruelT = 1.6 + Math.random() * 0.9;
-          }
-
-          // Move canes and gruel
-          var spd = this.speed + this.survive * 7;
-          for (var ci = 0; ci < this.canes.length; ci++) this.canes[ci].y += spd * dt;
-          for (var gi = 0; gi < this.gruel.length; gi++) this.gruel[gi].y += spd * 0.55 * dt;
-          this.canes = this.canes.filter(function(c){ return c.y < H+40; });
-
-          // Catch gruel
-          var olivY = H * 0.76, olivX = this.olivX, self = this;
-          this.gruel = this.gruel.filter(function(gu) {
-            if (Math.abs(gu.x - olivX) < 22 && gu.y > olivY-22 && gu.y < olivY+10) {
-              api.addScore(15);
-              api.burst(gu.x, gu.y, C.amber, 6);
-              return false;
+          // Spawn a lift opportunity in a random idle pot (max 2 concurrent)
+          this.spawnT -= dt;
+          var glowing = this.pots.filter(function (p) { return p.glow; });
+          if (this.spawnT <= 0 && glowing.length < 2) {
+            var idle = this.pots.filter(function (p) { return !p.glow; });
+            if (idle.length) {
+              var pick = idle[Math.floor(Math.random() * idle.length)];
+              pick.glow = true;
+              pick.glowT = 1.15;
             }
-            return gu.y < H+30;
-          });
+            this.spawnT = 0.75 + Math.random() * 0.45 - Math.min(0.3, this.lifts * 0.018);
+          }
 
-          // Cane collision
-          if (this.hitCD > 0) {
-            this.hitCD -= dt;
-          } else {
-            for (var ci2 = 0; ci2 < this.canes.length; ci2++) {
-              var cn = this.canes[ci2];
-              if (Math.abs(cn.x - this.olivX) < 19 && cn.y > olivY-24 && cn.y < olivY+10) {
-                this.lives--;
-                this.hitCD = 0.9;
-                api.shake(7, 0.35);
-                api.flash(C.red, 0.18);
-                api.burst(this.olivX, olivY, C.red, 8);
-                if (this.lives <= 0) { api.lose(); return; }
-                break;
-              }
+          // Countdown glow windows; missed lifts just fade (no penalty)
+          for (var pi = 0; pi < this.pots.length; pi++) {
+            var pot = this.pots[pi];
+            if (pot.glow) {
+              pot.glowT -= dt;
+              if (pot.glowT <= 0) pot.glow = false;
             }
           }
 
-          // Progress
-          this.survive += dt;
-          api.addScore(Math.floor(dt * 5));
-          if (this.survive >= this.target) api.win();
+          // Keyboard cursor movement (touch taps target directly instead)
+          var col = this.cur % 3, row = (this.cur / 3) | 0;
+          if (api.keyPressed && api.keyPressed('left'))  col = clamp(col - 1, 0, 2);
+          if (api.keyPressed && api.keyPressed('right')) col = clamp(col + 1, 0, 2);
+          if (api.keyPressed && api.keyPressed('up'))    row = clamp(row - 1, 0, 1);
+          if (api.keyPressed && api.keyPressed('down'))  row = clamp(row + 1, 0, 1);
+          this.cur = row * 3 + col;
+
+          // Resolve a tap: pointer hit-test, or 'a' key on the cursor pot
+          var targetPot = null;
+          if (api.pointer.justDown) {
+            var px = api.pointer.x, py = api.pointer.y;
+            for (var hi = 0; hi < this.pots.length; hi++) {
+              var hp = this.pots[hi];
+              if (Math.abs(px - hp.x) < 28 && Math.abs(py - hp.y) < 28) { targetPot = hp; break; }
+            }
+          } else if (api.keyPressed && api.keyPressed('a')) {
+            targetPot = this.pots[this.cur];
+          }
+
+          if (targetPot && targetPot.glow) {
+            targetPot.glow = false;
+            if (targetPot.col === this.watchCol) {
+              this.suspicion++;
+              this.fxs.push({ x: targetPot.x, y: targetPot.y, t: 0.7, txt: 'CAUGHT!', col: C.red });
+              api.shake(6, 0.28);
+              api.flash(C.red, 0.16);
+              api.burst(targetPot.x, targetPot.y, C.red, 7);
+              if (this.suspicion >= this.maxSuspicion) { api.lose(); return; }
+            } else {
+              this.lifts++;
+              api.addScore(20);
+              this.fxs.push({ x: targetPot.x, y: targetPot.y, t: 0.6, txt: 'LIFTED!', col: C.amberL });
+              api.burst(targetPot.x, targetPot.y, C.amber, 6);
+              if (this.lifts >= this.target) { api.win(); return; }
+            }
+          }
+
+          this.fxs = this.fxs.filter(function (f) { f.t -= dt; return f.t > 0; });
         },
 
         draw: function (api) {
@@ -497,58 +519,73 @@
           // Floor
           g.rect(0, H*0.72, W, H*0.28, '#1c1610');
 
-          // Flickering candle glow
-          var fl = 0.8 + 0.2 * Math.sin(t*17);
-          c.globalAlpha = fl * 0.10;
-          c.fillStyle = C.amberL;
-          c.beginPath(); c.arc(W/2, H*0.36, 52, 0, Math.PI*2); c.fill();
-          c.globalAlpha = 1;
-          g.circle(W/2, H*0.36, 3, C.amberL);
-          g.rect(W/2-2, H*0.36, 4, 14, C.brownL);
+          // Serving counter
+          g.rect(W*0.12, H*0.34, W*0.76, H*0.32, '#20160a');
+          c.strokeStyle = C.brown; c.lineWidth = 2;
+          c.strokeRect(W*0.12, H*0.34, W*0.76, H*0.32);
 
-          // Gruel bowls
-          for (var gi = 0; gi < this.gruel.length; gi++) {
-            var gu = this.gruel[gi];
-            c.strokeStyle = C.amber; c.lineWidth = 2;
-            c.beginPath(); c.arc(gu.x, gu.y+5, 9, Math.PI, 0); c.stroke();
-            g.rect(gu.x-11, gu.y+5, 22, 3, C.amber);
-            c.globalAlpha = 0.45;
+          // Beadle's watching eye, positioned over the danger column
+          var eyeX = this.pots[this.watchCol].x, eyeY = H*0.22;
+          var blink = 0.85 + 0.15 * Math.sin(t*3);
+          c.fillStyle = C.cream;
+          c.beginPath(); c.ellipse(eyeX, eyeY, 15, 9*blink, 0, 0, Math.PI*2); c.fill();
+          c.strokeStyle = C.brown; c.lineWidth = 2;
+          c.beginPath(); c.ellipse(eyeX, eyeY, 15, 9*blink, 0, 0, Math.PI*2); c.stroke();
+          c.fillStyle = C.coal;
+          c.beginPath(); c.arc(eyeX, eyeY, 5*blink, 0, Math.PI*2); c.fill();
+          api.txtCFit('THE BEADLE WATCHES', eyeX, eyeY-20, 5, C.stone, false, W*0.8);
+
+          // Danger-column tint (helps mobile players spot it fast)
+          c.globalAlpha = 0.10;
+          c.fillStyle = C.red;
+          c.fillRect(eyeX - 38, H*0.34, 76, H*0.32);
+          c.globalAlpha = 1;
+
+          // Pots
+          for (var pIdx = 0; pIdx < this.pots.length; pIdx++) {
+            var pot = this.pots[pIdx];
+            var glowPulse = pot.glow ? (0.6 + 0.4 * Math.sin(t*11)) : 0;
+            if (pot.glow) {
+              c.globalAlpha = glowPulse * 0.5;
+              c.fillStyle = C.amberL;
+              c.beginPath(); c.arc(pot.x, pot.y, 20, 0, Math.PI*2); c.fill();
+              c.globalAlpha = 1;
+            }
+            c.strokeStyle = pot.glow ? C.amberL : C.amber; c.lineWidth = 2;
+            c.beginPath(); c.arc(pot.x, pot.y+5, 12, Math.PI, 0); c.stroke();
+            g.rect(pot.x-14, pot.y+5, 28, 4, pot.glow ? C.amberL : C.amber);
+            c.globalAlpha = 0.4;
             c.fillStyle = '#c49028';
-            c.beginPath(); c.arc(gu.x, gu.y+3, 7, Math.PI, 0); c.fill();
+            c.beginPath(); c.arc(pot.x, pot.y+2, 9, Math.PI, 0); c.fill();
+            c.globalAlpha = 1;
+            // Keyboard cursor ring
+            if (pIdx === this.cur) {
+              c.strokeStyle = C.fogL; c.lineWidth = 1;
+              c.setLineDash([3,3]);
+              c.strokeRect(pot.x-19, pot.y-15, 38, 34);
+              c.setLineDash([]);
+            }
+          }
+
+          // FX popups
+          for (var fi = 0; fi < this.fxs.length; fi++) {
+            var fx = this.fxs[fi];
+            c.globalAlpha = Math.min(1, fx.t * 2.2);
+            api.txtCFit(fx.txt, fx.x, fx.y - (0.7 - fx.t) * 20, 7, fx.col, false, W*0.55);
             c.globalAlpha = 1;
           }
 
-          // Canes
-          for (var ci = 0; ci < this.canes.length; ci++) {
-            var cn = this.canes[ci];
-            c.strokeStyle = C.brownL; c.lineWidth = 4;
-            c.beginPath(); c.moveTo(cn.x, cn.y-26); c.lineTo(cn.x, cn.y+8); c.stroke();
-            // Curved handle
-            c.strokeStyle = C.amber; c.lineWidth = 3;
-            c.beginPath();
-            c.moveTo(cn.x, cn.y+6);
-            c.quadraticCurveTo(cn.x+13, cn.y+16, cn.x+13, cn.y+25);
-            c.stroke();
-          }
+          // Oliver, reaching from below
+          drawOliver(g, c, W/2, H*0.92, false);
 
-          // Oliver
-          var olivY = H * 0.76;
-          var invisible = this.hitCD > 0 && Math.floor(this.hitCD * 8) % 2 === 0;
-          drawOliver(g, c, this.olivX, olivY, invisible);
+          // HUD
+          api.txtCFit('LIFTED ' + this.lifts + '/' + this.target, W*0.28, 16, 6, C.amberL, false, W*0.5);
 
-          // Lives (gruel bowl icons)
-          for (var li = 0; li < this.lives; li++) {
-            var lx = 14 + li*28, ly = 14;
-            c.strokeStyle = C.amber; c.lineWidth = 2;
-            c.beginPath(); c.arc(lx, ly+5, 7, Math.PI, 0); c.stroke();
-            g.rect(lx-8, ly+5, 16, 3, C.amber);
-          }
-
-          // Survive bar
-          var pct = Math.min(1, this.survive / this.target);
+          // Suspicion meter
+          var spct = this.suspicion / this.maxSuspicion;
           g.rect(0, H-8, W, 8, '#100806');
-          g.rect(0, H-8, W*pct, 8, C.amber);
-          api.txtCFit('SURVIVE ' + Math.ceil(this.target - this.survive) + 's', W/2, H-17, 6, C.stone, false, W);
+          g.rect(0, H-8, W*spct, 8, C.red);
+          api.txtCFit('SUSPICION', W/2, H-17, 6, C.stone, false, W);
           api.topBar('THE WORKHOUSE', api.score);
           api.vignette();
           api.scanlines();
