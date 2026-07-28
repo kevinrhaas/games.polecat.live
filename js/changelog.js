@@ -10,6 +10,17 @@
 // format stays identical to the rest of the fleet.
 export const CHANGELOG = [
   {
+    v: 148,
+    title: 'Grimm\'s Path rebuilt for genre variety',
+    kind: 'game',
+    ts: '2026-07-28T15:23:18.929Z',
+    items: [
+      'LET DOWN YOUR HAIR is now a hand-over-hand climb: grab the glowing side of the braid — left or right — before your grip slips, all the way up the tower.',
+      'TRUE LOVE\'S KISS is now a Simon-says thorn-path memory game: watch the hedge maze\'s gates light in order, then retrace the path to reach the sleeping princess.',
+      'REBUILD_QUEUE #21, done — grimm-tales had two near-identical tap-in-the-zone timing chapters; they\'re now genuinely different genres.',
+    ],
+  },
+  {
     v: 147,
     title: 'Treasure Island rebuilt for genre variety',
     kind: 'game',
