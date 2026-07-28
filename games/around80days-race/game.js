@@ -729,7 +729,7 @@
         },
       },
 
-      /* ===== LEG 5: LONDON IN TIME — carriage sprint ===== */
+      /* ===== LEG 5: LONDON IN TIME — urge the horses (rhythm) ===== */
       {
         id: 'london', name: 'LONDON IN TIME', sub: 'THE FINAL SPRINT',
         icon(api, x, y) {
@@ -749,38 +749,72 @@
           'Race to the Club!',
         ],
         quote: 'Phileas Fogg had won his wager of twenty thousand pounds. He had made the tour of the world in eighty days!',
-        help: 'DRAG or LEFT/RIGHT to steer · reach the Reform Club before the clock strikes nine',
+        help: 'TAP the reins in rhythm with each GOLD beat to urge the horses on — hold back when a RED beat rides through · reach the Reform Club before the clock strikes nine',
         winText: '"Here I am, gentlemen," says Fogg. The clock reads 8:44 and 59 seconds. He has won.',
         loseText: 'The church bell tolls nine. The Reform Club doors swing shut. The wager is lost by seconds.',
         init(api) {
-          this.x = api.W / 2; this.timer = 32; this.dist = 0; this.need = 960;
-          this.obs = []; this.spawn = 1.0; this.hits = 0; this.spd = 30;
+          this.timer = 32; this.dist = 0; this.need = 960;
+          this.beats = []; this.spawnT = 0.9; this.spawnInterval = 0.9; this.beatCount = 0;
+          this.combo = 0; this.bestCombo = 0; this.speed = 108;
+          this.laneL = 16; this.laneR = api.W - 16; this.laneY = 34; this.hitX = 44;
+          this.flashTap = 0;
         },
         update(api, dt) {
-          const f = dt * 60;
+          const W = api.W;
           this.timer -= dt;
-          this.dist += this.spd * dt;
-          this.spd = Math.min(52, 30 + (32 - this.timer) * 0.8);
-          api.score = Math.floor(this.dist / 4);
-          const p = api.pointer;
-          if (p.down) this.x += (p.x - this.x) * 0.15 * f;
-          if (api.keyDown('left')) this.x -= 3.5 * f;
-          if (api.keyDown('right')) this.x += 3.5 * f;
-          this.x = clamp(this.x, 20, api.W - 20);
-          this.spawn -= dt;
-          if (this.spawn <= 0) {
-            this.spawn = Math.max(0.42, 1.0 - (32 - this.timer) * 0.022);
-            this.obs.push({ x: api.rnd(20, api.W - 20), y: -22, vy: api.rnd(140, 210), kind: api.rint(0, 2), hit: false });
+          this.flashTap = Math.max(0, this.flashTap - dt * 3);
+          // the gallop quickens as the clock runs down toward nine
+          const urgency = clamp((32 - this.timer) / 32, 0, 1);
+          this.speed = 108 + urgency * 70;
+          this.spawnInterval = Math.max(0.46, 0.9 - urgency * 0.42);
+
+          // a rhythm of correct taps carries the carriage; idling barely moves it
+          this.dist += (10 + Math.min(this.combo, 10) * 3) * dt;
+          api.score = Math.floor(this.dist / 4) + this.bestCombo * 2;
+
+          this.spawnT -= dt;
+          if (this.spawnT <= 0) {
+            this.spawnT = this.spawnInterval;
+            this.beatCount++;
+            const isRed = this.beatCount > 2 && api.chance(0.26);
+            this.beats.push({ x: this.laneR, kind: isRed ? 'red' : 'gold', judged: false });
           }
-          for (const o of this.obs) o.y += o.vy * dt;
-          for (const o of this.obs) {
-            if (!o.hit && Math.abs(o.x - this.x) < 20 && Math.abs(o.y - (api.H - 70)) < 20) {
-              o.hit = true; this.hits++; this.timer -= 2.5;
-              api.shake(5, 0.25); api.flash('#1a1206', 0.2); api.audio.sfx('hurt');
-              api.burst(this.x, api.H - 70, '#d4a017', 8);
+          for (const b of this.beats) b.x -= this.speed * dt;
+
+          if (api.confirm()) {
+            this.flashTap = 1;
+            let target = null, bestD = 1e9;
+            for (const b of this.beats) {
+              if (b.judged) continue;
+              const d = Math.abs(b.x - this.hitX);
+              if (d < 15 && d < bestD) { target = b; bestD = d; }
+            }
+            if (target) {
+              target.judged = true;
+              if (target.kind === 'gold') {
+                this.combo++; this.bestCombo = Math.max(this.bestCombo, this.combo);
+                this.dist += 44 + Math.min(this.combo, 12) * 3;
+                api.audio.sfx('coin'); api.burst(this.hitX, api.H - 70, '#d4a017', 10); api.flash('#d4a017', 0.08);
+              } else {
+                this.combo = 0; this.timer -= 2;
+                api.audio.sfx('hurt'); api.shake(5, 0.22); api.flash('#c8102e', 0.16);
+                api.burst(this.hitX, api.H - 70, '#c8102e', 10);
+              }
+            } else {
+              this.combo = 0; api.audio.sfx('blip');
             }
           }
-          this.obs = this.obs.filter(o => o.y < api.H + 20 && !o.hit);
+          // beats that slide past the reins unjudged: a red one dodged safely,
+          // a gold one simply missed (no bonus, streak broken)
+          for (const b of this.beats) {
+            if (!b.judged && b.x < this.hitX - 15) {
+              b.judged = true;
+              if (b.kind === 'red') this.dist += 10;
+              else this.combo = 0;
+            }
+          }
+          this.beats = this.beats.filter((b) => !b.judged);
+
           if (this.timer <= 0) { api.lose(); return; }
           if (this.dist >= this.need) { api.score += 120 + Math.floor(this.timer * 5); api.win(); }
         },
@@ -810,29 +844,13 @@
             for (let wy = H - 90 - bh + 8; wy < H - 90 - 10; wy += 16)
               for (let wx = bx + 5; wx < bx + 31; wx += 10) g.rect(wx, wy, 7, 9, '#c8902a');
           }
-          // Obstacles
-          for (const o of this.obs) {
-            if (o.kind === 0) {       // oncoming carriage
-              g.rect(o.x - 16, o.y - 10, 32, 20, '#2a1a06');
-              g.rect(o.x - 14, o.y - 8, 28, 16, '#3a2810');
-              g.rect(o.x - 8, o.y - 8, 16, 10, '#c8902a');
-              g.circle(o.x - 9, o.y + 10, 5, '#1a1206'); g.circle(o.x + 9, o.y + 10, 5, '#1a1206');
-            } else if (o.kind === 1) { // barrel
-              g.rect(o.x - 8, o.y - 10, 16, 20, '#3a2408');
-              g.rect(o.x - 9, o.y - 8, 18, 3, '#5a3e10'); g.rect(o.x - 9, o.y + 3, 18, 3, '#5a3e10');
-            } else {                   // police constable (stop sign)
-              g.rect(o.x - 4, o.y - 14, 8, 14, '#1a2838');
-              g.rect(o.x - 5, o.y - 16, 10, 4, '#101e28');
-              g.rect(o.x - 3, o.y, 6, 10, '#1a3040');
-              api.txtC('!', o.x, o.y - 26, 9, '#d4a017');
-            }
-          }
-          // Player carriage
-          const py = H - 70;
-          g.rect(this.x - 22, py - 14, 44, 28, '#3a2408');
-          g.rect(this.x - 20, py - 12, 40, 24, '#4a3010');
-          g.rect(this.x - 10, py - 10, 20, 16, '#c8902a');
-          g.circle(this.x - 14, py + 14, 7, '#1a1206'); g.circle(this.x + 14, py + 14, 7, '#1a1206');
+          // Carriage gallops in place, bobbing harder on a hot streak
+          const bobScale = 1 + Math.min(this.combo, 10) * 0.35;
+          const cx = W / 2, py = H - 70 + Math.sin(api.t * 9) * bobScale;
+          g.rect(cx - 22, py - 14, 44, 28, '#3a2408');
+          g.rect(cx - 20, py - 12, 40, 24, '#4a3010');
+          g.rect(cx - 10, py - 10, 20, 16, '#c8902a');
+          g.circle(cx - 14, py + 14, 7, '#1a1206'); g.circle(cx + 14, py + 14, 7, '#1a1206');
           // Big Ben — visible ahead, grows as progress increases
           const bbProgress = this.dist / this.need;
           const bbx = Math.floor(W - 18 - bbProgress * 58);
@@ -842,12 +860,29 @@
             c.fillRect(bbx - 5, H - 202, 10, 10); c.fillRect(bbx - 2, H - 208, 4, 7);
             g.circle(bbx, H - 168, 12, '#c8a020'); g.circle(bbx, H - 168, 10, '#f0e8a0');
           }
+          // Reins rhythm lane — tap on the gold beat, hold off the red
+          const laneY = this.laneY;
+          g.rect(this.laneL, laneY, this.laneR - this.laneL, 20, 'rgba(10,7,3,.7)');
+          c.strokeStyle = '#4a3818'; c.lineWidth = 1; c.strokeRect(this.laneL, laneY, this.laneR - this.laneL, 20);
+          const tapGlow = this.flashTap;
+          c.fillStyle = 'rgba(212,160,23,' + (0.22 + tapGlow * 0.4) + ')';
+          c.fillRect(this.hitX - 15, laneY, 30, 20);
+          c.strokeStyle = '#d4a017'; c.lineWidth = 2; c.strokeRect(this.hitX - 15, laneY, 30, 20);
+          for (const b of this.beats) {
+            if (b.kind === 'gold') { g.circle(b.x, laneY + 10, 7, '#d4a017'); g.circle(b.x, laneY + 10, 3, '#f6e8b0'); }
+            else {
+              g.rect(b.x - 6, laneY + 2, 12, 16, '#7a1a1a');
+              api.txtC('!', b.x, laneY + 3, 7, '#f0d0d0', true);
+            }
+          }
+          api.txtC('REINS', this.hitX, laneY - 9, 6, '#a07840', true);
+          if (this.combo > 2) api.txtC('COMBO ' + this.combo, W - 40, laneY - 9, 6, '#d4a017', true);
           // Timer bar
           const tr = clamp(this.timer / 32, 0, 1);
           g.rect(8, H - 12, W - 16, 5, '#1a1208');
           g.rect(8, H - 12, Math.floor((W - 16) * tr), 5, tr < 0.25 ? '#c8102e' : '#d4a017');
           api.topBar('RACE TO THE REFORM CLUB');
-          api.txt('CLUB ' + Math.floor(this.dist / this.need * 100) + '%', 6, 20, 9, '#d4a017');
+          api.txt('CLUB ' + Math.floor(clamp(this.dist / this.need, 0, 1) * 100) + '%', 6, 20, 9, '#d4a017');
           api.txt(Math.ceil(this.timer) + 's', W - 36, 20, 9, this.timer < 8 ? '#c8102e' : '#d4a017');
           api.vignette();
         },

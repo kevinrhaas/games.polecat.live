@@ -10,6 +10,16 @@
 // format stays identical to the rest of the fleet.
 export const CHANGELOG = [
   {
+    v: 143,
+    title: 'Around the World in 80 Days: London in Time rebuilt as a rhythm sprint',
+    kind: 'game',
+    ts: '2026-07-28T09:33:34.426Z',
+    items: [
+      'The final carriage-dash lane is now "urge the horses": tap in rhythm with each gold beat sliding into the reins zone to speed the gallop, but hold back when a red beat rides through — mistime it and the wager loses precious seconds.',
+      'Last of REBUILD_QUEUE #15\'s three interchangeable dodge lanes (Mongolia, Kiouni, London) — the saga now has zero repeated move-to-dodge chapters.',
+    ],
+  },
+  {
     v: 142,
     title: 'Around the World in 80 Days: Kiouni rebuilt as a stealth rescue',
     kind: 'game',
