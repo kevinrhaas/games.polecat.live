@@ -10,6 +10,15 @@
 // format stays identical to the rest of the fleet.
 export const CHANGELOG = [
   {
+    v: 155,
+    title: 'Treasure Island levels up to 16-bit',
+    kind: 'game',
+    ts: '2026-07-28T19:04:35.113Z',
+    items: [
+      'X Marks the Spot gets a Gen-4 companion: cross Jim\'s own treasure chart across the Inn, the Hispaniola, the apple barrel, the stockade siege, and Flint\'s hoard — each a run of escalating trials and a mini-boss, relics carried between them, and a choice at the Inn that decides how the tale is told.',
+    ],
+  },
+  {
     v: 154,
     title: 'Bigger tap targets across the arcade',
     kind: 'fix',

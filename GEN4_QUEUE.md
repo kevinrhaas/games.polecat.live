@@ -8,32 +8,34 @@ Gen-4 game: add its row to the shipped table (hub concept + typeface + the
 mechanics it used), delete its queue line, and keep the claimed lists current —
 **in the same PR as the build**.
 
-## Shipped (6 of ~83)
+## Shipped (7 of ~83)
 
 | Property | 16-bit id | 8-bit partner | Hub concept | Title face |
 |---|---|---|---|---|
-| Dracula | dracula-castle | dracula-8bit | Gothic route map, Transylvania→England | Jacquard 24 |
+| Dracula | dracula-castle | dracula-8bit | Gothic route map, Transylvania→England | Micro 5 (was Jacquard 24, retired) |
 | Robin Hood | robinhood-16 | robinhood-archer | Sherwood forest map | Jersey 25 |
-| Sherlock Holmes | sherlock-16 | sherlock-hound | Sepia ordnance case-map, pinned photos + red string | Jacquard 12 |
+| Sherlock Holmes | sherlock-16 | sherlock-hound | Sepia ordnance case-map, pinned photos + red string | Silkscreen (was Jacquard 12, retired) |
 | The Odyssey | odyssey-16 | odysseus-voyage | The wine-dark sea from above, islands + golden wake | Jersey 15 |
 | The War of the Worlds | warworlds-16 | warworlds-tripods | Phosphor war-room dispatch map (sanctioned CRT) | Workbench |
-| King Arthur | arthur-16 | arthur-sword | THE ROUND TABLE — shields in a ring (circular layout) | Jacquarda Bastarda 9 |
+| King Arthur | arthur-16 | arthur-sword | THE ROUND TABLE — shields in a ring (circular layout) | Handjet (was Jacquarda Bastarda 9, retired) |
+| Treasure Island | treasureisland-16 | treasureisland-map | Jim's own parchment sea-chart — dotted rope trail, singed edges, X marks each stop | Jersey 20 |
 
 ## Claimed conventions — do NOT reuse
 
 - **Hub shapes used:** route-map trail ×2 (Dracula, Robin Hood), pinned paper
   map ×2 (Sherlock sepia, WotW phosphor), overhead terrain (Odyssey), circular
-  ring (Arthur). Fresh ideas for next builds: a book/scroll that turns pages, a
-  constellation chart, a train/route timetable, a ship's deck plan, a family
-  tree, a dungeon cross-section, a shop counter, a river descending the screen.
+  ring (Arthur), parchment sea-chart with a dotted rope trail (Treasure Island).
+  Fresh ideas for next builds: a book/scroll that turns pages, a constellation
+  chart, a train/route timetable, a family tree, a dungeon cross-section, a
+  shop counter, a river descending the screen.
 - **Pixel display faces used:** Silkscreen (Sherlock), Handjet (Arthur),
-  Micro 5 (Dracula), Jersey 25, Jersey 15, Workbench (+ Pixelify Sans as the
-  shared UI face). Jacquard 24 / Jacquard 12 / Jacquarda Bastarda 9 were
-  RETIRED 2026-07-28 — their blackletter forms rendered hero titles
-  illegible ("SHERLOCK HOLMES" as "SHCRLDCR / HDLMCS" etc., UX-sweep #34/#37
-  finding 1, carried 4+ sweeps) — do not reuse them for title faces. Still
-  free on Google Fonts: Jersey 10/20, Tiny5, Sixtyfour (reserve
-  Sixtyfour/VT323-likes for sci-fi, per CLAUDE.md).
+  Micro 5 (Dracula), Jersey 25, Jersey 20 (Treasure Island), Jersey 15,
+  Workbench (+ Pixelify Sans as the shared UI face). Jacquard 24 / Jacquard 12
+  / Jacquarda Bastarda 9 were RETIRED 2026-07-28 — their blackletter forms
+  rendered hero titles illegible ("SHERLOCK HOLMES" as "SHCRLDCR / HDLMCS"
+  etc., UX-sweep #34/#37 finding 1, carried 4+ sweeps) — do not reuse them for
+  title faces. Still free on Google Fonts: Jersey 10, Tiny5, Sixtyfour
+  (reserve Sixtyfour/VT323-likes for sci-fi, per CLAUDE.md).
 - **Mechanics well-spent so far** (avoid stacking more of these; the standouts
   are marked ✦): timing stop-in-band, drag-runner + dodge, whack pop-ups,
   ✦ risk/reward taunt (Odyssey), ✦ simon-says memory (Circe), lane dodge,
@@ -41,33 +43,33 @@ mechanics it used), delete its queue line, and keep the claimed lists current �
   ✦ artillery arc-shots (Weybridge), hide-hop reaction (tentacle),
   ✦ alternating-tap tug (sword in the stone), high/low parry duel,
   ✦ perspective joust, balance-hold in a drifting zone, catch-the-good /
-  refuse-the-bad sorter, spot-the-true-among-decoys, cover-to-cover creep.
-- **Under-used genres for the next wave:** card/board play, tycoon/management,
-  route-planning strategy, social deduction, fishing, racing (mode7 was built
-  for it), tower defense, roguelite runs, disguise/bluff.
+  refuse-the-bad sorter, spot-the-true-among-decoys, cover-to-cover creep,
+  aim-and-fire broadside duel, track-the-marked-card (Treasure Island),
+  resource deploy/distribute under a timer (Treasure Island stockade prep).
+- **Under-used genres for the next wave:** tycoon/management, route-planning
+  strategy, social deduction, fishing, racing (mode7 was built for it), tower
+  defense, roguelite runs, disguise/bluff. (Card/board play drawn on by
+  Treasure Island's black-spot table, but still has room for a full board.)
 
 ## Queue (best next candidates, in order)
 
-1. **Treasure Island** (`treasureisland-map`) — a pirate CHART hub is a gift
-   (X marks each node). Broadside cannon duel, rigging climb, black-spot card
-   draw, apple-barrel eavesdrop stealth, Ben Gunn barter, stockade defense.
-2. **20,000 Leagues / Nemo** (`nemo-nautilus`) — porthole/instrument-panel hub
+1. **20,000 Leagues / Nemo** (`nemo-nautilus`) — porthole/instrument-panel hub
    (dive gauges). Depth management, squid tentacle defense, salvage dive,
    maelstrom escape; justified techy look #2 (brass + glass, NOT green CRT).
-3. **The Jungle Book** (`junglebook-mowgli`) — canopy-to-floor vertical jungle
+2. **The Jungle Book** (`junglebook-mowgli`) — canopy-to-floor vertical jungle
    cross-section hub. Monkey-swing chase, Kaa hypnosis resist (pattern),
    red-flower stealth fetch, wolf-pack council choice, Shere Khan boss.
-4. **Moby-Dick** (`mobydick-hunt`) — whaling voyage log/chart hub. Mast-top
+3. **Moby-Dick** (`mobydick-hunt`) — whaling voyage log/chart hub. Mast-top
    spotting (push-your-luck), whaleboat rowing rhythm crew, harpoon arcs,
    try-works management, the white whale multi-stage boss; Ahab-vs-Starbuck
    choice for endings.
-5. **A Christmas Carol** (`scrooge-carol` or `scrooge-ledger`) — the LEDGER as
+4. **A Christmas Carol** (`scrooge-carol` or `scrooge-ledger`) — the LEDGER as
    hub (entries = nodes). Past/Present/Future branch choices; also crosses off
    REBUILD_QUEUE #11 in spirit.
-6. **Frankenstein** (`frankenstein-spark`) — laboratory wall of instruments as
+5. **Frankenstein** (`frankenstein-spark`) — laboratory wall of instruments as
    hub. Assembly puzzle, lightning-timing revival, alpine pursuit, arctic
    finale; monster-sympathy flag for endings. (Also clears a legacy rebuild.)
-7. **Alice in Wonderland** (`alice-rabbithole`) — playing-card hub (deal a
+6. **Alice in Wonderland** (`alice-rabbithole`) — playing-card hub (deal a
    hand). Falling, croquet aim, tea-party rhythm, EAT ME/DRINK ME size puzzle,
    card-soldier defense; brightest palette in the set.
 
