@@ -60,7 +60,7 @@ window.POLECAT_CATALOG = [
   { id: "cinderella-ball", title: "Before Midnight", source: "Cinderella — Perrault / Grimm", genre: "Time Attack", style: "8-bit", accent: "#ff2e97", status: "live",
     blurb: "Finish the chores, catch the Fairy Godmother's sparkles, waltz with the Prince, race the midnight clock, and guide the glass slipper home.", tags: ["time","arcade","multi-chapter"] },
   { id: "snowwhite-apple", title: "Seven for the Mine", source: "Snow White — Brothers Grimm", genre: "Mining Puzzle", style: "8-bit", accent: "#5dff8f", status: "live",
-    blurb: "Find Snow White in the magic mirror, flee the enchanted forest, catch gems in the dwarfs' mine, dodge the Evil Queen's poisoned apples, and fill the heart with true love's kiss.", tags: ["fairy-tale","puzzle","multi-chapter"] },
+    blurb: "Find Snow White in the magic mirror, hide from the Huntsman's lantern in the enchanted forest, foreman the dwarfs' mine, brew the Evil Queen's poisoned apple, and fill the heart with true love's kiss.", tags: ["fairy-tale","puzzle","multi-chapter"] },
   { id: "tarzan-vines", title: "Lord of the Vines", source: "Tarzan of the Apes — E. R. Burroughs", genre: "Swing Platformer", style: "8-bit", accent: "#5dff8f", status: "live",
     blurb: "Dodge the jungle cradle dangers, swing the canopy vine by vine, duel mighty Kerchak, slip past ape patrols to rescue Jane, and drive ivory hunters from Tarzan's domain.", tags: ["swing","action","multi-chapter"] },
   { id: "pinocchio-nose", title: "No Strings", source: "Pinocchio — Carlo Collodi", genre: "Story Arcade", style: "8-bit", accent: "#4ab8e8", status: "live",

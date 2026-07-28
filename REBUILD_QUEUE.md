@@ -12,7 +12,6 @@ queue** in the same commit. Promote to Gen-4 (hub + branches) where noted.
 
 ## Queue
 8. **timemachine-eloi** — already has a custom dial menu + a timing-bar / catch-dodge / stealth-cones / matchlight-gather / dodge-debris spread (this line's old "4/5 dodge, only plain-list menu" description no longer matches the file — checked 2026-07-22). Still a **Gen-4 candidate** (machine-assembly + resource roguelite, branching eras, inventory) if someone wants to build its 16-bit hub version, but not a worst-offender rebuild.
-14. **snowwhite-apple** — HI-HO MINE rebuilt as a **dwarfs mine-management/tycoon** chapter (send/pull dwarfs between 3 shafts before instability caves one in) 2026-07-28; POISONED APPLE rebuilt as the **Queen's potion-brewing crafting puzzle** (tap jars to match an exact ingredient recipe before the cauldron curdles) 2026-07-28. Remaining 1 of the original 3 dodge lanes: hide-in-cottage stealth (forest chapter).
 15. **around80days-race** — 3 interchangeable steer-dodge lanes → **time-budget travel strategy**: a route-planning board game across a world map (embodies the wager).
 16. **odysseus-voyage** — 3 L/R dodges → **overworld voyage map** with Oregon-Trail-style crew/resource management and choice encounters.
 17. **heidi-alps** — 3 horizontal-move levels → **alpine day-cycle chore/herding sim** (Harvest-Moon-lite): seasons, foraging, caregiving stats.

@@ -2,7 +2,7 @@
  * SNOW WHITE — SEVEN FOR THE MINE
  * Five chapters through Brothers Grimm:
  *   1. THE MAGIC MIRROR  — observe & tap who is fairest (tap/observation)
- *   2. FOREST FLIGHT     — dodge grabbing tree-claws (dodge/run)
+ *   2. FOREST FLIGHT     — hide from the Huntsman's sweeping lantern (stealth)
  *   3. HI-HO MINE        — foreman 3 shafts: send/pull dwarfs, don't cave in
  *   4. POISONED APPLE    — dodge the Evil Queen's apples (dodge/survive)
  *   5. TRUE LOVE'S KISS  — mash to fill the heart meter (mash/timing)
@@ -508,99 +508,217 @@
       },
 
       /* ═══════════════════════════════════════════════════
-       * TALE 2 · FOREST FLIGHT — dodge grabbing tree-claws
+       * TALE 2 · FOREST FLIGHT — hide from the Huntsman's
+       * sweeping lantern among three hiding spots (stealth)
        * ═══════════════════════════════════════════════════ */
       {
-        id: 'forest', name: 'FOREST FLIGHT', sub: 'RUN FROM THE QUEEN',
+        id: 'forest', name: 'FOREST FLIGHT', sub: 'HIDE FROM THE HUNTSMAN',
         icon(api, x, y) {
-          const g = api.gfx;
-          g.rect(x - 2, y - 8, 4, 14, '#1e0e04');
-          g.circle(x, y - 10, 7, '#0a2006');
+          const g = api.gfx, c = api.ctx;
+          g.rect(x - 2, y - 4, 4, 10, '#5a3c10');
+          g.rect(x - 6, y - 10, 12, 8, '#3a2608');
+          c.fillStyle = '#ffd060';
+          c.beginPath(); c.moveTo(x - 3, y - 8); c.lineTo(x + 3, y - 8); c.lineTo(x, y - 2); c.closePath(); c.fill();
         },
-        intro: ['THE QUEEN ORDERS', 'THE HUNTSMAN TO', 'KILL SNOW WHITE.', '', 'She flees into the', 'ENCHANTED FOREST!', 'The trees grab at her!'],
+        intro: ['THE QUEEN ORDERS', 'THE HUNTSMAN TO', 'KILL SNOW WHITE.', '', 'She flees into the', 'ENCHANTED FOREST and', 'HIDES from his lantern!'],
         quote: '"She ran as fast as her feet would carry her over sharp stones and through thorns." — Grimm',
-        help: 'TAP LEFT / RIGHT SIDE · DODGE THE GRABBING CLAWS · SURVIVE!',
-        winText:  'SNOW WHITE ESCAPES!',
-        loseText: 'THE FOREST HOLDS HER.',
+        help: 'TAP A HIDING SPOT · STAY OUT OF THE LANTERN’S SWEEP · REACH THE COTTAGE!',
+        winText:  'SNOW WHITE REACHES THE COTTAGE!',
+        loseText: "THE HUNTSMAN'S LANTERN FINDS HER.",
+        SPOT_X: [50, 135, 220], SPOT_Y: 300, SPOT_KIND: ['bush', 'tree', 'rock'],
+        LANTERN_X: 236, LANTERN_Y: 178,
         init(api) {
-          this.swX       = api.W / 2;
-          this.swY       = api.H - 82;
-          this.obstacles = [];
-          this.spawnT    = 0;
-          this.spawnRate = 1.4;
-          this.survived  = 0;
-          this.goal      = 22;
-          this.lives     = 3;
-          this.hitFlash  = 0;
-          this.speed     = 95;
+          this.spot     = 1;
+          this.target   = [];
+          this.warnT    = 0;
+          this.warnDur  = 1.6;
+          this.cycleT   = 1.3;
+          this.sweepFlashT = 0;
+          this.caughtT  = 0;
+          this.moveFlash = 0;
+          this.dodges   = 0;
+          this.goal     = 9;
+          this.lives    = 3;
+        },
+        startSweep(api) {
+          const doubleChance = clamp(0.1 + this.dodges * 0.05, 0, 0.55);
+          const isDouble = this.dodges >= 4 && rand(0, 1) < doubleChance;
+          const t1 = randInt(0, 2);
+          this.target = [t1];
+          if (isDouble) {
+            let t2 = randInt(0, 2);
+            while (t2 === t1) t2 = randInt(0, 2);
+            this.target.push(t2);
+          }
+          this.warnDur = Math.max(0.85, 1.7 - this.dodges * 0.06);
+          this.warnT   = this.warnDur;
+        },
+        resolveSweep(api) {
+          const caught = this.target.indexOf(this.spot) !== -1;
+          this.sweepFlashT = 0.35;
+          if (caught) {
+            this.lives--; this.caughtT = 0.5;
+            api.shake(7, 0.4); api.flash('#c8102e', 0.4); api.audio.sfx('hurt');
+            api.burst(this.SPOT_X[this.spot], this.SPOT_Y, '#ffcf6a', 12);
+          } else {
+            this.dodges++;
+            api.addScore(60);
+            api.audio.sfx('coin');
+            api.burst(this.SPOT_X[this.spot], this.SPOT_Y, '#5dff8f', 8);
+          }
+          this.target = [];
+          this.cycleT = Math.max(0.5, 1.35 - this.dodges * 0.03) + rand(0, 0.4);
         },
         update(api, dt) {
           if (this.lives <= 0) { api.lose(); return; }
-          if (this.survived >= this.goal) { api.win(); return; }
+          if (this.dodges >= this.goal) { api.win(); return; }
 
-          this.survived += dt;
-          this.hitFlash  = Math.max(0, this.hitFlash - dt);
-          this.spawnT   += dt;
-          if (this.spawnT >= this.spawnRate) {
-            this.spawnT -= this.spawnRate;
-            this.spawnRate = Math.max(0.55, this.spawnRate - 0.04);
-            const lane = randInt(0, 2);
-            const lx   = [55, api.W / 2, api.W - 55][lane];
-            this.obstacles.push({ x: lx, y: -20, vy: 90 + this.survived * 5, hit: false });
+          this.sweepFlashT = Math.max(0, this.sweepFlashT - dt);
+          this.caughtT     = Math.max(0, this.caughtT - dt);
+          this.moveFlash   = Math.max(0, this.moveFlash - dt);
+
+          if (this.target.length === 0) {
+            this.cycleT -= dt;
+            if (this.cycleT <= 0) this.startSweep(api);
+          } else {
+            this.warnT -= dt;
+            if (this.warnT <= 0) this.resolveSweep(api);
           }
-          // movement
-          if (api.keyDown('left')  || (api.pointer.down && api.pointer.x < api.W / 2))
-            this.swX = clamp(this.swX - this.speed * dt, 28, api.W - 28);
-          if (api.keyDown('right') || (api.pointer.down && api.pointer.x >= api.W / 2))
-            this.swX = clamp(this.swX + this.speed * dt, 28, api.W - 28);
 
-          for (const ob of this.obstacles) ob.y += ob.vy * dt;
-          this.obstacles = this.obstacles.filter(function(ob) { return ob.y < api.H + 30; });
-
-          for (const ob of this.obstacles) {
-            if (ob.hit) continue;
-            if (Math.abs(ob.x - this.swX) < 22 && Math.abs(ob.y - this.swY) < 22) {
-              ob.hit = true; this.lives--;
-              this.hitFlash = 0.5;
-              api.shake(6, 0.4); api.flash('#c8102e', 0.4); api.audio.sfx('hurt');
-              api.burst(this.swX, this.swY, '#e23b4a', 10);
+          if (api.pointer.justDown) {
+            const px = api.pointer.x, py = api.pointer.y;
+            for (let s = 0; s < 3; s++) {
+              if (Math.abs(px - this.SPOT_X[s]) < 32 && Math.abs(py - this.SPOT_Y) < 44) {
+                if (s !== this.spot) { this.spot = s; this.moveFlash = 0.2; api.audio.sfx('select'); }
+                break;
+              }
             }
           }
-          api.addScore(dt * 10);
+        },
+        drawSpot(api, kind, x, y, danger) {
+          const g = api.gfx, c = api.ctx;
+          if (kind === 'bush') {
+            g.circle(x, y + 4, 16, danger ? '#2a1004' : '#0e2a08');
+            g.circle(x - 10, y + 8, 12, danger ? '#3a1808' : '#123a0c');
+            g.circle(x + 10, y + 8, 12, danger ? '#3a1808' : '#123a0c');
+          } else if (kind === 'tree') {
+            g.rect(x - 5, y - 2, 10, 26, '#241206');
+            c.fillStyle = danger ? '#3a1808' : '#0c2408';
+            c.beginPath(); c.arc(x, y - 14, 20, Math.PI, 0); c.fill();
+            g.rect(x - 20, y - 14, 40, 12, danger ? '#3a1808' : '#0c2408');
+          } else {
+            c.fillStyle = danger ? '#4a2410' : '#3a3438';
+            c.beginPath();
+            c.moveTo(x - 20, y + 16); c.lineTo(x - 16, y - 8); c.lineTo(x, y - 16);
+            c.lineTo(x + 16, y - 6); c.lineTo(x + 20, y + 16); c.closePath(); c.fill();
+            c.globalAlpha = 0.35; c.fillStyle = danger ? '#e8823a' : '#8a949c';
+            c.beginPath(); c.moveTo(x - 4, y - 6); c.lineTo(x + 8, y - 10); c.lineTo(x + 12, y + 10); c.lineTo(x - 2, y + 12); c.closePath(); c.fill();
+            c.globalAlpha = 1;
+          }
         },
         draw(api) {
           const g = api.gfx, c = api.ctx, W = api.W, H = api.H;
           const bg2 = c.createLinearGradient(0, 0, 0, H);
-          bg2.addColorStop(0, '#040c04'); bg2.addColorStop(1, '#0a1808');
+          bg2.addColorStop(0, '#03060e'); bg2.addColorStop(1, '#0a1808');
           c.fillStyle = bg2; c.fillRect(0, 0, W, H);
 
-          // scrolling background trees
-          const scroll = (api.t * 40) % 180;
-          for (let ti = 0; ti < 6; ti++) {
-            const tx = (ti * 46 + scroll) % W;
-            g.rect(tx - 2, H - 120, 5, 120, '#1a0e04');
-            c.fillStyle = ti % 2 === 0 ? '#061006' : '#081408';
-            c.beginPath(); c.moveTo(tx - 20, H - 120); c.lineTo(tx, H - 175); c.lineTo(tx + 20, H - 120); c.closePath(); c.fill();
+          // distant stars
+          for (let i = 0; i < 22; i++) {
+            const sx = (i * 61 + 9) % W, sy = (i * 31 + 5) % 100;
+            c.globalAlpha = 0.25 + 0.35 * Math.sin(api.t * 2 + i);
+            g.rect(sx, sy, 1, 1, '#e0e8ff');
+            c.globalAlpha = 1;
           }
-          g.rect(0, H - 52, W, 52, '#0c1806');
-          for (let gx = 0; gx < W; gx += 18) g.rect(gx, H - 52, 14, 3, '#0e1c08');
 
-          // falling tree-claw obstacles
-          for (const ob of this.obstacles) {
-            c.fillStyle = '#1a0e04';
-            c.beginPath(); c.moveTo(ob.x - 6, ob.y); c.lineTo(ob.x + 6, ob.y); c.lineTo(ob.x + 4, ob.y + 22); c.lineTo(ob.x - 4, ob.y + 22); c.closePath(); c.fill();
-            for (let cl = -2; cl <= 2; cl++) {
-              c.fillStyle = '#240e04';
-              c.beginPath(); c.moveTo(ob.x + cl * 5, ob.y + 18); c.lineTo(ob.x + cl * 5 - 3, ob.y + 36); c.lineTo(ob.x + cl * 5 + 3, ob.y + 36); c.closePath(); c.fill();
+          // the cottage, warm and waiting, in the clearing beyond the trees
+          const cotX = W / 2, cotY = 96;
+          g.rect(cotX - 26, cotY, 52, 40, '#1e1004');
+          c.fillStyle = '#2a1808';
+          c.beginPath(); c.moveTo(cotX - 32, cotY); c.lineTo(cotX, cotY - 22); c.lineTo(cotX + 32, cotY); c.closePath(); c.fill();
+          c.globalAlpha = 0.65 + 0.25 * Math.sin(api.t * 2.4);
+          g.rect(cotX - 9, cotY + 12, 12, 12, '#ffd060');
+          c.globalAlpha = 1;
+          g.rect(cotX + 10, cotY + 16, 8, 24, '#1e1004');
+
+          // background treeline
+          for (let ti = 0; ti < 7; ti++) {
+            const tx = (ti * 41 + 6) % W;
+            c.fillStyle = ti % 2 === 0 ? '#061006' : '#081408';
+            c.beginPath(); c.moveTo(tx - 16, 168); c.lineTo(tx, 118); c.lineTo(tx + 16, 168); c.closePath(); c.fill();
+          }
+
+          // the Huntsman on his post, lantern raised, cloak stirring
+          const hx = this.LANTERN_X, hy = this.LANTERN_Y;
+          c.fillStyle = '#0a0a10';
+          c.beginPath();
+          c.moveTo(hx - 12, hy + 46); c.lineTo(hx - 16, hy + 6); c.quadraticCurveTo(hx, hy - 8, hx + 16, hy + 6); c.lineTo(hx + 12, hy + 46);
+          c.closePath(); c.fill();
+          g.circle(hx, hy - 6, 8, '#caa88a');
+          g.rect(hx - 9, hy - 16, 18, 8, '#1a1a24');
+          g.rect(hx + 10, hy + 4, 4, 16, '#5a4020');
+          const lgr = c.createRadialGradient(hx + 12, hy + 22, 0, hx + 12, hy + 22, 10);
+          lgr.addColorStop(0, '#ffd060'); lgr.addColorStop(1, '#5a3808');
+          c.fillStyle = lgr;
+          c.beginPath(); c.arc(hx + 12, hy + 22, 6, 0, Math.PI * 2); c.fill();
+
+          // lantern beam(s) telegraphing the sweep, brightening as it lands
+          for (const ti of this.target) {
+            const tx = this.SPOT_X[ti];
+            const prog = 1 - clamp(this.warnT / this.warnDur, 0, 1);
+            // thin aim line, always visible, brightening as the beam swings in
+            c.strokeStyle = 'rgba(255,208,96,' + (0.3 + 0.5 * prog).toFixed(2) + ')';
+            c.lineWidth = 1.5;
+            c.beginPath(); c.moveTo(hx + 12, hy + 22); c.lineTo(tx, this.SPOT_Y + 6); c.stroke();
+            // a narrow cone of light only glows in on final approach (no full-screen wash)
+            if (prog > 0.4) {
+              const spread = 14 - (prog - 0.4) * 10;
+              c.globalAlpha = (prog - 0.4) / 0.6 * 0.4;
+              const grad = c.createLinearGradient(hx + 12, hy + 22, tx, this.SPOT_Y);
+              grad.addColorStop(0, 'rgba(255,208,96,.7)'); grad.addColorStop(1, 'rgba(255,208,96,0)');
+              c.fillStyle = grad;
+              c.beginPath();
+              c.moveTo(hx + 12, hy + 22);
+              c.lineTo(tx - spread, this.SPOT_Y + 20);
+              c.lineTo(tx + spread, this.SPOT_Y + 20);
+              c.closePath(); c.fill();
+              c.globalAlpha = 1;
+            }
+            // ground warning ring, pulsing faster as it nears landing
+            c.strokeStyle = '#ff5a3a';
+            c.lineWidth = 2;
+            c.globalAlpha = 0.4 + 0.5 * Math.abs(Math.sin(api.t * (6 + prog * 14)));
+            c.beginPath(); c.arc(tx, this.SPOT_Y + 6, 26 + prog * 4, 0, Math.PI * 2); c.stroke();
+            c.globalAlpha = 1;
+          }
+          if (this.sweepFlashT > 0) {
+            c.globalAlpha = Math.min(1, this.sweepFlashT / 0.35) * 0.55;
+            c.fillStyle = '#ffd060'; c.fillRect(0, 0, W, H);
+            c.globalAlpha = 1;
+          }
+
+          // three hiding spots, with Snow White peeking from the current one
+          for (let s = 0; s < 3; s++) {
+            const danger = this.target.indexOf(s) !== -1;
+            this.drawSpot(api, this.SPOT_KIND[s], this.SPOT_X[s], this.SPOT_Y, danger);
+            if (s === this.spot) {
+              drawSW(api, this.SPOT_X[s], this.SPOT_Y + 6, this.caughtT, api.t);
             }
           }
 
-          drawSW(api, this.swX, this.swY, this.hitFlash, api.t);
+          // forest floor
+          g.rect(0, H - 44, W, 44, '#0a1206');
+          for (let gx = 0; gx < W; gx += 18) g.rect(gx, H - 44, 14, 2, '#0e1808');
+
+          // steps-to-cottage progress trail
+          const trailW = 200;
+          g.rect(35, H - 20, trailW, 4, '#1a2810');
+          g.rect(35, H - 20, Math.round(trailW * this.dodges / this.goal), 4, '#5dff8f');
 
           api.topBar('TALE 2: FOREST FLIGHT');
-          api.txt('SURVIVE: ' + Math.round(this.goal - this.survived) + 's', 6, 20, 8, '#5dff8f');
+          api.txt('STEPS TO COTTAGE: ' + this.dodges + '/' + this.goal, 6, 20, 8, '#5dff8f');
           for (let lf = 0; lf < this.lives; lf++) g.circle(W - 14 - lf * 16, 24, 5, '#e23b4a');
-          if (api.t < 3) { c.globalAlpha = 0.6; api.txtC('← TAP LEFT  RIGHT →', W / 2, H - 18, 7, '#e8d0ff'); c.globalAlpha = 1; }
+          if (this.moveFlash > 0) { c.globalAlpha = this.moveFlash / 0.2 * 0.5; g.circle(this.SPOT_X[this.spot], this.SPOT_Y, 30, '#5dff8f'); c.globalAlpha = 1; }
+          if (api.t < 3.5) { c.globalAlpha = 0.6; api.txtC('TAP A SPOT TO DUCK AWAY FROM THE LANTERN', W / 2, H - 6, 7, '#e8d0ff'); c.globalAlpha = 1; }
           api.vignette();
         },
       },

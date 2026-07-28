@@ -10,6 +10,17 @@
 // format stays identical to the rest of the fleet.
 export const CHANGELOG = [
   {
+    v: 140,
+    title: 'Snow White: Forest Flight rebuilt as a hide-from-the-Huntsman stealth chapter',
+    kind: 'game',
+    ts: '2026-07-28T07:20:05.497Z',
+    items: [
+      'The dodge-the-falling-tree-claws lane is now real stealth: the Huntsman\'s lantern telegraphs which of three hiding spots (bush, hollow tree, rock) it\'s about to sweep, and you duck to a safe one before it lands.',
+      'Every clean dodge is a step closer to the dwarfs\' cottage, visible in the clearing beyond the trees — get caught 3 times and the lantern finds her.',
+      'REBUILD_QUEUE #14 closed out: all 3 of the saga\'s original dodge lanes (mine, apple, forest) are now genuinely distinct mechanics, so the line is dropped from the queue.',
+    ],
+  },
+  {
     v: 139,
     title: 'Snow White: The Poisoned Apple rebuilt as a potion-brewing puzzle',
     kind: 'game',
