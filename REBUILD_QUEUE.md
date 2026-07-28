@@ -12,7 +12,6 @@ queue** in the same commit. Promote to Gen-4 (hub + branches) where noted.
 
 ## Queue
 8. **timemachine-eloi** — already has a custom dial menu + a timing-bar / catch-dodge / stealth-cones / matchlight-gather / dodge-debris spread (this line's old "4/5 dodge, only plain-list menu" description no longer matches the file — checked 2026-07-22). Still a **Gen-4 candidate** (machine-assembly + resource roguelite, branching eras, inventory) if someone wants to build its 16-bit hub version, but not a worst-offender rebuild.
-13. **littlemermaid-sea** — 4/5 dodge → **potion-brewing ingredient-memory** at the witch's cave + a branching courtship dialogue; keep only the dance as action.
 14. **snowwhite-apple** — 3 dodge lanes → **dwarfs mine-management/tycoon** + the Queen's potion-brewing crafting puzzle + hide-in-cottage stealth.
 15. **around80days-race** — 3 interchangeable steer-dodge lanes → **time-budget travel strategy**: a route-planning board game across a world map (embodies the wager).
 16. **odysseus-voyage** — 3 L/R dodges → **overworld voyage map** with Oregon-Trail-style crew/resource management and choice encounters.
