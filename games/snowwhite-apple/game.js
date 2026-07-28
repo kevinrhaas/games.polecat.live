@@ -3,7 +3,7 @@
  * Five chapters through Brothers Grimm:
  *   1. THE MAGIC MIRROR  — observe & tap who is fairest (tap/observation)
  *   2. FOREST FLIGHT     — dodge grabbing tree-claws (dodge/run)
- *   3. HI-HO MINE        — cart collect: catch gems, avoid boulders
+ *   3. HI-HO MINE        — foreman 3 shafts: send/pull dwarfs, don't cave in
  *   4. POISONED APPLE    — dodge the Evil Queen's apples (dodge/survive)
  *   5. TRUE LOVE'S KISS  — mash to fill the heart meter (mash/timing)
  * Built on RetroSaga (js/saga.js) + RetroEngine.
@@ -550,7 +550,8 @@
       },
 
       /* ═══════════════════════════════════════════════════
-       * TALE 3 · HI-HO MINE — catch gems in the mine cart
+       * TALE 3 · HI-HO MINE — foreman 3 shafts, pull the
+       * dwarfs before a vein caves in (resource management)
        * ═══════════════════════════════════════════════════ */
       {
         id: 'mine', name: 'HI-HO MINE', sub: 'THE DWARFS AT WORK',
@@ -561,68 +562,77 @@
           g.rect(x + 2, y + 6, 4, 4, '#3a2008');
           g.circle(x + 9, y - 6, 4, '#5dff8f');
         },
-        intro: ['DEEP IN THE MOUNTAIN,', 'THE SEVEN DWARFS', 'ARE AT THEIR WORK.', '', 'Snow White joins them!', 'Catch GEMS in the cart!', 'Avoid the BOULDERS!'],
+        intro: ['DEEP IN THE MOUNTAIN,', 'THREE WEARY DWARFS', 'NEED A FOREMAN.', '', 'Send them into the shafts —', 'but PULL them out before', 'a vein CAVES IN!'],
         quote: '"Hi-ho, hi-ho, it\'s off to work we go!" — traditional dwarf song',
-        help: 'TAP LEFT / RIGHT · CATCH GEMS · AVOID BOULDERS · GET 15!',
-        winText:  'HI-HO! WHAT A HAUL!',
-        loseText: 'CRUSHED BY A BOULDER.',
+        help: 'TAP A SHAFT TO SEND A DWARF IN · TAP AGAIN TO PULL HIM OUT · WATCH THE CRACKS!',
+        winText:  'HI-HO! A RICH HAUL!',
+        loseText: 'THE MOUNTAIN WON.',
         init(api) {
-          this.cartX     = api.W / 2;
-          this.cartY     = api.H - 58;
-          this.cartW     = 42;
-          this.items     = [];
-          this.spawnT    = 0;
-          this.spawnRate = 1.2;
-          this.caught    = 0;
-          this.goal      = 15;
+          this.SHAFT_X   = [api.W * 0.2, api.W * 0.5, api.W * 0.8];
+          this.SHAFT_TOP = 64;
+          this.SHAFT_H   = 130;
+          this.SHAFT_W   = 62;
+          this.shafts    = [0, 1, 2].map(function() { return { richness: 100, instability: 0, collapseFlash: 0 }; });
+          this.dwarfs    = [0, 1, 2].map(function() { return { hurtT: 0 }; });
+          this.shaftDwarf= [-1, -1, -1];
+          this.gems      = 0;
+          this.goal      = 140;
+          this.timer     = 50;
           this.lives     = 3;
-          this.hitFlash  = 0;
-          this.speed     = 120;
+        },
+        tapShaft(api, s) {
+          const sh = this.shafts[s];
+          if (this.shaftDwarf[s] !== -1) {
+            this.shaftDwarf[s] = -1;
+            api.audio.sfx('select');
+          } else if (sh.richness > 0) {
+            const idle = this.dwarfs.findIndex((d, i) => d.hurtT <= 0 && this.shaftDwarf.indexOf(i) === -1);
+            if (idle !== -1) { this.shaftDwarf[s] = idle; api.audio.sfx('select'); }
+            else { api.flash('#e8c010', 0.15); }
+          }
         },
         update(api, dt) {
           if (this.lives <= 0) { api.lose(); return; }
-          if (this.caught >= this.goal) { api.win(); return; }
+          if (this.gems >= this.goal) { api.win(); return; }
+          this.timer -= dt;
+          if (this.timer <= 0) { api.lose(); return; }
 
-          this.hitFlash = Math.max(0, this.hitFlash - dt);
-          this.spawnT  += dt;
-          if (this.spawnT >= this.spawnRate) {
-            this.spawnT -= this.spawnRate;
-            this.spawnRate = Math.max(0.48, this.spawnRate - 0.025);
-            const isGem = Math.random() < 0.65;
-            const gidx  = randInt(0, 4);
-            this.items.push({
-              x: randInt(22, api.W - 22),
-              y: -10,
-              vy: 70 + this.caught * 5,
-              gem: isGem,
-              col: isGem ? GEM_COLS[gidx] : '#7a5828',
-              r: isGem ? 6 : 9,
-              hit: false,
-            });
-          }
-          if (api.keyDown('left')  || (api.pointer.down && api.pointer.x < api.W / 2))
-            this.cartX = clamp(this.cartX - this.speed * dt, this.cartW / 2 + 8, api.W - this.cartW / 2 - 8);
-          if (api.keyDown('right') || (api.pointer.down && api.pointer.x >= api.W / 2))
-            this.cartX = clamp(this.cartX + this.speed * dt, this.cartW / 2 + 8, api.W - this.cartW / 2 - 8);
+          for (const dw of this.dwarfs) if (dw.hurtT > 0) dw.hurtT = Math.max(0, dw.hurtT - dt);
 
-          for (const it of this.items) it.y += it.vy * dt;
-          this.items = this.items.filter(function(it) { return it.y < api.H + 20; });
-
-          for (const it of this.items) {
-            if (it.hit) continue;
-            if (Math.abs(it.x - this.cartX) < this.cartW / 2 + it.r - 4 &&
-                Math.abs(it.y - this.cartY) < 18) {
-              it.hit = true;
-              if (it.gem) {
-                this.caught++;
-                api.addScore(50);
-                api.burst(it.x, it.y, it.col, 8);
-                api.audio.sfx('coin');
-              } else {
+          for (let s = 0; s < this.shafts.length; s++) {
+            const sh = this.shafts[s];
+            sh.collapseFlash = Math.max(0, sh.collapseFlash - dt);
+            const worked = this.shaftDwarf[s] !== -1;
+            if (worked && sh.richness > 0) {
+              this.gems += 3.2 * dt;
+              sh.richness = Math.max(0, sh.richness - 4 * dt);
+              const instabRate = 10 + (100 - sh.richness) * 0.15;
+              sh.instability = Math.min(100, sh.instability + instabRate * dt);
+              if (sh.instability >= 100) {
+                const dwi = this.shaftDwarf[s];
+                this.dwarfs[dwi].hurtT = 3.2;
+                this.shaftDwarf[s] = -1;
+                sh.instability = 0;
+                sh.richness = Math.max(0, sh.richness - 15);
+                sh.collapseFlash = 0.6;
                 this.lives--;
-                this.hitFlash = 0.5;
-                api.shake(7, 0.4); api.flash('#c8102e', 0.3); api.audio.sfx('hurt');
-                api.burst(it.x, it.y, '#c8102e', 10);
+                api.shake(8, 0.45); api.flash('#c8102e', 0.4); api.audio.sfx('explode');
+                api.burst(this.SHAFT_X[s], this.SHAFT_TOP + 40, '#8a6010', 14);
+              } else if (sh.richness <= 0) {
+                this.shaftDwarf[s] = -1;
+              }
+            } else {
+              sh.instability = Math.max(0, sh.instability - 26 * dt);
+            }
+          }
+
+          if (api.pointer.justDown) {
+            const px = api.pointer.x, py = api.pointer.y;
+            for (let s = 0; s < this.shafts.length; s++) {
+              if (Math.abs(px - this.SHAFT_X[s]) < this.SHAFT_W / 2 + 6 &&
+                  py > this.SHAFT_TOP - 10 && py < this.SHAFT_TOP + this.SHAFT_H + 10) {
+                this.tapShaft(api, s);
+                break;
               }
             }
           }
@@ -641,55 +651,93 @@
             c.globalAlpha = 1;
           }
 
-          // mine rails
-          const ry = H - 42;
-          g.rect(0, ry, W, 6, '#4a3010');
-          g.rect(0, ry, W, 2, '#6a4818');
-          for (let rx = 0; rx < W; rx += 24) g.rect(rx, ry - 2, 18, 4, '#3a2008');
+          const SX = this.SHAFT_X, ST = this.SHAFT_TOP, SH = this.SHAFT_H, SW = this.SHAFT_W;
+          for (let s = 0; s < 3; s++) {
+            const sh = this.shafts[s], x = SX[s];
 
-          // falling items
-          for (const it of this.items) {
-            if (it.gem) {
-              c.fillStyle = it.col;
-              c.beginPath();
-              c.moveTo(it.x, it.y - it.r);
-              c.lineTo(it.x + it.r * 0.7, it.y);
-              c.lineTo(it.x, it.y + it.r);
-              c.lineTo(it.x - it.r * 0.7, it.y);
-              c.closePath(); c.fill();
-              c.globalAlpha = 0.4; c.fillStyle = '#ffffff';
-              c.beginPath(); c.moveTo(it.x - it.r * 0.3, it.y - it.r * 0.5); c.lineTo(it.x + it.r * 0.2, it.y - it.r * 0.1); c.lineTo(it.x, it.y - it.r * 0.1); c.closePath(); c.fill();
+            // tunnel mouth (dark arch in the rock)
+            c.fillStyle = '#100a04';
+            c.beginPath();
+            c.moveTo(x - SW / 2, ST + SH);
+            c.lineTo(x - SW / 2, ST + 14);
+            c.quadraticCurveTo(x - SW / 2, ST, x, ST);
+            c.quadraticCurveTo(x + SW / 2, ST, x + SW / 2, ST + 14);
+            c.lineTo(x + SW / 2, ST + SH);
+            c.closePath(); c.fill();
+            c.strokeStyle = '#5a3a14'; c.lineWidth = 4; c.stroke();
+
+            // remaining vein, glowing up from the tunnel floor
+            const veinH = (sh.richness / 100) * (SH - 20);
+            if (veinH > 0) {
+              c.save();
+              c.beginPath(); c.rect(x - SW / 2 + 6, ST + SH - veinH - 6, SW - 12, veinH); c.clip();
+              c.globalAlpha = 0.55 + 0.15 * Math.sin(api.t * 3 + s);
+              c.fillStyle = GEM_COLS[s % GEM_COLS.length];
+              c.fillRect(x - SW / 2, ST, SW, SH);
               c.globalAlpha = 1;
+              c.restore();
+            }
+
+            // instability cracks
+            if (sh.instability > 15) {
+              const jitter = sh.instability > 70 ? Math.sin(api.t * 30 + s) * 1.5 : 0;
+              c.strokeStyle = 'rgba(255,60,60,' + Math.min(0.9, sh.instability / 110) + ')';
+              c.lineWidth = 1.5;
+              c.beginPath();
+              c.moveTo(x - SW / 2 + 10 + jitter, ST + 30);
+              c.lineTo(x + jitter, ST + 60);
+              c.lineTo(x - SW / 2 + 18 + jitter, ST + 95);
+              c.stroke();
+            }
+            if (sh.collapseFlash > 0) {
+              c.globalAlpha = Math.min(1, sh.collapseFlash / 0.6) * 0.6;
+              c.fillStyle = '#c8102e'; c.fillRect(x - SW / 2, ST, SW, SH);
+              c.globalAlpha = 1;
+            }
+
+            // dwarf at work
+            const dwi = this.shaftDwarf[s];
+            if (dwi !== -1) {
+              const by = ST + SH - 24 + Math.sin(api.t * 6 + s) * 2;
+              g.circle(x, by - 10, 7, '#f8d8c0');
+              g.rect(x - 7, by - 3, 14, 16, s % 2 === 0 ? '#4a3010' : '#c8102e');
+              g.rect(x - 9, by - 16, 18, 5, '#8a6010');
+            }
+
+            // instability meter
+            g.rect(x - SW / 2, ST + SH + 10, SW, 5, '#2a1808');
+            g.rect(x - SW / 2, ST + SH + 10, Math.round(SW * sh.instability / 100), 5,
+              sh.instability > 70 ? '#e23b4a' : sh.instability > 35 ? '#ff8a3d' : '#5dff8f');
+            api.txtCFit(sh.richness > 0 ? Math.round(sh.richness) + '%' : 'TAPPED', x, ST - 12, 7,
+              sh.richness > 0 ? '#e8d0b0' : '#806050');
+          }
+
+          // camp — idle & resting dwarfs
+          const campY = ST + SH + 60;
+          g.rect(0, campY, W, H - campY, '#0c1004');
+          api.txt('CAMP', 8, campY + 4, 7, '#8a6010');
+          let slot = 0;
+          for (let i = 0; i < this.dwarfs.length; i++) {
+            if (this.shaftDwarf.indexOf(i) !== -1) continue;
+            const dw = this.dwarfs[i];
+            const cx3 = 40 + slot * 90, cy3 = campY + 34;
+            slot++;
+            if (dw.hurtT > 0) {
+              g.rect(cx3 - 10, cy3 + 4, 20, 8, '#4a3010');
+              g.circle(cx3 - 12, cy3 + 4, 6, '#f8d8c0');
+              api.txtCFit('RESTING', cx3, cy3 + 22, 6, '#e23b4a');
             } else {
-              g.circle(it.x, it.y, it.r, '#5a4020');
-              g.circle(it.x - 2, it.y - 2, it.r * 0.5, '#6a5028');
+              g.circle(cx3, cy3 - 8, 7, '#f8d8c0');
+              g.rect(cx3 - 7, cy3, 14, 16, i % 2 === 0 ? '#4a3010' : '#c8102e');
+              api.txtCFit('READY', cx3, cy3 + 22, 6, '#5dff8f');
             }
           }
 
-          // mine cart
-          const cx3 = this.cartX, cy3 = this.cartY, cw = this.cartW;
-          if (!(this.hitFlash > 0 && Math.floor(this.hitFlash * 8) % 2 === 0)) {
-            g.rect(cx3 - cw / 2, cy3 - 20, cw, 20, '#6a4010');
-            g.rect(cx3 - cw / 2 + 2, cy3 - 18, cw - 4, 16, '#4a2c08');
-            g.circle(cx3 - cw / 2 + 7, cy3, 6, '#3a2008');
-            g.circle(cx3 + cw / 2 - 7, cy3, 6, '#3a2008');
-            g.circle(cx3 - cw / 2 + 7, cy3, 3, '#6a4010');
-            g.circle(cx3 + cw / 2 - 7, cy3, 3, '#6a4010');
-          }
-
-          // small decorative dwarfs
-          for (let d = 0; d < 3; d++) {
-            const dx = 22 + d * 82, dy = H - 100;
-            g.circle(dx, dy, 10, '#f8d8c0');
-            g.rect(dx - 10, dy - 18, 20, 8, d % 2 === 0 ? '#4a3010' : '#c8102e');
-            g.rect(dx + 10, dy - 3, 12, 2, '#6a4010');
-            g.rect(dx + 20, dy - 7, 3, 8, '#8a6010');
-          }
-
           api.topBar('TALE 3: HI-HO MINE');
-          api.txt('GEMS: ' + this.caught + '/' + this.goal, 6, 20, 8, '#5dff8f');
+          api.txt('GEMS: ' + Math.floor(this.gems) + '/' + this.goal, 6, 20, 8, '#5dff8f');
+          api.txt('TIME: ' + Math.ceil(this.timer) + 's', 6, 32, 8, this.timer < 10 ? '#e23b4a' : '#c8a0e8');
           for (let lf = 0; lf < this.lives; lf++) g.circle(W - 14 - lf * 16, 24, 5, '#e23b4a');
-          if (api.t < 3) { c.globalAlpha = 0.6; api.txtC('← TAP LEFT  RIGHT →', W / 2, H - 14, 7, '#e8d0b0'); c.globalAlpha = 1; }
+          if (api.t < 3.5) { c.globalAlpha = 0.6; api.txtC('TAP A SHAFT TO SEND / PULL A DWARF', W / 2, H - 8, 7, '#e8d0b0'); c.globalAlpha = 1; }
           api.vignette();
         },
       },
