@@ -10,6 +10,17 @@
 // format stays identical to the rest of the fleet.
 export const CHANGELOG = [
   {
+    v: 147,
+    title: 'Treasure Island rebuilt for genre variety',
+    kind: 'game',
+    ts: '2026-07-28T15:08:06.796Z',
+    items: [
+      'THE HISPANIOLA is now THE APPLE BARREL — a crew social-deduction chapter: watch each hand\'s tells from hiding and tap out Silver\'s secret mutineers before landfall.',
+      'THE STOCKADE is now an aim-and-fire duel: drag to aim the salvaged ship\'s gun and tap to fire on a reload timer as the charge comes in, instead of tapping pirates directly.',
+      'REBUILD_QUEUE #20, done — treasureisland-map had three tap-to-hit chapters; two are now genuinely different genres.',
+    ],
+  },
+  {
     v: 146,
     title: 'The Wind in the Willows rebuilt for genre variety',
     kind: 'game',
