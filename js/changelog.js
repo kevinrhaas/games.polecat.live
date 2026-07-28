@@ -10,6 +10,17 @@
 // format stays identical to the rest of the fleet.
 export const CHANGELOG = [
   {
+    v: 146,
+    title: 'The Wind in the Willows rebuilt for genre variety',
+    kind: 'game',
+    ts: '2026-07-28T13:57:47.783Z',
+    items: [
+      'Chapter 2 is now DISGUISED! — a social-stealth bluff: hold your ground in the courtyard and curtsy on cue the instant a guard\'s gaze turns your way, or get caught out.',
+      'THE RIVER BANK is now a rowing rhythm chapter: tap each ripple the moment it reaches the ring to pull a steady stroke home, instead of catching falling treats.',
+      'REBUILD_QUEUE #19, done — windwillows-toad had two dodge-lane chapters back to back; they\'re now genuinely different genres.',
+    ],
+  },
+  {
     v: 145,
     title: 'Merlin\'s Wild Magic and Nimue\'s Snare rebuilt for genre variety',
     kind: 'game',
