@@ -458,122 +458,117 @@
       {
         id: 'past',
         name: 'CHRISTMAS PAST',
-        sub: 'MEMORIES IN THE LIGHT',
+        sub: 'THE REDEMPTION LEDGER',
 
         icon(api, x, y) {
-          api.gfx.circle(x, y, 7, '#f0e070');
-          api.gfx.circle(x, y, 4, '#fff8c0');
+          const g = api.gfx, c = api.ctx;
+          g.rect(x - 9, y - 6, 18, 12, '#e8d8b0');
+          c.strokeStyle = '#8a7850'; c.lineWidth = 1;
+          c.beginPath(); c.moveTo(x, y - 6); c.lineTo(x, y + 6); c.stroke();
         },
 
         intro: [
-          'A RADIANT SPIRIT TAKES',
-          "SCROOGE BACK TO HIS",
-          'FORGOTTEN CHILDHOOD.',
-          'Catch the warm memories!',
+          'THE SPIRIT SHOWS SIX',
+          "SCENES FROM SCROOGE'S",
+          'OWN PAST. FOR EACH,',
+          'CHOOSE WARMTH OR GOLD.',
         ],
-        quote: 'A solitary child, neglected by his friends, is left there still.',
-        help: 'TAP golden wisps · avoid the dark ones',
-        winText: 'The warm glow of memory floods the room. Scrooge weeps.',
-        loseText: 'Too many memories fade into the cold dark.',
+        quote: 'I was a boy here! Poor Fan! She had a large heart!',
+        help: 'READ the scene · TAP the WARM memory before the cold ledger claims it',
+        winText: 'The ledger glows warm at last. Scrooge weeps for the boy he was.',
+        loseText: 'The ledger fills with cold black ink. The old habits hold fast.',
+
+        scenes: [
+          { label: 'THE LONELY SCHOOLROOM',   warm: 'REMEMBER LITTLE FAN',        cold: 'TURN AWAY, AS ALWAYS' },
+          { label: "FEZZIWIG'S BALL",         warm: 'DANCE TILL THE FIDDLES STOP', cold: 'COUNT THE COST OF IT' },
+          { label: 'BELLE BY THE FIRE',       warm: "REACH FOR BELLE'S HAND",      cold: 'CLUTCH THE GOLDEN IDOL' },
+          { label: 'THE PARTING WORDS',       warm: 'BEG HER TO STAY',            cold: 'LET AMBITION SPEAK' },
+          { label: 'THE OLD COUNTING-HOUSE',  warm: "REMEMBER MARLEY'S KINDNESS", cold: 'BURY IT IN LEDGERS' },
+          { label: 'ONE LAST GLANCE',         warm: "WATCH BELLE'S HAPPY HOME",   cold: 'LOOK AWAY, UNMOVED' },
+        ],
+
+        sideRect(side) {
+          const w = 112, h = 150, y = 190;
+          return side === 'L' ? { x: 14, y, w, h } : { x: 270 - 14 - w, y, w, h };
+        },
+
+        hitSide(x, y) {
+          for (const side of ['L', 'R']) {
+            const r = this.sideRect(side);
+            if (x >= r.x && x <= r.x + r.w && y >= r.y && y <= r.y + r.h) return side;
+          }
+          return null;
+        },
+
+        resolve(api, chosenWarm) {
+          if (chosenWarm) {
+            this.warmCount++;
+            this.lastOk = true;
+            api.addScore(22);
+            api.audio.sfx('coin');
+            const r = this.sideRect(this.warmSide);
+            api.burst(r.x + r.w / 2, r.y + r.h / 2, '#e8b84a', 8);
+          } else {
+            this.lastOk = false;
+            this.lives--;
+            api.shake(5, 0.22); api.flash('#1a2038', 0.18); api.audio.sfx('hurt');
+          }
+          this.phase = 'result';
+          this.resultT = 1.0;
+        },
 
         init(api) {
-          this.wisps   = [];
-          this.caught  = 0;
-          this.need    = 18;
-          this.missed  = 0;
-          this.maxMiss = 6;
-          this.timer   = 32;
-          this.spawnT  = 0.7;
+          this.idx       = 0;
+          this.need      = this.scenes.length;
+          this.warmCount = 0;
+          this.lives     = 3;
+          this.sceneDur  = 4.2;
+          this.timer     = this.sceneDur;
+          this.phase     = 'choose';
+          this.resultT   = 0;
+          this.lastOk    = null;
+          this.warmSide  = Math.random() < 0.5 ? 'L' : 'R';
         },
 
         update(api, dt) {
-          const f = dt * 60;
-          this.timer -= dt;
-
-          // Spawn wisps
-          this.spawnT -= dt;
-          if (this.spawnT <= 0) {
-            this.spawnT = Math.max(0.32, 0.7 - (32 - Math.max(0, this.timer)) / 80);
-            const dark = Math.random() < 0.22;
-            this.wisps.push({
-              x: 22 + Math.random() * (api.W - 44),
-              y: api.H - 28,
-              vy: -(0.7 + Math.random() * 0.7),
-              vx: (Math.random() - 0.5) * 0.85,
-              dark,
-              life: 1.0,
-              r: dark ? 10 : 9,
-            });
-          }
-
-          // Drift
-          for (const w of this.wisps) {
-            w.x += w.vx * f;
-            w.y += w.vy * f;
-            w.x = clamp(w.x, 12, api.W - 12);
-            w.life -= dt * 0.17;
-          }
-
-          // Escaped golden wisps cost a life
-          for (const w of this.wisps) {
-            if (!w.gone && w.life <= 0) {
-              if (!w.dark) {
-                this.missed++;
-                if (this.missed >= this.maxMiss) { api.lose(); return; }
-              }
-              w.gone = true;
+          if (this.phase === 'choose') {
+            this.timer -= dt;
+            if (api.pointer.justDown) {
+              const side = this.hitSide(api.pointer.x, api.pointer.y);
+              if (side) { this.resolve(api, side === this.warmSide); return; }
             }
+            if (this.timer <= 0) { this.resolve(api, false); return; }
+            return;
           }
-          this.wisps = this.wisps.filter(w => !w.gone);
 
-          // Tap detection
-          if (api.pointer.justDown) {
-            let hit = false;
-            for (const w of this.wisps) {
-              if (!w.gone && Math.hypot(api.pointer.x - w.x, api.pointer.y - w.y) < w.r + 10) {
-                w.gone = true; hit = true;
-                if (w.dark) {
-                  this.missed++;
-                  api.shake(4, 0.2); api.flash('#1a2040', 0.2); api.audio.sfx('hurt');
-                  if (this.missed >= this.maxMiss) { api.lose(); return; }
-                } else {
-                  this.caught++;
-                  api.addScore(18);
-                  api.audio.sfx('coin');
-                  api.burst(w.x, w.y, '#f0d060', 8);
-                  if (this.caught >= this.need) {
-                    api.addScore(60 + Math.floor(Math.max(0, this.timer) * 3));
-                    api.win(); return;
-                  }
-                }
-                break;
-              }
+          // phase === 'result'
+          this.resultT -= dt;
+          if (this.resultT <= 0) {
+            if (this.lives <= 0) { api.lose(); return; }
+            this.idx++;
+            if (this.idx >= this.need) {
+              api.addScore(50 + this.warmCount * 8);
+              api.win(); return;
             }
-            if (!hit) api.audio.sfx('blip');
+            this.timer    = this.sceneDur;
+            this.phase    = 'choose';
+            this.lastOk   = null;
+            this.warmSide = Math.random() < 0.5 ? 'L' : 'R';
           }
-
-          if (this.timer <= 0 && this.caught < this.need) api.lose();
         },
 
         draw(api) {
           const g = api.gfx, c = api.ctx, W = api.W, H = api.H;
-          c.fillStyle = '#080c14'; c.fillRect(0, 0, W, H);
+          c.fillStyle = '#0a0c14'; c.fillRect(0, 0, W, H);
 
           // Warm sepia memory glow
           c.globalAlpha = 0.1;
-          g.circle(W / 2, H * 0.45, 130, '#f8c050');
+          g.circle(W / 2, H * 0.3, 120, '#f8c050');
           c.globalAlpha = 1;
 
-          // Old schoolroom benches (bottom)
-          g.rect(0, H - 70, W, 70, '#100e08');
-          for (let i = 0; i < 4; i++) {
-            g.rect(i * 66 + 6, H - 56, 54, 38, '#1e1808');
-            g.rect(i * 66 + 6, H - 52, 54, 2, '#2a2208');
-          }
-
           // Ghost of Christmas Past (glowing child, floating)
-          const gx = W / 2, gy = 70 + Math.sin(api.t * 0.65) * 12;
-          c.globalAlpha = 0.35 + 0.14 * Math.sin(api.t * 2.1);
+          const gx = W / 2, gy = 62 + Math.sin(api.t * 0.65) * 10;
+          c.globalAlpha = 0.32 + 0.12 * Math.sin(api.t * 2.1);
           g.sprite([
             '..ww..',
             '.wwww.',
@@ -584,21 +579,55 @@
           ], gx - 12, gy - 12, { w: '#c8e0ff', l: '#f0f8ff' }, 4);
           c.globalAlpha = 1;
 
-          // Wisps
-          for (const w of this.wisps) {
-            c.globalAlpha = clamp(w.life, 0.15, 1);
-            const col  = w.dark ? '#3a4868' : '#f0d858';
-            const col2 = w.dark ? '#202e48' : '#fff8c0';
-            g.circle(w.x, w.y, w.r, col);
-            g.circle(w.x, w.y, w.r - 3, col2);
-            c.globalAlpha = 1;
+          api.topBar('CHRISTMAS PAST');
+
+          const scene = this.scenes[Math.min(this.idx, this.need - 1)];
+          api.txtCFit(scene.label, W / 2, 100, 9, '#e8b84a', true, W - 24);
+
+          // Progress dots (scenes completed)
+          const dotW = 10, dotGap = 5, rowW = this.need * dotW + (this.need - 1) * dotGap;
+          const dx0 = W / 2 - rowW / 2;
+          for (let i = 0; i < this.need; i++) {
+            let col = '#241e30';
+            if (i < this.idx) col = '#e8b84a';
+            else if (i === this.idx && this.phase === 'result') col = this.lastOk ? '#6ab848' : '#c84040';
+            g.circle(dx0 + i * (dotW + dotGap) + dotW / 2, 122, dotW / 2, col);
           }
 
-          // HUD
-          api.topBar('CHRISTMAS PAST');
-          api.txt('CAUGHT ' + this.caught + '/' + this.need, 6, 20, 9, '#d4a020');
-          api.txt('LOST ' + this.missed + '/' + this.maxMiss, W - 80, 20, 9,
-            this.missed >= 4 ? '#c84040' : '#7a8898');
+          for (let i = 0; i < 3; i++) {
+            g.rect(W - 20 - i * 16, 130, 12, 12, i < this.lives ? '#e8b84a' : '#1a1a28');
+          }
+
+          if (this.phase === 'choose') {
+            const pct = clamp(this.timer / this.sceneDur, 0, 1);
+            g.rect(20, 148, W - 40, 6, '#241e30');
+            g.rect(20, 148, (W - 40) * pct, 6, pct < 0.3 ? '#c84040' : '#e8b84a');
+            api.txtC('CHOOSE...', W / 2, 172, 7, '#7a8898');
+          } else {
+            api.txtC(this.lastOk ? 'THE LEDGER WARMS' : 'THE LEDGER COOLS', W / 2, 172, 7,
+              this.lastOk ? '#6ab848' : '#c84040');
+          }
+
+          // Two memory panels
+          for (const side of ['L', 'R']) {
+            const r = this.sideRect(side);
+            const isWarm = side === this.warmSide;
+            let bg = isWarm ? '#241e0c' : '#141824';
+            let border = isWarm ? '#8a6828' : '#3a4458';
+            if (this.phase === 'result') c.globalAlpha = isWarm ? 1 : 0.4;
+            g.rect(r.x, r.y, r.w, r.h, bg);
+            c.strokeStyle = border; c.lineWidth = 2; c.strokeRect(r.x, r.y, r.w, r.h);
+            c.globalAlpha = 1;
+
+            const cx = r.x + r.w / 2, cy = r.y + 40;
+            if (isWarm) { g.circle(cx, cy, 12, '#f0d060'); g.circle(cx, cy, 6, '#fff8c0'); }
+            else { g.rect(cx - 12, cy - 9, 24, 18, '#5a4838'); g.rect(cx - 12, cy - 9, 24, 5, '#7a6248'); }
+
+            api.txtCHead(isWarm ? scene.warm : scene.cold, cx, r.y + 78, 7,
+              isWarm ? '#e8b84a' : '#a0b0c8', false, 11, r.w - 12);
+          }
+
+          api.txt('TAP A MEMORY', 6, H - 16, 6, '#4a5060');
           api.vignette();
         },
       },

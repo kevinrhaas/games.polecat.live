@@ -10,6 +10,17 @@
 // format stays identical to the rest of the fleet.
 export const CHANGELOG = [
   {
+    v: 134,
+    title: 'A Christmas Carol: Christmas Past rebuilt as a redemption-ledger choice',
+    kind: 'game',
+    ts: '2026-07-28T01:47:59.344Z',
+    items: [
+      'The catch-the-falling-wisps chapter is now six scenes from Scrooge\'s own youth — the schoolroom, Fezziwig\'s ball, Belle by the fire — and for each one you tap the warm memory or watch the cold ledger claim it before time runs out.',
+      'Choices bank into the ledger itself: three cold picks and the spirit\'s visit ends early, same as always, but now every scene has a name and a real choice behind it.',
+      'Fourth step on REBUILD_QUEUE #11\'s branching-narrative rework of the Christmas Carol saga — only Christmas Morning is still a plain runner.',
+    ],
+  },
+  {
     v: 133,
     title: 'A Christmas Carol: Yet to Come rebuilt as an Old Joe\'s-den search',
     kind: 'game',
