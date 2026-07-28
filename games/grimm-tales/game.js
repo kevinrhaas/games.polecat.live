@@ -1,10 +1,10 @@
 /* ============================================================================
  * GRIMM'S PATH — Five Dark Tales from the Brothers Grimm
  *   1. THROUGH THE WOOD    — steer Red past the wolf's charging runs (22s, 3 lives)
- *   2. LET DOWN YOUR HAIR  — pendulum timing to climb Rapunzel's tower (8 levels, 3 misses)
+ *   2. LET DOWN YOUR HAIR  — hand-over-hand QTE climb up Rapunzel's braid (8 rungs, 3 misses)
  *   3. THE WITCH'S OVEN    — whack the witch before she catches Hansel (12 hits, 3 misses)
  *   4. STRAW INTO GOLD     — catch spinning wheel's golden coins (12 coins, 3 straw hits)
- *   5. TRUE LOVE'S KISS    — precision ring to wake Sleeping Beauty (5 kisses, 3 misses)
+ *   5. TRUE LOVE'S KISS    — Simon-says thorn-path memory through the hedge maze (3 lives)
  * Built on RetroSaga (js/saga.js) + RetroEngine.
  * ============================================================================ */
 (function () {
@@ -52,6 +52,9 @@
     candy:   '#e8604a',
     ginger:  '#d08030',
   };
+
+  /* ─── Thorn-gate colors for the Sleeping Beauty maze (up, right, down, left) ─── */
+  var THORN_C = [C.red, C.gold, C.enchant, C.leafL];
 
   /* ─── Emblem: moonlit forest with a glowing path ─── */
   function emblem(api, cx, cy) {
@@ -510,53 +513,59 @@
           'HIGH IN HER TOWER.',
           'The prince has found her',
           'and calls from below.',
-          'The golden braid',
-          'sways in the moonlight...',
+          'Hand over hand up the',
+          'braid — grab true, don\'t look down...',
         ],
         quote: '"Rapunzel, Rapunzel, let down your golden hair!" — Rapunzel (1812)',
-        help: 'TAP when the braid swings to the GOLD ZONE!',
+        help: 'TAP or ARROW the side that glows — LEFT or RIGHT!',
         winText: 'Tap by tap, the prince climbed to Rapunzel. Together at last!',
         loseText: 'The braid slipped from his grasp. The witch laughed from below.',
         init: function (api) {
-          this.level  = 0;
-          this.need   = 8;
-          this.misses = 0;
-          this.maxMis = 3;
-          this.angle  = 0;
-          this.dir    = 1;
-          this.spd    = 0.7; // radians per second
-          this.pause  = 0;
-          this.result = null;
+          this.height   = 0;
+          this.need     = 8;
+          this.misses   = 0;
+          this.maxMis   = 3;
+          this.target   = Math.random() < 0.5 ? 'L' : 'R';
+          this.beatDur  = 1.1;
+          this.beatT    = 0;
+          this.pause    = 0;
+          this.result   = null;
         },
         update: function (api, dt) {
-          if (this.pause > 0) { this.pause -= dt; return; }
-          // Pendulum sweep ±60°
-          var maxA = Math.PI / 3;
-          this.angle += this.dir * this.spd * dt;
-          if (this.angle > maxA)  { this.angle = maxA;  this.dir = -1; }
-          if (this.angle < -maxA) { this.angle = -maxA; this.dir = 1; }
-          // Win zone: ±8° (shrinks with each level)
-          var zone = Math.max(0.06, 0.14 - this.level * 0.014);
-          if (api.confirm()) {
-            if (Math.abs(this.angle) < zone) {
-              this.level++;
+          var W = api.W;
+          if (this.pause > 0) {
+            this.pause -= dt;
+            if (this.pause <= 0) {
+              this.target = Math.random() < 0.5 ? 'L' : 'R';
+              this.beatT = 0;
+            }
+            return;
+          }
+          this.beatT += dt;
+          var pressL = api.keyPressed('left')  || (api.pointer.justDown && api.pointer.x < W / 2);
+          var pressR = api.keyPressed('right') || (api.pointer.justDown && api.pointer.x >= W / 2);
+          var timedOut = this.beatT >= this.beatDur;
+          if (pressL || pressR || timedOut) {
+            var correct = !timedOut && ((pressL && this.target === 'L') || (pressR && this.target === 'R'));
+            if (correct) {
+              this.height++;
               this.result = 'hit';
               api.audio.sfx('power'); api.shake(3, 0.14);
-              api.burst(api.W / 2, api.H / 2, C.gold, 14);
-              this.spd = Math.min(2.6, this.spd + 0.22);
-              this.pause = 0.38;
-              if (this.level >= this.need) { api.score += 160; api.win(); }
+              api.burst(api.W / 2, api.H / 2, C.gold, 12);
+              this.beatDur = Math.max(0.6, this.beatDur - 0.06);
+              this.pause = 0.3;
+              if (this.height >= this.need) { api.score += 160; api.win(); return; }
             } else {
               this.misses++;
               this.result = 'miss';
-              api.audio.sfx('hurt'); api.shake(5, 0.20);
-              this.pause = 0.40;
-              if (this.misses >= this.maxMis) { api.lose(); }
+              api.audio.sfx('hurt'); api.shake(5, 0.2);
+              this.pause = 0.4;
+              if (this.misses >= this.maxMis) { api.lose(); return; }
             }
           }
         },
         draw: function (api) {
-          var g = api.gfx, c = api.ctx, W = api.W, H = api.H;
+          var g = api.gfx, c = api.ctx, W = api.W, H = api.H, t = api.t;
           // Night sky
           c.fillStyle = C.forest; c.fillRect(0, 0, W, H);
           // Moon
@@ -580,31 +589,64 @@
           g.circle(tx, ty + 20, 7, '#e8c0a0');
           g.rect(tx - 4, ty + 10, 8, 5, C.gold);
 
-          // Braid pendulum (hangs from window centre)
-          var bLen = 180;
-          var bx = tx + Math.sin(this.angle) * bLen;
-          var by = ty + 28 + Math.cos(this.angle) * bLen;
-          // Draw braid strand
+          // Climb progress → prince's position along the braid
+          var frac = this.height / this.need;
+          var startY = H - 90, endY = ty + 48;
+          var py = startY + (endY - startY) * frac;
+          var handOff = this.target === 'L' ? -9 : 9;
+          var px2 = tx + handOff * (1 - frac * 0.6);
+          var bob = Math.sin(t * 6) * 1.5;
+
+          // Braid strand (taut, from window to the prince's grip)
           c.strokeStyle = C.gold; c.lineWidth = 4;
-          c.beginPath(); c.moveTo(tx, ty + 28); c.lineTo(bx, by); c.stroke();
+          c.beginPath(); c.moveTo(tx, ty + 28); c.lineTo(px2, py); c.stroke();
           c.strokeStyle = C.amber; c.lineWidth = 1.5;
           c.setLineDash([6, 4]);
-          c.beginPath(); c.moveTo(tx, ty + 28); c.lineTo(bx, by); c.stroke();
+          c.beginPath(); c.moveTo(tx, ty + 28); c.lineTo(px2, py); c.stroke();
           c.setLineDash([]);
-          // Braid end
-          g.circle(bx, by, 6, C.gold);
-          g.circle(bx, by, 3, C.amber);
 
-          // Gold zone indicator (vertical center bar)
-          var zone = Math.max(0.06, 0.14 - this.level * 0.014);
-          var mh = bLen * 2 + 4, mx = W / 2 - 4, my = ty + 28 - bLen;
-          // Zone arc (centre segment is the hit area)
-          c.strokeStyle = '#1a3a10'; c.lineWidth = 3;
-          c.beginPath(); c.arc(tx, ty + 28, bLen, Math.PI / 2 - zone, Math.PI / 2 + zone); c.stroke();
-          c.strokeStyle = C.gold; c.lineWidth = 3;
-          c.globalAlpha = 0.7;
-          c.beginPath(); c.arc(tx, ty + 28, bLen, Math.PI / 2 - zone, Math.PI / 2 + zone); c.stroke();
+          // Prince, climbing
+          g.rect(px2 - 7, py + bob, 14, 16, '#2a4a78');
+          g.rect(px2 - 7, py + 14 + bob, 14, 5, C.gold);
+          g.circle(px2, py - 7 + bob, 7, '#e8c0a0');
+          g.rect(px2 - 6, py - 12 + bob, 12, 5, '#5a3c18');
+          c.strokeStyle = '#e8c0a0'; c.lineWidth = 3;
+          c.beginPath(); c.moveTo(px2 - 6, py + 2 + bob); c.lineTo(tx - 3, ty + 24); c.stroke();
+          c.beginPath(); c.moveTo(px2 + 6, py + 2 + bob); c.lineTo(tx + 3, ty + 24); c.stroke();
+
+          // Fireflies for atmosphere
+          for (var j = 0; j < 6; j++) {
+            var fx = (j * 41 + 12) % W, fy = H * 0.25 + (j * 37) % (H * 0.4);
+            c.globalAlpha = 0.2 + 0.4 * Math.abs(Math.sin(t * 1.6 + j * 2));
+            c.fillStyle = C.amber;
+            c.beginPath(); c.arc(fx, fy, 2, 0, Math.PI * 2); c.fill();
+          }
           c.globalAlpha = 1;
+
+          // Beat urgency ring around the reaching hand
+          if (this.pause <= 0) {
+            var pct = 1 - clamp(this.beatT / this.beatDur, 0, 1);
+            c.strokeStyle = pct < 0.25 ? C.red : C.gold;
+            c.globalAlpha = 0.65;
+            c.lineWidth = 3;
+            c.beginPath(); c.arc(px2, py + bob, 16, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * pct); c.stroke();
+            c.globalAlpha = 1;
+          }
+
+          // Hand-zone panels (bottom HUD)
+          var panelY = H - 46, panelH = 36, halfW = W / 2 - 18;
+          var leftOn = this.target === 'L' && this.pause <= 0;
+          var rightOn = this.target === 'R' && this.pause <= 0;
+          c.fillStyle = leftOn ? 'rgba(212,160,32,.32)' : 'rgba(20,26,16,.6)';
+          c.fillRect(10, panelY, halfW, panelH);
+          c.fillStyle = rightOn ? 'rgba(212,160,32,.32)' : 'rgba(20,26,16,.6)';
+          c.fillRect(W - 10 - halfW, panelY, halfW, panelH);
+          c.strokeStyle = leftOn ? C.gold : C.wood; c.lineWidth = leftOn ? 2 : 1;
+          c.strokeRect(10, panelY, halfW, panelH);
+          c.strokeStyle = rightOn ? C.gold : C.wood; c.lineWidth = rightOn ? 2 : 1;
+          c.strokeRect(W - 10 - halfW, panelY, halfW, panelH);
+          api.txtCFit('◀ LEFT', 10 + halfW / 2, panelY + panelH / 2 - 4, 8, leftOn ? C.moon : C.silver, true, halfW - 8);
+          api.txtCFit('RIGHT ▶', W - 10 - halfW / 2, panelY + panelH / 2 - 4, 8, rightOn ? C.moon : C.silver, true, halfW - 8);
 
           // Hit/miss flash
           if (this.pause > 0) {
@@ -612,19 +654,17 @@
             c.fillRect(0, 0, W, H);
           }
 
-          // Level progress dots
+          // Climb progress dots, just above the hand panels
           for (var i = 0; i < this.need; i++) {
-            var px = W / 2 - (this.need - 1) * 10 + i * 20;
-            g.circle(px, H - 28, 6, i < this.level ? C.gold : '#2a2410');
-            if (i < this.level) g.circle(px, H - 28, 3, C.amber);
+            var pxd = W / 2 - (this.need - 1) * 10 + i * 20;
+            g.circle(pxd, panelY - 18, 6, i < this.height ? C.gold : '#2a2410');
+            if (i < this.height) g.circle(pxd, panelY - 18, 3, C.amber);
           }
-          api.txtC('CLIMB: ' + this.level + '/' + this.need, W / 2, H - 46, 7, C.silver, true);
+          api.txtC('CLIMB: ' + this.height + '/' + this.need, W / 2, panelY - 32, 7, C.silver, true);
 
-          // Misses (bottom bar)
-          for (var mi = 0; mi < this.maxMis; mi++) {
-            g.circle(W - 30 + mi * 14, H - 28, 5, mi < this.misses ? C.red : '#2a1408');
-          }
-          api.topBar('TAP IN THE GOLD ZONE');
+          // Misses (top-right)
+          for (var mi = 0; mi < this.maxMis; mi++) g.circle(W - 38 + mi * 13, 20, 4, mi < this.misses ? C.red : '#2a0808');
+          api.topBar('GRAB THE GLOWING HAND!');
           api.vignette();
         },
       },
@@ -979,58 +1019,132 @@
         intro: [
           'THE PRINCESS SLEEPS,',
           'WRAPPED IN THORNS.',
-          'One hundred years',
-          'beneath the enchantment.',
-          'The prince must deliver',
-          'the kiss of true love...',
+          'A hundred years have',
+          'grown the hedge into',
+          'a living maze — watch',
+          'the path, then walk it.',
         ],
         quote: '"Then the prince kissed her, and she awoke." — Sleeping Beauty (Briar Rose), Brothers Grimm (1812)',
-        help: 'TAP when the enchantment ring closes to its tightest!',
+        help: 'WATCH the thorn-gates light in order, then repeat it — TAP a gate or ARROW KEYS',
         winText: 'She opened her eyes! The spell was broken. The kingdom awoke.',
-        loseText: 'The enchantment ring held firm. She sleeps another hundred years.',
+        loseText: 'The thorns close in around him. She sleeps another hundred years.',
         init: function (api) {
-          this.kisses = 0;
-          this.need   = 5;
-          this.misses = 0;
-          this.maxMis = 3;
-          this.ring   = 1.0; // 0 = smallest (hit zone), 1 = largest
-          this.rDir   = -1;  // -1 = shrinking, +1 = growing
-          this.spd    = 0.5;
-          this.pause  = 0;
-          this.result = null;
-          this.roseA  = 0;
+          this.lives  = 3;
+          this.seq    = [];
+          this.maxLen = 6;
+          this.round  = 1;
+          this.t      = 0;
+          this.lit    = -1;
+          this.feedT  = 0;
+          this.msg    = '';
+          this.msgC   = C.silver;
+          this._extend(); this._extend(); this._extend();
+          this._beginWatch();
+        },
+        _extend: function () { this.seq.push(randI(0, 3)); }, // 0=up 1=right 2=down 3=left
+        _beginWatch: function () {
+          this.phase    = 'watch';
+          this.watchIdx = 0;
+          this.stepState = 'gap';
+          this.stepT    = 0.4;
+          this.lit      = -1;
+          this.inputIdx = 0;
+        },
+        _nodes: function (api) {
+          var px = api.W / 2, py = api.H * 0.44 - 14, R = 68;
+          return [
+            { x: px, y: py - R },        // up
+            { x: px + R * 0.85, y: py }, // right
+            { x: px, y: py + R },        // down
+            { x: px - R * 0.85, y: py }, // left
+          ];
         },
         update: function (api, dt) {
-          this.roseA += dt;
-          if (this.pause > 0) { this.pause -= dt; return; }
-          this.ring += this.rDir * this.spd * dt;
-          if (this.ring <= 0) {
-            // Hit zone: near 0 = tightest ring, is where they should tap
-            this.ring = 0;
-            this.rDir = 1;
-          }
-          if (this.ring >= 1) {
-            this.ring = 1;
-            this.rDir = -1;
-          }
-          // Tap check — good window is ring < 0.18 (shrinks with each kiss)
-          var hitWindow = Math.max(0.08, 0.18 - this.kisses * 0.018);
-          if (api.confirm()) {
-            if (this.ring < hitWindow) {
-              this.kisses++;
-              this.result = 'hit';
-              api.audio.sfx('power'); api.shake(3, 0.15);
-              api.burst(api.W / 2, api.H / 2, C.enchant, 16);
-              this.spd = Math.min(2.0, this.spd + 0.22);
-              this.pause = 0.42;
-              if (this.kisses >= this.need) { api.score += 200; api.win(); }
-            } else {
-              this.misses++;
-              this.result = 'miss';
-              api.audio.sfx('hurt'); api.shake(5, 0.22);
-              this.pause = 0.42;
-              if (this.misses >= this.maxMis) { api.lose(); }
+          this.t += dt;
+
+          if (this.phase === 'watch') {
+            this.stepT -= dt;
+            if (this.stepT <= 0) {
+              if (this.stepState === 'gap') {
+                if (this.watchIdx >= this.seq.length) {
+                  this.phase = 'input'; this.inputIdx = 0; this.lit = -1;
+                } else {
+                  this.lit = this.seq[this.watchIdx];
+                  this.stepState = 'lit'; this.stepT = 0.46;
+                  api.audio.sfx('blip');
+                }
+              } else {
+                this.lit = -1;
+                this.watchIdx++;
+                this.stepState = 'gap'; this.stepT = 0.2;
+              }
             }
+            return;
+          }
+
+          if (this.phase === 'input') {
+            var dir = -1;
+            if (api.keyPressed('up'))         dir = 0;
+            else if (api.keyPressed('right')) dir = 1;
+            else if (api.keyPressed('down'))  dir = 2;
+            else if (api.keyPressed('left'))  dir = 3;
+            else if (api.pointer.justDown) {
+              var nodes = this._nodes(api);
+              var best = -1, bestD = 48;
+              for (var i = 0; i < 4; i++) {
+                var d = Math.hypot(api.pointer.x - nodes[i].x, api.pointer.y - nodes[i].y);
+                if (d < bestD) { bestD = d; best = i; }
+              }
+              dir = best;
+            }
+            if (dir < 0) return;
+
+            if (dir === this.seq[this.inputIdx]) {
+              this.lit = dir;
+              api.score += 12;
+              api.audio.sfx('coin');
+              var n = this._nodes(api)[dir];
+              api.burst(n.x, n.y, THORN_C[dir], 8);
+              this.inputIdx++;
+              if (this.inputIdx >= this.seq.length) {
+                if (this.seq.length >= this.maxLen) {
+                  api.score += 180;
+                  this.msg = 'THE THORNS PART'; this.msgC = C.gold;
+                  this.phase = 'won'; this.feedT = 0.5;
+                } else {
+                  this.msg = 'ONWARD'; this.msgC = C.amber;
+                  this.phase = 'roundgap'; this.feedT = 0.6;
+                }
+              }
+            } else {
+              this.lives--;
+              this.lit = -1;
+              api.shake(5, 0.3); api.flash(C.red, 0.28); api.audio.sfx('hurt');
+              this.msg = 'WRONG TURN'; this.msgC = C.red;
+              this.phase = 'wronggap'; this.feedT = 0.85;
+            }
+            return;
+          }
+
+          if (this.phase === 'roundgap') {
+            this.feedT -= dt;
+            if (this.feedT <= 0) { this.round++; this._extend(); this._beginWatch(); }
+            return;
+          }
+
+          if (this.phase === 'wronggap') {
+            this.feedT -= dt;
+            if (this.feedT <= 0) {
+              if (this.lives <= 0) { api.lose(); return; }
+              this._beginWatch();
+            }
+            return;
+          }
+
+          if (this.phase === 'won') {
+            this.feedT -= dt;
+            if (this.feedT <= 0) api.win();
+            return;
           }
         },
         draw: function (api) {
@@ -1090,58 +1204,58 @@
           g.circle(px, py - 12, 4, C.red);
           g.circle(px - 1, py - 14, 2, C.redL);
 
-          // Enchantment ring (pulsing around princess)
-          var maxR = 62, minR = 8;
-          var curR = minR + (maxR - minR) * this.ring;
-          // Ring glow
-          c.globalAlpha = 0.4 * (1 - this.ring);
-          c.strokeStyle = C.enchant;
-          c.lineWidth = 4;
-          c.beginPath(); c.arc(px, py - 14, curR, 0, Math.PI * 2); c.stroke();
-          c.globalAlpha = 0.7;
-          c.strokeStyle = C.magic;
-          c.lineWidth = 2;
-          c.beginPath(); c.arc(px, py - 14, curR, 0, Math.PI * 2); c.stroke();
-          c.globalAlpha = 1;
-          // Target centre circle (hit when ring reaches this)
-          var hitWindow2 = Math.max(0.08, 0.18 - this.kisses * 0.018);
-          var hitR = minR + (maxR - minR) * hitWindow2;
-          c.strokeStyle = C.gold; c.lineWidth = 1.5;
-          c.globalAlpha = 0.5;
-          c.beginPath(); c.arc(px, py - 14, hitR, 0, Math.PI * 2); c.stroke();
-          c.globalAlpha = 1;
-
-          // Floating rose petals (orbiting)
-          for (var pi2 = 0; pi2 < 5; pi2++) {
-            var pa = this.roseA * 0.6 + pi2 * (Math.PI * 2 / 5);
-            var prx = px + Math.cos(pa) * 48;
-            var pry = (py - 14) + Math.sin(pa) * 28;
-            g.circle(prx, pry, 3, C.red);
+          // Thorn-gate nodes (the maze's four turns), ringing the bed
+          var nodes = this._nodes(api);
+          for (var ni = 0; ni < 4; ni++) {
+            var n = nodes[ni], active = this.lit === ni;
+            var idlePulse = 0.5 + 0.3 * Math.sin(t * 2.4 + ni * 1.5);
+            var r = active ? 18 : 12;
+            c.globalAlpha = active ? 0.9 : 0.3 + 0.15 * idlePulse;
+            g.circle(n.x, n.y, r + 6, active ? THORN_C[ni] : '#12180c');
+            c.globalAlpha = 1;
+            // Thorned ring
+            c.strokeStyle = active ? THORN_C[ni] : '#2a3a1c';
+            c.lineWidth = active ? 3 : 1.5;
+            c.beginPath(); c.arc(n.x, n.y, r, 0, Math.PI * 2); c.stroke();
+            for (var sp = 0; sp < 5; sp++) {
+              var sa = sp * (Math.PI * 2 / 5) + t * 0.3;
+              c.beginPath();
+              c.moveTo(n.x + Math.cos(sa) * r, n.y + Math.sin(sa) * r);
+              c.lineTo(n.x + Math.cos(sa) * (r + 5), n.y + Math.sin(sa) * (r + 5));
+              c.stroke();
+            }
           }
+          // Connecting hedge lines from bed to each gate
+          c.globalAlpha = 0.22; c.strokeStyle = C.leafL; c.lineWidth = 1.5;
+          for (var li2 = 0; li2 < 4; li2++) { c.beginPath(); c.moveTo(px, py - 14); c.lineTo(nodes[li2].x, nodes[li2].y); c.stroke(); }
+          c.globalAlpha = 1;
 
           // Hit/miss flash
-          if (this.pause > 0) {
-            c.fillStyle = this.result === 'hit' ? 'rgba(192,96,232,.3)' : 'rgba(200,20,30,.25)';
+          if (this.feedT > 0 && (this.phase === 'wronggap')) {
+            c.fillStyle = 'rgba(200,20,30,.22)';
+            c.fillRect(0, 0, W, H);
+          } else if (this.feedT > 0 && (this.phase === 'roundgap' || this.phase === 'won')) {
+            c.fillStyle = 'rgba(192,96,232,.22)';
             c.fillRect(0, 0, W, H);
           }
 
-          // Kiss progress hearts
-          for (var ki = 0; ki < this.need; ki++) {
-            var kx = W / 2 - (this.need - 1) * 12 + ki * 24;
-            var filled = ki < this.kisses;
-            c.fillStyle = filled ? C.red : '#2a0c18';
-            // Simple heart
-            c.beginPath();
-            c.arc(kx - 3, H - 28, 4, Math.PI, 0);
-            c.arc(kx + 3, H - 28, 4, Math.PI, 0);
-            c.lineTo(kx, H - 18); c.closePath(); c.fill();
+          // Phase hint + feedback
+          var hint = '';
+          if (this.phase === 'watch') hint = 'WATCH THE PATH';
+          else if (this.phase === 'input') hint = 'YOUR TURN';
+          if (hint) api.txtCFit(hint, W / 2, 58, 9, C.silver, true, W - 40);
+          if (this.msg && this.feedT > 0) api.txtCFit(this.msg, W / 2, 76, 9, this.msgC, true, W - 40);
+
+          // Round label + sequence progress dots
+          api.txtC('ROUND ' + this.round, W / 2, H - 46, 7, C.silver, true);
+          var dots = this.maxLen, dotW = (W - 40) / dots;
+          for (var di = 0; di < dots; di++) {
+            var dx = 20 + dotW * di + dotW / 2;
+            g.circle(dx, H - 28, 4, di < this.seq.length ? C.gold : '#2a2410');
           }
-          api.txtC('KISSES: ' + this.kisses + '/' + this.need, W / 2, H - 46, 7, C.silver, true);
-          // Misses
-          for (var mi2 = 0; mi2 < this.maxMis; mi2++) {
-            g.circle(W - 30 + mi2 * 14, H - 40, 5, mi2 < this.misses ? C.red : '#2a0818');
-          }
-          api.topBar('TAP WHEN THE RING IS SMALL!');
+          // Lives (top-right)
+          for (var mi2 = 0; mi2 < 3; mi2++) g.circle(W - 38 + mi2 * 13, 20, 4, mi2 < this.lives ? C.red : '#2a0818');
+          api.topBar('FIND THE PATH THROUGH THE THORNS');
           api.vignette();
         },
       },
