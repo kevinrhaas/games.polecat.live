@@ -188,6 +188,8 @@ img { max-width: 100%; display: block; }
   padding: 9px 12px; border-radius: 999px; cursor: pointer;
   border: 2px solid var(--panel-br); background: var(--panel); color: var(--ink-dim);
   transition: all .12s ease;
+  /* WCAG-minimum touch target (UX-sweep #34 finding 3, carried 4+ sweeps) */
+  display: inline-flex; align-items: center; min-height: 44px; box-sizing: border-box;
 }
 .chip[aria-pressed="true"] { color: #0b0420; background: var(--cyan); border-color: #000; }
 .chip.style[aria-pressed="true"] { background: var(--yellow); }
