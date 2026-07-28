@@ -10,6 +10,15 @@
 // format stays identical to the rest of the fleet.
 export const CHANGELOG = [
   {
+    v: 154,
+    title: 'Bigger tap targets across the arcade',
+    kind: 'fix',
+    ts: '2026-07-28T17:52:35.206Z',
+    items: [
+      'Genre/style filter chips, the topbar icon buttons (waffle, What\'s New, theme toggle), the What\'s New kind filters, and the in-game back/fullscreen/mute/restart buttons were all under the 44px touch-target minimum — flagged 4+ UX sweeps running. All now meet it.',
+    ],
+  },
+  {
     v: 153,
     title: 'Home hero stats are clickable now',
     kind: 'fix',

@@ -69,6 +69,12 @@ body.ps-shell {
 .abtn.magenta { background: var(--magenta); color: #fff; box-shadow: 0 4px 0 #a01060, var(--shadow); }
 .abtn.ghost { background: transparent; color: var(--ink); border-color: var(--panel-br); box-shadow: var(--shadow); }
 
+/* bump the vendored 38px topbar icon buttons (waffle, sparkle, theme toggle,
+   mobile hamburger) and the What's-New kind-filter chips to the WCAG-minimum
+   44px touch target (UX-sweep #34 finding 3, carried 4+ sweeps) */
+.ps-topbar .btn.icon { width: 44px; height: 44px; }
+.wn-kinds .filter-chip { min-height: 44px; padding: 10px 14px; box-sizing: border-box; }
+
 /* unseen dot on the topbar What's-New sparkle */
 .ps-topbar .btn.has-unseen { position: relative; }
 .ps-topbar .btn.has-unseen::after {

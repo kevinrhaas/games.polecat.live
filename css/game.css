@@ -41,6 +41,8 @@
   display: inline-flex; align-items: center; gap: 7px;
   background: var(--g-panel); border: 2px solid var(--g-border);
   border-radius: 8px; padding: 8px 11px;
+  /* WCAG-minimum touch target (UX-sweep #34 finding 3, carried 4+ sweeps) */
+  min-height: 44px; box-sizing: border-box;
 }
 .game-bar .back .ar { display: inline-flex; align-items: center; }
 .game-bar .back:hover { border-color: var(--g-accent); }
@@ -62,6 +64,8 @@
   display: inline-flex; align-items: center; justify-content: center;
   background: var(--g-panel); color: var(--g-title); border: 2px solid var(--g-border);
   border-radius: 8px; padding: 7px;
+  /* WCAG-minimum touch target (UX-sweep #34 finding 3, carried 4+ sweeps) */
+  min-width: 44px; min-height: 44px; box-sizing: border-box;
 }
 .game-bar .icon-btn:hover { border-color: var(--g-accent); }
 .game-bar .icon-btn:active { transform: translateY(1px); }
