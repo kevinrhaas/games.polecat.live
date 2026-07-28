@@ -1,7 +1,7 @@
 /* ============================================================================
  * A CHRISTMAS CAROL — SCROOGE'S LONG NIGHT
  * Five chapters through Dickens' 1843 novella, each a distinct mini-game:
- *   1. MARLEY'S CHAINS    — dodge flying chains, collect shillings (vertical dodge)
+ *   1. MARLEY'S CHAINS    — watch the chain reform link by link, tap it back (memory)
  *   2. CHRISTMAS PAST     — tap glowing memory wisps before they fade (tap-collect)
  *   3. CHRISTMAS PRESENT  — grab & sort gifts to Tiny Tim / the table / the hearth (route)
  *   4. YET TO COME        — dodge the Shadow's lane-pointing finger (lane dodge)
@@ -265,127 +265,141 @@
 
         intro: [
           'JACOB MARLEY APPEARS,',
-          'BOUND IN HEAVY CHAINS',
-          'FORGED THROUGH A LIFE',
-          'of greed. Dodge the links!',
+          'BOUND IN A CHAIN HE',
+          'FORGED LINK BY LINK.',
+          'Watch it, then relive it.',
         ],
         quote: 'I wear the chain I forged in life. I made it link by link.',
-        help: 'DRAG up/down to dodge chains · catch the shillings',
-        winText: 'The spectre fades with a mournful wail. Scrooge sits, trembling.',
-        loseText: "The chains wind tight. Marley howls: 'Hear me, Ebenezer!'",
+        help: 'WATCH the chain light up, then TAP the links back in order',
+        winText: 'The spectre fades, its long chain finally recounted and understood.',
+        loseText: "The chain rattles louder. Marley howls: 'Hear me, Ebenezer!'",
+
+        stepDur: 0.62, // total time one link is shown during 'watch' (on + gap)
+        onDur:   0.42, // portion of stepDur the link is actually lit
+
+        linkDefs: [
+          { key: 'box',    label: 'CASH-BOX' },
+          { key: 'ledger', label: 'LEDGER'   },
+          { key: 'lock',   label: 'PADLOCK'  },
+          { key: 'purse',  label: 'PURSE'    },
+        ],
+
+        btnRect(i) {
+          const col = i % 2, row = Math.floor(i / 2);
+          const w = 120, h = 95, gapX = 8, gapY = 10, left = 11, top = 170;
+          return { x: left + col * (w + gapX), y: top + row * (h + gapY), w, h };
+        },
+
+        hitButton(x, y) {
+          for (let i = 0; i < 4; i++) {
+            const r = this.btnRect(i);
+            if (x >= r.x && x <= r.x + r.w && y >= r.y && y <= r.y + r.h) return i;
+          }
+          return -1;
+        },
+
+        drawLinkIcon(api, key, cx, cy) {
+          const c = api.ctx, g = api.gfx;
+          if (key === 'box') {
+            g.rect(cx - 12, cy - 8, 24, 16, '#8a6828');
+            g.rect(cx - 12, cy - 8, 24, 4, '#a8824a');
+            c.fillStyle = '#3a2810'; c.fillRect(cx - 2, cy - 3, 4, 6);
+          } else if (key === 'ledger') {
+            g.rect(cx - 10, cy - 10, 20, 20, '#5a4838');
+            c.strokeStyle = '#2a2018'; c.lineWidth = 1;
+            c.beginPath(); c.moveTo(cx, cy - 10); c.lineTo(cx, cy + 10); c.stroke();
+            c.strokeStyle = '#8a7858';
+            for (let i = -6; i <= 6; i += 4) {
+              c.beginPath(); c.moveTo(cx - 8, cy + i); c.lineTo(cx - 2, cy + i); c.stroke();
+            }
+          } else if (key === 'lock') {
+            c.strokeStyle = '#8a9898'; c.lineWidth = 3;
+            c.beginPath(); c.arc(cx, cy - 6, 7, Math.PI, 0); c.stroke();
+            g.rect(cx - 10, cy - 4, 20, 16, '#6a7878');
+          } else {
+            c.fillStyle = '#5a3050';
+            c.beginPath(); c.arc(cx, cy + 2, 11, 0, Math.PI * 2); c.fill();
+            g.rect(cx - 4, cy - 12, 8, 8, '#7a4868');
+          }
+        },
 
         init(api) {
-          this.scrY   = api.H / 2;
-          this.tgtY   = api.H / 2;
-          this.lives  = 3;
-          this.timer  = 28;
-          this.chains = [];
-          this.spawnT = 1.2;
-          this.coins  = [];
-          this.coinT  = 1.6;
-          this.hitCool = 0;
-          this.spd    = 1.0;
+          this.seq = [];
+          for (let i = 0; i < 3; i++) this.seq.push(Math.floor(Math.random() * 4));
+          this.round      = 0;
+          this.needRounds = 4;
+          this.lives      = 3;
+          this.phase      = 'watch';
+          this.phaseT     = 0;
+          this.inputIdx   = 0;
+          this.lit        = -1;
+          this.litOk      = null;
         },
 
         update(api, dt) {
-          const f = dt * 60;
-          this.timer -= dt;
-          this.hitCool = Math.max(0, this.hitCool - dt);
-          this.spd = 1 + (28 - Math.max(0, this.timer)) / 40;
+          this.phaseT += dt;
 
-          // Scrooge moves vertically
-          if (api.pointer.down) this.tgtY = api.pointer.y;
-          if (api.keyDown('up'))   this.tgtY -= 4 * f;
-          if (api.keyDown('down')) this.tgtY += 4 * f;
-          this.tgtY = clamp(this.tgtY, 58, api.H - 55);
-          this.scrY += (this.tgtY - this.scrY) * 0.2 * f;
-
-          // Spawn chains (horizontal bands at fixed Y, moving L or R)
-          this.spawnT -= dt;
-          if (this.spawnT <= 0) {
-            this.spawnT = Math.max(0.45, 1.2 - (28 - Math.max(0, this.timer)) / 56);
-            const fromLeft = Math.random() < 0.5;
-            const cy = 70 + Math.random() * (api.H - 156);
-            const spd = (2.8 + Math.random() * 1.5) * this.spd;
-            const cw  = 44 + Math.random() * 28;
-            this.chains.push({
-              x:  fromLeft ? -cw / 2 - 12 : api.W + cw / 2 + 12,
-              y:  cy,
-              vx: fromLeft ? spd : -spd,
-              w:  cw,
-              hit: false,
-            });
+          if (this.phase === 'roundClear') {
+            if (this.phaseT > 0.5) { this.phase = 'watch'; this.phaseT = 0; }
+            return;
           }
 
-          // Move chains
-          for (const ch of this.chains) ch.x += ch.vx * f;
-          this.chains = this.chains.filter(ch => ch.x > -140 && ch.x < api.W + 140);
-
-          // Spawn shilling coins
-          this.coinT -= dt;
-          if (this.coinT <= 0) {
-            this.coinT = 0.8 + Math.random() * 0.8;
-            this.coins.push({ x: 22 + Math.random() * (api.W - 44), y: -8, vy: 1.4 });
-          }
-          for (const co of this.coins) co.y += co.vy * f;
-
-          // Collect coins
-          const scrX = api.W / 2;
-          for (const co of this.coins) {
-            if (!co.gone && Math.hypot(co.x - scrX, co.y - this.scrY) < 20) {
-              co.gone = true;
-              api.addScore(12);
-              api.audio.sfx('coin');
-              api.burst(co.x, co.y, '#d4a020', 5);
+          if (this.phase === 'watch') {
+            const i = Math.floor(this.phaseT / this.stepDur);
+            if (i < this.seq.length) {
+              const within = this.phaseT - i * this.stepDur;
+              this.lit = within < this.onDur ? this.seq[i] : -1;
+              this.litOk = null;
+            } else {
+              this.lit = -1;
+              if (this.phaseT > this.seq.length * this.stepDur + 0.3) {
+                this.phase = 'input'; this.phaseT = 0; this.inputIdx = 0;
+              }
             }
+            return;
           }
-          this.coins = this.coins.filter(co => co.y < api.H + 22 && !co.gone);
 
-          // Chain collision (only if not invincible)
-          if (this.hitCool <= 0) {
-            for (const ch of this.chains) {
-              if (ch.hit) continue;
-              const cx1 = ch.x - ch.w / 2, cx2 = ch.x + ch.w / 2;
-              if (cx1 < scrX + 8 && cx2 > scrX - 8) {
-                if (Math.abs(ch.y - this.scrY) < 18) {
-                  ch.hit = true;
-                  this.lives--;
-                  this.hitCool = 0.85;
-                  api.shake(6, 0.3);
-                  api.flash('#1a2848', 0.22);
-                  api.audio.sfx('hurt');
-                  if (this.lives <= 0) { api.lose(); return; }
+          // phase === 'input'
+          if (api.pointer.justDown) {
+            const idx = this.hitButton(api.pointer.x, api.pointer.y);
+            if (idx >= 0) {
+              if (idx === this.seq[this.inputIdx]) {
+                this.lit = idx; this.litOk = true;
+                api.audio.sfx('coin');
+                const r = this.btnRect(idx);
+                api.burst(r.x + r.w / 2, r.y + r.h / 2, '#d4a020', 5);
+                this.inputIdx++;
+                if (this.inputIdx >= this.seq.length) {
+                  this.round++;
+                  api.addScore(20 + this.seq.length * 4);
+                  if (this.round >= this.needRounds) { api.addScore(60); api.win(); return; }
+                  this.seq.push(Math.floor(Math.random() * 4));
+                  this.phase = 'roundClear'; this.phaseT = 0;
                 }
+              } else {
+                this.lit = idx; this.litOk = false;
+                this.lives--;
+                api.shake(6, 0.25); api.flash('#1a2848', 0.2); api.audio.sfx('hurt');
+                if (this.lives <= 0) { api.lose(); return; }
+                this.phase = 'watch'; this.phaseT = 0; this.inputIdx = 0;
               }
             }
           }
-
-          if (this.timer <= 0) { api.addScore(40 + this.lives * 30); api.win(); }
         },
 
         draw(api) {
           const g = api.gfx, c = api.ctx, W = api.W, H = api.H;
           c.fillStyle = '#060810'; c.fillRect(0, 0, W, H);
 
-          // Fireplace glow (bottom)
-          c.globalAlpha = 0.14;
-          g.circle(W / 2, H + 10, 70, '#e07020');
-          c.globalAlpha = 1;
-          g.rect(W / 2 - 26, H - 38, 52, 34, '#18100a');
-          g.rect(W / 2 - 21, H - 32, 42, 24, '#241808');
-          c.globalAlpha = 0.55 + 0.2 * Math.sin(api.t * 9);
-          g.sprite(['.ff.', 'ffff', 'f..f'], W / 2 - 8, H - 28, { f: '#e05810' }, 4);
-          c.globalAlpha = 1;
-
-          // Wall panelling
-          c.globalAlpha = 0.07;
-          for (let y = 60; y < H - 40; y += 38) g.rect(0, y, W, 1, '#8090a0');
+          // Fireplace glow (corner ambience)
+          c.globalAlpha = 0.1;
+          g.circle(28, H - 18, 50, '#e07020');
           c.globalAlpha = 1;
 
           // Marley ghost (floating, translucent, oscillating)
-          const gx = W / 2 + Math.sin(api.t * 1.3) * 18;
-          const gy = 50 + Math.sin(api.t * 0.7) * 10;
-          c.globalAlpha = 0.42 + 0.15 * Math.sin(api.t * 2.2);
+          const gx = W / 2 + Math.sin(api.t * 1.3) * 14;
+          const gy = 46 + Math.sin(api.t * 0.7) * 8;
+          c.globalAlpha = 0.4 + 0.15 * Math.sin(api.t * 2.2);
           g.sprite([
             '..ggg..',
             '.ggggg.',
@@ -396,41 +410,46 @@
           ], gx - 14, gy - 14, { g: '#8090b8', w: '#c0d0e8' }, 4);
           c.globalAlpha = 1;
 
-          // Chains (horizontal bands)
-          for (const ch of this.chains) {
-            const x1 = ch.x - ch.w / 2, x2 = ch.x + ch.w / 2;
-            for (let lx = x1; lx < x2; lx += 10) {
-              const even = Math.floor((lx - x1) / 10) % 2 === 0;
-              g.rect(Math.round(lx), ch.y - 4, 8, 8, even ? '#6a7888' : '#8a9aa8');
-            }
-            c.strokeStyle = '#4a5868'; c.lineWidth = 1;
-            c.strokeRect(x1, ch.y - 5, ch.w, 10);
-          }
-
-          // Coins (shillings)
-          for (const co of this.coins) {
-            g.circle(co.x, co.y, 6, '#c89020');
-            g.circle(co.x, co.y, 3, '#f0d040');
-          }
-
-          // Scrooge sprite (nightcap + robe)
-          const scrX = W / 2;
-          const hitFl = this.hitCool > 0 && Math.floor(this.hitCool * 8) % 2 === 1;
-          if (!hitFl) {
-            g.sprite([
-              '.hh.',
-              'hbbh',
-              '.bb.',
-              'b..b',
-            ], scrX - 8, this.scrY - 14, { h: '#c0a870', b: '#2a2838' }, 4);
-          }
-
-          // HUD
           api.topBar("MARLEY'S CHAINS");
-          api.txt('TIME ' + Math.ceil(Math.max(0, this.timer)), 6, 20, 9, '#d4a020');
-          for (let i = 0; i < 3; i++) {
-            api.gfx.rect(W - 18 - i * 16, 4, 12, 12, i < this.lives ? '#d4a020' : '#1a1a28');
+          let label = 'WATCH THE CHAIN...';
+          if (this.phase === 'input') label = 'NOW TAP IT BACK';
+          else if (this.phase === 'roundClear') label = 'ANOTHER LINK FORMS...';
+          api.txtC(label, W / 2, 92, 8, this.phase === 'input' ? '#d4a020' : '#7a8898', true);
+
+          // Progress dots (how far through the current chain)
+          const total = this.seq.length;
+          const dotW = 10, dotGap = 4, rowW = total * dotW + (total - 1) * dotGap;
+          const dx0 = W / 2 - rowW / 2;
+          for (let i = 0; i < total; i++) {
+            let filled;
+            if (this.phase === 'watch') filled = i <= Math.min(total - 1, Math.floor(this.phaseT / this.stepDur));
+            else if (this.phase === 'input') filled = i < this.inputIdx;
+            else filled = true;
+            g.circle(dx0 + i * (dotW + dotGap) + dotW / 2, 112, dotW / 2, filled ? '#d4a020' : '#2a2438');
           }
+
+          api.txt('ROUND ' + (this.round + 1) + '/' + this.needRounds, 6, 128, 8, '#7a8898');
+          for (let i = 0; i < 3; i++) {
+            g.rect(W - 18 - i * 16, 124, 12, 12, i < this.lives ? '#d4a020' : '#1a1a28');
+          }
+
+          // The four links
+          for (let i = 0; i < 4; i++) {
+            const r = this.btnRect(i);
+            const link = this.linkDefs[i];
+            let bg = '#120d16', border = '#3a3248';
+            if (this.lit === i) {
+              if (this.litOk === true) { bg = '#284018'; border = '#6ab848'; }
+              else if (this.litOk === false) { bg = '#401818'; border = '#c84040'; }
+              else { bg = '#3a3020'; border = '#d4a020'; }
+            }
+            g.rect(r.x, r.y, r.w, r.h, bg);
+            c.strokeStyle = border; c.lineWidth = 2; c.strokeRect(r.x, r.y, r.w, r.h);
+            this.drawLinkIcon(api, link.key, r.x + r.w / 2, r.y + r.h / 2 - 8);
+            api.txtCFit(link.label, r.x + r.w / 2, r.y + r.h - 20, 7, '#c8b888', false, r.w - 10);
+          }
+
+          api.txt('TAP THE LINKS IN ORDER', 6, H - 16, 6, '#4a5060');
           api.vignette();
         },
       },
