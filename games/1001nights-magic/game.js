@@ -1,11 +1,15 @@
 /* ============================================================================
  * A THOUSAND NIGHTS — One Thousand and One Nights (Arabic folklore)
- *   1. THE SULTAN'S EAR    — pendulum-tap timing: Scheherazade holds the Sultan (10 hits)
- *   2. THE ROC'S SHADOW    — steer Sinbad's ship through feathers & rocks (22 s)
- *   3. OPEN SESAME         — catch Ali Baba's gold bags, dodge daggers (12, 3 lives)
- *   4. THE GENIE'S WISH    — tap falling soldiers before they breach the palace (12)
- *   5. THE FLYING CARPET   — steer through palace spires to freedom (22 s)
- * Built on RetroSaga (js/saga.js) + RetroEngine.
+ *   A point-and-click branching adventure: Scheherazade weaves her tale by
+ *   choosing story fragments, memory-paths, hidden gold, bold commands, and a
+ *   charted course across the night sky — every choice buys time before dawn.
+ *   1. THE SULTAN'S EAR    — tap story-fragment cards to fill the suspense meter
+ *   2. THE ROC'S SHADOW    — watch, then repeat the safe island path (memory)
+ *   3. OPEN SESAME         — spot & tap the true gold jars before the thieves return
+ *   4. THE GENIE'S WISH    — choose bold or safe commands; favor is not limitless
+ *   5. THE FLYING CARPET   — chart a course across a night-sky lattice to the Sultan
+ * Built on RetroSaga (js/saga.js) + RetroEngine. Rebuilt from a dodge/steer
+ * arcade set into a genuine point-and-click branching adventure (REBUILD_QUEUE #25).
  * ============================================================================ */
 (function () {
   'use strict';
@@ -48,11 +52,110 @@
     shadow:  '#040212',
   };
 
+  /* ─── Branching-story tags, tallied across the whole playthrough ─── */
+  var TAGS = { brave: 0, clever: 0, wise: 0, mercy: 0 };
+  function dominantTag() {
+    var order = ['brave', 'clever', 'wise', 'mercy'], best = order[0], bv = -1;
+    for (var i = 0; i < order.length; i++) { var v = TAGS[order[i]] || 0; if (v > bv) { bv = v; best = order[i]; } }
+    return best;
+  }
+  var FINALE_TEXT = {
+    brave: [
+      'THE SULTAN RISES,',
+      'HIS BLADE SET DOWN.',
+      '',
+      '"No one at my court',
+      ' carries your courage.',
+      ' Stay — and rule',
+      ' beside me."',
+    ],
+    clever: [
+      'THE SULTAN LAUGHS —',
+      'FOR THE FIRST TIME',
+      'IN A THOUSAND NIGHTS.',
+      '',
+      '"Your wit outran every',
+      ' vizier I have known.',
+      ' Keep me guessing."',
+    ],
+    wise: [
+      'THE SULTAN SETS DOWN',
+      'HIS SWORD FOREVER.',
+      '',
+      '"One thousand and one',
+      ' nights, and at last',
+      ' I understand: wisdom',
+      ' outlasts anger."',
+    ],
+    mercy: [
+      'THE SULTAN WEEPS,',
+      'THEN OPENS THE',
+      'PALACE GATES.',
+      '',
+      '"Your mercy freed more',
+      ' than a storyteller',
+      ' tonight."',
+    ],
+  };
+
+  /* ─── Small reusable helpers ─── */
+  function shuffleArr(a) {
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1)), t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+  function hitRects(px, py, rects) {
+    for (var i = 0; i < rects.length; i++) {
+      var r = rects[i];
+      if (px >= r.x && px <= r.x + r.w && py >= r.y && py <= r.y + r.h) return i;
+    }
+    return -1;
+  }
+  function hitPoints(px, py, pts, r) {
+    for (var i = 0; i < pts.length; i++) {
+      var p = pts[i], dx = px - p.x, dy = py - p.y;
+      if (dx * dx + dy * dy <= r * r) return i;
+    }
+    return -1;
+  }
+  function drawStarGlyph(c, x, y, r) {
+    c.beginPath();
+    for (var k = 0; k < 5; k++) {
+      var a = -Math.PI / 2 + k * (Math.PI * 2 / 5);
+      var xx = x + Math.cos(a) * r, yy = y + Math.sin(a) * r;
+      if (k === 0) c.moveTo(xx, yy); else c.lineTo(xx, yy);
+      var a2 = a + (Math.PI * 2 / 10);
+      var xx2 = x + Math.cos(a2) * (r * 0.45), yy2 = y + Math.sin(a2) * (r * 0.45);
+      c.lineTo(xx2, yy2);
+    }
+    c.closePath(); c.fill();
+  }
+  function tagGlyph(api, tagName, x, y, color) {
+    var c = api.ctx;
+    c.strokeStyle = color; c.fillStyle = color; c.lineWidth = 1.5;
+    if (tagName === 'brave') {
+      c.beginPath(); c.moveTo(x, y - 8); c.lineTo(x, y + 6); c.stroke();
+      c.beginPath(); c.moveTo(x - 5, y + 2); c.lineTo(x + 5, y + 2); c.stroke();
+      c.beginPath(); c.arc(x, y - 8, 2, 0, Math.PI * 2); c.fill();
+    } else if (tagName === 'clever') {
+      c.beginPath(); c.arc(x, y, 5, 0, Math.PI * 2); c.stroke();
+      c.beginPath(); c.arc(x, y, 1.6, 0, Math.PI * 2); c.fill();
+    } else if (tagName === 'wise') {
+      drawStarGlyph(c, x, y, 6);
+    } else {
+      c.beginPath();
+      c.moveTo(x, y + 5);
+      c.bezierCurveTo(x - 8, y - 4, x - 3, y - 9, x, y - 3);
+      c.bezierCurveTo(x + 3, y - 9, x + 8, y - 4, x, y + 5);
+      c.fill();
+    }
+  }
+
   /* ─── Emblem: magic lamp with genie smoke ─── */
   function emblem(api, cx, cy) {
     var g = api.gfx, c = api.ctx;
     var t = api.t !== undefined ? api.t : (Date.now() * 0.001);
-    // Genie smoke wisps behind
     var i;
     for (i = 0; i < 3; i++) {
       var sw = 10 + i * 6;
@@ -63,34 +166,27 @@
       c.beginPath(); c.arc(sx, sy, sw, 0, Math.PI * 2); c.fill();
     }
     c.globalAlpha = 1;
-    // Genie face
     c.globalAlpha = 0.7;
     c.fillStyle = C.smoke;
     c.beginPath(); c.arc(cx, cy - 44, 12, 0, Math.PI * 2); c.fill();
     c.globalAlpha = 1;
     g.circle(cx, cy - 44, 8, C.smokeL);
-    // Lamp body
     c.fillStyle = C.gold;
     c.beginPath(); c.ellipse(cx, cy - 4, 20, 10, 0, 0, Math.PI * 2); c.fill();
-    // Spout
     c.fillStyle = C.goldL;
     c.beginPath();
     c.moveTo(cx + 16, cy - 4);
     c.quadraticCurveTo(cx + 28, cy - 12, cx + 22, cy - 18);
     c.quadraticCurveTo(cx + 14, cy - 10, cx + 10, cy - 4);
     c.closePath(); c.fill();
-    // Base
     c.fillStyle = C.copper;
     c.beginPath(); c.ellipse(cx, cy + 6, 16, 6, 0, 0, Math.PI * 2); c.fill();
-    // Handle
     c.lineWidth = 4; c.strokeStyle = C.gold;
     c.beginPath(); c.arc(cx - 18, cy - 4, 8, Math.PI * 0.5, Math.PI * 1.5); c.stroke();
-    // Flame
     c.globalAlpha = 0.8 + 0.15 * Math.sin(t * 5);
     c.fillStyle = C.amber;
     c.beginPath(); c.ellipse(cx + 20, cy - 22, 4, 7, -0.3, 0, Math.PI * 2); c.fill();
     c.globalAlpha = 1;
-    // Orbiting stars
     for (var j = 0; j < 6; j++) {
       var sa = j / 6 * Math.PI * 2 + t * 0.5;
       var srx = cx + Math.cos(sa) * 44, sry = cy - 4 + Math.sin(sa) * 28;
@@ -104,13 +200,11 @@
   /* ─── Scenery: Arabian night with palace silhouettes ─── */
   function scenery(api, scene, t) {
     var g = api.gfx, c = api.ctx, W = api.W, H = api.H;
-    // Sky gradient
     var sky = c.createLinearGradient(0, 0, 0, H * 0.65);
     sky.addColorStop(0, C.night);
     sky.addColorStop(0.5, C.indigo);
     sky.addColorStop(1, C.dkblue);
     c.fillStyle = sky; c.fillRect(0, 0, W, H);
-    // Stars
     var i;
     for (i = 0; i < 55; i++) {
       var sx = (i * 53 + 7) % W, sy = (i * 97 + 3) % (H * 0.55);
@@ -120,14 +214,12 @@
       c.fillRect(sx, sy, (i % 3 === 0) ? 2 : 1, (i % 3 === 0) ? 2 : 1);
     }
     c.globalAlpha = 1;
-    // Crescent moon
     c.globalAlpha = 0.88;
     c.fillStyle = C.moon;
     c.beginPath(); c.arc(50, 44, 22, 0, Math.PI * 2); c.fill();
     c.fillStyle = C.indigo;
     c.beginPath(); c.arc(60, 40, 17, 0, Math.PI * 2); c.fill();
     c.globalAlpha = 1;
-    // Palace silhouettes
     var horizY = H * 0.60;
     c.fillStyle = '#0e0826';
     c.beginPath(); c.moveTo(0, horizY + 20);
@@ -135,7 +227,6 @@
       c.quadraticCurveTo(dx + 19, horizY - 10 + (dx * 7 + 4) % 26, dx + 38, horizY + 12 + (dx * 3) % 16);
     }
     c.lineTo(W, H); c.lineTo(0, H); c.closePath(); c.fill();
-    // Minarets
     var minarets = [[26, 78], [66, 106], [132, 92], [182, 114], [228, 82], [256, 68]];
     for (var m = 0; m < minarets.length; m++) {
       var mx = minarets[m][0], mh = minarets[m][1], my = horizY - mh;
@@ -157,7 +248,6 @@
     c.fillStyle = '#0a0620';
     c.fillRect(0, horizY + 12, W, H - horizY - 12);
     if (scene === 'boot' || scene === 'menu') {
-      // Lantern glows on horizon
       for (var li = 0; li < 6; li++) {
         var lx = 22 + li * 44, ly = horizY - 8;
         var la = 0.25 + 0.45 * Math.abs(Math.sin(t * 1.8 + li * 1.3));
@@ -189,21 +279,18 @@
     var ch = info.ch, x = info.x, y = info.y, w = info.w, h = info.h;
     var sel = info.sel, done = info.done;
     var cx = x + w / 2, cy = y + h / 2;
-    // Hanging rope
     c.strokeStyle = C.copper; c.lineWidth = 1.5;
     c.beginPath(); c.moveTo(cx, y - 10); c.lineTo(cx, y + 4); c.stroke();
     for (var ci = 0; ci < 3; ci++) {
       c.strokeStyle = C.goldL; c.lineWidth = 1;
       c.beginPath(); c.ellipse(cx, y - 8 + ci * 4, 2, 3, 0, 0, Math.PI * 2); c.stroke();
     }
-    // Outer glow
     if (sel || done) {
       c.globalAlpha = sel ? (0.22 + 0.12 * Math.sin(t * 3)) : 0.10;
       c.fillStyle = done ? C.teal : C.amber;
       c.beginPath(); c.ellipse(cx, cy, w * 0.58, h * 0.54, 0, 0, Math.PI * 2); c.fill();
       c.globalAlpha = 1;
     }
-    // Lantern hex body
     c.fillStyle = done ? '#0a2018' : (sel ? '#261608' : '#140c22');
     c.strokeStyle = done ? C.teal : (sel ? C.amber : C.copper);
     c.lineWidth = sel ? 2 : 1.5;
@@ -215,7 +302,6 @@
     c.lineTo(x + 8, y + h * 0.72);
     c.lineTo(x + 8, y + h * 0.28);
     c.closePath(); c.fill(); c.stroke();
-    // Inner panel glow
     if (!info.locked) {
       c.fillStyle = done ? 'rgba(0,184,160,.20)' : 'rgba(212,144,10,.16)';
       c.beginPath();
@@ -227,22 +313,17 @@
       c.lineTo(x + 13, y + h * 0.30);
       c.closePath(); c.fill();
     }
-    // Cap & base bar
     c.fillStyle = C.gold;
     c.fillRect(cx - 13, y + 2, 26, 5);
     c.fillRect(cx - 13, y + h - 7, 26, 5);
-    // Corner gems
     g.circle(cx - 9, y + 4, 2.5, C.amber);
     g.circle(cx + 9, y + 4, 2.5, C.amber);
     g.circle(cx - 9, y + h - 4, 2.5, C.amber);
     g.circle(cx + 9, y + h - 4, 2.5, C.amber);
-    // Chapter icon
     if (ch.icon && !info.locked) ch.icon(api, x + 26, cy - 2);
-    // Text
     var nameCol = done ? C.teal : (sel ? C.amber : C.goldL);
     api.txtCFit(ch.name, cx + 12, cy - 12, 7, nameCol, true, w - 52);
     api.txtCFit(ch.sub || '', cx + 12, cy + 4, 6, sel ? C.parch : C.dust, true, w - 52);
-    // Done badge
     if (done) {
       c.globalAlpha = 0.88; c.fillStyle = C.teal;
       c.font = "bold 10px 'Press Start 2P'";
@@ -250,11 +331,143 @@
       c.fillText('☽', x + w - 8, y + 8);
       c.textAlign = 'left'; c.globalAlpha = 1;
     }
-    // Selection arrow
     if (sel) {
       c.fillStyle = C.amber;
       c.beginPath(); c.moveTo(x + 2, cy); c.lineTo(x - 7, cy - 5); c.lineTo(x - 7, cy + 5); c.closePath(); c.fill();
     }
+  }
+
+  /* ============================================================
+   * Chapter 1 data — story-fragment deck (choose-your-path cards)
+   * ============================================================ */
+  var FRAGMENT_POOL = [
+    { label: "THE MERCHANT'S RUIN", tag: 'brave',  val: 20 },
+    { label: "THE THIEF'S BARGAIN", tag: 'clever', val: 22 },
+    { label: "THE DJINN'S OATH",    tag: 'wise',   val: 24 },
+    { label: "THE BEGGAR'S KINDNESS", tag: 'mercy', val: 18 },
+    { label: 'THE CARAVAN AMBUSH',  tag: 'brave',  val: 22 },
+    { label: 'THE RIDDLE UNTOLD',   tag: 'clever', val: 20 },
+    { label: "THE HERMIT'S WARNING", tag: 'wise',  val: 18 },
+    { label: "THE ORPHAN'S PLEA",   tag: 'mercy',  val: 22 },
+    { label: 'THE STORM AT SEA',    tag: 'brave',  val: 18 },
+    { label: 'THE FALSE VIZIER',    tag: 'clever', val: 18 },
+    { label: 'A KING FORGIVEN',     tag: 'mercy',  val: 20 },
+    { label: "THE STARS' COUNSEL",  tag: 'wise',   val: 22 },
+  ];
+  var FRAG_CARDS = [
+    { x: 12,  y: 356, w: 78, h: 96 },
+    { x: 96,  y: 356, w: 78, h: 96 },
+    { x: 180, y: 356, w: 78, h: 96 },
+  ];
+  function nextFragment(ch) {
+    if (!ch.pool || !ch.pool.length) ch.pool = shuffleArr(FRAGMENT_POOL.slice());
+    return ch.pool.pop();
+  }
+
+  /* ============================================================
+   * Chapter 2 data — island memory path
+   * ============================================================ */
+  var ISLANDS = [
+    { x: 52,  y: 150 }, { x: 150, y: 118 }, { x: 222, y: 186 },
+    { x: 96,  y: 250 }, { x: 186, y: 288 },
+  ];
+  function startSinbadRound(ch) {
+    ch.sequence = [];
+    for (var i = 0; i < ch.seqLen; i++) ch.sequence.push(randI(0, ISLANDS.length - 1));
+    ch.phase = 'show'; ch.showIdx = -1; ch.showT = 0.4;
+  }
+
+  /* ============================================================
+   * Chapter 3 data — spot the true gold jars
+   * ============================================================ */
+  var JARS = [
+    { x: 50, y: 170 }, { x: 135, y: 170 }, { x: 220, y: 170 },
+    { x: 50, y: 270 }, { x: 135, y: 270 }, { x: 220, y: 270 },
+  ];
+  function startAlibabaRound(ch) {
+    var idxs = [0, 1, 2, 3, 4, 5]; shuffleArr(idxs);
+    ch.trueIdx = [idxs[0], idxs[1]]; ch.foundIdx = [];
+    ch.phase = 'reveal'; ch.revealT = 1.1; ch.roundT = ch.roundDur || 7;
+  }
+
+  /* ============================================================
+   * Chapter 4 data — command the genie (branching choices)
+   * ============================================================ */
+  var WISH_ROUNDS = [
+    { situation: "JAFAR'S SOLDIERS STORM THE GATE.", options: [
+      { label: 'RAISE A WALL OF SAND', hint: 'Steady & sure', cost: 0, tag: 'wise' },
+      { label: 'CALL DOWN DESERT FIRE', hint: 'Bold — costs favor', cost: 1, tag: 'brave' },
+      { label: 'WHISPER A CLEVER RUSE', hint: 'Sly — costs favor', cost: 1, tag: 'clever' },
+    ] },
+    { situation: 'THE VIZIER SENDS SPIES IN DISGUISE.', options: [
+      { label: 'POST WATCHFUL GUARDS', hint: 'Steady & sure', cost: 0, tag: 'wise' },
+      { label: 'UNLEASH A ROARING WIND', hint: 'Bold — costs favor', cost: 1, tag: 'brave' },
+      { label: 'SET A TRAIL OF FALSE GOLD', hint: 'Sly — costs favor', cost: 1, tag: 'clever' },
+    ] },
+    { situation: 'A SIEGE TOWER APPROACHES THE WALL.', options: [
+      { label: 'REINFORCE THE GATE', hint: 'Steady & sure', cost: 0, tag: 'wise' },
+      { label: 'HURL A BOULDER OF FLAME', hint: 'Bold — costs favor', cost: 1, tag: 'brave' },
+      { label: "COLLAPSE THEIR LADDERS", hint: 'Sly — costs favor', cost: 1, tag: 'clever' },
+    ] },
+    { situation: 'JAFAR HIMSELF DEMANDS THE LAMP.', options: [
+      { label: 'OFFER A HUMBLE BARGAIN', hint: 'Steady & sure', cost: 0, tag: 'mercy' },
+      { label: 'STAND AND FACE HIM', hint: 'Bold — costs favor', cost: 1, tag: 'brave' },
+      { label: 'VANISH IN A PLUME OF SMOKE', hint: 'Sly — costs favor', cost: 1, tag: 'clever' },
+    ] },
+    { situation: 'THE PALACE GUARD WAVERS IN FEAR.', options: [
+      { label: 'SPEAK WORDS OF COMFORT', hint: 'Steady & sure', cost: 0, tag: 'mercy' },
+      { label: 'RALLY THEM WITH A ROAR', hint: 'Bold — costs favor', cost: 1, tag: 'brave' },
+      { label: 'SHOW THEM A CLEVER SIGN', hint: 'Sly — costs favor', cost: 1, tag: 'clever' },
+    ] },
+    { situation: 'DAWN NEARS — ONE LAST ASSAULT.', options: [
+      { label: 'HOLD THE LINE TOGETHER', hint: 'Steady & sure', cost: 0, tag: 'wise' },
+      { label: "UNLEASH THE GENIE'S FURY", hint: 'Bold — costs favor', cost: 1, tag: 'brave' },
+      { label: 'SPARE THE FLEEING SOLDIERS', hint: 'Sly — costs favor', cost: 1, tag: 'mercy' },
+    ] },
+  ];
+  var WISH_CARDS = [
+    { x: 14, y: 210, w: 242, h: 64 },
+    { x: 14, y: 284, w: 242, h: 64 },
+    { x: 14, y: 358, w: 242, h: 64 },
+  ];
+
+  /* ============================================================
+   * Chapter 5 data — chart the sky (route-planning lattice)
+   * ============================================================ */
+  var LATTICE_COLS = 5, LATTICE_ROWS = 3;
+  var LAT_COLX = [40, 87, 134, 181, 228];
+  var LAT_ROWY = [150, 220, 290];
+  function weightedType() {
+    var r = Math.random();
+    if (r < 0.35) return 'star';
+    if (r < 0.80) return 'cloud';
+    return 'storm';
+  }
+  function buildLattice() {
+    var nodes = [];
+    for (var col = 0; col < LATTICE_COLS; col++) {
+      var colArr = [];
+      for (var row = 0; row < LATTICE_ROWS; row++) {
+        colArr.push({ col: col, row: row, x: LAT_COLX[col], y: LAT_ROWY[row], type: weightedType() });
+      }
+      nodes.push(colArr);
+    }
+    return nodes;
+  }
+
+  /* ─── Bespoke finale: outcome depends on which story tags dominated ─── */
+  function renderFinale(api, info) {
+    var W = api.W, H = api.H;
+    scenery(api, 'finale', info.sceneT);
+    emblem(api, W / 2, H * 0.24);
+    var tag = dominantTag();
+    api.lines(FINALE_TEXT[tag], W / 2, H * 0.38, 11, C.amber, 16);
+    api.txtC('FINAL COINS  ' + info.respect, W / 2, H * 0.62, 11, C.ivory);
+    api.txtC('A THOUSAND NIGHTS', W / 2, H * 0.70, 8, C.tealL);
+    if (Math.floor(info.sceneT * 1.5) % 2 === 0 && info.sceneT > 0.6) {
+      api.txtC('RETURN TO THE BAZAAR', W / 2, H - 40, 11, C.ivory);
+    }
+    api.vignette(); api.scanlines();
   }
 
   /* ===================================================================== */
@@ -267,24 +480,11 @@
     credit:    'AFTER ONE THOUSAND AND ONE NIGHTS · c.800–1500 CE',
     emblem:    emblem,
     scenery:   scenery,
+    renderFinale: renderFinale,
     bootCta:   'TAP TO HEAR THE TALE',
     menuLabel: 'A THOUSAND NIGHTS',
     menuHint:  'CHOOSE YOUR TALE',
     menuDone:  'ALL TALES ARE TOLD. SCHEHERAZADE LIVES.',
-    finale: [
-      'SCHEHERAZADE HAS',
-      'TOLD HER LAST TALE.',
-      '',
-      'One thousand and one',
-      'nights of stories,',
-      'and the Sultan sets',
-      'down his sword forever.',
-      '',
-      '"He who does not know',
-      ' his past is lost in',
-      ' the desert without',
-      ' a star to follow."',
-    ],
 
     screens: {
       win:          C.amber,
@@ -315,12 +515,10 @@
       title: function (api, currency) {
         var c = api.ctx, W = api.W;
         var t = Date.now() * 0.001;
-        // Header band
         var topGrad = c.createLinearGradient(0, 0, 0, 80);
         topGrad.addColorStop(0, C.night);
         topGrad.addColorStop(1, C.dkblue);
         c.fillStyle = topGrad; c.fillRect(0, 0, W, 80);
-        // Stars
         var i;
         for (i = 0; i < 20; i++) {
           var sx = (i * 17 + 5) % W, sy = (i * 11 + 3) % 44;
@@ -328,28 +526,24 @@
           c.fillStyle = C.star; c.fillRect(sx, sy, 1, 1);
         }
         c.globalAlpha = 1;
-        // Crescent in header
         c.globalAlpha = 0.82;
         c.fillStyle = C.moon;
         c.beginPath(); c.arc(W - 30, 28, 15, 0, Math.PI * 2); c.fill();
         c.fillStyle = C.dkblue;
         c.beginPath(); c.arc(W - 24, 25, 11, 0, Math.PI * 2); c.fill();
         c.globalAlpha = 1;
-        // Title scroll
         c.fillStyle = '#16102e'; c.fillRect(8, 10, W - 16, 58);
         c.strokeStyle = C.gold; c.lineWidth = 1.5; c.strokeRect(8, 10, W - 16, 58);
         c.strokeStyle = C.copper; c.lineWidth = 1; c.strokeRect(11, 13, W - 22, 52);
         api.txtCFit('A THOUSAND NIGHTS', W / 2, 18, 9, C.goldL, true, W - 40);
         api.txtCFit(currency + ' COINS', W / 2, 38, 7, C.amber, true, W - 60);
         api.txtCFit('CHOOSE YOUR TALE', W / 2, 56, 6, C.teal, true, W - 60);
-        // Ropes from header down to each lantern
         c.strokeStyle = C.copper; c.lineWidth = 1; c.globalAlpha = 0.4;
         for (var ri = 0; ri < CARD_LAYOUT.length; ri++) {
           var rl = CARD_LAYOUT[ri];
           c.beginPath(); c.moveTo(rl.x + rl.w / 2, 70); c.lineTo(rl.x + rl.w / 2, rl.y - 4); c.stroke();
         }
         c.globalAlpha = 1;
-        // Ambient sparkles in menu area
         for (var si = 0; si < 10; si++) {
           var spx = (si * 31 + 12) % W, spy = 90 + (si * 57) % 250;
           var spa = 0.08 + 0.16 * Math.abs(Math.sin(t * 1.8 + si * 1.7));
@@ -370,8 +564,8 @@
     chapters: [
 
       /* ==============================================================
-       * 1. THE SULTAN'S EAR — pendulum-tap timing (10 successes, 3 misses)
-       * Scheherazade must strike the golden ink zone to spin her tale.
+       * 1. THE SULTAN'S EAR — story-fragment deck (choose-your-path)
+       * Tap fragment cards to fill the suspense meter before dawn.
        * ============================================================== */
       {
         id: 'scheherazade',
@@ -389,121 +583,94 @@
         intro: [
           'NIGHT FALLS ON THE',
           "SULTAN'S PALACE.",
-          'Scheherazade begins',
-          'her tale — but the',
-          'Sultan grows restless.',
-          'Keep him captivated!',
+          'Weave the tale from',
+          'story fragments —',
+          'keep him spellbound',
+          'before the dawn breaks!',
         ],
         quote: '"Once upon a time and a long, long time ago..." — One Thousand and One Nights',
-        help: 'TAP when the quill touches the GOLDEN INK ZONE!',
+        help: 'TAP a story fragment to weave it in. Fill SUSPENSE before dawn!',
         winText: "The Sultan leans forward, enchanted. The night is saved — and Scheherazade with it.",
-        loseText: "The Sultan yawned. The tale was lost and silence fell over the palace.",
+        loseText: "The Sultan's patience ran out with the tale unfinished. Dawn found her silent.",
         init: function (api) {
-          this.swings = 0;
-          this.need   = 10;
-          this.misses = 0;
-          this.maxMis = 3;
-          this.angle  = 0;
-          this.dir    = 1;
-          this.spd    = 0.72;
-          this.zone   = 0.16;
-          this.pause  = 0;
-          this.result = null;
+          this.pool = shuffleArr(FRAGMENT_POOL.slice());
+          this.hand = [nextFragment(this), nextFragment(this), nextFragment(this)];
+          this.suspense = 0;
+          this.target = 155;
+          this.dawn = 30; this.maxDawn = 30;
+          this.cooldown = 0; this.flash2 = 0; this.lastLabel = '';
         },
         update: function (api, dt) {
-          if (this.pause > 0) { this.pause -= dt; return; }
-          var maxA = Math.PI / 3;
-          this.angle += this.dir * this.spd * dt;
-          if (this.angle > maxA)  { this.angle = maxA;  this.dir = -1; }
-          if (this.angle < -maxA) { this.angle = -maxA; this.dir =  1; }
-          if (api.confirm()) {
-            if (Math.abs(this.angle) < this.zone) {
-              this.swings++;
-              this.result = 'hit';
-              api.addScore(20); api.audio.sfx('power');
-              api.shake(3, 0.12);
-              api.burst(api.W / 2, api.H * 0.55, C.goldL, 12);
-              this.spd  = Math.min(2.2, this.spd + 0.18);
-              this.zone = Math.max(0.07, this.zone - 0.008);
-              this.pause = 0.34;
-              if (this.swings >= this.need) { api.addScore(60); api.win(); }
-            } else {
-              this.misses++;
-              this.result = 'miss';
-              api.audio.sfx('hurt'); api.shake(4, 0.18);
-              this.pause = 0.38;
-              if (this.misses >= this.maxMis) { api.lose(); }
+          if (this.cooldown > 0) this.cooldown -= dt;
+          if (this.flash2 > 0) this.flash2 -= dt;
+          this.dawn -= dt;
+          if (this.dawn <= 0) { api.lose(); return; }
+          if (api.pointer.justDown && this.cooldown <= 0) {
+            var idx = hitRects(api.pointer.x, api.pointer.y, FRAG_CARDS);
+            if (idx >= 0) {
+              var card = this.hand[idx];
+              this.suspense += card.val;
+              this.lastLabel = card.label;
+              TAGS[card.tag] = (TAGS[card.tag] || 0) + 1;
+              this.hand[idx] = nextFragment(this);
+              this.cooldown = 0.6; this.flash2 = 0.4;
+              api.audio.sfx('power'); api.shake(2, 0.1);
+              api.burst(FRAG_CARDS[idx].x + FRAG_CARDS[idx].w / 2, FRAG_CARDS[idx].y + 20, C.goldL, 10);
+              if (this.suspense >= this.target) { api.addScore(Math.round(this.suspense)); api.win(); }
             }
           }
         },
         draw: function (api) {
           var g = api.gfx, c = api.ctx, W = api.W, H = api.H;
-          // Throne room
           c.fillStyle = C.dome; c.fillRect(0, 0, W, H);
-          // Arched niches
-          var archY = H * 0.28;
+          var archY = H * 0.24;
           c.fillStyle = '#120938';
-          var ai;
-          for (ai = 0; ai < 4; ai++) {
+          for (var ai = 0; ai < 4; ai++) {
             var ax = 18 + ai * 62;
             c.fillRect(ax, archY, 46, H - archY);
             c.beginPath(); c.arc(ax + 23, archY, 23, Math.PI, 0); c.fill();
           }
-          // Overhead lanterns
-          var li2;
-          for (li2 = 0; li2 < 3; li2++) {
-            var lx2 = 50 + li2 * 84, ly2 = 56;
+          for (var li2 = 0; li2 < 3; li2++) {
+            var lx2 = 50 + li2 * 84, ly2 = 50;
             c.globalAlpha = 0.16; c.fillStyle = C.amber;
-            c.beginPath(); c.arc(lx2, ly2, 20, 0, Math.PI * 2); c.fill();
+            c.beginPath(); c.arc(lx2, ly2, 18, 0, Math.PI * 2); c.fill();
             c.globalAlpha = 1; g.circle(lx2, ly2, 5, C.amber);
             g.rect(lx2 - 2, ly2 - 14, 4, 14, C.copper);
           }
-          // Silk curtains
-          c.fillStyle = '#3a0c48'; c.fillRect(0, 0, 24, H); c.fillRect(W - 24, 0, 24, H);
-          c.strokeStyle = C.silk; c.lineWidth = 1; c.globalAlpha = 0.5;
-          c.beginPath(); c.moveTo(0, 0); c.lineTo(24, H / 3); c.stroke();
-          c.beginPath(); c.moveTo(24, 0); c.lineTo(0, H / 2); c.stroke();
-          c.beginPath(); c.moveTo(W, 0); c.lineTo(W - 24, H / 3); c.stroke();
-          c.beginPath(); c.moveTo(W - 24, 0); c.lineTo(W, H / 2); c.stroke();
-          c.globalAlpha = 1;
-          // Inkwell
-          var inkX = W / 2, inkY = H * 0.72;
-          g.rect(inkX - 14, inkY - 8, 28, 20, C.copper);
-          g.circle(inkX, inkY - 8, 14, C.copper);
-          c.fillStyle = C.gold;
-          c.beginPath(); c.ellipse(inkX, inkY - 8, 10, 6, 0, 0, Math.PI * 2); c.fill();
-          // Zone arc
-          var qLen = 136;
-          c.save();
-          c.translate(inkX, inkY - 8);
-          c.globalAlpha = 0.24; c.strokeStyle = C.goldL; c.lineWidth = 14;
-          c.beginPath(); c.arc(0, 0, qLen, -Math.PI / 2 - this.zone, -Math.PI / 2 + this.zone);
-          c.stroke(); c.globalAlpha = 1; c.restore();
-          // Quill pendulum
-          var qTipX = inkX + Math.sin(this.angle) * qLen;
-          var qTipY = inkY - 8 - Math.cos(this.angle) * qLen;
-          c.strokeStyle = C.amber; c.lineWidth = 3;
-          c.beginPath(); c.moveTo(inkX, inkY - 8); c.lineTo(qTipX, qTipY); c.stroke();
-          c.fillStyle = C.ivory;
-          c.beginPath(); c.moveTo(qTipX - 5, qTipY); c.lineTo(qTipX + 5, qTipY); c.lineTo(qTipX, qTipY - 14); c.closePath(); c.fill();
-          g.circle(qTipX, qTipY + 2, 4, C.amber);
-          // Flash feedback
-          if (this.result === 'hit' && this.pause > 0.2) {
-            c.globalAlpha = 0.4; c.fillStyle = C.gold; c.fillRect(0, 0, W, H); c.globalAlpha = 1;
-          } else if (this.result === 'miss' && this.pause > 0.2) {
-            c.globalAlpha = 0.28; c.fillStyle = C.ruby; c.fillRect(0, 0, W, H); c.globalAlpha = 1;
+          c.fillStyle = '#3a0c48'; c.fillRect(0, 0, 20, H); c.fillRect(W - 20, 0, 20, H);
+
+          var meterY = 96, meterH = 14, meterW = W - 40;
+          g.rect(20, meterY, meterW, meterH, '#1a1024');
+          c.strokeStyle = C.gold; c.lineWidth = 1.5; c.strokeRect(20, meterY, meterW, meterH);
+          var fillW = Math.max(0, Math.min(meterW - 4, (meterW - 4) * (this.suspense / this.target)));
+          g.rect(22, meterY + 2, fillW, meterH - 4, C.goldL);
+          api.txtCFit('SUSPENSE', W / 2, meterY - 14, 8, C.amber, true);
+          var dawnFrac = Math.max(0, this.dawn / this.maxDawn);
+          api.txtCFit('DAWN IN ' + Math.ceil(this.dawn) + 's', W / 2, meterY + 24, 8, dawnFrac < 0.25 ? C.rubyL : C.sandL, true);
+
+          if (this.lastLabel) {
+            c.globalAlpha = Math.min(1, this.flash2 * 2.5 + 0.35);
+            api.txtCHead('"' + this.lastLabel + '"', W / 2, 158, 9, C.cream, false, 13, W - 40);
+            c.globalAlpha = 1;
           }
-          // HUD
-          api.topBar('TALES: ' + this.swings + ' / ' + this.need);
-          var hi;
-          for (hi = 0; hi < 3; hi++) g.circle(W - 38 + hi * 13, 20, 4, hi < (3 - this.misses) ? C.teal : '#1a0c28');
+
+          for (var i = 0; i < 3; i++) {
+            var r = FRAG_CARDS[i], card = this.hand[i];
+            var tagCol = card.tag === 'brave' ? C.rubyL : card.tag === 'clever' ? C.tealL : card.tag === 'wise' ? C.goldL : C.silk;
+            g.rect(r.x, r.y, r.w, r.h, '#1c1230');
+            c.strokeStyle = tagCol; c.lineWidth = 2; c.strokeRect(r.x, r.y, r.w, r.h);
+            tagGlyph(api, card.tag, r.x + r.w / 2, r.y + 22, tagCol);
+            api.txtCHead(card.label, r.x + r.w / 2, r.y + 40, 7, C.ivory, true, 9, r.w - 10);
+            api.txtCFit('+' + card.val, r.x + r.w / 2, r.y + r.h - 16, 8, tagCol, true);
+          }
+
+          api.topBar('WEAVE THE TALE');
           api.vignette(); api.scanlines();
         },
       },
 
       /* ==============================================================
-       * 2. THE ROC'S SHADOW — steer Sinbad's ship (22 s, 3 lives)
-       * Sinbad's 2nd Voyage: the monstrous Roc blots out the sun.
+       * 2. THE ROC'S SHADOW — island memory path (watch, then repeat)
        * ============================================================== */
       {
         id: 'sinbad',
@@ -522,140 +689,91 @@
           'SINBAD IS STRANDED',
           'ON A LONELY ISLAND.',
           'The monstrous Roc',
-          'returns with prey,',
-          'its wings blotting',
-          'out the whole sky!',
+          'wheels overhead —',
+          'remember the safe',
+          'stepping stones home!',
         ],
         quote: '"Its wings darkened the sun and the earth shook with its cry." — Sinbad\'s Second Voyage',
-        help: 'STEER left/right to dodge Roc feathers and rocks!',
-        winText: "Sinbad clung to the Roc's talon and soared to safety. Courage rewarded!",
-        loseText: "The Roc's shadow swallowed Sinbad's ship. Lost at sea.",
+        help: 'WATCH the glowing islands, then TAP them back in order!',
+        winText: "Sinbad traced the safe path home from memory alone — the Roc's shadow passed him by.",
+        loseText: "Sinbad's foot found open water. The Roc's shriek was the last sound he heard.",
         init: function (api) {
-          this.shipX  = api.W / 2;
-          this.lives  = 3;
-          this.timer  = 0;
-          this.dur    = 22;
-          this.obs    = [];
-          this.spawnT = 0;
-          this.invT   = 0;
-          this.waveY  = 0;
-          this.rocX   = api.W * 0.65;
-          this.rocDir = -1;
+          this.round = 0; this.roundsToWin = 4; this.seqLen = 3; this.lives = 3;
+          this.sequence = []; this.inputIdx = 0;
+          startSinbadRound(this);
         },
         update: function (api, dt) {
-          var W = api.W, H = api.H;
-          this.timer += dt;
-          if (this.invT > 0) this.invT -= dt;
-          if (this.timer >= this.dur) { api.addScore(100); api.win(); return; }
-          if (api.pointer.down) this.shipX = clamp(api.pointer.x, 26, W - 26);
-          if (api.keyDown('left'))  this.shipX = clamp(this.shipX - 180 * dt, 26, W - 26);
-          if (api.keyDown('right')) this.shipX = clamp(this.shipX + 180 * dt, 26, W - 26);
-          this.waveY = (this.waveY + 90 * dt) % 48;
-          this.rocX += this.rocDir * 26 * dt;
-          if (this.rocX < 32) { this.rocX = 32; this.rocDir = 1; }
-          if (this.rocX > W - 32) { this.rocX = W - 32; this.rocDir = -1; }
-          // Spawn feathers and rocks
-          this.spawnT -= dt;
-          if (this.spawnT <= 0) {
-            this.spawnT = Math.max(0.55, 1.8 - this.timer * 0.045);
-            var kind = Math.random() < 0.65 ? 'feather' : 'rock';
-            this.obs.push({ x: 22 + randI(0, W - 44), y: -32, kind: kind, vx: (Math.random() - 0.5) * 28 });
-          }
-          var spd = 85 + this.timer * 3.5;
-          var i;
-          for (i = 0; i < this.obs.length; i++) {
-            this.obs[i].y += spd * dt;
-            this.obs[i].x = clamp(this.obs[i].x + this.obs[i].vx * dt, 10, W - 10);
-          }
-          this.obs = this.obs.filter(function (o) { return o.y < H + 36; });
-          if (this.invT <= 0) {
-            var sy = H - 54;
-            var j;
-            for (j = 0; j < this.obs.length; j++) {
-              var ob = this.obs[j];
-              if (Math.abs(ob.x - this.shipX) < 22 && Math.abs(ob.y - sy) < 22) {
-                this.lives--; this.invT = 1.4;
-                api.shake(6, 0.24); api.flash(C.ruby, 0.18); api.audio.sfx('hurt');
-                api.burst(this.shipX, sy, C.ruby, 10);
-                if (this.lives <= 0) { api.lose(); return; }
-                break;
+          if (this.phase === 'show') {
+            this.showT -= dt;
+            if (this.showT <= 0) {
+              this.showIdx++;
+              if (this.showIdx >= this.sequence.length) { this.phase = 'input'; this.inputIdx = 0; }
+              else { this.showT = 0.55; api.audio.sfx('blip'); }
+            }
+          } else if (this.phase === 'input') {
+            if (api.pointer.justDown) {
+              var hit = hitPoints(api.pointer.x, api.pointer.y, ISLANDS, 20);
+              if (hit >= 0) {
+                if (hit === this.sequence[this.inputIdx]) {
+                  api.audio.sfx('select'); api.burst(ISLANDS[hit].x, ISLANDS[hit].y, C.tealL, 8);
+                  this.inputIdx++;
+                  if (this.inputIdx >= this.sequence.length) {
+                    this.round++;
+                    api.addScore(30 + this.seqLen * 5);
+                    TAGS.brave = (TAGS.brave || 0) + 1;
+                    if (this.round >= this.roundsToWin) { api.win(); return; }
+                    this.seqLen++;
+                    startSinbadRound(this);
+                  }
+                } else {
+                  this.lives--;
+                  api.audio.sfx('hurt'); api.shake(5, 0.2); api.flash(C.ruby, 0.15);
+                  if (this.lives <= 0) { api.lose(); return; }
+                  startSinbadRound(this);
+                }
               }
             }
           }
         },
         draw: function (api) {
           var g = api.gfx, c = api.ctx, W = api.W, H = api.H, t = api.t;
-          // Ocean
           var seaGrad = c.createLinearGradient(0, H * 0.38, 0, H);
-          seaGrad.addColorStop(0, '#0a2840');
-          seaGrad.addColorStop(1, '#042028');
+          seaGrad.addColorStop(0, '#0a2840'); seaGrad.addColorStop(1, '#042028');
           c.fillStyle = seaGrad; c.fillRect(0, 0, W, H);
-          // Sky darkened by Roc
           var skyGrad = c.createLinearGradient(0, 0, 0, H * 0.42);
-          skyGrad.addColorStop(0, '#0c0618');
-          skyGrad.addColorStop(1, '#142030');
+          skyGrad.addColorStop(0, '#0c0618'); skyGrad.addColorStop(1, '#142030');
           c.fillStyle = skyGrad; c.fillRect(0, 0, W, H * 0.42);
-          // Roc silhouette
-          c.globalAlpha = 0.5 + 0.12 * Math.sin(t * 0.8);
+          var rocX = W * 0.5 + Math.sin(t * 0.5) * 40;
+          c.globalAlpha = 0.42 + 0.1 * Math.sin(t * 0.8);
           c.fillStyle = '#060210';
-          c.beginPath(); c.ellipse(this.rocX, 26, 88, 42, 0, 0, Math.PI * 2); c.fill();
-          c.beginPath(); c.ellipse(this.rocX - 70, 42, 48, 20, -0.3, 0, Math.PI * 2); c.fill();
-          c.beginPath(); c.ellipse(this.rocX + 70, 42, 48, 20, 0.3, 0, Math.PI * 2); c.fill();
+          c.beginPath(); c.ellipse(rocX, 26, 80, 36, 0, 0, Math.PI * 2); c.fill();
           c.globalAlpha = 1;
-          // Waves
-          c.strokeStyle = '#1a5080'; c.lineWidth = 1.5;
-          var wy;
-          for (wy = H * 0.38 + this.waveY; wy < H; wy += 24) {
-            c.beginPath();
-            var wx;
-            for (wx = 0; wx < W; wx += 36) {
-              c.moveTo(wx, wy + Math.sin(t * 2 + wx * 0.08) * 3);
-              c.quadraticCurveTo(wx + 18, wy - 5, wx + 36, wy + Math.sin(t * 2 + (wx + 36) * 0.08) * 3);
+          for (var i = 0; i < ISLANDS.length; i++) {
+            var isl = ISLANDS[i];
+            var isShown = (this.phase === 'show' && this.showIdx >= 0 && this.sequence[this.showIdx] === i);
+            var isDone = (this.phase === 'input' && this.sequence.slice(0, this.inputIdx).indexOf(i) >= 0);
+            if (isShown) {
+              c.globalAlpha = 0.35 + 0.25 * Math.sin(t * 8); c.fillStyle = C.goldL;
+              c.beginPath(); c.arc(isl.x, isl.y, 26, 0, Math.PI * 2); c.fill(); c.globalAlpha = 1;
             }
-            c.stroke();
-          }
-          // Obstacles
-          var oi;
-          for (oi = 0; oi < this.obs.length; oi++) {
-            var ob = this.obs[oi];
-            if (ob.kind === 'feather') {
-              c.fillStyle = C.smoke;
-              c.beginPath();
-              c.moveTo(ob.x, ob.y - 16);
-              c.quadraticCurveTo(ob.x + 9, ob.y, ob.x, ob.y + 12);
-              c.quadraticCurveTo(ob.x - 9, ob.y, ob.x, ob.y - 16);
-              c.fill();
-              c.strokeStyle = C.smokeL; c.lineWidth = 1;
-              c.beginPath(); c.moveTo(ob.x, ob.y - 14); c.lineTo(ob.x, ob.y + 10); c.stroke();
-            } else {
-              g.circle(ob.x, ob.y, 11, C.wall);
-              g.circle(ob.x - 3, ob.y - 2, 5, C.wallL);
+            g.circle(isl.x, isl.y + 6, 16, C.sand);
+            g.circle(isl.x, isl.y + 2, 12, C.sandL);
+            c.strokeStyle = isDone ? C.teal : (isShown ? C.goldL : C.dust); c.lineWidth = 2;
+            c.beginPath(); c.arc(isl.x, isl.y + 2, 12, 0, Math.PI * 2); c.stroke();
+            if (isDone) {
+              c.fillStyle = C.teal; c.font = "bold 10px 'Press Start 2P'";
+              c.textAlign = 'center'; c.fillText('✓', isl.x, isl.y + 6); c.textAlign = 'left';
             }
           }
-          // Sinbad's ship
-          var sy2 = H - 54;
-          if (this.invT <= 0 || Math.floor(this.invT * 8) % 2 === 0) {
-            g.rect(this.shipX - 20, sy2 + 4, 40, 14, C.sand);
-            c.fillStyle = C.dust;
-            c.beginPath(); c.moveTo(this.shipX - 20, sy2 + 18); c.lineTo(this.shipX + 20, sy2 + 18); c.lineTo(this.shipX + 14, sy2 + 26); c.lineTo(this.shipX - 14, sy2 + 26); c.closePath(); c.fill();
-            c.fillStyle = C.ivory;
-            c.beginPath(); c.moveTo(this.shipX, sy2 - 18); c.lineTo(this.shipX + 16, sy2 + 4); c.lineTo(this.shipX - 16, sy2 + 4); c.closePath(); c.fill();
-            g.rect(this.shipX - 2, sy2 - 20, 4, 24, C.dust);
-            c.fillStyle = C.goldL;
-            c.beginPath(); c.arc(this.shipX + 2, sy2 - 20, 4.5, 0, Math.PI * 2); c.fill();
-            c.fillStyle = C.indigo;
-            c.beginPath(); c.arc(this.shipX + 4, sy2 - 21, 3, 0, Math.PI * 2); c.fill();
-          }
-          api.topBar('SURVIVE: ' + Math.max(0, Math.ceil(this.dur - this.timer)) + 's');
-          var li;
-          for (li = 0; li < 3; li++) g.circle(W - 38 + li * 13, 20, 4, li < this.lives ? C.teal : '#1a0c28');
+          api.topBar('ROUND ' + Math.min(this.round + 1, this.roundsToWin) + ' / ' + this.roundsToWin);
+          for (var li = 0; li < 3; li++) g.circle(W - 38 + li * 13, 20, 4, li < this.lives ? C.teal : '#1a0c28');
+          api.txtCFit(this.phase === 'show' ? 'WATCH THE STARS...' : 'REPEAT THE PATH', W / 2, H - 30, 9, C.sandL, true);
           api.vignette();
         },
       },
 
       /* ==============================================================
-       * 3. OPEN SESAME — catch gold bags, dodge daggers (12 bags, 3 lives)
-       * Ali Baba fills the sacks before the Forty Thieves return!
+       * 3. OPEN SESAME — spot the true gold jars before the thieves return
        * ============================================================== */
       {
         id: 'alibaba',
@@ -674,129 +792,89 @@
         intro: [
           '"OPEN SESAME!"',
           'ALI BABA ENTERS',
-          'THE THIEVES\' CAVE.',
-          'Gold rains from the',
-          'ceiling — but the',
-          'forty thieves return!',
+          "THE THIEVES' CAVE.",
+          'Only two jars hold',
+          'true gold — the rest',
+          "are the thieves' traps!",
         ],
         quote: '"Open Sesame!" — Ali Baba and the Forty Thieves',
-        help: 'MOVE left/right — catch GOLD BAGS, dodge DAGGERS!',
-        winText: "Ali Baba filled his sacks and slipped away before the Forty Thieves returned.",
-        loseText: "A thief's dagger found Ali Baba in the dark. The gold was lost.",
+        help: 'MEMORIZE the glowing jars, then TAP them before the thieves return!',
+        winText: "Ali Baba's sharp eye found every hidden gleam of gold. He slipped away rich.",
+        loseText: "A thief's trap sprang shut on Ali Baba's hand. The cave keeps its gold.",
         init: function (api) {
-          this.x      = api.W / 2;
-          this.lives  = 3;
-          this.caught = 0;
-          this.need   = 12;
-          this.items  = [];
-          this.spawnT = 0;
-          this.invT   = 0;
+          this.round = 0; this.need = 5; this.lives = 3; this.roundDur = 7;
+          startAlibabaRound(this);
         },
         update: function (api, dt) {
-          var W = api.W, H = api.H;
-          if (this.invT > 0) this.invT -= dt;
-          if (api.pointer.down) this.x = clamp(api.pointer.x, 22, W - 22);
-          if (api.keyDown('left'))  this.x = clamp(this.x - 185 * dt, 22, W - 22);
-          if (api.keyDown('right')) this.x = clamp(this.x + 185 * dt, 22, W - 22);
-          this.spawnT -= dt;
-          if (this.spawnT <= 0) {
-            var progress = this.caught / this.need;
-            var isDagger = Math.random() < (0.22 + progress * 0.28);
-            this.spawnT = isDagger ? (0.5 + Math.random() * 0.5) : (0.65 + Math.random() * 0.85);
-            this.items.push({ x: 18 + randI(0, W - 36), y: -22, kind: isDagger ? 'dagger' : 'gold' });
-          }
-          var fallSpd = 95 + this.caught * 5;
-          var i;
-          for (i = 0; i < this.items.length; i++) this.items[i].y += fallSpd * dt;
-          this.items = this.items.filter(function (o) { return o.y < H + 22; });
-          var py = H - 44;
-          var j;
-          for (j = this.items.length - 1; j >= 0; j--) {
-            var it = this.items[j];
-            if (Math.abs(it.x - this.x) < 24 && Math.abs(it.y - py) < 22) {
-              if (it.kind === 'gold') {
-                this.caught++; api.addScore(15); api.audio.sfx('coin');
-                api.burst(it.x, it.y, C.gold, 8);
-                this.items.splice(j, 1);
-                if (this.caught >= this.need) { api.addScore(80); api.win(); }
-              } else if (this.invT <= 0) {
-                this.lives--; this.invT = 1.3;
-                api.shake(5, 0.22); api.flash(C.ruby, 0.16); api.audio.sfx('hurt');
-                api.burst(this.x, py, C.ruby, 8);
-                this.items.splice(j, 1);
-                if (this.lives <= 0) { api.lose(); }
+          if (this.phase === 'reveal') {
+            this.revealT -= dt;
+            if (this.revealT <= 0) this.phase = 'hunt';
+          } else if (this.phase === 'hunt') {
+            this.roundT -= dt;
+            if (this.roundT <= 0) {
+              this.lives--;
+              api.audio.sfx('hurt'); api.shake(4, 0.18); api.flash(C.ruby, 0.14);
+              if (this.lives <= 0) { api.lose(); return; }
+              startAlibabaRound(this);
+              return;
+            }
+            if (api.pointer.justDown) {
+              var hit = hitPoints(api.pointer.x, api.pointer.y, JARS, 22);
+              if (hit >= 0 && this.foundIdx.indexOf(hit) === -1) {
+                if (this.trueIdx.indexOf(hit) >= 0) {
+                  this.foundIdx.push(hit);
+                  api.audio.sfx('coin'); api.addScore(15); api.burst(JARS[hit].x, JARS[hit].y, C.gold, 10);
+                  if (this.foundIdx.length >= this.trueIdx.length) {
+                    this.round++;
+                    TAGS.clever = (TAGS.clever || 0) + 1;
+                    if (this.round >= this.need) { api.win(); return; }
+                    startAlibabaRound(this);
+                  }
+                } else {
+                  this.lives--;
+                  api.audio.sfx('hurt'); api.shake(5, 0.2); api.flash(C.ruby, 0.16);
+                  api.burst(JARS[hit].x, JARS[hit].y, C.ruby, 8);
+                  if (this.lives <= 0) { api.lose(); return; }
+                }
               }
-              break;
             }
           }
         },
         draw: function (api) {
           var g = api.gfx, c = api.ctx, W = api.W, H = api.H, t = api.t;
-          // Cave
           c.fillStyle = '#0a0614'; c.fillRect(0, 0, W, H);
           c.fillStyle = '#12082a';
-          var ci;
-          for (ci = 0; ci < 6; ci++) {
-            c.beginPath(); c.arc((ci * 50 + 20) % W, (ci * 37 + 10) % (H * 0.7), 28 + (ci * 11) % 22, 0, Math.PI * 2); c.fill();
+          for (var ci = 0; ci < 6; ci++) {
+            c.beginPath(); c.arc((ci * 50 + 20) % W, (ci * 37 + 10) % (H * 0.55) + 60, 26 + (ci * 11) % 20, 0, Math.PI * 2); c.fill();
           }
-          // Gem veins
-          c.globalAlpha = 0.3;
-          var vi;
-          for (vi = 0; vi < 5; vi++) {
-            c.strokeStyle = vi % 2 === 0 ? C.gem : C.teal; c.lineWidth = 1;
-            c.beginPath(); c.moveTo((vi * 56 + 8) % W, (vi * 41 + 8) % (H * 0.6));
-            c.lineTo((vi * 56 + 28) % W, (vi * 41 + 38) % (H * 0.6)); c.stroke();
-          }
-          c.globalAlpha = 1;
-          // Glowing gems
-          var gi2;
-          for (gi2 = 0; gi2 < 4; gi2++) {
-            var gx = (gi2 * 72 + 20) % (W - 20), gy = 80 + (gi2 * 63) % 160;
-            c.globalAlpha = 0.10 + 0.09 * Math.sin(t * 2 + gi2);
-            c.fillStyle = gi2 % 2 === 0 ? C.gem : C.teal;
-            c.beginPath(); c.arc(gx, gy, 13, 0, Math.PI * 2); c.fill();
-            c.globalAlpha = 1;
-            g.circle(gx, gy, 4, gi2 % 2 === 0 ? C.gem : C.tealL);
-          }
-          // Items
-          var ii;
-          for (ii = 0; ii < this.items.length; ii++) {
-            var it = this.items[ii];
-            if (it.kind === 'gold') {
-              g.circle(it.x, it.y, 10, C.gold);
-              g.circle(it.x, it.y - 2, 7, C.goldL);
-              g.rect(it.x - 3, it.y - 16, 6, 8, C.sand);
-              c.strokeStyle = C.copper; c.lineWidth = 1.5;
-              c.beginPath(); c.arc(it.x, it.y - 10, 4, Math.PI, 0); c.stroke();
-            } else {
-              c.fillStyle = C.ivory;
-              c.beginPath(); c.moveTo(it.x, it.y + 14); c.lineTo(it.x - 5, it.y - 6); c.lineTo(it.x + 5, it.y - 6); c.closePath(); c.fill();
-              c.fillRect(it.x - 7, it.y - 10, 14, 6);
-              c.fillStyle = C.sand; c.fillRect(it.x - 4, it.y - 24, 8, 16);
+          for (var i = 0; i < JARS.length; i++) {
+            var j = JARS[i];
+            var isTrue = this.trueIdx.indexOf(i) >= 0;
+            var isFound = this.foundIdx.indexOf(i) >= 0;
+            var showGlow = (this.phase === 'reveal' && isTrue) || isFound;
+            if (showGlow) {
+              c.globalAlpha = 0.3 + 0.2 * Math.sin(t * 4); c.fillStyle = C.gold;
+              c.beginPath(); c.arc(j.x, j.y, 24, 0, Math.PI * 2); c.fill(); c.globalAlpha = 1;
+            }
+            g.circle(j.x, j.y, 15, '#3a2560');
+            g.circle(j.x, j.y - 3, 11, '#4a3070');
+            c.strokeStyle = isFound ? C.teal : C.copper; c.lineWidth = 1.5;
+            c.beginPath(); c.arc(j.x, j.y, 15, 0, Math.PI * 2); c.stroke();
+            if (isFound) {
+              c.fillStyle = C.teal; c.font = "bold 9px 'Press Start 2P'";
+              c.textAlign = 'center'; c.fillText('✓', j.x, j.y + 3); c.textAlign = 'left';
             }
           }
-          // Ali Baba
-          var py2 = H - 44;
-          if (this.invT <= 0 || Math.floor(this.invT * 8) % 2 === 0) {
-            c.fillStyle = '#38205e';
-            c.beginPath(); c.moveTo(this.x - 12, py2 + 14); c.lineTo(this.x + 12, py2 + 14); c.lineTo(this.x + 10, py2 - 8); c.lineTo(this.x - 10, py2 - 8); c.closePath(); c.fill();
-            g.circle(this.x, py2 - 16, 10, '#d8a878');
-            c.fillStyle = C.teal;
-            c.beginPath(); c.arc(this.x, py2 - 20, 11, Math.PI, 0); c.fill();
-            g.rect(this.x - 11, py2 - 20, 22, 6, C.teal);
-            g.circle(this.x + 16, py2 - 2, 8, C.sand);
-            g.circle(this.x + 16, py2 - 4, 5, C.sandL);
-          }
-          api.topBar('BAGS: ' + this.caught + ' / ' + this.need);
-          var li3;
-          for (li3 = 0; li3 < 3; li3++) g.circle(W - 38 + li3 * 13, 20, 4, li3 < this.lives ? C.teal : '#1a0c28');
+          api.topBar('BAGS ' + this.round + ' / ' + this.need);
+          for (var li = 0; li < 3; li++) g.circle(W - 38 + li * 13, 20, 4, li < this.lives ? C.teal : '#1a0c28');
+          if (this.phase === 'reveal') api.txtCFit('REMEMBER THE GLEAM...', W / 2, H - 30, 9, C.amber, true);
+          else api.txtCFit('TIME LEFT: ' + Math.ceil(this.roundT) + 's', W / 2, H - 30, 9, this.roundT < 2.5 ? C.rubyL : C.sandL, true);
           api.vignette(); api.scanlines();
         },
       },
 
       /* ==============================================================
-       * 4. THE GENIE'S WISH — tap falling soldiers before they breach (12)
-       * Aladdin commands the Genie to defend the palace from Jafar!
+       * 4. THE GENIE'S WISH — command the genie; favor is not limitless
        * ============================================================== */
       {
         id: 'aladdin',
@@ -814,160 +892,76 @@
           g.circle(x + 14, y - 14, 3, C.amber);
         },
         intro: [
-          "ALADDIN FINDS THE",
+          'ALADDIN FINDS THE',
           'MAGIC LAMP!',
-          "But Jafar's soldiers",
-          'storm the palace.',
-          'Rub the lamp — command',
-          'the Genie to defend!',
+          "Jafar's forces close in.",
+          'Command the Genie',
+          'wisely — his favor',
+          'is not limitless.',
         ],
         quote: '"Thy wish is my command." — The Genie of the Lamp',
-        help: 'TAP the SOLDIERS before they breach the palace gate!',
-        winText: "The Genie's power scattered Jafar's forces. The palace stands!",
-        loseText: "Jafar's soldiers overwhelmed the gate. The lamp grows cold.",
+        help: "TAP a command. Bold wishes work — but cost the GENIE'S FAVOR.",
+        winText: "The Genie's power held the gate through six desperate calls. The palace stands!",
+        loseText: "The Genie's favor ran dry mid-wish. The lamp grows cold and dark.",
         init: function (api) {
-          this.tapped   = 0;
-          this.need     = 12;
-          this.misses   = 0;
-          this.maxMis   = 3;
-          this.threats  = [];
-          this.spawnT   = 0;
-          this.sparks   = [];
-          this.timer    = 0;
+          this.round = 0; this.need = WISH_ROUNDS.length; this.favor = 3;
+          this.opts = WISH_ROUNDS[0].options; this.situation = WISH_ROUNDS[0].situation;
+          this.flashIdx = -1; this.flashT = 0; this.roundT = 0;
         },
         update: function (api, dt) {
-          var W = api.W, H = api.H;
-          this.timer += dt;
-          this.spawnT -= dt;
-          if (this.spawnT <= 0) {
-            var spd = 52 + this.tapped * 4.5;
-            this.spawnT = Math.max(0.52, 1.4 - this.tapped * 0.065);
-            this.threats.push({ x: 22 + randI(0, W - 44), y: -26, r: 16, spd: spd });
-          }
-          var i;
-          for (i = 0; i < this.threats.length; i++) this.threats[i].y += this.threats[i].spd * dt;
-          var groundY = H - 44;
-          var j;
-          for (j = this.threats.length - 1; j >= 0; j--) {
-            if (this.threats[j].y > groundY) {
-              this.threats.splice(j, 1);
-              this.misses++;
-              api.shake(5, 0.20); api.flash(C.ruby, 0.15); api.audio.sfx('hurt');
-              if (this.misses >= this.maxMis) { api.lose(); return; }
+          if (this.flashT > 0) this.flashT -= dt;
+          this.roundT += dt;
+          if (api.pointer.justDown && this.roundT > 0.7) {
+            var hit = hitRects(api.pointer.x, api.pointer.y, WISH_CARDS);
+            if (hit >= 0) {
+              var opt = this.opts[hit];
+              this.favor -= opt.cost;
+              TAGS[opt.tag] = (TAGS[opt.tag] || 0) + 1;
+              api.addScore(20);
+              this.flashIdx = hit; this.flashT = 0.3;
+              api.audio.sfx(opt.cost ? 'power' : 'select');
+              api.burst(WISH_CARDS[hit].x + 20, WISH_CARDS[hit].y + WISH_CARDS[hit].h / 2, opt.cost ? C.rubyL : C.tealL, 10);
+              if (this.favor <= 0) { api.shake(6, 0.3); api.lose(); return; }
+              this.round++;
+              if (this.round >= this.need) { api.win(); return; }
+              var next = WISH_ROUNDS[this.round];
+              this.opts = next.options; this.situation = next.situation;
+              this.roundT = 0;
             }
-          }
-          // Tap
-          if (api.pointer.justDown) {
-            var px = api.pointer.x, py2 = api.pointer.y;
-            var k;
-            for (k = this.threats.length - 1; k >= 0; k--) {
-              var th = this.threats[k];
-              var dx = px - th.x, dy = py2 - th.y;
-              if (dx * dx + dy * dy < (th.r + 14) * (th.r + 14)) {
-                this.threats.splice(k, 1);
-                this.tapped++; api.addScore(18); api.audio.sfx('power');
-                api.burst(px, py2, C.amber, 12);
-                this.sparks.push({ x: px, y: py2, life: 0.45 });
-                if (this.tapped >= this.need) { api.addScore(60); api.win(); }
-                break;
-              }
-            }
-          }
-          // Keyboard: destroy nearest
-          if (api.confirm()) {
-            if (this.threats.length > 0) {
-              var nearest = 0, bestY = -1;
-              var n;
-              for (n = 0; n < this.threats.length; n++) {
-                if (this.threats[n].y > bestY) { nearest = n; bestY = this.threats[n].y; }
-              }
-              var nt = this.threats[nearest];
-              this.threats.splice(nearest, 1);
-              this.tapped++; api.addScore(18); api.audio.sfx('power');
-              api.burst(nt.x, nt.y, C.amber, 12);
-              this.sparks.push({ x: nt.x, y: nt.y, life: 0.45 });
-              if (this.tapped >= this.need) { api.addScore(60); api.win(); }
-            }
-          }
-          for (var si = this.sparks.length - 1; si >= 0; si--) {
-            this.sparks[si].life -= dt;
-            if (this.sparks[si].life <= 0) this.sparks.splice(si, 1);
           }
         },
         draw: function (api) {
           var g = api.gfx, c = api.ctx, W = api.W, H = api.H, t = api.t;
-          // Palace courtyard
           var palGrad = c.createLinearGradient(0, 0, 0, H);
-          palGrad.addColorStop(0, C.night);
-          palGrad.addColorStop(1, C.dome);
+          palGrad.addColorStop(0, C.night); palGrad.addColorStop(1, C.dome);
           c.fillStyle = palGrad; c.fillRect(0, 0, W, H);
-          // Stars
-          var si2;
-          for (si2 = 0; si2 < 22; si2++) {
-            var stx = (si2 * 14 + 5) % W, sty = (si2 * 23 + 4) % (H * 0.55);
-            c.globalAlpha = 0.18 + 0.28 * Math.abs(Math.sin(t * 1.4 + si2));
-            c.fillStyle = C.star; c.fillRect(stx, sty, 1, 1);
+          for (var si = 0; si < 22; si++) {
+            var sx = (si * 14 + 5) % W, sy = (si * 23 + 4) % (H * 0.35);
+            c.globalAlpha = 0.18 + 0.28 * Math.abs(Math.sin(t * 1.4 + si));
+            c.fillStyle = C.star; c.fillRect(sx, sy, 1, 1);
           }
           c.globalAlpha = 1;
-          // Palace gate (bottom)
-          c.fillStyle = C.wall; c.fillRect(0, H - 54, W, 54);
-          c.strokeStyle = C.goldL; c.lineWidth = 1.5; c.strokeRect(0, H - 54, W, 2);
-          var ai2;
-          for (ai2 = 0; ai2 < 3; ai2++) {
-            var ax2 = 16 + ai2 * 84, aw2 = 78, ah2 = 80;
-            c.fillStyle = '#1e1448'; c.fillRect(ax2, H - ah2, aw2, ah2);
-            c.beginPath(); c.arc(ax2 + aw2 / 2, H - ah2, aw2 / 2, Math.PI, 0); c.fill();
+          c.fillStyle = '#16102e'; c.fillRect(8, 54, W - 16, 44);
+          c.strokeStyle = C.gold; c.lineWidth = 1.5; c.strokeRect(8, 54, W - 16, 44);
+          api.txtCHead(this.situation, W / 2, 62, 8, C.amber, true, 11, W - 32);
+          for (var i = 0; i < this.opts.length; i++) {
+            var r = WISH_CARDS[i], opt = this.opts[i];
+            var col = opt.tag === 'brave' ? C.rubyL : opt.tag === 'clever' ? C.tealL : opt.tag === 'mercy' ? C.silk : C.goldL;
+            var lit = this.flashIdx === i && this.flashT > 0;
+            g.rect(r.x, r.y, r.w, r.h, lit ? 'rgba(212,144,10,.28)' : '#1c1230');
+            c.strokeStyle = col; c.lineWidth = 2; c.strokeRect(r.x, r.y, r.w, r.h);
+            api.txtCHead(opt.label, r.x + r.w / 2, r.y + 8, 8, C.ivory, true, 10, r.w - 16);
+            api.txtCFit(opt.hint, r.x + r.w / 2, r.y + r.h - 16, 7, col, false);
+            if (opt.cost > 0) { c.fillStyle = C.amber; c.beginPath(); c.arc(r.x + r.w - 14, r.y + 14, 4, 0, Math.PI * 2); c.fill(); }
           }
-          // Genie laser beams
-          var lampX = W / 2;
-          var bi;
-          for (bi = 0; bi < this.threats.length; bi++) {
-            var th2 = this.threats[bi];
-            c.globalAlpha = 0.06; c.strokeStyle = C.smoke; c.lineWidth = 2;
-            c.setLineDash([4, 6]);
-            c.beginPath(); c.moveTo(lampX, H - 30); c.lineTo(th2.x, th2.y); c.stroke();
-            c.setLineDash([]); c.globalAlpha = 1;
-          }
-          // Soldiers
-          var ti2;
-          for (ti2 = 0; ti2 < this.threats.length; ti2++) {
-            var th3 = this.threats[ti2];
-            c.fillStyle = C.ruby;
-            c.beginPath(); c.arc(th3.x, th3.y - 10, 8, 0, Math.PI * 2); c.fill();
-            c.fillRect(th3.x - 8, th3.y - 2, 16, 18);
-            c.strokeStyle = C.ivory; c.lineWidth = 2;
-            c.beginPath(); c.moveTo(th3.x + 9, th3.y - 14); c.lineTo(th3.x + 9, th3.y + 12); c.stroke();
-            c.fillStyle = C.amber;
-            c.beginPath(); c.moveTo(th3.x + 5, th3.y - 14); c.lineTo(th3.x + 13, th3.y - 14); c.lineTo(th3.x + 9, th3.y - 22); c.closePath(); c.fill();
-          }
-          // Spark flashes
-          var spk;
-          for (spk = 0; spk < this.sparks.length; spk++) {
-            var sp = this.sparks[spk];
-            c.globalAlpha = sp.life / 0.45;
-            c.fillStyle = C.amber;
-            c.beginPath(); c.arc(sp.x, sp.y, (1 - sp.life / 0.45) * 28 + 8, 0, Math.PI * 2); c.fill();
-            c.globalAlpha = 1;
-          }
-          // Genie lamp at bottom center
-          c.fillStyle = C.gold;
-          c.beginPath(); c.ellipse(lampX, H - 28, 22, 10, 0, 0, Math.PI * 2); c.fill();
-          c.fillStyle = C.goldL;
-          c.beginPath(); c.moveTo(lampX + 18, H - 28); c.quadraticCurveTo(lampX + 30, H - 38, lampX + 24, H - 44); c.quadraticCurveTo(lampX + 14, H - 36, lampX + 10, H - 28); c.closePath(); c.fill();
-          c.globalAlpha = 0.65 + 0.2 * Math.sin(t * 3);
-          c.fillStyle = C.smoke;
-          c.beginPath(); c.arc(lampX + 18, H - 50, 10, 0, Math.PI * 2); c.fill();
-          c.globalAlpha = 1;
-          api.topBar('DEFEATED: ' + this.tapped + ' / ' + this.need);
-          var mi;
-          for (mi = 0; mi < 3; mi++) g.circle(W - 38 + mi * 13, 20, 4, mi < (3 - this.misses) ? C.teal : '#1a0c28');
+          api.topBar('CALL ' + (this.round + 1) + ' / ' + this.need);
+          for (var fi = 0; fi < 3; fi++) g.circle(W - 38 + fi * 13, 20, 4, fi < this.favor ? C.gold : '#1a0c28');
           api.vignette();
         },
       },
 
       /* ==============================================================
-       * 5. THE FLYING CARPET — steer through palace spires (22 s, 3 lives)
-       * Race the magic carpet to the Sultan with Scheherazade's final tale!
+       * 5. THE FLYING CARPET — chart a course across the night sky
        * ============================================================== */
       {
         id: 'carpet',
@@ -990,139 +984,92 @@
           "SCHEHERAZADE'S",
           'FINAL TALE MUST',
           'REACH THE SULTAN!',
-          'Ride the magic carpet',
-          'through desert spires —',
-          'swift as the east wind!',
+          "Chart the carpet's",
+          'course through the',
+          'night sky before dawn.',
         ],
         quote: '"It soared up and up, swift as the evening star." — One Thousand and One Nights',
-        help: 'MOVE left/right to steer the carpet through the GAPS!',
-        winText: "The carpet swept through the last minaret and Scheherazade spoke her final words to the Sultan.",
-        loseText: "The carpet struck a spire and tumbled from the sky. So close to the end...",
+        help: 'TAP a star-chart node each leg. Stars buy time, storms cost a life.',
+        winText: "The carpet swept past the last star-swept height and Scheherazade spoke her final words to the Sultan.",
+        loseText: "A storm caught the carpet's fringe and dawn broke before the tale could land.",
         init: function (api) {
-          this.x      = api.W / 2;
-          this.y      = api.H * 0.42;
-          this.timer  = 0;
-          this.dur    = 22;
-          this.lives  = 3;
-          this.invT   = 0;
-          this.spires = [];
-          this.spawnT = 0;
+          this.nodes = buildLattice();
+          this.col = 0; this.lives = 3; this.dawn = 24; this.maxDawn = 24; this.lockT = 0;
+          this.path = [];
         },
         update: function (api, dt) {
-          var W = api.W, H = api.H;
-          this.timer += dt;
-          if (this.invT > 0) this.invT -= dt;
-          if (this.timer >= this.dur) { api.addScore(120); api.win(); return; }
-          if (api.pointer.down) this.x = clamp(api.pointer.x, 20, W - 20);
-          if (api.keyDown('left'))  this.x = clamp(this.x - 185 * dt, 20, W - 20);
-          if (api.keyDown('right')) this.x = clamp(this.x + 185 * dt, 20, W - 20);
-          // Carpet gently floats
-          this.y = H * 0.42 + Math.sin(this.timer * 2.2) * 14;
-          // Spawn spire pairs
-          this.spawnT -= dt;
-          if (this.spawnT <= 0) {
-            this.spawnT = Math.max(0.62, 1.6 - this.timer * 0.042);
-            var gapW = Math.max(68, 108 - this.timer * 2.2);
-            var gapX = 22 + randI(0, W - 44 - gapW);
-            this.spires.push({ y: -22, gapX: gapX, gapW: gapW });
-          }
-          var spd = 88 + this.timer * 4;
-          var i;
-          for (i = 0; i < this.spires.length; i++) this.spires[i].y += spd * dt;
-          this.spires = this.spires.filter(function (s) { return s.y < H + 32; });
-          // Collision
-          if (this.invT <= 0) {
-            var carpY = this.y;
-            var j;
-            for (j = 0; j < this.spires.length; j++) {
-              var sp = this.spires[j];
-              if (Math.abs(sp.y - carpY) < 30) {
-                if (this.x < sp.gapX + 14 || this.x > sp.gapX + sp.gapW - 14) {
-                  this.lives--; this.invT = 1.2;
-                  api.shake(6, 0.22); api.flash(C.ruby, 0.16); api.audio.sfx('hurt');
-                  api.burst(this.x, carpY, C.ruby, 10);
-                  if (this.lives <= 0) { api.lose(); return; }
-                  break;
-                }
+          if (this.lockT > 0) this.lockT -= dt;
+          this.dawn -= dt;
+          if (this.dawn <= 0) { api.lose(); return; }
+          if (this.lockT <= 0 && this.col < LATTICE_COLS && api.pointer.justDown) {
+            var colNodes = this.nodes[this.col];
+            var hit = hitPoints(api.pointer.x, api.pointer.y, colNodes, 17);
+            if (hit >= 0) {
+              var node = colNodes[hit];
+              this.path.push(node);
+              if (node.type === 'star') {
+                this.dawn = Math.min(this.maxDawn, this.dawn + 4);
+                TAGS.wise = (TAGS.wise || 0) + 1;
+                api.audio.sfx('power'); api.addScore(20);
+              } else if (node.type === 'cloud') {
+                TAGS.clever = (TAGS.clever || 0) + 1;
+                api.audio.sfx('select'); api.addScore(10);
+              } else {
+                this.lives--; this.dawn -= 3;
+                TAGS.brave = (TAGS.brave || 0) + 1;
+                api.audio.sfx('hurt'); api.shake(5, 0.2); api.flash(C.ruby, 0.14); api.addScore(5);
               }
+              api.burst(node.x, node.y, node.type === 'storm' ? C.ruby : C.goldL, 10);
+              if (this.lives <= 0) { api.lose(); return; }
+              this.col++;
+              this.lockT = 0.9;
+              if (this.col >= LATTICE_COLS) { api.addScore(80); api.win(); return; }
             }
           }
         },
         draw: function (api) {
           var g = api.gfx, c = api.ctx, W = api.W, H = api.H, t = api.t;
-          // Night sky
           var skyGrad = c.createLinearGradient(0, 0, 0, H);
-          skyGrad.addColorStop(0, C.night);
-          skyGrad.addColorStop(0.7, C.indigo);
-          skyGrad.addColorStop(1, '#1a1440');
+          skyGrad.addColorStop(0, C.night); skyGrad.addColorStop(0.7, C.indigo); skyGrad.addColorStop(1, '#1a1440');
           c.fillStyle = skyGrad; c.fillRect(0, 0, W, H);
-          // Stars
-          var si3;
-          for (si3 = 0; si3 < 42; si3++) {
-            var stx2 = (si3 * 71 + 4) % W, sty2 = (si3 * 53 + 8) % (H * 0.9);
-            c.globalAlpha = 0.12 + 0.32 * Math.abs(Math.sin(t * 1.1 + si3));
-            c.fillStyle = C.star; c.fillRect(stx2, sty2, 1, 1);
+          for (var si = 0; si < 42; si++) {
+            var sx = (si * 71 + 4) % W, sy = (si * 53 + 8) % (H * 0.9);
+            c.globalAlpha = 0.12 + 0.32 * Math.abs(Math.sin(t * 1.1 + si));
+            c.fillStyle = C.star; c.fillRect(sx, sy, 1, 1);
           }
           c.globalAlpha = 1;
-          // Moon
-          c.globalAlpha = 0.78;
-          c.fillStyle = C.moon;
-          c.beginPath(); c.arc(W * 0.78, 48, 19, 0, Math.PI * 2); c.fill();
-          c.fillStyle = C.indigo;
-          c.beginPath(); c.arc(W * 0.78 + 8, 45, 15, 0, Math.PI * 2); c.fill();
-          c.globalAlpha = 1;
-          // Spires
-          var si4;
-          for (si4 = 0; si4 < this.spires.length; si4++) {
-            var sp2 = this.spires[si4];
-            var bandH = 44;
-            var bandTop = sp2.y - bandH / 2;
-            // Left wall
-            c.fillStyle = '#150d34';
-            c.fillRect(0, bandTop, sp2.gapX, bandH);
-            c.beginPath(); c.moveTo(sp2.gapX - 18, bandTop); c.lineTo(sp2.gapX, bandTop - 22); c.lineTo(sp2.gapX, bandTop); c.closePath(); c.fill();
-            // Right wall
-            c.fillRect(sp2.gapX + sp2.gapW, bandTop, W - (sp2.gapX + sp2.gapW), bandH);
-            c.beginPath(); c.moveTo(sp2.gapX + sp2.gapW, bandTop - 22); c.lineTo(sp2.gapX + sp2.gapW, bandTop); c.lineTo(sp2.gapX + sp2.gapW + 18, bandTop); c.closePath(); c.fill();
-            // Gold edges
-            c.strokeStyle = C.copper; c.lineWidth = 1;
-            c.strokeRect(0, bandTop, sp2.gapX, bandH);
-            c.strokeRect(sp2.gapX + sp2.gapW, bandTop, W - (sp2.gapX + sp2.gapW), bandH);
-            // Gap highlight
-            c.globalAlpha = 0.07; c.fillStyle = C.teal;
-            c.fillRect(sp2.gapX, bandTop, sp2.gapW, bandH); c.globalAlpha = 1;
+          c.strokeStyle = C.goldL; c.lineWidth = 1.5; c.globalAlpha = 0.6;
+          for (var pi = 1; pi < this.path.length; pi++) {
+            c.beginPath(); c.moveTo(this.path[pi - 1].x, this.path[pi - 1].y); c.lineTo(this.path[pi].x, this.path[pi].y); c.stroke();
           }
-          // Magic carpet (player)
-          var cx2 = this.x, cy2 = this.y;
-          if (this.invT <= 0 || Math.floor(this.invT * 8) % 2 === 0) {
-            var wobble = Math.sin(t * 4) * 2.5;
-            c.fillStyle = C.ruby;
-            c.beginPath();
-            c.moveTo(cx2 - 22, cy2 + 5 + wobble * 0.3);
-            c.quadraticCurveTo(cx2, cy2 + 10 + Math.abs(wobble), cx2 + 22, cy2 + 5 + wobble * 0.3);
-            c.lineTo(cx2 + 22, cy2 - 5);
-            c.quadraticCurveTo(cx2, cy2 - 1 + wobble * 0.2, cx2 - 22, cy2 - 5);
-            c.closePath(); c.fill();
-            c.strokeStyle = C.amber; c.lineWidth = 1.5;
-            c.beginPath(); c.moveTo(cx2, cy2 - 4); c.lineTo(cx2 + 8, cy2); c.lineTo(cx2, cy2 + 4); c.lineTo(cx2 - 8, cy2); c.closePath(); c.stroke();
-            // Fringe
-            c.strokeStyle = C.gold; c.lineWidth = 1.5;
-            var fi;
-            for (fi = -2; fi <= 2; fi++) {
-              c.beginPath(); c.moveTo(cx2 + fi * 9, cy2 + 5); c.lineTo(cx2 + fi * 9, cy2 + 11); c.stroke();
+          c.globalAlpha = 1;
+          for (var col = 0; col < LATTICE_COLS; col++) {
+            for (var row = 0; row < LATTICE_ROWS; row++) {
+              var node = this.nodes[col][row];
+              var active = col === this.col;
+              var past = col < this.col;
+              c.globalAlpha = active ? 1 : (past ? 0.35 : 0.55);
+              var glyphCol = node.type === 'star' ? C.goldL : node.type === 'cloud' ? C.sandL : C.rubyL;
+              g.circle(node.x, node.y, 13, past ? '#241a3a' : '#1c1230');
+              c.strokeStyle = glyphCol; c.lineWidth = active ? 2 : 1;
+              c.beginPath(); c.arc(node.x, node.y, 13, 0, Math.PI * 2); c.stroke();
+              if (node.type === 'star') { c.fillStyle = glyphCol; drawStarGlyph(c, node.x, node.y, 6); }
+              else if (node.type === 'cloud') {
+                c.fillStyle = glyphCol;
+                c.beginPath(); c.arc(node.x - 3, node.y, 4, 0, Math.PI * 2); c.arc(node.x + 3, node.y, 5, 0, Math.PI * 2); c.arc(node.x, node.y - 3, 4, 0, Math.PI * 2); c.fill();
+              } else {
+                c.fillStyle = glyphCol;
+                c.beginPath();
+                c.moveTo(node.x, node.y - 6); c.lineTo(node.x + 5, node.y + 2); c.lineTo(node.x - 1, node.y + 2);
+                c.lineTo(node.x + 3, node.y + 7); c.lineTo(node.x - 6, node.y - 1); c.lineTo(node.x - 1, node.y - 1);
+                c.closePath(); c.fill();
+              }
+              c.globalAlpha = 1;
             }
-            // Rider
-            g.circle(cx2, cy2 - 16, 8, '#d8a878');
-            c.fillStyle = C.silk;
-            c.beginPath(); c.arc(cx2, cy2 - 20, 9, Math.PI, 0); c.fill();
-            g.rect(cx2 - 8, cy2 - 14, 16, 10, '#541040');
-            g.rect(cx2 + 9, cy2 - 24, 5, 12, C.ivory);
-            g.circle(cx2 + 11, cy2 - 24, 3, C.parch);
-            g.circle(cx2 + 11, cy2 - 12, 3, C.parch);
           }
-          api.topBar('SURVIVE: ' + Math.max(0, Math.ceil(this.dur - this.timer)) + 's');
-          var li4;
-          for (li4 = 0; li4 < 3; li4++) g.circle(W - 38 + li4 * 13, 20, 4, li4 < this.lives ? C.teal : '#1a0c28');
+          api.topBar('LEG ' + Math.min(this.col + 1, LATTICE_COLS) + ' / ' + LATTICE_COLS);
+          for (var li = 0; li < 3; li++) g.circle(W - 38 + li * 13, 20, 4, li < this.lives ? C.teal : '#1a0c28');
+          api.txtCFit('DAWN IN ' + Math.ceil(this.dawn) + 's', W / 2, H - 24, 9, this.dawn < 8 ? C.rubyL : C.sandL, true);
           api.vignette();
         },
       },
