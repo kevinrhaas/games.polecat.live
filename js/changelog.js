@@ -10,6 +10,15 @@
 // format stays identical to the rest of the fleet.
 export const CHANGELOG = [
   {
+    v: 156,
+    title: '20,000 Leagues levels up to 16-bit',
+    kind: 'game',
+    ts: '2026-07-28T19:40:50.188Z',
+    items: [
+      'Captain Nemo gets a Gen-4 companion: work the Nautilus\'s own brass console across the hunt for the "monster," the Nautilus\'s trust, the pearl banks, the kraken\'s arms, and the Norway maelstrom — each a run of escalating trials and a mini-boss, relics carried between them, and a choice that decides how the voyage ends.',
+    ],
+  },
+  {
     v: 155,
     title: 'Treasure Island levels up to 16-bit',
     kind: 'game',
