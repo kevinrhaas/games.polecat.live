@@ -103,7 +103,7 @@ window.POLECAT_CATALOG = [
     blurb: "Five scenes from the 1933 legend — survive Skull Island, dodge prehistoric jaws on the great log, break free from Broadway chains, rampage through New York, and swat biplanes from atop the Empire State Building.", tags: ["climb","action","multi-chapter"] },
   { id: "notld-survive", title: "They're Coming", source: "Night of the Living Dead (1968)", genre: "Tower Defense", style: "8-bit", accent: "#cc1122", status: "live",
     blurb: "Five nights from Romero's 1968 masterpiece — flee the cemetery, board the farmhouse windows, gather supplies in the dark, hold three breach points against the growing horde, and race to the dawn.", tags: ["defense","horror","multi-chapter"] },
-  { id: "littlemermaid-sea", title: "The Sea King's Daughter", source: "The Little Mermaid — H. C. Andersen", genre: "Swim Collect", style: "8-bit", accent: "#00d4b8", status: "live",
+  { id: "littlemermaid-sea", title: "The Sea King's Daughter", source: "The Little Mermaid — H. C. Andersen", genre: "Story Arcade", style: "8-bit", accent: "#00d4b8", status: "live",
     blurb: "Swim to the surface on your 15th birthday, navigate the sea witch's tentacled cave, rescue the drowning prince, dance at the palace, and catch the sea spirits' gifts at dawn.", tags: ["swim","story","multi-chapter"] },
   { id: "tomsawyer-fence", title: "Whitewash & Wonder", source: "Tom Sawyer — Mark Twain", genre: "Adventure Arcade", style: "8-bit", accent: "#c87a10", status: "live",
     blurb: "Trick kids into whitewashing the fence, dodge Injun Joe's lantern at midnight, raft down the Mississippi, escape McDougal's Cave, and dig up the buried treasure.", tags: ["adventure","arcade","multi-chapter"] },

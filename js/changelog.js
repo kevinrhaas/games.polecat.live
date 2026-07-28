@@ -10,6 +10,17 @@
 // format stays identical to the rest of the fleet.
 export const CHANGELOG = [
   {
+    v: 137,
+    title: 'The Little Mermaid: two tides rebuilt for The Sea King\'s Daughter',
+    kind: 'game',
+    ts: '2026-07-28T03:42:32.864Z',
+    items: [
+      'The Sea Witch\'s Cave is now a Simon-says potion-brewing memory game: watch Ursula stir five glowing ingredients into the cauldron, then tap them back in the same order as the spell grows — the tentacles stay, but purely as menace, not a hazard.',
+      'The Final Dawn is now a branching, silent courtship: four moments on deck where you pick a wordless gesture toward the prince, each with its own reaction and a running affection meter, before the same bittersweet dawn.',
+      'REBUILD_QUEUE #13\'s rework — the saga now spans dodge, memory, rescue, timing, and dialogue across its five tides, and the line comes off the queue.',
+    ],
+  },
+  {
     v: 136,
     title: 'Oliver Twist: The Workhouse rebuilt as a stealth pickpocket sim',
     kind: 'game',

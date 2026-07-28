@@ -74,6 +74,95 @@
     }
   }
 
+  // ── Potion ingredients (Tide 2 memory game) + prince sprite (Tide 5) ───────
+  function nextIngredientIndex(seq) {
+    var n;
+    do { n = Math.floor(Math.random() * 5); } while (seq.length && n === seq[seq.length - 1]);
+    return n;
+  }
+
+  var INGREDIENT_COLORS = { moon: C.pearl, coral: C.coral, pearl: C.seafoam, tear: '#5090e0', root: '#9040a0' };
+
+  function drawIngredient(api, kind, x, y, lit) {
+    var c = api.ctx;
+    var col = INGREDIENT_COLORS[kind];
+    if (lit) {
+      var glow = c.createRadialGradient(x, y, 1, x, y, 22);
+      glow.addColorStop(0, col); glow.addColorStop(1, 'rgba(0,0,0,0)');
+      c.globalAlpha = 0.55; c.fillStyle = glow; c.beginPath(); c.arc(x, y, 22, 0, 7); c.fill(); c.globalAlpha = 1;
+    }
+    c.save(); c.translate(x, y);
+    c.globalAlpha = lit ? 1 : 0.6;
+    if (kind === 'moon') {
+      c.fillStyle = col;
+      for (var i = 0; i < 5; i++) {
+        var a = i * Math.PI * 2 / 5;
+        c.beginPath(); c.ellipse(Math.cos(a) * 6, Math.sin(a) * 6, 5, 3, a, 0, Math.PI * 2); c.fill();
+      }
+      c.fillStyle = C.gold; c.beginPath(); c.arc(0, 0, 3, 0, 7); c.fill();
+    } else if (kind === 'coral') {
+      c.strokeStyle = col; c.lineWidth = 3; c.lineCap = 'round';
+      c.beginPath(); c.moveTo(0, 9); c.lineTo(0, -2); c.moveTo(0, 2); c.lineTo(-6, -7);
+      c.moveTo(0, 0); c.lineTo(6, -8); c.moveTo(-2, -3); c.lineTo(-2, -9); c.stroke();
+    } else if (kind === 'pearl') {
+      var pg = c.createRadialGradient(-2, -3, 1, 0, 0, 13);
+      pg.addColorStop(0, '#ffffff'); pg.addColorStop(1, col);
+      c.fillStyle = pg; c.beginPath(); c.arc(0, 0, 10, 0, 7); c.fill();
+    } else if (kind === 'tear') {
+      c.fillStyle = col;
+      c.beginPath(); c.moveTo(0, -9); c.quadraticCurveTo(8, 6, 0, 10); c.quadraticCurveTo(-8, 6, 0, -9); c.closePath(); c.fill();
+    } else if (kind === 'root') {
+      c.strokeStyle = col; c.lineWidth = 3; c.lineCap = 'round';
+      c.beginPath(); c.moveTo(0, -9); c.lineTo(-3, -3); c.lineTo(2, 2); c.lineTo(-3, 8); c.stroke();
+      c.fillStyle = col; c.beginPath(); c.arc(0, -10, 3, 0, 7); c.fill();
+    }
+    c.restore(); c.globalAlpha = 1;
+  }
+
+  function drawPrince(api, x, y) {
+    var c = api.ctx, g = api.gfx;
+    g.circle(x, y - 9, 8, C.skin);
+    c.fillStyle = '#1a2c48'; c.fillRect(x - 6, y - 1, 12, 18);
+    c.fillStyle = '#c8a848'; c.fillRect(x - 6, y - 1, 12, 3);
+    c.fillStyle = '#3a2818'; c.fillRect(x - 7, y - 17, 14, 5);
+  }
+
+  // Tide 5 — the courtship dialogue's four moments, each a branching gesture choice
+  var MOMENTS = [
+    {
+      label: 'UNDER THE STARS',
+      choices: [
+        { label: 'POINT TO THE SKY', hint: 'share the wonder', pts: 10, reaction: 'HE FOLLOWS YOUR GAZE, SMILING.' },
+        { label: 'MIME THE STORM', hint: 'remind him of the sea', pts: 14, reaction: 'HIS EYES SEARCH YOURS, PUZZLED.' },
+        { label: 'OFFER A SHY SMILE', hint: 'simple warmth', pts: 8, reaction: 'HE SMILES BACK, GENTLE.' },
+      ],
+    },
+    {
+      label: 'BY THE SHIP\'S LANTERN',
+      choices: [
+        { label: 'DANCE A FEW STEPS', hint: 'the steps still hurt', pts: 14, reaction: 'HE CLAPS, DELIGHTED.' },
+        { label: 'DRAW A HEART IN AIR', hint: 'bold and plain', pts: 12, reaction: 'HE LAUGHS, UNSURE WHAT IT MEANS.' },
+        { label: 'REST NEAR HIS SHOULDER', hint: 'quiet closeness', pts: 10, reaction: 'HE DOES NOT PULL AWAY.' },
+      ],
+    },
+    {
+      label: 'HE SPEAKS OF HIS BRIDE',
+      choices: [
+        { label: 'NOD, HIDING THE ACHE', hint: 'safest', pts: 6, reaction: 'HE NEVER SEES YOUR PAIN.' },
+        { label: 'MIME "IT WAS ME"', hint: 'the risky truth', pts: 16, reaction: 'HE TILTS HIS HEAD, ALMOST GUESSING.' },
+        { label: 'TURN AWAY, EYES BRIGHT', hint: 'let it show', pts: 9, reaction: 'HE REACHES FOR YOUR HAND.' },
+      ],
+    },
+    {
+      label: 'THE FINAL HOUR',
+      choices: [
+        { label: 'TAKE HIS HAND', hint: 'one last touch', pts: 12, reaction: 'HE HOLDS ON, A MOMENT LONGER.' },
+        { label: 'GIVE HIM YOUR SHELL', hint: 'leave him something true', pts: 15, reaction: 'HE KEEPS IT CLOSE TO HIS HEART.' },
+        { label: 'WATCH THE HORIZON', hint: 'together, in silence', pts: 9, reaction: 'YOU STAND AS THE SKY PALES.' },
+      ],
+    },
+  ];
+
   // ── Emblem: mermaid silhouette + starfish ──────────────────────────────────
   function emblem(api, cx, cy) {
     var g = api.gfx, c = api.ctx;
@@ -533,82 +622,96 @@
         intro: [
           'SHE DESCENDS TO',
           "URSULA'S LAIR.",
-          'GREAT TENTACLES GUARD',
-          'the path to the cauldron.',
+          'THE WITCH STIRS SPELLS —',
+          'watch closely, then brew them true.',
         ],
         quote: '"Cut out your tongue in payment," said the sea witch. "I will have that as my price." — H. C. Andersen',
-        help: 'DRAG or ARROW KEYS to swim · reach the GLOWING CAULDRON',
+        help: 'WATCH THE GLOWING INGREDIENTS · TAP THEM BACK IN ORDER',
 
         init: function (api) {
           var s = api._s = {};
-          s.lives = 3; s.invincible = 0; s.done = false;
+          s.done = false; s.lives = 3;
           var W = api.W, H = api.H;
-          s.mx = 38; s.my = H / 2;
-          s.cauldron = { x: W - 44, y: H / 2 };
-          s.reachProg = 0;
-          // Six animated tentacles
-          s.tentacles = [
-            { ax: 78,  ay: H * 0.22, len: 54, spd: 0.72, phase: 0 },
-            { ax: 135, ay: H * 0.76, len: 58, spd: 0.90, phase: 2.2 },
-            { ax: 100, ay: H * 0.48, len: 50, spd: 1.12, phase: 4.0 },
-            { ax: 172, ay: H * 0.20, len: 56, spd: 0.82, phase: 1.3 },
-            { ax: 202, ay: H * 0.72, len: 50, spd: 1.05, phase: 5.6 },
-            { ax: 162, ay: H * 0.50, len: 46, spd: 1.30, phase: 2.8 },
-          ];
+          s.cx = W / 2; s.cy = H * 0.40; s.ringR = 96;
+          var kinds = ['moon', 'coral', 'pearl', 'tear', 'root'];
+          s.stations = [];
+          for (var i = 0; i < 5; i++) {
+            var ang = -Math.PI / 2 + i * (Math.PI * 2 / 5);
+            s.stations.push({ x: s.cx + Math.cos(ang) * s.ringR, y: s.cy + Math.sin(ang) * s.ringR, kind: kinds[i] });
+          }
+          s.seq = [];
+          for (var qi = 0; qi < 3; qi++) s.seq.push(nextIngredientIndex(s.seq));
+          s.roundsCleared = 0; s.roundsToWin = 4; // clears sequence lengths 3,4,5,6
+          s.state = 'pause'; s.pauseT = 0.8;
+          s.showIdx = -1; s.showT = 0; s.lit = -1;
+          s.inputIdx = 0; s.cursor = 0;
+          s.tapFlash = -1; s.tapFlashT = 0;
         },
 
         update: function (api, dt) {
           var s = api._s;
           if (s.done) return;
-          var W = api.W, H = api.H, spd = 125;
+          var W = api.W, H = api.H;
 
-          // Free 2D movement
-          var dx = 0, dy = 0;
-          if (api.keyDown('left'))  dx = -1;
-          if (api.keyDown('right')) dx =  1;
-          if (api.keyDown('up'))    dy = -1;
-          if (api.keyDown('down'))  dy =  1;
-          if (api.pointer.down) {
-            var pdx = api.pointer.x - s.mx, pdy = api.pointer.y - s.my;
-            var d = Math.sqrt(pdx * pdx + pdy * pdy);
-            if (d > 12) { dx = pdx / d; dy = pdy / d; }
+          if (s.tapFlashT > 0) { s.tapFlashT -= dt; if (s.tapFlashT <= 0) s.tapFlash = -1; }
+
+          if (s.state === 'pause') {
+            s.pauseT -= dt;
+            if (s.pauseT <= 0) { s.state = 'show'; s.showIdx = -1; s.showT = 0.15; s.lit = -1; }
+            return;
           }
-          // Normalise diagonal
-          if (dx !== 0 && dy !== 0) { var inv = 1 / Math.SQRT2; dx *= inv; dy *= inv; }
-          s.mx = clamp(s.mx + dx * spd * dt, 14, W - 14);
-          s.my = clamp(s.my + dy * spd * dt, 36, H - 28);
 
-          if (s.invincible > 0) s.invincible -= dt;
-
-          // Tentacle tip collisions
-          if (s.invincible <= 0) {
-            for (var ti = 0; ti < s.tentacles.length; ti++) {
-              var t = s.tentacles[ti];
-              var ang = Math.sin(api.t * t.spd + t.phase) * Math.PI * 0.72;
-              var tx = t.ax + Math.cos(ang) * t.len;
-              var ty = t.ay + Math.sin(ang) * t.len;
-              var tdx = tx - s.mx, tdy = ty - s.my;
-              if (tdx * tdx + tdy * tdy < 196) { // 14px tip radius
-                s.lives--; s.invincible = 1.2;
-                api.shake(5, 0.35); api.flash('#a050c0', 0.18); api.audio.sfx('hurt');
-                if (s.lives <= 0) { s.done = true; api.lose(); }
-                break;
+          if (s.state === 'show') {
+            s.showT -= dt;
+            if (s.showT <= 0) {
+              s.showIdx++;
+              if (s.showIdx < s.seq.length) {
+                s.lit = s.seq[s.showIdx]; s.showT = 0.52; api.audio.sfx('blip');
+              } else {
+                s.lit = -1; s.state = 'input'; s.inputIdx = 0;
               }
             }
+            return;
           }
 
-          // Reach cauldron (hold 2.2s)
-          var cdx = s.mx - s.cauldron.x, cdy = s.my - s.cauldron.y;
-          if (cdx * cdx + cdy * cdy < 900) {
-            s.reachProg += dt / 2.2;
-            if (s.reachProg >= 1) {
-              s.done = true;
-              api.burst(s.cauldron.x, s.cauldron.y, C.seafoam, 20);
-              api.burst(s.cauldron.x, s.cauldron.y, '#d090ff', 12);
-              api.flash('#c080ff', 0.5); api.audio.sfx('win'); api.win();
+          if (s.state === 'input') {
+            if (api.keyPressed('left'))  s.cursor = (s.cursor + 4) % 5;
+            if (api.keyPressed('right')) s.cursor = (s.cursor + 1) % 5;
+
+            var picked = -1;
+            if (api.pointer.justDown) {
+              for (var i = 0; i < s.stations.length; i++) {
+                var st = s.stations[i];
+                var dx0 = api.pointer.x - st.x, dy0 = api.pointer.y - st.y;
+                if (dx0 * dx0 + dy0 * dy0 < 26 * 26) { picked = i; break; }
+              }
             }
-          } else {
-            s.reachProg = Math.max(0, s.reachProg - dt * 0.4);
+            if (picked < 0 && api.keyPressed('a')) picked = s.cursor;
+
+            if (picked >= 0) {
+              s.tapFlash = picked; s.tapFlashT = 0.25;
+              if (picked === s.seq[s.inputIdx]) {
+                api.addScore(8); api.audio.sfx('coin');
+                api.burst(s.stations[picked].x, s.stations[picked].y, C.seafoam, 6);
+                s.inputIdx++;
+                if (s.inputIdx >= s.seq.length) {
+                  s.roundsCleared++;
+                  if (s.roundsCleared >= s.roundsToWin) {
+                    s.done = true;
+                    api.burst(s.cx, s.cy, C.seafoam, 22); api.burst(s.cx, s.cy, '#d090ff', 14);
+                    api.flash('#c080ff', 0.5); api.audio.sfx('win'); api.win();
+                  } else {
+                    s.seq.push(nextIngredientIndex(s.seq));
+                    s.state = 'pause'; s.pauseT = 0.9;
+                  }
+                }
+              } else {
+                s.lives--;
+                api.shake(5, 0.3); api.flash('#a050c0', 0.16); api.audio.sfx('hurt');
+                if (s.lives <= 0) { s.done = true; api.lose(); }
+                else { s.state = 'pause'; s.pauseT = 0.9; }
+              }
+            }
           }
         },
 
@@ -622,7 +725,7 @@
           c.fillStyle = grad; c.fillRect(0, 0, W, H);
 
           // Cave crack glows
-          c.globalAlpha = 0.18;
+          c.globalAlpha = 0.16;
           for (var gi = 0; gi < 8; gi++) {
             c.strokeStyle = gi % 2 ? C.seafoam : '#c080ff'; c.lineWidth = 1;
             c.beginPath(); c.moveTo((gi * 33 + 7) % W, (gi * 47 + 13) % H);
@@ -631,53 +734,50 @@
           }
           c.globalAlpha = 1;
 
-          // Tentacles
-          for (var ti = 0; ti < s.tentacles.length; ti++) {
-            var t = s.tentacles[ti];
-            var ang = Math.sin(api.t * t.spd + t.phase) * Math.PI * 0.72;
-            var ex = t.ax + Math.cos(ang) * t.len;
-            var ey = t.ay + Math.sin(ang) * t.len;
-            var mid = { x: (t.ax + ex) / 2 + Math.sin(api.t + t.phase) * 14, y: (t.ay + ey) / 2 };
-
-            c.strokeStyle = '#602080'; c.lineWidth = 9;
-            c.beginPath(); c.moveTo(t.ax, t.ay); c.quadraticCurveTo(mid.x, mid.y, ex, ey); c.stroke();
-            c.strokeStyle = '#9030c0'; c.lineWidth = 4;
-            c.beginPath(); c.moveTo(t.ax, t.ay); c.quadraticCurveTo(mid.x, mid.y, ex, ey); c.stroke();
-
-            // Suction cups
-            c.fillStyle = '#a040c8'; c.globalAlpha = 0.6;
-            for (var si = 1; si <= 3; si++) {
-              c.beginPath(); c.arc(t.ax + (ex - t.ax) * si / 4, t.ay + (ey - t.ay) * si / 4, 3, 0, 7); c.fill();
-            }
-            c.globalAlpha = 1;
-            // Danger tip glow
-            c.globalAlpha = 0.55 + 0.3 * Math.sin(api.t * 4);
-            g.circle(ex, ey, 7, '#c040e0');
-            c.globalAlpha = 1;
+          // Ambient background tentacles — atmosphere only, no longer a hazard
+          for (var ai = 0; ai < 4; ai++) {
+            var bx = 26 + ai * 74;
+            c.strokeStyle = '#4a1868'; c.lineWidth = 6; c.globalAlpha = 0.35;
+            c.beginPath(); c.moveTo(bx, H);
+            c.quadraticCurveTo(bx + Math.sin(api.t * 0.7 + ai) * 16, H - 60, bx + Math.sin(api.t * 0.5 + ai * 1.6) * 14, H - 108);
+            c.stroke(); c.globalAlpha = 1;
           }
 
-          // Cauldron (goal)
-          var cx = s.cauldron.x, cy = s.cauldron.y;
-          c.globalAlpha = 0.28 + 0.18 * Math.sin(api.t * 3) + s.reachProg * 0.4;
-          g.circle(cx, cy, 24, C.seafoam);
+          // Cauldron at the centre of the ring
+          var cx = s.cx, cy = s.cy;
+          c.globalAlpha = 0.28 + 0.18 * Math.sin(api.t * 3);
+          g.circle(cx, cy, 30, C.seafoam);
           c.globalAlpha = 1;
-          c.fillStyle = '#2a3840'; c.beginPath(); c.ellipse(cx, cy + 6, 13, 7, 0, 0, Math.PI * 2); c.fill();
-          c.fillStyle = '#344858'; c.beginPath(); c.ellipse(cx, cy, 13, 7, 0, Math.PI, 0); c.lineTo(cx + 13, cy + 6); c.arc(cx, cy + 6, 13, 0, Math.PI); c.closePath(); c.fill();
-          c.globalAlpha = 0.8; g.circle(cx - 3, cy - 2, 3, C.seafoam); g.circle(cx + 4, cy - 3, 3, '#d080ff'); g.circle(cx, cy - 6, 4, '#90e8d8'); c.globalAlpha = 1;
+          c.fillStyle = '#2a3840'; c.beginPath(); c.ellipse(cx, cy + 8, 20, 10, 0, 0, Math.PI * 2); c.fill();
+          c.fillStyle = '#344858'; c.beginPath(); c.ellipse(cx, cy, 20, 10, 0, Math.PI, 0);
+          c.lineTo(cx + 20, cy + 8); c.arc(cx, cy + 8, 20, 0, Math.PI); c.closePath(); c.fill();
+          c.globalAlpha = 0.8; g.circle(cx - 5, cy - 3, 4, C.seafoam); g.circle(cx + 6, cy - 4, 4, '#d080ff'); g.circle(cx, cy - 8, 5, '#90e8d8'); c.globalAlpha = 1;
 
-          // Reach progress arc
-          if (s.reachProg > 0) {
-            c.strokeStyle = C.seafoam; c.lineWidth = 3; c.globalAlpha = 0.8;
-            c.beginPath(); c.arc(cx, cy, 28, -Math.PI / 2, -Math.PI / 2 + s.reachProg * Math.PI * 2); c.stroke();
-            c.globalAlpha = 1;
+          // Ring path connecting the ingredient stations
+          c.strokeStyle = '#3a2050'; c.lineWidth = 1; c.globalAlpha = 0.4;
+          c.beginPath(); c.arc(cx, cy, s.ringR, 0, Math.PI * 2); c.stroke(); c.globalAlpha = 1;
+
+          // Ingredient stations
+          for (var si = 0; si < s.stations.length; si++) {
+            var st = s.stations[si];
+            var lit = (s.state === 'show' && s.lit === si) || s.tapFlash === si;
+            if (s.state === 'input' && s.cursor === si) {
+              c.strokeStyle = '#e0c8ff'; c.lineWidth = 2; c.globalAlpha = 0.7;
+              c.beginPath(); c.arc(st.x, st.y, 19, 0, 7); c.stroke(); c.globalAlpha = 1;
+            }
+            drawIngredient(api, st.kind, st.x, st.y, lit);
           }
 
-          // Mermaid
-          var blink = s.invincible > 0 && Math.floor(s.invincible * 7) % 2 === 0;
-          drawMermaid(api, s.mx, s.my, blink);
+          // Sequence progress dots
+          var dotsY = 26;
+          for (var di = 0; di < s.seq.length; di++) {
+            var filled = di < s.inputIdx || s.state === 'show';
+            g.circle(W / 2 - (s.seq.length - 1) * 8 + di * 16, dotsY, filled ? 4 : 3, filled ? C.seafoam : '#243848');
+          }
+          api.txtC(s.state === 'show' ? 'WATCH THE BREW' : 'REPEAT THE SPELL', W / 2, dotsY + 12, 8, '#8a70b0');
+          api.txtC('SPELL ' + (s.roundsCleared + 1) + '/' + s.roundsToWin, W / 2, dotsY + 24, 7, '#4a3868');
 
           drawHearts(api, s.lives, 16, 10);
-          api.txtCFit('REACH THE CAULDRON', W / 2, H - 18, 8, '#4a6878');
           api.scanlines(); api.vignette();
         },
       },
@@ -1035,7 +1135,7 @@
 
       /* ═══════════════════ TIDE 5 · THE FINAL DAWN ═══════════════════════ */
       {
-        id: 'dawn', name: 'THE FINAL DAWN', sub: 'THE SEA FOAM RISES',
+        id: 'dawn', name: 'THE FINAL DAWN', sub: 'A NIGHT WITHOUT WORDS',
         icon: function (api, x, y) {
           var g = api.gfx, c = api.ctx;
           c.fillStyle = '#f0a040';
@@ -1049,89 +1149,66 @@
           g.rect(x - 12, y - 10, 2, 2, C.pearl); g.rect(x + 10, y - 8, 2, 2, C.pearl);
         },
         intro: [
-          'SUNRISE. SHE COULD',
-          'KILL THE PRINCE AND LIVE.',
-          'SHE CASTS THE KNIFE',
-          'into the sea instead.',
+          "HER SISTERS BRING A",
+          'BLADE BEFORE DAWN.',
+          'ONE LAST NIGHT TO SPEAK',
+          'without a voice — or lose him.',
         ],
         quote: '"She flung herself from the ship into the sea and felt her body dissolving into foam." — H. C. Andersen',
-        help: 'CATCH the SPIRIT ORBS · DODGE the sunrise bolts',
+        help: 'TAP A GESTURE EACH MOMENT · or ARROWS + A',
 
         init: function (api) {
           var s = api._s = {};
-          s.lives = 3; s.invincible = 0; s.done = false;
+          s.done = false;
           var W = api.W, H = api.H;
-          s.mx = W / 2; s.my = H - 55;
-          s.orbs = []; s.bolts = [];
-          s.orbCount = 0; s.orbTarget = 12;
-          s.orbT = 1.9; s.boltT = 2.6;
-          s.sunriseY = H + 50;
-          s.sunriseSpd = 7.2; // px/s → fills screen in ~(H+50)/7.2 ≈ 73s, well past 12-orb collection
+          s.moment = 0; s.affection = 0;
+          s.phase = 'choose'; s.reactT = 0; s.verdictT = 0;
+          s.cursor = 1; s.chosenIdx = -1; s.reactionText = '';
+          var cw = W - 32, ch = 54, gap = 10, top = H - 3 * ch - 2 * gap - 34;
+          s.cards = [];
+          for (var i = 0; i < 3; i++) s.cards.push({ x: 16, y: top + i * (ch + gap), w: cw, h: ch });
         },
 
         update: function (api, dt) {
           var s = api._s;
           if (s.done) return;
-          var W = api.W, H = api.H, spd = 150;
+          var W = api.W, H = api.H;
+          var moment = MOMENTS[Math.min(s.moment, MOMENTS.length - 1)];
 
-          // Steer mermaid left/right
-          var dx = 0;
-          if (api.keyDown('left'))  dx = -1;
-          if (api.keyDown('right')) dx =  1;
-          if (api.pointer.down && !api.keyDown('left') && !api.keyDown('right')) {
-            var pd = api.pointer.x - s.mx;
-            if (Math.abs(pd) > 10) dx = Math.sign(pd) * Math.min(1, Math.abs(pd) / 40);
-          }
-          s.mx = clamp(s.mx + dx * spd * dt, 14, W - 14);
-          s.sunriseY -= s.sunriseSpd * dt;
+          if (s.phase === 'choose') {
+            if (api.keyPressed('left') || api.keyPressed('up'))    s.cursor = (s.cursor + 2) % 3;
+            if (api.keyPressed('right') || api.keyPressed('down')) s.cursor = (s.cursor + 1) % 3;
 
-          // Spawn sea spirit orbs
-          s.orbT -= dt;
-          if (s.orbT <= 0 && s.orbCount + s.orbs.length < s.orbTarget) {
-            s.orbs.push({ x: 18 + Math.random() * (W - 36), y: -15, vy: 48 + Math.random() * 22, r: 7 + Math.random() * 4, phase: Math.random() * 7 });
-            s.orbT = 1.5 + Math.random() * 0.9;
-          }
-          // Spawn sunrise bolts
-          s.boltT -= dt;
-          if (s.boltT <= 0) {
-            s.bolts.push({ x: 18 + Math.random() * (W - 36), y: -12, vy: 115 + Math.random() * 55 });
-            s.boltT = 1.9 + Math.random() * 1.0;
-          }
-
-          // Move orbs, check catch
-          for (var oi = 0; oi < s.orbs.length; oi++) s.orbs[oi].y += s.orbs[oi].vy * dt;
-          s.orbs = s.orbs.filter(function (o) {
-            if (o.y > H + 20) return false;
-            if (Math.abs(o.x - s.mx) < 22 && Math.abs(o.y - s.my) < 22) {
-              s.orbCount++;
-              api.addScore(20); api.audio.sfx('coin');
-              api.burst(o.x, o.y, C.seafoam, 8); api.burst(o.x, o.y, C.pearl, 4);
-              if (s.orbCount >= s.orbTarget) {
-                s.done = true;
-                api.burst(W / 2, H / 2, C.seafoam, 30); api.burst(W / 2, H / 2, C.gold, 20);
-                api.flash('#c0f8ff', 0.6); api.audio.sfx('win'); api.win();
+            var picked = -1;
+            if (api.pointer.justDown) {
+              for (var i = 0; i < s.cards.length; i++) {
+                var cd = s.cards[i];
+                if (api.pointer.x >= cd.x && api.pointer.x <= cd.x + cd.w && api.pointer.y >= cd.y && api.pointer.y <= cd.y + cd.h) { picked = i; break; }
               }
-              return false;
             }
-            return true;
-          });
+            if (picked < 0 && api.keyPressed('a')) picked = s.cursor;
 
-          // Move bolts
-          for (var bi = 0; bi < s.bolts.length; bi++) s.bolts[bi].y += s.bolts[bi].vy * dt;
-          s.bolts = s.bolts.filter(function (b) { return b.y < H + 30; });
-
-          if (s.invincible > 0) s.invincible -= dt;
-
-          // Bolt collision
-          if (s.invincible <= 0) {
-            for (var bi2 = 0; bi2 < s.bolts.length; bi2++) {
-              var b = s.bolts[bi2];
-              if (Math.abs(b.x - s.mx) < 16 && Math.abs(b.y - s.my) < 20) {
-                s.lives--; s.invincible = 1.2;
-                api.shake(6, 0.4); api.flash('#ff8030', 0.2); api.audio.sfx('hurt');
-                if (s.lives <= 0) { s.done = true; api.lose(); }
-                break;
-              }
+            if (picked >= 0) {
+              var choice = moment.choices[picked];
+              s.chosenIdx = picked; s.affection += choice.pts;
+              api.addScore(choice.pts); api.audio.sfx('select');
+              api.burst(s.cards[picked].x + s.cards[picked].w / 2, s.cards[picked].y + s.cards[picked].h / 2, C.seafoam, 8);
+              s.reactionText = choice.reaction;
+              s.phase = 'reaction'; s.reactT = 1.1;
+            }
+          } else if (s.phase === 'reaction') {
+            s.reactT -= dt;
+            if (s.reactT <= 0) {
+              s.moment++;
+              if (s.moment >= MOMENTS.length) { s.phase = 'verdict'; s.verdictT = 1.7; }
+              else { s.phase = 'choose'; s.chosenIdx = -1; s.cursor = 1; }
+            }
+          } else if (s.phase === 'verdict') {
+            s.verdictT -= dt;
+            if (s.verdictT <= 0) {
+              s.done = true;
+              api.burst(W / 2, H / 2, C.seafoam, 26); api.burst(W / 2, H / 2, C.gold, 14);
+              api.flash('#c0f8ff', 0.55); api.audio.sfx('win'); api.win();
             }
           }
         },
@@ -1139,75 +1216,71 @@
         draw: function (api) {
           var s = api._s;
           var g = api.gfx, c = api.ctx, W = api.W, H = api.H;
-          var sunProg = clamp(1 - s.sunriseY / H, 0, 1);
+          var moment = MOMENTS[Math.min(s.moment, MOMENTS.length - 1)];
+          var prog = clamp(s.moment / MOMENTS.length + (s.phase === 'verdict' ? 1 : 0), 0, 1);
 
-          // Night sky fading to dawn
+          // Night sky fading toward dawn as the moments pass
           var grad = c.createLinearGradient(0, 0, 0, H);
-          grad.addColorStop(0, 'hsl(220,60%,' + Math.round(5 + sunProg * 14) + '%)');
-          grad.addColorStop(0.5, 'hsl(200,50%,' + Math.round(4 + sunProg * 10) + '%)');
+          grad.addColorStop(0, 'hsl(220,60%,' + Math.round(5 + prog * 16) + '%)');
+          grad.addColorStop(0.5, 'hsl(200,50%,' + Math.round(4 + prog * 11) + '%)');
           grad.addColorStop(1, '#010810');
           c.fillStyle = grad; c.fillRect(0, 0, W, H);
 
-          // Sunrise glow from below horizon
-          if (s.sunriseY < H) {
-            var sunGrad = c.createLinearGradient(0, s.sunriseY - 40, 0, H);
-            sunGrad.addColorStop(0, 'rgba(255,200,80,0)');
-            sunGrad.addColorStop(0.5, 'rgba(255,140,40,' + (sunProg * 0.5) + ')');
-            sunGrad.addColorStop(1, 'rgba(255,80,20,' + (sunProg * 0.65) + ')');
-            c.fillStyle = sunGrad; c.fillRect(0, Math.max(0, s.sunriseY - 40), W, H);
-          }
-
-          // Stars (fade as dawn rises)
-          c.globalAlpha = Math.max(0, 1 - sunProg * 2.5);
-          for (var sti = 0; sti < 18; sti++) {
-            c.fillStyle = '#e0f0ff'; c.fillRect((sti * 73 + 17) % W, (sti * 43 + 11) % Math.floor(H * 0.6), 2, 2);
+          c.globalAlpha = Math.max(0, 1 - prog * 1.4);
+          for (var sti = 0; sti < 16; sti++) {
+            c.fillStyle = '#e0f0ff'; c.fillRect((sti * 73 + 17) % W, (sti * 43 + 11) % Math.floor(H * 0.3), 2, 2);
           }
           c.globalAlpha = 1;
 
-          // Sea foam at water line
-          c.globalAlpha = 0.25; c.strokeStyle = '#a0e8f8'; c.lineWidth = 2;
-          for (var fmi = 0; fmi < 8; fmi++) {
-            var fx = ((api.t * 28 + fmi * 38) % (W + 40)) - 20, fy = H - 66 + (fmi % 3) * 12;
-            c.beginPath(); c.moveTo(fx, fy); c.quadraticCurveTo(fx + 10, fy - 4, fx + 20, fy); c.stroke();
-          }
-          c.globalAlpha = 1;
-
-          // Sea spirit orbs
-          for (var oi = 0; oi < s.orbs.length; oi++) {
-            var o = s.orbs[oi];
-            var glow = c.createRadialGradient(o.x, o.y, 1, o.x, o.y, o.r + 5);
-            glow.addColorStop(0, '#ffffff');
-            glow.addColorStop(0.4, C.seafoam);
-            glow.addColorStop(1, 'rgba(0,200,180,0)');
-            c.fillStyle = glow; c.beginPath(); c.arc(o.x, o.y, o.r + 5, 0, 7); c.fill();
-            g.circle(o.x, o.y, o.r, '#d0f8f8'); g.circle(o.x - 2, o.y - 2, o.r * 0.35, '#ffffff');
-            // Trailing sparkle
-            c.globalAlpha = 0.45;
-            g.rect(o.x + Math.sin(api.t * 4 + o.phase) * 6, o.y - 13, 2, 2, C.pearl);
+          if (prog > 0.5) {
+            c.globalAlpha = (prog - 0.5) * 0.6;
+            var sunGrad = c.createLinearGradient(0, H * 0.55, 0, H);
+            sunGrad.addColorStop(0, 'rgba(255,200,80,0)'); sunGrad.addColorStop(1, 'rgba(255,120,40,.6)');
+            c.fillStyle = sunGrad; c.fillRect(0, H * 0.55, W, H * 0.45);
             c.globalAlpha = 1;
           }
 
-          // Sunrise bolts (orange streaks from above)
-          for (var bi = 0; bi < s.bolts.length; bi++) {
-            var b = s.bolts[bi];
-            c.fillStyle = '#ff8020';
-            c.beginPath(); c.moveTo(b.x, b.y); c.lineTo(b.x - 5, b.y + 18); c.lineTo(b.x + 5, b.y + 18); c.closePath(); c.fill();
-            c.globalAlpha = 0.4; g.circle(b.x, b.y, 5, C.gold); c.globalAlpha = 1;
+          // Ship deck rail
+          c.fillStyle = '#12222e'; c.fillRect(0, H * 0.32, W, 8);
+          c.strokeStyle = '#1c3648'; c.lineWidth = 2;
+          for (var ri = 0; ri < 6; ri++) { c.beginPath(); c.moveTo(20 + ri * 46, H * 0.32); c.lineTo(20 + ri * 46, H * 0.32 - 26); c.stroke(); }
+
+          // Prince and the mute mermaid, side by side at the rail
+          drawPrince(api, W * 0.66, H * 0.30);
+          drawMermaid(api, W * 0.34, H * 0.31 + 8);
+
+          api.txtCFit(moment.label, W / 2, 20, 10, '#a0d8f0', true, W - 28);
+
+          if (s.phase === 'choose') {
+            for (var ci = 0; ci < s.cards.length; ci++) {
+              var cd2 = s.cards[ci], mc = moment.choices[ci];
+              var sel = s.cursor === ci;
+              c.fillStyle = sel ? 'rgba(60,40,90,.85)' : 'rgba(20,14,34,.78)';
+              c.beginPath(); c.roundRect(cd2.x, cd2.y, cd2.w, cd2.h, 8); c.fill();
+              c.strokeStyle = sel ? C.seafoam : '#3a2858'; c.lineWidth = sel ? 2 : 1; c.stroke();
+              api.txtCFit(mc.label, cd2.x + cd2.w / 2, cd2.y + 9, 9, sel ? '#e0f8ff' : '#c8b8e0', true, cd2.w - 16);
+              if (mc.hint) api.txtCFit(mc.hint, cd2.x + cd2.w / 2, cd2.y + cd2.h - 19, 7, '#8070a0', false, cd2.w - 16);
+            }
+            api.txtC('CHOOSE A GESTURE', W / 2, s.cards[0].y - 12, 7, '#5a4878');
+          } else if (s.phase === 'reaction') {
+            c.fillStyle = 'rgba(40,26,64,.9)';
+            c.beginPath(); c.roundRect(16, H * 0.56, W - 32, 70, 8); c.fill();
+            c.strokeStyle = C.seafoam; c.lineWidth = 1; c.stroke();
+            api.txtCHead(s.reactionText, W / 2, H * 0.56 + 14, 9, '#d8f0ff', false, 12, W - 56);
+          } else if (s.phase === 'verdict') {
+            var verdict = s.affection >= 50 ? 'HE FEELS SOMETHING HE CANNOT NAME'
+              : s.affection >= 40 ? 'HE WILL REMEMBER HER ALWAYS'
+              : 'HE SEES ONLY A DEAR, SILENT FRIEND';
+            c.fillStyle = 'rgba(10,6,20,.85)'; c.fillRect(0, H * 0.5, W, H * 0.28);
+            api.txtCHead(verdict, W / 2, H * 0.55, 10, C.seafoam, true, 14, W - 48);
           }
 
-          // Mermaid (slightly dissolving)
-          c.globalAlpha = 0.88 - sunProg * 0.18;
-          var blink = s.invincible > 0 && Math.floor(s.invincible * 7) % 2 === 0;
-          drawMermaid(api, s.mx, s.my, blink);
-          c.globalAlpha = 1;
+          // Affection meter
+          g.rect(14, H - 30, W - 28, 7, '#102030');
+          g.rect(14, H - 30, (W - 28) * clamp(s.affection / 60, 0, 1), 7, C.coral);
+          g.rectO(14, H - 30, W - 28, 7, '#1a4050', 1);
+          api.txtC('AFFECTION', W / 2, H - 41, 7, '#4a8090');
 
-          // Orb counter bar
-          g.rect(14, 8, W - 28, 7, '#102030');
-          g.rect(14, 8, (W - 28) * (s.orbCount / s.orbTarget), 7, C.seafoam);
-          g.rectO(14, 8, W - 28, 7, '#1a4050', 1);
-          api.txtC(s.orbCount + '/' + s.orbTarget + ' GIFTS', W / 2, 17, 7, '#4a8090');
-
-          drawHearts(api, s.lives, 16, 28);
           api.scanlines(); api.vignette();
         },
       },

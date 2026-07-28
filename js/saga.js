@@ -190,6 +190,7 @@
       chapters: chapters.map((c) => c.id),
       scene: () => scene,
       current: () => cur,
+      state: () => api._s,
       jump(i) { startChapter(i); playChapter(); },
     };
 
