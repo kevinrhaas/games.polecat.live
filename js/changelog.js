@@ -10,6 +10,15 @@
 // format stays identical to the rest of the fleet.
 export const CHANGELOG = [
   {
+    v: 152,
+    title: 'Fixed illegible GEN4 titles on Sherlock, Arthur & Dracula',
+    kind: 'fix',
+    ts: '2026-07-28T17:20:22.828Z',
+    items: [
+      'Sherlock Holmes, King Arthur, and Dracula\'s 16-bit titles used blackletter display fonts whose stylized letterforms read as gibberish (e.g. "SHERLOCK HOLMES" rendered as "SHCRLDCR / HDLMCS") — flagged 4+ sweeps running. Swapped in legible pixel display faces (Silkscreen, Handjet, Micro 5) for every hero title and in-hub header, and refreshed their thumbnails.',
+    ],
+  },
+  {
     v: 151,
     title: 'A Thousand Nights rebuilt as a branching adventure',
     kind: 'game',

@@ -26,10 +26,14 @@ mechanics it used), delete its queue line, and keep the claimed lists current �
   ring (Arthur). Fresh ideas for next builds: a book/scroll that turns pages, a
   constellation chart, a train/route timetable, a ship's deck plan, a family
   tree, a dungeon cross-section, a shop counter, a river descending the screen.
-- **Pixel display faces used:** Jacquard 24, Jacquard 12, Jacquarda Bastarda 9,
-  Jersey 25, Jersey 15, Workbench (+ Pixelify Sans as the shared UI face).
-  Still free on Google Fonts: Jersey 10/20, Micro 5, Tiny5, Silkscreen,
-  Handjet, Sixtyfour (reserve Sixtyfour/VT323-likes for sci-fi, per CLAUDE.md).
+- **Pixel display faces used:** Silkscreen (Sherlock), Handjet (Arthur),
+  Micro 5 (Dracula), Jersey 25, Jersey 15, Workbench (+ Pixelify Sans as the
+  shared UI face). Jacquard 24 / Jacquard 12 / Jacquarda Bastarda 9 were
+  RETIRED 2026-07-28 — their blackletter forms rendered hero titles
+  illegible ("SHERLOCK HOLMES" as "SHCRLDCR / HDLMCS" etc., UX-sweep #34/#37
+  finding 1, carried 4+ sweeps) — do not reuse them for title faces. Still
+  free on Google Fonts: Jersey 10/20, Tiny5, Sixtyfour (reserve
+  Sixtyfour/VT323-likes for sci-fi, per CLAUDE.md).
 - **Mechanics well-spent so far** (avoid stacking more of these; the standouts
   are marked ✦): timing stop-in-band, drag-runner + dodge, whack pop-ups,
   ✦ risk/reward taunt (Odyssey), ✦ simon-says memory (Circe), lane dodge,
