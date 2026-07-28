@@ -10,6 +10,17 @@
 // format stays identical to the rest of the fleet.
 export const CHANGELOG = [
   {
+    v: 145,
+    title: 'Merlin\'s Wild Magic and Nimue\'s Snare rebuilt for genre variety',
+    kind: 'game',
+    ts: '2026-07-28T13:36:05.113Z',
+    items: [
+      'The Wild Magic trial is now a rune-tracing spellcaster: tap each glowing waypoint of a sigil in order to trace it, across five sigils sharing one candle-timer.',
+      'Nimue\'s Snare is now a Simon-style incantation duel: watch her crystal spires light up in sequence, then repeat it back — tap a spire or use the arrow keys — as the sequence grows round by round.',
+      'REBUILD_QUEUE #18, done — merlin-spells was 4/5 dodge-or-catch chapters; two of those are now genuinely different genres.',
+    ],
+  },
+  {
     v: 144,
     title: 'Heidi rebuilt as an alpine day-cycle chore sim',
     kind: 'game',

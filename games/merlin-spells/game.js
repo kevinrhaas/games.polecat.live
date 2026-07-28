@@ -1,11 +1,11 @@
 /* ============================================================================
  * MERLIN — FIVE TRIALS OF THE ENCHANTER
  * Five chapters from Arthurian legend:
- *   1. THE WILD MAGIC    — catch glowing runes, dodge cursed glyphs (collect 12)
+ *   1. THE WILD MAGIC    — trace glowing rune sigils in order (path-tracing, 5 sigils)
  *   2. THE TWO DRAGONS   — dodge Red & White Dragon fire in Vortigern's tower (24s)
  *   3. FALCON'S FLIGHT   — steer the merlin falcon, collect 10 golden feathers (dodge)
  *   4. THE RUNE PUZZLE   — tap the correct glowing rune from the standing stones (10 rounds)
- *   5. NIMUE'S SNARE     — steer through closing crystal spires before trapped (26s)
+ *   5. NIMUE'S SNARE     — Simon-style incantation duel: repeat her crystal sequence
  * Built on RetroSaga (js/saga.js) + RetroEngine.
  * ============================================================================ */
 (function () {
@@ -237,105 +237,83 @@
 
   /* ═══════════════════════════════════════════════════════════
    * CHAPTER 1: THE WILD MAGIC
-   * Catch 12 glowing runes falling from above; avoid dark cursed glyphs.
-   * 3 lives, 22s average duration.
+   * Rune-tracing spellcaster: tap each glowing waypoint of a sigil
+   * in order across 5 sigils, sharing one candle-timer.
    ═══════════════════════════════════════════════════════════ */
   const RUNE_SYMS = ['ᚠ','ᚢ','ᚦ','ᚨ','ᚱ','ᚷ','ᚹ','ᚺ','ᚾ','ᛁ','ᛃ','ᛇ','ᛈ','ᛉ','ᛊ','ᛏ'];
+  const RUNE_GLYPHS = [
+    [[0,-1],[0.9,0.72],[-0.9,0.72],[0,-1]],
+    [[0,-1],[0,0],[0,1],[-1,0],[1,0]],
+    [[-0.5,-0.9],[0.35,-0.15],[-0.35,0.15],[0.5,0.9]],
+    [[-0.85,-0.9],[0.85,-0.45],[-0.85,0],[0.85,0.45],[-0.85,0.9]],
+    [[0,-1],[1,0],[0,1],[-1,0]],
+  ];
   function chapter1_wildMagic() {
     return {
-      id: 'wildmagic', name: 'THE WILD MAGIC', sub: 'Catch the runes',
+      id: 'wildmagic', name: 'THE WILD MAGIC', sub: 'Trace the sigils',
       intro: [
         "Deep in the oakwood, the Old Magic",
-        "stirs — runes drift down through the",
-        "canopy like embers from a distant fire.",
-        "Catch the golden ones.",
-        "Shun the cursed red.",
+        "stirs. Merlin traces the shape of",
+        "each rune in the air with a finger",
+        "of light — every point, in order,",
+        "or the working scatters unspoken.",
       ],
       quote: '"There is only one sin: choosing not to see." — attributed to Merlin',
-      help: 'DRAG or ARROWS to catch gold runes · avoid red glyphs · 3 lives',
-      winText: 'The forest breathes. The runes settle into Merlin\'s staff, singing.',
-      loseText: 'A cursed glyph burns the hand. The Old Magic scatters on the wind.',
+      help: 'TAP each glowing point in order to trace the sigil · 5 sigils · one shared candle',
+      winText: 'Five sigils burn complete. The Old Magic answers Merlin\'s hand.',
+      loseText: 'The candle gutters out. The half-drawn sigil fades to smoke.',
       icon(api, x, y) {
         api.gfx.rect(x - 1, y - 8, 2, 16, C.gold);
         api.gfx.rect(x - 5, y - 8, 10, 2, C.gold);
         api.txtC('ᚠ', x, y + 4, 8, C.lavender, true);
       },
       init(api) {
-        this.px = api.W / 2;
         this.lives = 3;
-        this.caught = 0;
-        this.need = 12;
-        this.items = [];
-        this.spawnT = 0;
-        this.spawnRate = 1.8; // seconds between spawns
+        this.sigil = 0;
+        this.need = 5;
         this.t = 0;
-        this.flashT = 0;
-        this.particles = [];
+        this.errT = 0;
+        this.doneFlashT = 0;
+        this.maxTime = 42;
+        this.timeLeft = 42;
+        this._buildSigil(api);
+      },
+      _buildSigil(api) {
+        const shape = RUNE_GLYPHS[this.sigil % RUNE_GLYPHS.length];
+        const cx = api.W / 2, cy = api.H * 0.48, scale = 78;
+        this.points = shape.map(([sx, sy]) => ({ x: cx + sx * scale, y: cy + sy * scale }));
+        this.step = 0;
       },
       update(api, dt) {
         this.t += dt;
-        this.flashT = Math.max(0, this.flashT - dt);
+        this.errT = Math.max(0, this.errT - dt);
+        this.doneFlashT = Math.max(0, this.doneFlashT - dt);
+        this.timeLeft -= dt;
+        if (this.timeLeft <= 0) { api.lose(); return; }
 
-        // player movement
-        const speed = 120;
-        if (api.input.down('left')) this.px = clamp(this.px - speed * dt, 14, api.W - 14);
-        if (api.input.down('right')) this.px = clamp(this.px + speed * dt, 14, api.W - 14);
-        if (api.pointer.down) this.px = clamp(api.pointer.x, 14, api.W - 14);
-
-        // spawn
-        this.spawnT += dt;
-        if (this.spawnT >= this.spawnRate) {
-          this.spawnT = 0;
-          this.spawnRate = Math.max(0.85, this.spawnRate - 0.06);
-          const cursed = Math.random() < 0.28 + Math.min(0.2, this.caught * 0.01);
-          this.items.push({
-            x: 18 + Math.random() * (api.W - 36),
-            y: -14,
-            spd: 55 + Math.random() * 30 + this.caught * 2,
-            cursed,
-            sym: RUNE_SYMS[Math.floor(Math.random() * RUNE_SYMS.length)],
-            wobble: Math.random() * Math.PI * 2,
-          });
-        }
-
-        const py = api.H - 52;
-        for (let i = this.items.length - 1; i >= 0; i--) {
-          const it = this.items[i];
-          it.y += it.spd * dt;
-          it.x += Math.sin(it.wobble + this.t * 1.8) * 0.6;
-          const dx = Math.abs(it.x - this.px), dy = Math.abs(it.y - py);
-          if (dx < 20 && dy < 18) {
-            this.items.splice(i, 1);
-            if (it.cursed) {
-              this.lives--;
-              api.shake(4, 0.4);
-              api.flash(C.red, 0.3);
-              api.audio.sfx('hurt');
-              if (this.lives <= 0) { api.lose(); return; }
-            } else {
-              this.caught++;
-              api.addScore(20);
-              api.audio.sfx('coin');
-              for (let p = 0; p < 6; p++) this.particles.push({ x: it.x, y: it.y, vx: (Math.random() - 0.5) * 80, vy: -40 - Math.random() * 60, life: 0.7, maxL: 0.7, c: Math.random() < 0.5 ? C.gold : C.lavender });
-              if (this.caught >= this.need) { api.addScore(80); api.win(); return; }
+        if (api.pointer.justDown) {
+          const target = this.points[this.step];
+          const dist = Math.hypot(api.pointer.x - target.x, api.pointer.y - target.y);
+          if (dist < 28) {
+            this.step++;
+            api.audio.sfx('coin');
+            api.burst(target.x, target.y, C.lavender, 8);
+            if (this.step >= this.points.length) {
+              this.sigil++;
+              api.addScore(30);
+              this.timeLeft = Math.min(this.maxTime, this.timeLeft + 6);
+              this.doneFlashT = 0.5;
+              if (this.sigil >= this.need) { api.addScore(80); api.win(); return; }
+              this._buildSigil(api);
             }
-          } else if (it.y > api.H + 10) {
-            this.items.splice(i, 1);
-            if (!it.cursed) {
-              this.lives--;
-              api.shake(2, 0.3);
-              api.audio.sfx('hurt');
-              if (this.lives <= 0) { api.lose(); return; }
-            }
+          } else {
+            this.lives--;
+            this.errT = 0.4;
+            api.shake(3, 0.3);
+            api.flash(C.red, 0.25);
+            api.audio.sfx('hurt');
+            if (this.lives <= 0) { api.lose(); return; }
           }
-        }
-
-        // particles
-        for (let p = this.particles.length - 1; p >= 0; p--) {
-          const pt = this.particles[p];
-          pt.x += pt.vx * dt; pt.y += pt.vy * dt; pt.vy += 120 * dt;
-          pt.life -= dt;
-          if (pt.life <= 0) this.particles.splice(p, 1);
         }
       },
       draw(api) {
@@ -348,40 +326,74 @@
         c.fillStyle = '#06040e';
         for (let tx = -10; tx < W + 10; tx += 28) {
           const th = 60 + Math.sin(tx * 0.08) * 20;
-          c.beginPath(); c.moveTo(tx, H * 0.22 + th);
-          c.lineTo(tx + 14, H * 0.22); c.lineTo(tx + 28, H * 0.22 + th);
+          c.beginPath(); c.moveTo(tx, H * 0.16 + th);
+          c.lineTo(tx + 14, H * 0.16); c.lineTo(tx + 28, H * 0.16 + th);
           c.lineTo(tx + 28, 0); c.lineTo(tx, 0); c.closePath(); c.fill();
         }
         // floor mist
         c.globalAlpha = 0.22; c.fillStyle = C.lavender; c.fillRect(0, H - 38, W, 38);
         c.globalAlpha = 1;
 
-        // falling items
-        for (const it of this.items) {
-          const pulse = 0.7 + 0.3 * Math.sin(this.t * 4 + it.wobble);
-          c.globalAlpha = 0.6 + 0.4 * pulse;
-          const col = it.cursed ? C.red : C.gold;
-          g.circle(it.x, it.y, 10, it.cursed ? 'rgba(180,20,40,.18)' : 'rgba(200,160,20,.18)');
-          api.txtC(it.sym, it.x, it.y - 5, 13, col, true);
+        const pts = this.points;
+
+        // faint full guide outline
+        c.globalAlpha = 0.22;
+        c.setLineDash([5, 5]);
+        c.strokeStyle = C.lavender; c.lineWidth = 1.5;
+        c.beginPath();
+        c.moveTo(pts[0].x, pts[0].y);
+        for (let i = 1; i < pts.length; i++) c.lineTo(pts[i].x, pts[i].y);
+        c.stroke();
+        c.setLineDash([]);
+        c.globalAlpha = 1;
+
+        // traced segments, glowing gold
+        if (this.step > 0) {
+          c.strokeStyle = C.goldL; c.lineWidth = 3;
+          c.globalAlpha = 0.9;
+          c.beginPath();
+          c.moveTo(pts[0].x, pts[0].y);
+          for (let i = 1; i <= this.step && i < pts.length; i++) c.lineTo(pts[i].x, pts[i].y);
+          c.stroke();
           c.globalAlpha = 1;
         }
 
-        // particles
-        for (const pt of this.particles) {
-          c.globalAlpha = pt.life / pt.maxL * 0.9;
-          g.rect(pt.x - 1.5, pt.y - 1.5, 3, 3, pt.c);
+        // waypoints
+        const pulse = 0.6 + 0.4 * Math.sin(this.t * 4.5);
+        for (let i = 0; i < pts.length; i++) {
+          const p = pts[i];
+          if (i < this.step) {
+            g.circle(p.x, p.y, 7, C.gold);
+          } else if (i === this.step) {
+            c.globalAlpha = 0.5 + 0.5 * pulse;
+            g.circle(p.x, p.y, 11, C.lavender);
+            c.globalAlpha = 1;
+            g.circle(p.x, p.y, 6, C.starlit);
+          } else {
+            c.globalAlpha = 0.35;
+            g.circle(p.x, p.y, 5, C.mist);
+            c.globalAlpha = 1;
+          }
         }
-        c.globalAlpha = 1;
 
-        // player: Merlin catcher (staff silhouette)
-        const py = H - 52;
-        g.rect(this.px - 1, py - 12, 3, 20, C.silver);
-        g.rect(this.px - 10, py - 14, 20, 3, C.gold);
-        g.circle(this.px, py - 12, 5, C.lavender);
+        // error / success flash rings
+        if (this.errT > 0) {
+          c.globalAlpha = this.errT / 0.4 * 0.4;
+          g.circle(W / 2, H * 0.48, 96, C.red);
+          c.globalAlpha = 1;
+        }
+        if (this.doneFlashT > 0) {
+          c.globalAlpha = this.doneFlashT / 0.5 * 0.35;
+          g.circle(W / 2, H * 0.48, 96, C.gold);
+          c.globalAlpha = 1;
+        }
 
         // HUD
-        api.topBar('RUNES  ' + this.caught + '/' + this.need);
+        api.topBar('SIGIL  ' + this.sigil + '/' + this.need);
         for (let li = 0; li < 3; li++) g.rect(W - 10 - li * 14, 3, 10, 10, li < this.lives ? C.red : '#2a0a10');
+        const pct = Math.max(0, this.timeLeft / this.maxTime);
+        g.rect(8, H - 16, W - 16, 6, '#1a0e30');
+        g.rect(8, H - 16, (W - 16) * pct, 6, pct > 0.3 ? C.lavender : C.red);
       },
     };
   }
@@ -976,238 +988,207 @@
 
   /* ═══════════════════════════════════════════════════════════
    * CHAPTER 5: NIMUE'S SNARE
-   * Steer through crystal spires closing from both sides. 26s.
-   * 3 lives. Corridor narrows over time.
+   * Simon-style incantation duel: watch Nimue's spell light the four
+   * crystal spires, then repeat it — TAP or ARROW KEYS. Grows each round.
    ═══════════════════════════════════════════════════════════ */
+  const DUEL_COLORS = [/* up */ '#88ccff', /* right */ '#d4a820', /* down */ '#b87aff', /* left */ '#c8d0f0'];
   function chapter5_nimueSnare() {
     return {
-      id: 'nimuesnare', name: "NIMUE'S SNARE", sub: 'Escape the crystal',
+      id: 'nimuesnare', name: "NIMUE'S SNARE", sub: 'Duel of incantations',
       intro: [
         "Nimue has turned Merlin's own magic",
-        "against him. Crystal spires grow",
-        "from the cave walls, closing in.",
-        "Guide him through the narrowing gap",
-        "before the trap shuts forever.",
+        "against him. Four crystal spires",
+        "answer her call in the cave dark.",
+        "Watch her incantation, then cast",
+        "it back to her, note for note.",
       ],
       quote: '"Merlin taught her his enchantments, and she used them to enclose him for ever." — Malory, Le Morte d\'Arthur',
-      help: 'DRAG or ARROWS to steer · survive 26 seconds · 3 lives',
-      winText: 'The crystal cracks. Merlin finds the last gap and is through.',
-      loseText: 'The spires close. The enchantment holds. Sleep, old wizard.',
+      help: 'WATCH the spires light in order, then repeat it — TAP a spire or ARROW KEYS · 3 lives',
+      winText: 'Merlin casts her own spell back at her. The snare shatters.',
+      loseText: "Merlin's answer falters. The crystal closes over him.",
       icon(api, x, y) {
         api.gfx.rect(x - 12, y - 12, 6, 18, C.crystalL);
         api.gfx.rect(x + 6, y - 8, 6, 14, C.crystal);
         api.gfx.rect(x - 3, y - 16, 6, 24, C.lavender);
       },
       init(api) {
-        this.px = api.W / 2;
-        this.py = api.H / 2;
         this.lives = 3;
-        this.elapsed = 0;
-        this.need = 26;
-        this.leftW = 20;   // width of left wall
-        this.rightW = 20;  // width of right wall
-        this.growRate = 1.6; // pixels per second each wall grows
-        this.spires = [];
-        this.spireT = 0;
-        this.spireRate = 0.9;
-        this.particles = [];
-        this.invT = 0;
-        this._spawnSpires(api);
+        this.seq = [];
+        this.maxLen = 8;
+        this.round = 1;
+        this.t = 0;
+        this.lit = -1;
+        this.feedT = 0;
+        this.msg = '';
+        this.msgC = C.silver;
+        for (let i = 0; i < 3; i++) this._extend();
+        this._beginWatch();
       },
-      _spawnSpires(api) {
-        // Left wall spires
-        for (let i = 0; i < 5; i++) {
-          this.spires.push({ side: 'left', x: 0, y: 50 + i * 90 + Math.random() * 40 - 20, w: 18 + Math.random() * 16, h: 8 + Math.random() * 10, spd: 0, t: i * 0.18 });
-        }
-        // Right wall spires
-        for (let i = 0; i < 5; i++) {
-          this.spires.push({ side: 'right', x: api.W, y: 60 + i * 90 + Math.random() * 40 - 20, w: 18 + Math.random() * 16, h: 8 + Math.random() * 10, spd: 0, t: i * 0.22 });
-        }
+      _extend() { this.seq.push(Math.floor(Math.random() * 4)); },
+      _beginWatch() {
+        this.phase = 'watch';
+        this.watchIdx = 0;
+        this.stepState = 'gap';
+        this.stepT = 0.4;
+        this.lit = -1;
+        this.inputIdx = 0;
+      },
+      _nodes(api) {
+        const cx = api.W / 2, cy = api.H * 0.5, R = 96;
+        return [
+          { x: cx, y: cy - R },        // up
+          { x: cx + R * 0.82, y: cy }, // right
+          { x: cx, y: cy + R },        // down
+          { x: cx - R * 0.82, y: cy }, // left
+        ];
       },
       update(api, dt) {
-        this.elapsed += dt;
-        this.invT = Math.max(0, this.invT - dt);
-        const W = api.W, H = api.H;
+        this.t += dt;
 
-        // Movement
-        const spd = 130;
-        let ax = 0, ay = 0;
-        if (api.input.down('left')) ax -= spd;
-        if (api.input.down('right')) ax += spd;
-        if (api.input.down('up')) ay -= spd;
-        if (api.input.down('down')) ay += spd;
-        if (api.pointer.down) {
-          const dx = api.pointer.x - this.px, dy = api.pointer.y - this.py;
-          const d = Math.sqrt(dx * dx + dy * dy);
-          if (d > 5) { ax = dx / d * spd; ay = dy / d * spd; }
-        }
-        this.px += ax * dt;
-        this.py += ay * dt;
-
-        // Wall growth
-        const prog = this.elapsed / this.need;
-        this.leftW = 20 + prog * 60;
-        this.rightW = 20 + prog * 60;
-        const leftEdge = this.leftW + 6;
-        const rightEdge = W - this.rightW - 6;
-        this.px = clamp(this.px, leftEdge, rightEdge);
-        this.py = clamp(this.py, 38, H - 52);
-
-        // Spire animations
-        for (const sp of this.spires) {
-          sp.t += dt;
-          sp.y -= 22 * dt; // scroll upward
-          if (sp.y < -30) sp.y = H + 30 + Math.random() * 80;
-        }
-
-        // Collision with walls
-        if (this.invT <= 0) {
-          const inLeftWall = this.px < this.leftW + 8;
-          const inRightWall = this.px > W - this.rightW - 8;
-          if (inLeftWall || inRightWall) {
-            this.lives--;
-            this.invT = 1.0;
-            api.shake(5, 0.4);
-            api.flash(C.crystal, 0.35);
-            api.audio.sfx('hurt');
-            for (let p = 0; p < 10; p++) this.particles.push({ x: this.px, y: this.py, vx: (Math.random() - 0.5) * 100, vy: -60 - Math.random() * 60, life: 0.5, maxL: 0.5, c: C.crystalL });
-            if (this.lives <= 0) { api.lose(); return; }
-            // Push back to center
-            this.px = W / 2;
+        if (this.phase === 'watch') {
+          this.stepT -= dt;
+          if (this.stepT <= 0) {
+            if (this.stepState === 'gap') {
+              if (this.watchIdx >= this.seq.length) {
+                this.phase = 'input'; this.inputIdx = 0; this.lit = -1;
+              } else {
+                this.lit = this.seq[this.watchIdx];
+                this.stepState = 'lit'; this.stepT = 0.5;
+                api.audio.sfx('blip');
+              }
+            } else {
+              this.lit = -1;
+              this.watchIdx++;
+              this.stepState = 'gap'; this.stepT = 0.22;
+            }
           }
+          return;
         }
 
-        // Spawn spire bursts
-        this.spireT += dt;
-        if (this.spireT >= this.spireRate) {
-          this.spireT = 0;
-          this.spireRate = Math.max(0.5, this.spireRate - 0.03);
-          const side = Math.random() < 0.5 ? 'left' : 'right';
-          this.spires.push({ side, y: H + 10, w: 20 + Math.random() * 20, h: 6 + Math.random() * 10, t: 0 });
+        if (this.phase === 'input') {
+          let dir = -1;
+          if (api.input.pressed('up')) dir = 0;
+          else if (api.input.pressed('right')) dir = 1;
+          else if (api.input.pressed('down')) dir = 2;
+          else if (api.input.pressed('left')) dir = 3;
+          else if (api.pointer.justDown) {
+            const nodes = this._nodes(api);
+            let best = -1, bestD = 46;
+            for (let i = 0; i < 4; i++) {
+              const d = Math.hypot(api.pointer.x - nodes[i].x, api.pointer.y - nodes[i].y);
+              if (d < bestD) { bestD = d; best = i; }
+            }
+            dir = best;
+          }
+          if (dir < 0) return;
+
+          if (dir === this.seq[this.inputIdx]) {
+            this.lit = dir;
+            api.addScore(10);
+            api.audio.sfx('coin');
+            const n = this._nodes(api)[dir];
+            api.burst(n.x, n.y, DUEL_COLORS[dir], 7);
+            this.inputIdx++;
+            if (this.inputIdx >= this.seq.length) {
+              if (this.seq.length >= this.maxLen) {
+                api.addScore(150);
+                this.msg = 'THE SPELL TURNS'; this.msgC = C.goldL;
+                this.phase = 'won'; this.feedT = 0.5;
+              } else {
+                this.msg = 'PRECISE'; this.msgC = C.goldL;
+                this.phase = 'roundgap'; this.feedT = 0.7;
+              }
+            }
+          } else {
+            this.lives--;
+            this.lit = -1;
+            api.shake(5, 0.35);
+            api.flash(C.red, 0.3);
+            api.audio.sfx('hurt');
+            this.msg = 'WRONG NOTE'; this.msgC = C.redL;
+            this.phase = 'wronggap'; this.feedT = 0.9;
+          }
+          return;
         }
 
-        // Particles
-        for (let p = this.particles.length - 1; p >= 0; p--) {
-          const pt = this.particles[p];
-          pt.x += pt.vx * dt; pt.y += pt.vy * dt; pt.vy += 80 * dt;
-          pt.life -= dt;
-          if (pt.life <= 0) this.particles.splice(p, 1);
+        if (this.phase === 'roundgap') {
+          this.feedT -= dt;
+          if (this.feedT <= 0) { this.round++; this._extend(); this._beginWatch(); }
+          return;
         }
 
-        if (this.elapsed >= this.need) { api.addScore(120); api.win(); }
+        if (this.phase === 'wronggap') {
+          this.feedT -= dt;
+          if (this.feedT <= 0) {
+            if (this.lives <= 0) { api.lose(); return; }
+            this._beginWatch();
+          }
+          return;
+        }
+
+        if (this.phase === 'won') {
+          this.feedT -= dt;
+          if (this.feedT <= 0) api.win();
+          return;
+        }
       },
       draw(api) {
         const g = api.gfx, c = api.ctx, W = api.W, H = api.H;
-        const t = api.t || 0;
 
-        // Cave interior
         const bg = c.createLinearGradient(0, 0, 0, H);
         bg.addColorStop(0, '#06040e'); bg.addColorStop(1, '#0c0820');
         c.fillStyle = bg; c.fillRect(0, 0, W, H);
 
-        // Crystal walls (solid, growing)
-        // Left wall
-        const lwPulse = 0.7 + 0.3 * Math.sin(t * 2.5);
-        c.fillStyle = '#100838';
-        c.fillRect(0, 0, this.leftW, H);
-        c.fillStyle = C.crystal; c.globalAlpha = 0.25 * lwPulse;
-        c.fillRect(0, 0, this.leftW, H);
-        c.globalAlpha = 1;
-        c.strokeStyle = C.crystalL; c.lineWidth = 1.5; c.globalAlpha = 0.7;
-        c.beginPath(); c.moveTo(this.leftW, 0); c.lineTo(this.leftW, H); c.stroke();
-        c.globalAlpha = 1;
-        // Right wall
-        c.fillStyle = '#100838';
-        c.fillRect(W - this.rightW, 0, this.rightW, H);
-        c.fillStyle = C.crystal; c.globalAlpha = 0.25 * lwPulse;
-        c.fillRect(W - this.rightW, 0, this.rightW, H);
-        c.globalAlpha = 1;
-        c.strokeStyle = C.crystalL; c.lineWidth = 1.5; c.globalAlpha = 0.7;
-        c.beginPath(); c.moveTo(W - this.rightW, 0); c.lineTo(W - this.rightW, H); c.stroke();
+        const nodes = this._nodes(api);
+        const cx = W / 2, cy = H * 0.5;
+
+        // connecting spokes
+        c.globalAlpha = 0.18; c.strokeStyle = C.mist; c.lineWidth = 1.5;
+        for (const n of nodes) { c.beginPath(); c.moveTo(cx, cy); c.lineTo(n.x, n.y); c.stroke(); }
         c.globalAlpha = 1;
 
-        // Spires protruding from walls
-        for (const sp of this.spires) {
-          const pulse = 0.5 + 0.5 * Math.sin(t * 3 + sp.t * 5);
-          c.globalAlpha = 0.6 + 0.3 * pulse;
-          if (sp.side === 'left') {
-            c.fillStyle = C.crystalL;
-            c.beginPath();
-            c.moveTo(this.leftW, sp.y - sp.h);
-            c.lineTo(this.leftW + sp.w, sp.y);
-            c.lineTo(this.leftW, sp.y + sp.h);
-            c.closePath(); c.fill();
-          } else {
-            c.fillStyle = C.crystalL;
-            c.beginPath();
-            c.moveTo(W - this.rightW, sp.y - sp.h);
-            c.lineTo(W - this.rightW - sp.w, sp.y);
-            c.lineTo(W - this.rightW, sp.y + sp.h);
-            c.closePath(); c.fill();
-          }
+        // center Nimue mark
+        const pulse = 0.6 + 0.4 * Math.sin(this.t * 2.2);
+        c.globalAlpha = 0.25 + 0.15 * pulse;
+        g.circle(cx, cy, 22, C.crystal);
+        c.globalAlpha = 1;
+        api.txtC('☾', cx, cy + 4, 12, C.crystalL, true);
+
+        // crystal spires
+        for (let i = 0; i < 4; i++) {
+          const n = nodes[i];
+          const active = this.lit === i;
+          const idlePulse = 0.55 + 0.35 * Math.sin(this.t * 2.6 + i * 1.4);
+          const r = active ? 20 : 14;
+          c.globalAlpha = active ? 0.9 : 0.35 + 0.15 * idlePulse;
+          g.circle(n.x, n.y, r + 6, active ? DUEL_COLORS[i] : '#160c30');
+          c.globalAlpha = 1;
+          c.fillStyle = DUEL_COLORS[i];
+          c.globalAlpha = active ? 1 : 0.55;
+          c.beginPath();
+          c.moveTo(n.x, n.y - r); c.lineTo(n.x + r * 0.7, n.y); c.lineTo(n.x, n.y + r); c.lineTo(n.x - r * 0.7, n.y);
+          c.closePath(); c.fill();
           c.globalAlpha = 1;
         }
 
-        // Ambient crystal shimmer in walls
-        for (let sh = 0; sh < 6; sh++) {
-          const sy = (t * 28 + sh * 80) % H;
-          c.globalAlpha = 0.3 + 0.2 * Math.sin(t * 4 + sh);
-          g.rect(4, sy, this.leftW - 6, 3, C.crystalL);
-          g.rect(W - this.rightW + 2, sy + 20, this.rightW - 6, 3, C.crystalL);
-          c.globalAlpha = 1;
+        // phase hint + feedback
+        let hint = '';
+        if (this.phase === 'watch') hint = 'WATCH';
+        else if (this.phase === 'input') hint = 'YOUR TURN';
+        if (hint) api.txtCFit(hint, W / 2, 56, 10, C.lavender, false);
+        if (this.msg && this.feedT > 0) api.txtCFit(this.msg, W / 2, 76, 10, this.msgC, false);
+
+        // round label + sequence progress dots
+        api.txtCFit('ROUND ' + this.round, W / 2, H - 56, 9, C.silver, false);
+        const dots = this.maxLen;
+        const dotW = (W - 40) / dots;
+        for (let i = 0; i < dots; i++) {
+          const dx = 20 + dotW * i + dotW / 2;
+          g.circle(dx, H - 38, 3.5, i < this.seq.length ? C.gold : '#241040');
         }
 
-        // Particles
-        for (const pt of this.particles) {
-          c.globalAlpha = pt.life / pt.maxL;
-          g.rect(pt.x - 2, pt.y - 2, 4, 4, pt.c);
-        }
-        c.globalAlpha = 1;
-
-        // Nimue spell text drifting
-        c.globalAlpha = 0.08 + 0.05 * Math.sin(t * 1.2);
-        api.txtCFit('IMPRISONED', W / 2, H / 2 - 30, 9, C.crystalL, false);
-        c.globalAlpha = 1;
-
-        // Player: Merlin
-        const inv = this.invT > 0 && Math.sin(this.invT * 18) > 0;
-        if (!inv) {
-          // Staff
-          g.rect(this.px - 1, this.py - 22, 3, 32, C.gold);
-          // Star at top of staff
-          const starPulse = 0.7 + 0.3 * Math.sin(t * 6);
-          c.globalAlpha = starPulse;
-          g.circle(this.px, this.py - 24, 5, C.lavender);
-          c.globalAlpha = 1;
-          // Robe
-          c.fillStyle = C.mist; c.globalAlpha = 0.85;
-          c.beginPath(); c.moveTo(this.px - 9, this.py - 8); c.lineTo(this.px + 9, this.py - 8); c.lineTo(this.px + 12, this.py + 14); c.lineTo(this.px - 12, this.py + 14); c.closePath(); c.fill();
-          c.globalAlpha = 1;
-          g.circle(this.px, this.py - 10, 7, C.silver);
-          // Hat
-          c.fillStyle = C.mist; c.globalAlpha = 0.9;
-          c.beginPath(); c.moveTo(this.px - 9, this.py - 14); c.lineTo(this.px + 9, this.py - 14); c.lineTo(this.px, this.py - 32); c.closePath(); c.fill();
-          c.globalAlpha = 1;
-        }
-
-        // Timer bar
-        const pct = Math.min(1, this.elapsed / this.need);
-        g.rect(8, H - 18, W - 16, 6, '#1a0e30');
-        g.rect(8, H - 18, (W - 16) * pct, 6, C.lavender);
-        api.txtCFit(Math.ceil(this.need - this.elapsed) + 's', W / 2, H - 30, 9, C.silver);
-
-        // Lives
-        for (let li = 0; li < 3; li++) {
-          g.circle(14 + li * 16, H - 42, 5, li < this.lives ? C.gold : C.mist);
-        }
-
-        // Corridor width warning
-        const gap = W - this.leftW - this.rightW;
-        if (gap < 100) {
-          c.globalAlpha = 0.5 + 0.4 * Math.sin(t * 6);
-          api.txtCFit('CLOSING', W / 2, 24, 10, C.crystal, false);
-          c.globalAlpha = 1;
-        }
+        // lives
+        for (let li = 0; li < 3; li++) g.rect(W - 10 - li * 14, 3, 10, 10, li < this.lives ? C.red : '#2a0a10');
       },
     };
   }
