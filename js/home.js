@@ -385,6 +385,10 @@ import { FLEET } from '../vendor/polecat-shell/catalog.js';
   });
   const lu = document.getElementById('lastUpdated');
   if (lu && CHANGELOG[0]) lu.textContent = fmtCT(CHANGELOG[0].ts);
+  const statLiveBtn = document.getElementById('statLiveBtn');
+  if (statLiveBtn) statLiveBtn.addEventListener('click', () => setFamily('All', { scroll: true }));
+  const statTotalBtn = document.getElementById('statTotalBtn');
+  if (statTotalBtn) statTotalBtn.addEventListener('click', () => setFamily('All', { scroll: true }));
 
   buildChips();
   meta();
