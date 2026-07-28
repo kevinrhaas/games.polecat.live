@@ -10,6 +10,15 @@
 // format stays identical to the rest of the fleet.
 export const CHANGELOG = [
   {
+    v: 153,
+    title: 'Home hero stats are clickable now',
+    kind: 'fix',
+    ts: '2026-07-28T17:41:04.205Z',
+    items: [
+      'The "Playable Now" and "Legends Incoming" hero tiles were dead text with no way to act on them — flagged 4+ UX sweeps running. Both now jump straight to the arcade grid.',
+    ],
+  },
+  {
     v: 152,
     title: 'Fixed illegible GEN4 titles on Sherlock, Arthur & Dracula',
     kind: 'fix',

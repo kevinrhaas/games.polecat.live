@@ -114,6 +114,13 @@ img { max-width: 100%; display: block; }
 .hero .stats { display:flex; gap: 26px; justify-content:center; margin-top: 26px; flex-wrap: wrap; color: var(--ink-dim); }
 .hero .stats b { display:block; font-family: var(--font-pixel); font-size: 22px; color: var(--yellow); }
 .hero .stats span { font-size: 12px; letter-spacing: 1px; text-transform: uppercase; }
+.hero .stats button.stat-link {
+  appearance: none; background: none; border: none; font: inherit; color: inherit;
+  padding: 8px 4px; margin: -8px -4px; min-height: 44px; cursor: pointer;
+  border-radius: var(--r); transition: color .15s, background .15s;
+}
+.hero .stats button.stat-link:hover, .hero .stats button.stat-link:focus-visible { color: var(--ink); background: rgba(255,255,255,.06); }
+.hero .stats button.stat-link:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
 
 .marquee {
   font-family: var(--font-pixel); font-size: 10px; color: var(--green);
