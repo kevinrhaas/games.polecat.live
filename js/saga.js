@@ -189,6 +189,7 @@
     global.__sagaTest = {
       chapters: chapters.map((c) => c.id),
       scene: () => scene,
+      current: () => cur,
       jump(i) { startChapter(i); playChapter(); },
     };
 
