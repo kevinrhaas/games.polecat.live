@@ -10,6 +10,17 @@
 // format stays identical to the rest of the fleet.
 export const CHANGELOG = [
   {
+    v: 135,
+    title: 'A Christmas Carol: Christmas Morning rebuilt as a redemption dash',
+    kind: 'game',
+    ts: '2026-07-28T02:11:00.841Z',
+    items: [
+      'The plain jump-the-obstacles runner is now a checklist dash through London: hop the snowdrifts on the way, then stop to keep three of Scrooge\'s real vows — buy the prize turkey the instant the poulterer\'s shutter opens, toss a coin to the gentleman when your timing lands in the sweet spot, and greet the neighbors on the beat.',
+      'Miss a promise and it costs a life instead of the whole chapter, so the dash to the Cratchits\' door keeps moving either way.',
+      'Final step on REBUILD_QUEUE #11\'s rework of the Christmas Carol saga — every chapter now has its own distinct mechanic, and the line comes off the queue.',
+    ],
+  },
+  {
     v: 134,
     title: 'A Christmas Carol: Christmas Past rebuilt as a redemption-ledger choice',
     kind: 'game',

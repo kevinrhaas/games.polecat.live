@@ -1022,7 +1022,7 @@
       {
         id: 'morning',
         name: 'CHRISTMAS MORNING',
-        sub: 'A CHANGED MAN',
+        sub: 'THE REDEMPTION DASH',
 
         icon(api, x, y) {
           const g = api.gfx;
@@ -1034,16 +1034,23 @@
 
         intro: [
           "SCROOGE LEAPS FROM BED,",
-          'LAUGHING, ON CHRISTMAS',
-          "MORNING — A NEW MAN!",
-          "Race to the Cratchits!",
+          'LAUGHING, A NEW MAN!',
+          'DASH THROUGH LONDON AND',
+          'MAKE GOOD ON EVERY VOW.',
         ],
         quote: 'I will honour Christmas in my heart, and try to keep it all the year.',
-        help: 'TAP to jump over obstacles!',
-        winText: "Scrooge arrives at the Cratchits' door, turkey in hand, beaming.",
+        help: 'TAP to hop the snowdrifts — TAP AGAIN at each stop to keep your promise',
+        winText: "Every vow kept, Scrooge arrives at the Cratchits' door, turkey held high.",
         loseText: 'Scrooge stumbles in the snow — but Christmas morning is still young!',
 
+        checklistDefs: [
+          { key: 'turkey', label: 'THE PRIZE TURKEY', sub: 'BUY IT FOR THE CRATCHITS',     at: 60,  verb: 'tap'    },
+          { key: 'coin',   label: 'FOR THE POOR',      sub: 'TOSS A COIN TO THE GENTLEMAN', at: 130, verb: 'bar'    },
+          { key: 'cheer',  label: 'MERRY CHRISTMAS!',  sub: 'GREET THE NEIGHBORS',          at: 195, verb: 'rhythm' },
+        ],
+
         init(api) {
+          // The parkour dash
           this.vy       = 0;
           this.y        = api.H - 88;
           this.onGround = true;
@@ -1053,17 +1060,88 @@
           this.coins    = [];
           this.coinT    = 0.7;
           this.dist     = 0;
-          this.need     = 200;
+          this.need     = 240;
           this.lives    = 3;
           this.hitCool  = 0;
           this.scrollX  = 0;
           this.spd      = 3.0;
+
+          // The redemption checklist — three stops, three distinct promises
+          this.checklist  = this.checklistDefs.map(d => ({ ...d, done: false, hit: false }));
+          this.stationIdx = -1;
+          this.phase      = 'run';
+          this.stationT   = 0;
+          this.stationDur = 4.5;
+        },
+
+        openStation(api, st) {
+          this.phase = 'station';
+          this.stationT = 0;
+          if (st.verb === 'tap') {
+            this.tapCycle = 0;
+          } else if (st.verb === 'bar') {
+            this.barPos = 0;
+          } else if (st.verb === 'rhythm') {
+            this.beatIdx = 0; this.beatNeed = 3; this.beatHits = 0;
+            this.beatPhase = 0; this.beatPeriod = 0.85;
+          }
+        },
+
+        closeStation(api, st, ok) {
+          st.done = true; st.hit = ok;
+          if (ok) { api.addScore(30); api.audio.sfx('coin'); }
+          else {
+            this.lives--;
+            api.shake(6, 0.25); api.flash('#1a2848', 0.2); api.audio.sfx('hurt');
+          }
+          this.phase = 'run';
+        },
+
+        updateStation(api, dt) {
+          const st = this.checklist[this.stationIdx];
+          this.stationT += dt;
+
+          if (st.verb === 'tap') {
+            this.tapCycle += dt;
+            const period = 0.85, openLen = 0.4;
+            const open = (this.tapCycle % period) < openLen;
+            if (api.pointer.justDown) {
+              if (open) { this.closeStation(api, st, true); return; }
+              api.audio.sfx('blip'); api.shake(3, 0.12);
+            }
+          } else if (st.verb === 'bar') {
+            this.barPos = 0.5 + 0.5 * Math.sin(this.stationT * 3.2);
+            if (api.pointer.justDown) {
+              if (this.barPos >= 0.6 && this.barPos <= 0.92) { this.closeStation(api, st, true); return; }
+              api.audio.sfx('blip'); api.shake(3, 0.12);
+            }
+          } else if (st.verb === 'rhythm') {
+            this.beatPhase += dt;
+            if (api.pointer.justDown) {
+              const target = this.beatPeriod * 0.5;
+              if (Math.abs(this.beatPhase - target) < 0.16) { this.beatHits++; api.audio.sfx('coin'); api.addScore(10); }
+              else { api.audio.sfx('blip'); }
+              this.beatIdx++; this.beatPhase = 0;
+            } else if (this.beatPhase >= this.beatPeriod) {
+              this.beatIdx++; this.beatPhase -= this.beatPeriod;
+            }
+            if (this.beatIdx >= this.beatNeed) {
+              this.closeStation(api, st, this.beatHits >= 2);
+              return;
+            }
+          }
+
+          if (st.verb !== 'rhythm' && this.stationT >= this.stationDur) {
+            this.closeStation(api, st, false);
+          }
         },
 
         update(api, dt) {
-          const f = dt * 60;
+          if (this.phase === 'station') { this.updateStation(api, dt); return; }
+
+          const f = dt * 60, W = api.W, H = api.H;
           this.hitCool = Math.max(0, this.hitCool - dt);
-          const groundY = api.H - 88;
+          const groundY = H - 88;
 
           // Jump on tap or up/A
           if (this.onGround &&
@@ -1079,17 +1157,17 @@
           if (this.y >= groundY) { this.y = groundY; this.vy = 0; this.onGround = true; }
 
           // Scrolling speed
-          this.spd = 3.0 + this.dist / 150;
+          this.spd = 3.0 + this.dist / 170;
           const dx = this.spd * f;
           this.dist  += dx / 30;
-          this.scrollX = (this.scrollX + dx) % (api.W + 62);
+          this.scrollX = (this.scrollX + dx) % (W + 62);
 
           // Obstacles
           this.obstT -= dt;
           if (this.obstT <= 0) {
-            this.obstT = Math.max(0.75, 1.6 - this.dist / 340);
+            this.obstT = Math.max(0.8, 1.6 - this.dist / 360);
             const h = 14 + Math.floor(Math.random() * 3) * 8;
-            this.obstacles.push({ x: api.W + 14, h, type: Math.random() < 0.5 ? 'snow' : 'post' });
+            this.obstacles.push({ x: W + 14, h, type: Math.random() < 0.5 ? 'snow' : 'post' });
           }
           for (const o of this.obstacles) o.x -= dx;
           this.obstacles = this.obstacles.filter(o => o.x > -26);
@@ -1098,14 +1176,14 @@
           this.coinT -= dt;
           if (this.coinT <= 0) {
             this.coinT = 0.5 + Math.random() * 0.55;
-            this.coins.push({ x: api.W + 8, y: groundY - 28 - Math.random() * 38 });
+            this.coins.push({ x: W + 8, y: groundY - 28 - Math.random() * 38 });
           }
           for (const co of this.coins) co.x -= dx;
 
           // Collect coins
           for (const co of this.coins) {
             if (!co.gone && Math.hypot(co.x - this.scrX, co.y - (this.y + 8)) < 22) {
-              co.gone = true; api.addScore(10); api.audio.sfx('coin');
+              co.gone = true; api.addScore(6); api.audio.sfx('coin');
               api.burst(co.x, co.y, '#d4a020', 5);
             }
           }
@@ -1124,8 +1202,17 @@
             }
           }
 
+          // Reach the next stop on the checklist — pause the dash for its promise
+          const next = this.checklist[this.stationIdx + 1];
+          if (next && this.dist >= next.at) {
+            this.stationIdx++;
+            this.openStation(api, next);
+            return;
+          }
+
           if (this.dist >= this.need) {
-            api.addScore(120 + this.lives * 35);
+            const kept = this.checklist.filter(c => c.hit).length;
+            api.addScore(90 + kept * 20 + this.lives * 20);
             api.audio.sfx('win');
             api.win();
           }
@@ -1210,6 +1297,56 @@
           for (let i = 0; i < 3; i++) {
             g.circle(W - 14 - i * 18, 10, 6, i < this.lives ? '#c83020' : '#1a1a28');
           }
+
+          // Checklist ticks — the three promises, kept or missed
+          const cw = 60, ch = 11, gap = 6;
+          const rowW = this.checklist.length * cw + (this.checklist.length - 1) * gap;
+          let cx0 = W / 2 - rowW / 2;
+          for (let i = 0; i < this.checklist.length; i++) {
+            const st = this.checklist[i];
+            const cx = cx0 + i * (cw + gap);
+            let col = '#3a4458';
+            if (st.done) col = st.hit ? '#6ab848' : '#c84040';
+            else if (i === this.stationIdx + 1) col = '#d4a020';
+            g.rect(cx, 20, cw, ch, '#141824');
+            c.strokeStyle = col; c.lineWidth = 1.5; c.strokeRect(cx, 20, cw, ch);
+            if (st.done) api.txtCFit(st.hit ? 'KEPT' : 'MISSED', cx + cw / 2, 20 + ch - 3, 5, col, false, cw - 4);
+          }
+
+          // Station overlay — the promise being kept right now
+          if (this.phase === 'station') {
+            const st = this.checklist[this.stationIdx];
+            const oy = H * 0.32;
+            c.fillStyle = 'rgba(6,10,20,.76)'; c.fillRect(0, oy, W, H * 0.4);
+            api.txtCFit(st.label, W / 2, oy + 24, 9, '#f0e8cc', true, W - 24);
+            api.txtCFit(st.sub, W / 2, oy + 40, 6, '#d4a020', false, W - 24);
+
+            if (st.verb === 'tap') {
+              const period = 0.85, openLen = 0.4;
+              const open = (this.tapCycle % period) < openLen;
+              const wx = W / 2 - 30, wy = oy + 54, ww = 60, wh = 42;
+              g.rect(wx, wy, ww, wh, open ? '#7a4818' : '#2a1c10');
+              c.strokeStyle = open ? '#f0c060' : '#4a3420'; c.lineWidth = 2; c.strokeRect(wx, wy, ww, wh);
+              api.txtC(open ? 'TAP NOW!' : 'WAIT FOR THE SHUTTER...', W / 2, wy + wh + 16, 7,
+                open ? '#f0c060' : '#7a8898');
+            } else if (st.verb === 'bar') {
+              const bx = W / 2 - 70, by = oy + 58, bw = 140, bh = 14;
+              g.rect(bx, by, bw, bh, '#20242e');
+              g.rect(bx + bw * 0.6, by, bw * 0.32, bh, '#3a5828');
+              const mx = bx + bw * this.barPos;
+              g.rect(mx - 2, by - 4, 4, bh + 8, '#f0c060');
+              api.txtC('TAP TO TOSS THE COIN', W / 2, by + bh + 16, 7, '#d4a020');
+            } else if (st.verb === 'rhythm') {
+              const cx = W / 2, cy = oy + 66, R = 26;
+              const pct = clamp(this.beatPhase / this.beatPeriod, 0, 1);
+              c.strokeStyle = '#4a5468'; c.lineWidth = 2;
+              c.beginPath(); c.arc(cx, cy, R, 0, Math.PI * 2); c.stroke();
+              c.strokeStyle = '#f0c060'; c.lineWidth = 3;
+              c.beginPath(); c.arc(cx, cy, Math.max(2, R * (1 - pct)), 0, Math.PI * 2); c.stroke();
+              api.txtC('TAP ON THE BEAT · ' + this.beatHits + '/' + this.beatNeed, cx, cy + R + 18, 7, '#d4a020');
+            }
+          }
+
           api.vignette();
         },
       },
