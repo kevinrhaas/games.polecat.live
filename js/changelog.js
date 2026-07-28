@@ -10,6 +10,17 @@
 // format stays identical to the rest of the fleet.
 export const CHANGELOG = [
   {
+    v: 139,
+    title: 'Snow White: The Poisoned Apple rebuilt as a potion-brewing puzzle',
+    kind: 'game',
+    ts: '2026-07-28T05:34:48.502Z',
+    items: [
+      'The dodge-and-catch falling-apples lane is now the Evil Queen\'s own work: tap jars of nightshade, raven\'s eye, hemlock and wolfsbane to match an exact recipe in the cauldron, round after round with more ingredients in play.',
+      'Add one drop too many of any ingredient and the brew curdles — a life lost and the cauldron reset, so every tap has to count.',
+      'REBUILD_QUEUE #14\'s rework — only 1 of the saga\'s original 3 dodge lanes remains (a hide-in-cottage stealth chapter), so the line stays on the queue.',
+    ],
+  },
+  {
     v: 138,
     title: 'Snow White: Hi-Ho Mine rebuilt as a dwarf mine-management chapter',
     kind: 'game',

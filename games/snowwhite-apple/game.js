@@ -26,6 +26,24 @@
   const GEM_DARKS = ['#6a1018', '#7a3808', '#1a5a28', '#3c1870', '#6a1050'];
   const GEM_NAMES = ['RUBY', 'AMBER', 'EMERALD', 'AMETHYST', 'ROSE'];
 
+  // Poison-potion ingredients for the Queen's cauldron (TALE 4)
+  const POTION_ITEMS = [
+    { key: 'nightshade', label: 'NIGHTSHADE',  col: '#9b5cff' },
+    { key: 'raven',      label: "RAVEN'S EYE", col: '#7a8aa8' },
+    { key: 'hemlock',    label: 'HEMLOCK',     col: '#8ec83a' },
+    { key: 'wolfsbane',  label: 'WOLFSBANE',   col: '#e2483a' },
+  ];
+  // weighted average of {col:'#rrggbb', w:number}[] -> 'rgb(r,g,b)' (null if no weight)
+  function blendColors(entries) {
+    let tw = 0, r = 0, g = 0, b = 0;
+    for (const e of entries) {
+      const p = parseInt(e.col.slice(1), 16);
+      r += ((p >> 16) & 255) * e.w; g += ((p >> 8) & 255) * e.w; b += (p & 255) * e.w; tw += e.w;
+    }
+    if (tw <= 0) return null;
+    return 'rgb(' + Math.round(r / tw) + ',' + Math.round(g / tw) + ',' + Math.round(b / tw) + ')';
+  }
+
   /* ─────────── emblem: bitten apple ─────────── */
   function emblem(api, cx, cy) {
     const g = api.gfx, c = api.ctx;
@@ -195,6 +213,44 @@
     const lp = Math.sin((t2 || 0) * 10);
     g.rect(sx - 6, sy + 26, 4, 10 + lp * 4, '#1848c8');
     g.rect(sx + 2, sy + 26, 4, 10 - lp * 4, '#1848c8');
+  }
+
+  /* ─────────── helper: draw a potion-ingredient glyph ─────────── */
+  function potionIcon(api, key, x, y, s) {
+    const g = api.gfx, c = api.ctx;
+    s = s || 1;
+    if (key === 'nightshade') {
+      g.circle(x - 4 * s, y + 2 * s, 3.2 * s, '#9b5cff');
+      g.circle(x + 3 * s, y + 3 * s, 3.2 * s, '#7a3ad8');
+      g.circle(x, y - 3 * s, 3.2 * s, '#b878ff');
+      c.strokeStyle = '#2a6a1a'; c.lineWidth = 1.4 * s;
+      c.beginPath(); c.moveTo(x, y - 6 * s); c.lineTo(x - 6 * s, y - 10 * s); c.stroke();
+      c.beginPath(); c.moveTo(x, y - 6 * s); c.lineTo(x + 6 * s, y - 10 * s); c.stroke();
+    } else if (key === 'raven') {
+      c.fillStyle = '#1c1c28';
+      c.beginPath();
+      c.moveTo(x, y - 9 * s); c.quadraticCurveTo(x + 7 * s, y, x, y + 9 * s);
+      c.quadraticCurveTo(x - 7 * s, y, x, y - 9 * s);
+      c.fill();
+      g.circle(x, y, 2.6 * s, '#e8e0d0');
+      g.circle(x, y, 1.1 * s, '#0a0a0e');
+    } else if (key === 'hemlock') {
+      c.strokeStyle = '#3a6a18'; c.lineWidth = 1.6 * s;
+      c.beginPath(); c.moveTo(x, y + 9 * s); c.lineTo(x, y - 4 * s); c.stroke();
+      for (let i = 0; i < 5; i++) {
+        const a = (i / 4 - 0.5) * 1.6;
+        g.circle(x + Math.sin(a) * 7 * s, y - 4 * s - Math.cos(a) * 4 * s, 2 * s, '#c8e07a');
+      }
+    } else { // wolfsbane
+      for (let i = 0; i < 5; i++) {
+        const a = (i / 5) * Math.PI * 2;
+        c.fillStyle = '#e2483a';
+        c.beginPath();
+        c.ellipse(x + Math.cos(a) * 5 * s, y + Math.sin(a) * 5 * s, 3.4 * s, 2 * s, a, 0, Math.PI * 2);
+        c.fill();
+      }
+      g.circle(x, y, 2.6 * s, '#f8d060');
+    }
   }
 
   /* ═══════════════════════════════════════════════════════ */
@@ -743,7 +799,7 @@
       },
 
       /* ═══════════════════════════════════════════════════
-       * TALE 4 · THE POISONED APPLE — dodge the hag's apples
+       * TALE 4 · THE POISONED APPLE — brew the Queen's poison
        * ═══════════════════════════════════════════════════ */
       {
         id: 'apple', name: 'THE POISONED APPLE', sub: 'BEWARE THE HAG',
@@ -753,113 +809,198 @@
           g.rect(x - 1, y - 7, 2, 5, '#3a2006');
           g.circle(x + 4, y + 2, 3, '#f8f0f0');
         },
-        intro: ['THE EVIL QUEEN,', 'DISGUISED AS AN OLD HAG,', 'OFFERS APPLES.', '', 'DODGE the RED ones!', 'Catch the GOLDEN ones!', 'Survive 20 seconds!'],
-        quote: '"She disguised herself so cunningly that no one could have told who she was." — Grimm',
-        help: 'TAP LEFT / RIGHT · DODGE RED APPLES · CATCH GOLDEN · 20s',
-        winText:  'NOT THIS TIME, QUEEN!',
-        loseText: 'THE APPLE TOOK HER.',
+        intro: ['IN HER TOWER,', 'THE QUEEN BREWS', 'A POISON FOR THE APPLE.', '', 'Tap the jars to add the', 'EXACT recipe to the pot —', 'too much SPOILS THE BREW!'],
+        quote: '"She took an apple, and painted it herself: white with a red cheek." — Grimm',
+        help: 'TAP THE JARS ABOVE THE POT · MATCH EACH RECIPE EXACTLY · 3 BREWS TO FINISH',
+        winText:  'THE APPLE GLEAMS, DEADLY RED.',
+        loseText: 'THE BREW CURDLES TO ASH.',
+        JAR_X: [38, 106, 174, 242], JAR_Y: 350, JAR_W: 56, JAR_H: 82,
         init(api) {
-          this.swX      = api.W / 2;
-          this.swY      = api.H - 72;
-          this.apples   = [];
-          this.spawnT   = 0;
-          this.spawnRate= 1.2;
-          this.survived = 0;
-          this.goal     = 20;
-          this.lives    = 3;
-          this.hitFlash = 0;
-          this.speed    = 100;
-          this.queenT   = 0;
-          this.queenX   = api.W / 2;
+          this.goal   = 3;
+          this.brewed = 0;
+          this.lives  = 3;
+          this.timer  = 50;
+          this.round  = 0;
+          this.mistakeT = 0;
+          this.brewT    = 0;
+          this.stirT    = 0;
+          this.have   = [0, 0, 0, 0];
+          this.target = [0, 0, 0, 0];
+          this.active = [];
+          this.newRecipe(api);
+        },
+        newRecipe(api) {
+          const count = Math.min(2 + this.round, POTION_ITEMS.length);
+          const idxs = [];
+          while (idxs.length < count) {
+            const r = randInt(0, POTION_ITEMS.length - 1);
+            if (idxs.indexOf(r) === -1) idxs.push(r);
+          }
+          idxs.sort();
+          this.active = idxs;
+          this.have   = [0, 0, 0, 0];
+          this.target = [0, 0, 0, 0];
+          for (const i of idxs) this.target[i] = randInt(1, 2);
+          this.round++;
+        },
+        mistake(api) {
+          this.lives--;
+          this.mistakeT = 0.5;
+          this.have = [0, 0, 0, 0];
+          api.shake(7, 0.4); api.flash('#c8102e', 0.35); api.audio.sfx('hurt');
+        },
+        brew(api) {
+          this.brewed++;
+          this.brewT = 0.7;
+          api.addScore(120);
+          api.flash('#5dff8f', 0.25); api.audio.sfx('coin');
+          api.burst(api.W / 2, 210, '#5dff8f', 18);
+          if (this.brewed >= this.goal) { api.win(); return; }
+          this.newRecipe(api);
+        },
+        tapJar(api, i) {
+          if (this.active.indexOf(i) === -1 || this.have[i] >= this.target[i]) { this.mistake(api); return; }
+          this.have[i]++;
+          api.audio.sfx('select');
+          api.burst(this.JAR_X[i], this.JAR_Y, POTION_ITEMS[i].col, 6);
+          if (this.active.every((idx) => this.have[idx] === this.target[idx])) this.brew(api);
         },
         update(api, dt) {
           if (this.lives <= 0) { api.lose(); return; }
-          if (this.survived >= this.goal) { api.win(); return; }
+          this.timer -= dt;
+          if (this.timer <= 0) { api.lose(); return; }
+          this.mistakeT = Math.max(0, this.mistakeT - dt);
+          this.brewT    = Math.max(0, this.brewT - dt);
+          this.stirT   += dt;
 
-          this.survived += dt;
-          this.hitFlash  = Math.max(0, this.hitFlash - dt);
-          this.queenT   += dt;
-          this.queenX    = api.W / 2 + Math.sin(this.queenT * 0.9) * (api.W / 2 - 40);
-
-          this.spawnT += dt;
-          if (this.spawnT >= this.spawnRate) {
-            this.spawnT -= this.spawnRate;
-            this.spawnRate = Math.max(0.55, this.spawnRate - 0.025);
-            const poisoned = Math.random() < 0.6;
-            this.apples.push({
-              x: this.queenX + rand(-20, 20),
-              y: 70, vy: 72 + this.survived * 3,
-              poisoned,
-              col: poisoned ? '#c8102e' : '#e8c010',
-              hit: false,
-            });
-          }
-
-          if (api.keyDown('left')  || (api.pointer.down && api.pointer.x < api.W / 2))
-            this.swX = clamp(this.swX - this.speed * dt, 24, api.W - 24);
-          if (api.keyDown('right') || (api.pointer.down && api.pointer.x >= api.W / 2))
-            this.swX = clamp(this.swX + this.speed * dt, 24, api.W - 24);
-
-          for (const ap of this.apples) ap.y += ap.vy * dt;
-          this.apples = this.apples.filter(function(ap) { return ap.y < api.H + 10; });
-
-          for (const ap of this.apples) {
-            if (ap.hit) continue;
-            if (Math.abs(ap.x - this.swX) < 22 && Math.abs(ap.y - this.swY) < 22) {
-              ap.hit = true;
-              if (ap.poisoned) {
-                this.lives--;
-                this.hitFlash = 0.6;
-                api.shake(7, 0.4); api.flash('#c8102e', 0.4); api.audio.sfx('hurt');
-                api.burst(ap.x, ap.y, '#c8102e', 10);
-              } else {
-                api.addScore(80);
-                api.flash('#5dff8f', 0.2); api.audio.sfx('coin');
-                api.burst(ap.x, ap.y, '#e8c010', 8);
+          if (api.pointer.justDown) {
+            const px = api.pointer.x, py = api.pointer.y;
+            for (let i = 0; i < 4; i++) {
+              if (Math.abs(px - this.JAR_X[i]) < this.JAR_W / 2 &&
+                  py > this.JAR_Y - this.JAR_H / 2 && py < this.JAR_Y + this.JAR_H / 2) {
+                this.tapJar(api, i);
+                break;
               }
             }
           }
-          api.addScore(dt * 8);
+        },
+        drawCauldron(api, cx, cy) {
+          const g = api.gfx, c = api.ctx;
+          const mixIn = this.active.map((i) => ({ col: POTION_ITEMS[i].col, w: this.have[i] || 0.001 }));
+          const brewCol = blendColors([{ col: '#2a0e3a', w: 1.6 }].concat(mixIn)) || '#2a0e3a';
+
+          c.fillStyle = '#0e0a10';
+          c.beginPath();
+          c.moveTo(cx - 58, cy - 10); c.lineTo(cx - 46, cy + 46); c.lineTo(cx + 46, cy + 46); c.lineTo(cx + 58, cy - 10);
+          c.closePath(); c.fill();
+          c.strokeStyle = '#3a2848'; c.lineWidth = 3; c.stroke();
+          g.rect(cx - 48, cy + 44, 8, 14, '#0e0a10');
+          g.rect(cx + 40, cy + 44, 8, 14, '#0e0a10');
+
+          c.fillStyle = '#241830';
+          c.beginPath(); c.ellipse(cx, cy - 10, 60, 14, 0, 0, Math.PI * 2); c.fill();
+
+          c.save();
+          c.beginPath(); c.ellipse(cx, cy - 10, 52, 10, 0, 0, Math.PI * 2); c.clip();
+          c.fillStyle = brewCol; c.fillRect(cx - 60, cy - 26, 120, 32);
+          for (let i = 0; i < 6; i++) {
+            const bx = cx + Math.sin(this.stirT * 1.7 + i * 1.3) * 40;
+            const by = cy - 10 + Math.cos(this.stirT * 2.1 + i) * 6;
+            c.globalAlpha = 0.45 + 0.3 * Math.sin(this.stirT * 4 + i);
+            g.circle(bx, by, 3 + (i % 3), '#ffffff');
+            c.globalAlpha = 1;
+          }
+          c.restore();
+          c.strokeStyle = '#4a3860'; c.lineWidth = 2;
+          c.beginPath(); c.ellipse(cx, cy - 10, 52, 10, 0, 0, Math.PI * 2); c.stroke();
+
+          for (let i = 0; i < 3; i++) {
+            const sx = cx - 20 + i * 20, sy = cy - 16 - ((this.stirT * 20 + i * 14) % 60);
+            c.globalAlpha = Math.max(0, 0.3 - ((this.stirT * 20 + i * 14) % 60) / 200);
+            g.circle(sx, sy, 4, '#e8d0f8');
+            c.globalAlpha = 1;
+          }
+          if (this.brewT > 0) {
+            c.globalAlpha = Math.min(1, this.brewT / 0.7) * 0.7;
+            g.circle(cx, cy - 10, 60, '#5dff8f');
+            c.globalAlpha = 1;
+          }
+        },
+        drawJar(api, i) {
+          const g = api.gfx, c = api.ctx;
+          const x = this.JAR_X[i], y = this.JAR_Y, w = this.JAR_W, h = this.JAR_H;
+          const isActive = this.active.indexOf(i) !== -1;
+          const item = POTION_ITEMS[i];
+          const fillLvl = isActive && this.target[i] > 0 ? this.have[i] / this.target[i] : 0;
+
+          c.globalAlpha = isActive ? 1 : 0.35;
+          const bodyPath = function() {
+            c.beginPath();
+            c.moveTo(x - w / 2 + 6, y - h / 2 + 10); c.lineTo(x - w / 2, y + h / 2 - 8);
+            c.quadraticCurveTo(x - w / 2, y + h / 2, x - w / 2 + 8, y + h / 2);
+            c.lineTo(x + w / 2 - 8, y + h / 2);
+            c.quadraticCurveTo(x + w / 2, y + h / 2, x + w / 2, y + h / 2 - 8);
+            c.lineTo(x + w / 2 - 6, y - h / 2 + 10); c.closePath();
+          };
+          c.fillStyle = 'rgba(30,20,40,.55)';
+          bodyPath(); c.fill();
+          c.strokeStyle = isActive ? item.col : '#4a3a58'; c.lineWidth = 1.4; c.stroke();
+          g.rect(x - w / 2 + 8, y - h / 2, w - 16, 8, '#5a3a20');
+
+          if (fillLvl > 0) {
+            const fh = (h - 22) * Math.min(1, fillLvl);
+            c.save();
+            bodyPath(); c.clip();
+            c.globalAlpha *= 0.6; c.fillStyle = item.col;
+            c.fillRect(x - w / 2, y + h / 2 - fh, w, fh);
+            c.restore();
+          }
+          potionIcon(api, item.key, x, y - h / 2 + 22, 1.1);
+          api.txtCFit(item.label, x, y + h / 2 + 4, 6, isActive ? item.col : '#5a4a58', false, w + 8);
+          c.globalAlpha = 1;
         },
         draw(api) {
           const g = api.gfx, c = api.ctx, W = api.W, H = api.H;
           const bg4 = c.createLinearGradient(0, 0, 0, H);
-          bg4.addColorStop(0, '#0c0a04'); bg4.addColorStop(1, '#160e08');
+          bg4.addColorStop(0, '#100612'); bg4.addColorStop(1, '#1c0a1a');
           c.fillStyle = bg4; c.fillRect(0, 0, W, H);
 
-          // apple tree in bg
-          g.rect(W / 2 - 4, 60, 8, 80, '#2a1408');
-          g.circle(W / 2, 50, 36, '#0e2808');
-          g.circle(W / 2 - 14, 42, 22, '#0a2006');
-          g.circle(W / 2 + 16, 44, 18, '#0c2408');
-          for (let ai = 0; ai < 5; ai++) g.circle(W / 2 - 20 + ai * 11, 36 + (ai % 2) * 12, 5, '#c8102e');
+          c.globalAlpha = 0.5;
+          g.circle(W - 40, 46, 20, '#2a1a3a');
+          c.globalAlpha = 1;
 
-          // evil queen disguised as hag
-          const qx = Math.round(this.queenX);
-          c.fillStyle = '#180610';
-          c.beginPath(); c.moveTo(qx - 14, 34); c.lineTo(qx + 14, 34); c.lineTo(qx + 20, 84); c.lineTo(qx - 20, 84); c.closePath(); c.fill();
-          g.circle(qx, 24, 11, '#d8b890');
-          c.fillStyle = '#180610';
-          c.beginPath(); c.moveTo(qx - 14, 24); c.lineTo(qx + 14, 24); c.lineTo(qx, -2); c.closePath(); c.fill();
-          c.fillRect(qx - 16, 22, 32, 4);
-          g.circle(qx - 4, 24, 2, '#d4a010');
-          g.circle(qx + 4, 24, 2, '#d4a010');
-
-          // falling apples
-          for (const ap of this.apples) {
-            g.circle(ap.x, ap.y, 8, ap.col);
-            g.rect(ap.x - 1, ap.y - 9, 2, 5, '#3a2006');
-            c.globalAlpha = 0.4; g.circle(ap.x + 2, ap.y - 2, 3, '#ffffff'); c.globalAlpha = 1;
-            if (!ap.poisoned) { c.globalAlpha = 0.6; g.circle(ap.x + 2, ap.y - 2, 2, '#ffffaa'); c.globalAlpha = 1; }
+          const rn = this.active.length;
+          for (let k = 0; k < rn; k++) {
+            const i = this.active[k];
+            const rx = (W / (rn + 1)) * (k + 1), ry = 58;
+            const met = this.have[i] >= this.target[i];
+            g.rectO(rx - 22, ry - 20, 44, 40, met ? POTION_ITEMS[i].col : '#5a4a68', 1);
+            potionIcon(api, POTION_ITEMS[i].key, rx, ry - 6, 1);
+            api.txtCFit(this.have[i] + '/' + this.target[i], rx, ry + 10, 7, met ? '#5dff8f' : '#e8d0f8');
           }
 
-          g.rect(0, H - 50, W, 50, '#0c1806');
-          drawSW(api, this.swX, this.swY, this.hitFlash, api.t);
+          const cx = W / 2, cy = 220;
+          this.drawCauldron(api, cx, cy);
+
+          const stir = Math.sin(this.stirT * 2.4) * 6;
+          c.fillStyle = '#140616';
+          c.beginPath();
+          c.moveTo(cx - 16, cy - 78); c.lineTo(cx + 16, cy - 78); c.lineTo(cx + 22, cy - 40); c.lineTo(cx - 22, cy - 40);
+          c.closePath(); c.fill();
+          g.circle(cx + 6, cy - 92, 10, '#c8a880');
+          c.fillStyle = '#140616';
+          c.beginPath(); c.moveTo(cx - 8, cy - 96); c.lineTo(cx + 20, cy - 96); c.lineTo(cx + 10, cy - 116); c.closePath(); c.fill();
+          c.strokeStyle = '#2a1420'; c.lineWidth = 4;
+          c.beginPath(); c.moveTo(cx + 14, cy - 80); c.lineTo(cx + 30 + stir, cy - 44); c.stroke();
+
+          for (let i = 0; i < 4; i++) this.drawJar(api, i);
 
           api.topBar('TALE 4: POISONED APPLE');
-          api.txt('SURVIVE: ' + Math.round(this.goal - this.survived) + 's', 6, 20, 8, '#5dff8f');
+          api.txt('BREWED: ' + this.brewed + '/' + this.goal, 6, 20, 8, '#5dff8f');
+          api.txt('TIME: ' + Math.ceil(this.timer) + 's', 6, 32, 8, this.timer < 10 ? '#e23b4a' : '#c8a0e8');
           for (let lf = 0; lf < this.lives; lf++) g.circle(W - 14 - lf * 16, 24, 5, '#e23b4a');
-          if (api.t < 3) { c.globalAlpha = 0.6; api.txtC('← TAP LEFT  RIGHT →', W / 2, H - 14, 7, '#e8d0b0'); c.globalAlpha = 1; }
+          if (this.mistakeT > 0) { c.globalAlpha = Math.min(1, this.mistakeT / 0.5) * 0.4; c.fillStyle = '#c8102e'; c.fillRect(0, 0, W, H); c.globalAlpha = 1; }
+          if (api.t < 3) { c.globalAlpha = 0.6; api.txtC('TAP THE JARS TO MATCH THE RECIPE', W / 2, H - 8, 7, '#e8d0f8'); c.globalAlpha = 1; }
           api.vignette();
         },
       },
