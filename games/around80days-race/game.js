@@ -285,7 +285,7 @@
         },
       },
 
-      /* ===== LEG 2: THE MONGOLIA — Suez steer ===== */
+      /* ===== LEG 2: THE MONGOLIA — chart the course (route-planning) ===== */
       {
         id: 'mongolia', name: 'THE MONGOLIA', sub: 'BRINDISI TO SUEZ',
         icon(api, x, y) {
@@ -299,84 +299,149 @@
           'AT BRINDISI FOR EGYPT.',
           'DETECTIVE FIX WATCHES',
           'FROM THE SHADOWS.',
-          'Steer through churning',
-          'seas to Suez.',
+          'Chart her course to Suez —',
+          'every strait a choice.',
         ],
         quote: 'The Mongolia steamed towards Suez at a furious speed, the passengers never doubting they would arrive on time.',
-        help: 'DRAG or LEFT/RIGHT to steer the Mongolia — dodge rocks and wave crests',
-        winText: 'The Mongolia docks at Suez right on schedule. Passepartout gets the passport stamped.',
-        loseText: 'The ship runs aground on submerged rocks. Days of delay are lost.',
+        help: 'TAP a route at each strait. STEAM is fast but burns coal; the SAFE lane spares the reserve but costs days. Run the bunkers dry, or miss the calendar, and the wager slips away.',
+        winText: '', loseText: '',
         init(api) {
-          this.x = api.W / 2; this.dist = 0; this.need = 840;
-          this.obs = []; this.spawn = 1.4; this.spd = 38; this.hits = 0;
+          this.coal = 70; this.day = 0; this.dayCap = 6; this.leg = 0;
+          this.legs = [
+            { name: 'OTRANTO STRAIT', text: 'THE NARROW GATE TO THE ADRIATIC.',
+              fast: { label: 'STEAM THE STRAIT', sub: '+1 day · -22 coal', day: 1, coal: -22 },
+              safe: { label: 'HUG THE ITALIAN COAST', sub: '+2 days · -8 coal', day: 2, coal: -8 } },
+            { name: 'CAPE MATAPAN', text: "GREECE'S STORMY SOUTHERN HORN.",
+              fast: { label: 'RACE THE OPEN CHANNEL', sub: '+1 day · -24 coal', day: 1, coal: -24 },
+              safe: { label: "SHELTER IN KYTHIRA'S LEE", sub: '+2 days · -8 coal', day: 2, coal: -8 } },
+            { name: 'CRETAN PASSAGE', text: 'THE LAST COALING PORT BEFORE EGYPT.',
+              fast: { label: 'PRESS ON THROUGH THE NIGHT', sub: '+1 day · -20 coal', day: 1, coal: -20 },
+              safe: { label: 'PUT IN AT CRETE FOR COAL', sub: '+2 days · +10 coal', day: 2, coal: 10 } },
+            { name: 'SUEZ APPROACH', text: 'THE CANAL MOUTH, AND THE PASSPORT STAMP.',
+              fast: { label: 'FULL STEAM TO SUEZ', sub: '+1 day · -18 coal', day: 1, coal: -18 },
+              safe: { label: 'DRIFT IN ON THE TIDE', sub: '+2 days · -6 coal', day: 2, coal: -6 } },
+          ];
+          this.active = this.legs[0];
+          this.feedback = null; this.feedbackT = 0;
+        },
+        choiceRects(api) {
+          const W = api.W, H = api.H;
+          return [
+            { x: 16, y: H - 128, w: W - 32, h: 42 },
+            { x: 16, y: H - 78, w: W - 32, h: 42 },
+          ];
         },
         update(api, dt) {
-          const f = dt * 60;
-          this.dist += this.spd * dt;
-          this.spd = Math.min(54, 38 + this.dist / 200);
-          api.score = Math.floor(this.dist / 4);
-          const p = api.pointer;
-          if (p.down) this.x += (p.x - this.x) * 0.14 * f;
-          if (api.keyDown('left')) this.x -= 3.5 * f;
-          if (api.keyDown('right')) this.x += 3.5 * f;
-          this.x = clamp(this.x, 20, api.W - 20);
-          this.spawn -= dt;
-          if (this.spawn <= 0) {
-            this.spawn = Math.max(0.55, 1.4 - this.dist / 1800);
-            this.obs.push({ x: api.rnd(22, api.W - 22), y: -22, vy: api.rnd(110, 170), kind: api.chance(0.4) ? 'rock' : 'wave', hit: false });
-          }
-          for (const o of this.obs) o.y += o.vy * dt;
-          for (const o of this.obs) {
-            if (!o.hit && Math.abs(o.x - this.x) < 20 && Math.abs(o.y - (api.H - 80)) < 20) {
-              o.hit = true; this.hits++;
-              api.shake(5, 0.25); api.flash('#1a4060', 0.2); api.audio.sfx('hurt');
+          this.feedbackT = Math.max(0, this.feedbackT - dt);
+          if (this.feedbackT > 0 || !this.active) return;
+          if (!api.pointer.justDown) return;
+          const rects = this.choiceRects(api);
+          const opts = [this.active.fast, this.active.safe];
+          for (let i = 0; i < 2; i++) {
+            const r = rects[i];
+            if (api.pointer.x >= r.x && api.pointer.x <= r.x + r.w &&
+                api.pointer.y >= r.y && api.pointer.y <= r.y + r.h) {
+              const pick = opts[i];
+              this.day += pick.day;
+              this.coal += pick.coal;
+              api.addScore(30);
+              this.feedback = pick.label; this.feedbackT = 0.9;
+              if (i === 0) { api.shake(3, 0.15); api.flash('#1a4060', 0.12); api.audio.sfx('blip'); }
+              else api.audio.sfx('select');
+              api.burst(api.W / 2, api.H * 0.4, pick.coal >= 0 ? '#5dff8f' : '#d4a017', 8);
+              if (this.coal < 0) {
+                this.loseText = 'The bunkers run dry in open water. The Mongolia drifts, dead in the swell, far short of Suez.';
+                this.active = null; api.lose(); return;
+              }
+              this.leg++;
+              if (this.leg >= this.legs.length) {
+                if (this.day > this.dayCap) {
+                  this.loseText = 'The Mongolia raises Suez two days behind the timetable — the connecting steamer has already sailed.';
+                  this.active = null; api.lose(); return;
+                }
+                this.winText = this.coal >= 30
+                  ? 'The Mongolia docks at Suez with coal and days to spare. Passepartout gets the passport stamped.'
+                  : 'The Mongolia docks at Suez on the very last shovel of coal. Passepartout gets the passport stamped.';
+                api.addScore(80);
+                this.active = null; api.win(); return;
+              }
+              this.active = this.legs[this.leg];
+              break;
             }
           }
-          this.obs = this.obs.filter(o => o.y < api.H + 20 && !o.hit);
-          if (this.hits >= 4) { api.lose(); return; }
-          if (this.dist >= this.need) { api.score += 100; api.win(); }
         },
         draw(api) {
           const g = api.gfx, c = api.ctx, W = api.W, H = api.H;
           api.clear('#0e2030');
           // Sky
-          c.fillStyle = '#182840'; c.fillRect(0, 0, W, 56);
-          g.circle(W - 38, 28, 12, '#d4a017');
+          c.fillStyle = '#182840'; c.fillRect(0, 0, W, 46);
+          g.circle(W - 34, 24, 10, '#d4a017');
           // Sea rows
-          for (let y = 60; y < H - 60; y += 22) {
-            c.globalAlpha = 0.1 + 0.05 * Math.sin(api.t * 2 + y * 0.05);
-            g.rect(0, y, W, 9, '#1a4860');
+          for (let y = 50; y < H * 0.42; y += 20) {
+            c.globalAlpha = 0.08 + 0.05 * Math.sin(api.t * 2 + y * 0.05);
+            g.rect(0, y, W, 8, '#1a4860');
           }
           c.globalAlpha = 1;
-          // Obstacles
-          for (const o of this.obs) {
-            if (o.kind === 'rock') {
-              g.rect(o.x - 12, o.y - 8, 24, 16, '#3a3020');
-              g.rect(o.x - 10, o.y - 12, 20, 8, '#4a4030');
-            } else {
-              c.globalAlpha = 0.8;
-              g.circle(o.x, o.y, 14, '#1a5878');
-              g.circle(o.x - 2, o.y - 3, 6, '#4ab0e0');
+          // Route map: the waypoint chain from Brindisi to Suez
+          const names = ['BRINDISI', 'OTRANTO', 'MATAPAN', 'CRETE', 'SUEZ'];
+          const mapY = 64, mapL = 26, mapR = W - 26;
+          for (let wi = 0; wi < names.length; wi++) {
+            const wx = mapL + wi * ((mapR - mapL) / (names.length - 1));
+            const passed = wi < this.leg, isCur = wi === this.leg;
+            if (wi > 0) {
+              const pwx = mapL + (wi - 1) * ((mapR - mapL) / (names.length - 1));
+              c.strokeStyle = (passed || isCur) ? '#d4a017' : '#2a3a4a';
+              c.lineWidth = 2; c.globalAlpha = 0.55;
+              c.beginPath(); c.moveTo(pwx, mapY); c.lineTo(wx, mapY); c.stroke();
               c.globalAlpha = 1;
             }
+            g.circle(wx, mapY, isCur ? 6 : 4, passed ? '#5dff8f' : (isCur ? '#f0e8c0' : '#2a3a4a'));
+            api.txtC(names[wi].slice(0, 3), wx, mapY + 12, 6, (passed || isCur) ? '#d4a017' : '#4a5a6a', true);
           }
-          // Ship
-          const sy = H - 80;
-          g.rect(this.x - 24, sy + 8, 48, 12, '#5a3420');
-          g.rect(this.x - 26, sy + 14, 52, 6, '#3a2010');
-          g.rect(this.x - 5, sy - 18, 10, 26, '#2a1808');
-          g.rect(this.x + 4, sy - 14, 12, 10, '#b0a078');
+          const shipX = mapL + Math.min(this.leg, names.length - 1) * ((mapR - mapL) / (names.length - 1));
+          g.rect(shipX - 6, mapY - 17, 12, 5, '#5a3420');
+          g.rect(shipX - 1, mapY - 22, 2, 6, '#2a1808');
+          // Mid-scene steamer, riding the current stretch of sea
+          const midY = H * 0.36;
+          for (let i = 0; i < 4; i++) { c.globalAlpha = 0.22; g.rect(0, midY - 4 + i * 12, W, 4, '#1a4860'); }
+          c.globalAlpha = 1;
+          g.rect(W / 2 - 26, midY - 6, 52, 14, '#5a3420');
+          g.rect(W / 2 - 28, midY, 56, 6, '#3a2010');
+          g.rect(W / 2 - 5, midY - 24, 10, 20, '#2a1808');
+          g.rect(W / 2 + 4, midY - 20, 12, 10, '#b0a078');
           for (let i = 0; i < 3; i++) {
             c.globalAlpha = 0.3 - i * 0.08;
-            g.circle(this.x + 5, sy - 20 - i * 9, 5 + i * 2, '#9a9080');
+            g.circle(W / 2 + 9, midY - 26 - i * 9, 5 + i * 2, '#9a9080');
           }
           c.globalAlpha = 1;
-          // Progress
-          g.rect(8, H - 14, W - 16, 5, '#1a1208');
-          g.rect(8, H - 14, (W - 16) * clamp(this.dist / this.need, 0, 1), 5, '#d4a017');
-          api.topBar('MONGOLIA — SUEZ RUN');
-          api.txt('SUEZ ' + Math.floor(this.dist / this.need * 100) + '%', 6, 20, 9, '#d4a017');
-          for (let i = 0; i < 4; i++) g.rect(W - 70 + i * 16, 19, 12, 8, i < (4 - this.hits) ? '#5dff8f' : '#2a1a06');
+          // Encounter card
+          const cardY = H * 0.52;
+          g.rect(14, cardY, W - 28, 40, '#0e1a1e');
+          c.strokeStyle = '#4a6878'; c.lineWidth = 1; c.strokeRect(14, cardY, W - 28, 40);
+          if (this.active) {
+            api.txtCFit(this.active.name, W / 2, cardY + 6, 8, '#f0e8d0', true, W - 40);
+            api.txtCFit(this.feedbackT > 0 ? ('"' + this.feedback + '"') : this.active.text,
+              W / 2, cardY + 24, 7, this.feedbackT > 0 ? '#d4a017' : '#8aa0b0', false, W - 40);
+          }
+          // Choice buttons
+          if (this.feedbackT <= 0 && this.active) {
+            const rects = this.choiceRects(api);
+            const opts = [this.active.fast, this.active.safe];
+            for (let i = 0; i < 2; i++) {
+              const r = rects[i], o = opts[i];
+              g.rect(r.x, r.y, r.w, r.h, i === 0 ? '#241a08' : '#0e1a1e');
+              c.strokeStyle = i === 0 ? '#d4a017' : '#4a6878';
+              c.lineWidth = 1; c.strokeRect(r.x, r.y, r.w, r.h);
+              api.txtCFit(o.label, r.x + r.w / 2, r.y + 9, 9, '#f0e8d0', false, r.w - 12);
+              api.txtCFit(o.sub, r.x + r.w / 2, r.y + 27, 7, i === 0 ? '#d4a017' : '#7ab8d8', false, r.w - 12);
+            }
+          }
+          // Stat readout
+          api.txt('COAL', 6, 20, 8, '#a07840');
+          g.rect(42, 15, W - 96, 6, '#1a1208');
+          g.rect(42, 15, Math.floor((W - 96) * clamp(this.coal / 70, 0, 1)), 6, this.coal < 20 ? '#c8102e' : '#d4a017');
+          api.txt('DAY ' + this.day + '/' + this.dayCap, W - 60, 20, 8, this.day > this.dayCap ? '#c8102e' : '#d4a017');
+          api.topBar('MONGOLIA — CHART THE COURSE');
           api.vignette();
         },
       },

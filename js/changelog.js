@@ -10,6 +10,17 @@
 // format stays identical to the rest of the fleet.
 export const CHANGELOG = [
   {
+    v: 141,
+    title: 'Around the World in 80 Days: The Mongolia rebuilt as a route-planning leg',
+    kind: 'game',
+    ts: '2026-07-28T07:31:32.397Z',
+    items: [
+      'The steer-and-dodge sea chase to Suez is now a chart-the-course strategy leg: at each strait, choose STEAM (fast, burns coal) or the SAFE lane (spares the reserve, costs days) across a real waypoint map.',
+      'Run the coal bunkers dry, or miss the eighty-day calendar, and the wager slips away — balancing both is the whole game.',
+      'First step on REBUILD_QUEUE #15\'s rework of the saga\'s three interchangeable dodge lanes (Mongolia, Kiouni, London); the queue line stays until all three are rebuilt.',
+    ],
+  },
+  {
     v: 140,
     title: 'Snow White: Forest Flight rebuilt as a hide-from-the-Huntsman stealth chapter',
     kind: 'game',
