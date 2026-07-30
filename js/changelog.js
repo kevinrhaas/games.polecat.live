@@ -10,6 +10,16 @@
 // format stays identical to the rest of the fleet.
 export const CHANGELOG = [
   {
+    v: 157,
+    title: 'The arcade badge replaces the mascot',
+    kind: 'fix',
+    ts: '2026-07-30T23:42:28.361Z',
+    items: [
+      'Following the fleet\'s updated brand guidelines, the home page favicon and header tile are now the arcade\'s own badge - the gamepad glyph on the neon-pink disc, same as the games tile on polecat.live.',
+      'The legacy Polecat mascot retires from app pages fleet-wide; the master mark now lives on polecat.live alone.',
+    ],
+  },
+  {
     v: 156,
     title: '20,000 Leagues levels up to 16-bit',
     kind: 'game',
