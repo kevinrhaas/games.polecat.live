@@ -8,7 +8,7 @@ Gen-4 game: add its row to the shipped table (hub concept + typeface + the
 mechanics it used), delete its queue line, and keep the claimed lists current —
 **in the same PR as the build**.
 
-## Shipped (8 of ~83)
+## Shipped (9 of ~83)
 
 | Property | 16-bit id | 8-bit partner | Hub concept | Title face |
 |---|---|---|---|---|
@@ -20,26 +20,28 @@ mechanics it used), delete its queue line, and keep the claimed lists current �
 | King Arthur | arthur-16 | arthur-sword | THE ROUND TABLE — shields in a ring (circular layout) | Handjet (was Jacquarda Bastarda 9, retired) |
 | Treasure Island | treasureisland-16 | treasureisland-map | Jim's own parchment sea-chart — dotted rope trail, singed edges, X marks each stop | Jersey 20 |
 | 20,000 Leagues | nemo-16 | nemo-nautilus | Captain's brass console — five glass portholes in a riveted instrument panel | Sixtyfour |
+| The Jungle Book | junglebook-mowgli-16 | junglebook-mowgli | Canopy-to-floor jungle cross-section — a vine trail running Council Rock down to Shere Khan's gorge | Jersey 10 |
 
 ## Claimed conventions — do NOT reuse
 
 - **Hub shapes used:** route-map trail ×2 (Dracula, Robin Hood), pinned paper
   map ×2 (Sherlock sepia, WotW phosphor), overhead terrain (Odyssey), circular
   ring (Arthur), parchment sea-chart with a dotted rope trail (Treasure Island),
-  riveted brass instrument panel with five circular glass portholes (Nemo).
+  riveted brass instrument panel with five circular glass portholes (Nemo),
+  vertical canopy-to-floor cross-section with a vine trail (Jungle Book).
   Fresh ideas for next builds: a book/scroll that turns pages, a constellation
-  chart, a train/route timetable, a family tree, a dungeon cross-section, a
-  shop counter, a river descending the screen.
+  chart, a train/route timetable, a family tree, a shop counter, a river
+  descending the screen.
 - **Pixel display faces used:** Silkscreen (Sherlock), Handjet (Arthur),
   Micro 5 (Dracula), Jersey 25, Jersey 20 (Treasure Island), Jersey 15,
   Workbench, Sixtyfour (Nemo — the digital/techy face, justified by the
-  Nautilus's instruments; not reused for anything non-techy) (+ Pixelify Sans
-  as the shared UI face). Jacquard 24 / Jacquard 12 / Jacquarda Bastarda 9 were
-  RETIRED 2026-07-28 — their blackletter forms rendered hero titles illegible
-  ("SHERLOCK HOLMES" as "SHCRLDCR / HDLMCS" etc., UX-sweep #34/#37 finding 1,
-  carried 4+ sweeps) — do not reuse them for title faces. Still free on Google
-  Fonts: Jersey 10, Tiny5 (VT323-likes still reserved for sci-fi, per CLAUDE.md
-  — Sixtyfour is now spent).
+  Nautilus's instruments; not reused for anything non-techy), Jersey 10
+  (Jungle Book) (+ Pixelify Sans as the shared UI face). Jacquard 24 /
+  Jacquard 12 / Jacquarda Bastarda 9 were RETIRED 2026-07-28 — their
+  blackletter forms rendered hero titles illegible ("SHERLOCK HOLMES" as
+  "SHCRLDCR / HDLMCS" etc., UX-sweep #34/#37 finding 1, carried 4+ sweeps) —
+  do not reuse them for title faces. Still free on Google Fonts: Tiny5
+  (VT323-likes still reserved for sci-fi, per CLAUDE.md).
 - **Mechanics well-spent so far** (avoid stacking more of these; the standouts
   are marked ✦): timing stop-in-band, drag-runner + dodge, whack pop-ups,
   ✦ risk/reward taunt (Odyssey), ✦ simon-says memory (Circe, Nemo's valve oath),
@@ -51,29 +53,31 @@ mechanics it used), delete its queue line, and keep the claimed lists current �
   aim-and-fire broadside duel (Nemo's beak duel), track-the-marked-card
   (Treasure Island), resource deploy/distribute under a timer (Treasure Island
   stockade prep), mode7 racing dodge (Nemo's ice field — first real use of the
-  under-used racing genre), pull-of-the-vortex survive+dodge (Nemo's maelstrom).
+  under-used racing genre), pull-of-the-vortex survive+dodge (Nemo's maelstrom),
+  ✦ spot-the-swayed social defend (Jungle Book's Council Rock), resist-the-pull
+  inhibition tap (Jungle Book's Kaa), hold-to-creep freeze-when-watched stealth
+  (Jungle Book's Red Flower), watch-then-pick-a-flank reaction (Jungle Book's
+  buffalo run).
 - **Under-used genres for the next wave:** tycoon/management, route-planning
-  strategy, social deduction, fishing, tower defense, roguelite runs,
-  disguise/bluff. (Card/board play drawn on by Treasure Island's black-spot
-  table, but still has room for a full board. Racing/mode7 now spent by Nemo's
-  ice field — still room for a full lap-based version.)
+  strategy, fishing, tower defense, roguelite runs, disguise/bluff. (Card/board
+  play drawn on by Treasure Island's black-spot table, but still has room for a
+  full board. Racing/mode7 now spent by Nemo's ice field — still room for a
+  full lap-based version. Social deduction now drawn on lightly by Jungle
+  Book's Council Rock.)
 
 ## Queue (best next candidates, in order)
 
-1. **The Jungle Book** (`junglebook-mowgli`) — canopy-to-floor vertical jungle
-   cross-section hub. Monkey-swing chase, Kaa hypnosis resist (pattern),
-   red-flower stealth fetch, wolf-pack council choice, Shere Khan boss.
-2. **Moby-Dick** (`mobydick-hunt`) — whaling voyage log/chart hub. Mast-top
+1. **Moby-Dick** (`mobydick-hunt`) — whaling voyage log/chart hub. Mast-top
    spotting (push-your-luck), whaleboat rowing rhythm crew, harpoon arcs,
    try-works management, the white whale multi-stage boss; Ahab-vs-Starbuck
    choice for endings.
-3. **A Christmas Carol** (`scrooge-carol` or `scrooge-ledger`) — the LEDGER as
+2. **A Christmas Carol** (`scrooge-carol` or `scrooge-ledger`) — the LEDGER as
    hub (entries = nodes). Past/Present/Future branch choices; also crosses off
    REBUILD_QUEUE #11 in spirit.
-4. **Frankenstein** (`frankenstein-spark`) — laboratory wall of instruments as
+3. **Frankenstein** (`frankenstein-spark`) — laboratory wall of instruments as
    hub. Assembly puzzle, lightning-timing revival, alpine pursuit, arctic
    finale; monster-sympathy flag for endings. (Also clears a legacy rebuild.)
-5. **Alice in Wonderland** (`alice-rabbithole`) — playing-card hub (deal a
+4. **Alice in Wonderland** (`alice-rabbithole`) — playing-card hub (deal a
    hand). Falling, croquet aim, tea-party rhythm, EAT ME/DRINK ME size puzzle,
    card-soldier defense; brightest palette in the set.
 

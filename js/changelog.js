@@ -12,6 +12,15 @@
 // format stays identical to the rest of the fleet.
 export const CHANGELOG = [
   {
+    v: 159,
+    title: 'The Jungle Book levels up to 16-bit',
+    kind: 'feature',
+    ts: '2026-07-31T22:28:17.948Z',
+    items: [
+      'Mowgli gets a Gen-4 companion: climb a canopy-to-floor cross-section of the jungle — hold Council Rock against Shere Khan\'s whispers, outrun the Bandar-log through the treetops, resist Kaa\'s Hunger Dance, steal the Red Flower from the man-village, and turn the buffalo herd on the lame tiger himself — a choice at Council Rock decides how the tale ends.',
+    ],
+  },
+  {
     v: 158,
     title: 'What\'s New filters now cover every entry',
     kind: 'fix',
