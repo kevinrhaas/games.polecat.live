@@ -128,7 +128,9 @@ capture console errors, screenshot.
 - **Log it for users.** PREPEND one friendly entry to the `CHANGELOG` array in
   `js/changelog.js` (an ES module, newest first) in the shared polecat format:
   `{ v: <one more than the current top entry's v>, title: "...", kind:
-  "game"|"feature"|"fix", ts: "", items: ["...", "..."] }`. LEAVE `ts` EMPTY —
+  "feature"|"polish"|"fix", ts: "", items: ["...", "..."] }` — the shared fleet
+  enum (see polecat-platform SHELL-API.md); a new game ships as `"feature"`.
+  LEAVE `ts` EMPTY —
   the push step runs `tools/stamp-changelog.mjs`, which fills the commit time as
   ISO-8601 UTC (`LATEST_VERSION` is derived automatically). Do NOT hand-write a
   date; the home page formats the UTC stamp into CT and lights the "What's New"

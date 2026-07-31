@@ -3,12 +3,23 @@
 // CHANGELOG array of versioned entries with an ISO-8601 UTC `ts`.
 //
 // The hourly build loop appends a new entry at the TOP for each user-visible
-// change (bump `v`, short `title`, a `kind` of 'game' | 'feature' | 'fix', and
-// 1-4 `items`). Leave `ts` as an EMPTY string on the new entry — this script
+// change (bump `v`, short `title`, a `kind` of 'feature' | 'polish' | 'fix' —
+// the shared fleet enum, see polecat-platform SHELL-API.md; a new game ships
+// as 'feature', and 1-4 `items`). Leave `ts` as an EMPTY string on the new
+// entry — this script
 // (run by the push step) stamps it with the real commit time and rewrites the
 // whole file in this canonical style, so timestamps are never fabricated and the
 // format stays identical to the rest of the fleet.
 export const CHANGELOG = [
+  {
+    v: 158,
+    title: 'What\'s New filters now cover every entry',
+    kind: 'fix',
+    ts: '2026-07-31T21:36:25.522Z',
+    items: [
+      'The What\'s New panel\'s Feature/Polish/Fix filter chips only ever matched a small slice of the changelog because most entries were tagged with kinds outside that set - so "Polish" always came up empty and most updates only ever showed under "All." Every entry is now tagged with the shared feature/polish/fix kinds, so the filters actually work.',
+    ],
+  },
   {
     v: 157,
     title: 'The arcade badge replaces the mascot',
@@ -22,7 +33,7 @@ export const CHANGELOG = [
   {
     v: 156,
     title: '20,000 Leagues levels up to 16-bit',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-28T19:40:50.188Z',
     items: [
       'Captain Nemo gets a Gen-4 companion: work the Nautilus\'s own brass console across the hunt for the "monster," the Nautilus\'s trust, the pearl banks, the kraken\'s arms, and the Norway maelstrom — each a run of escalating trials and a mini-boss, relics carried between them, and a choice that decides how the voyage ends.',
@@ -31,7 +42,7 @@ export const CHANGELOG = [
   {
     v: 155,
     title: 'Treasure Island levels up to 16-bit',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-28T19:04:35.113Z',
     items: [
       'X Marks the Spot gets a Gen-4 companion: cross Jim\'s own treasure chart across the Inn, the Hispaniola, the apple barrel, the stockade siege, and Flint\'s hoard — each a run of escalating trials and a mini-boss, relics carried between them, and a choice at the Inn that decides how the tale is told.',
@@ -67,7 +78,7 @@ export const CHANGELOG = [
   {
     v: 151,
     title: 'A Thousand Nights rebuilt as a branching adventure',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-28T17:08:58.335Z',
     items: [
       'REBUILD_QUEUE #25, done — the old steer/dodge/catch set is now a genuine point-and-click branching adventure: weave story fragments into Scheherazade\'s tale, recall Sinbad\'s safe island path, spot Ali Baba\'s true gold, command Aladdin\'s Genie, and chart the flying carpet\'s course.',
@@ -77,7 +88,7 @@ export const CHANGELOG = [
   {
     v: 150,
     title: 'They\'re Coming: The Night Siege is now real base defense',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-28T16:25:30.922Z',
     items: [
       'REBUILD_QUEUE #24, done — the tap-to-repair siege was a near-twin of BOARD THE WINDOWS. Now: drag Harry & Tom onto whichever breach point needs them most, and fire a strictly rationed rifle (6 rounds) on whichever door you can\'t cover.',
@@ -87,7 +98,7 @@ export const CHANGELOG = [
   {
     v: 149,
     title: 'Open Sesame rebuilt for genre variety',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-28T16:04:44.456Z',
     items: [
       'THE OIL JARS is now a deduction game: Morgiana reads three truthful clues each round, the courtyard\'s jars gray out as suspects are ruled out, and you tap the one jar still standing.',
@@ -97,7 +108,7 @@ export const CHANGELOG = [
   {
     v: 148,
     title: 'Grimm\'s Path rebuilt for genre variety',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-28T15:23:18.929Z',
     items: [
       'LET DOWN YOUR HAIR is now a hand-over-hand climb: grab the glowing side of the braid — left or right — before your grip slips, all the way up the tower.',
@@ -108,7 +119,7 @@ export const CHANGELOG = [
   {
     v: 147,
     title: 'Treasure Island rebuilt for genre variety',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-28T15:08:06.796Z',
     items: [
       'THE HISPANIOLA is now THE APPLE BARREL — a crew social-deduction chapter: watch each hand\'s tells from hiding and tap out Silver\'s secret mutineers before landfall.',
@@ -119,7 +130,7 @@ export const CHANGELOG = [
   {
     v: 146,
     title: 'The Wind in the Willows rebuilt for genre variety',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-28T13:57:47.783Z',
     items: [
       'Chapter 2 is now DISGUISED! — a social-stealth bluff: hold your ground in the courtyard and curtsy on cue the instant a guard\'s gaze turns your way, or get caught out.',
@@ -130,7 +141,7 @@ export const CHANGELOG = [
   {
     v: 145,
     title: 'Merlin\'s Wild Magic and Nimue\'s Snare rebuilt for genre variety',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-28T13:36:05.113Z',
     items: [
       'The Wild Magic trial is now a rune-tracing spellcaster: tap each glowing waypoint of a sigil in order to trace it, across five sigils sharing one candle-timer.',
@@ -141,7 +152,7 @@ export const CHANGELOG = [
   {
     v: 144,
     title: 'Heidi rebuilt as an alpine day-cycle chore sim',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-28T13:14:58.400Z',
     items: [
       'Heidi\'s five interchangeable tales are now a single seasonal loop: spend three chores a day — herd Peter\'s goats, forage the meadow, or tend Grandfather\'s hearth — across Spring, Summer, Autumn and Winter.',
@@ -152,7 +163,7 @@ export const CHANGELOG = [
   {
     v: 143,
     title: 'Around the World in 80 Days: London in Time rebuilt as a rhythm sprint',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-28T09:33:34.426Z',
     items: [
       'The final carriage-dash lane is now "urge the horses": tap in rhythm with each gold beat sliding into the reins zone to speed the gallop, but hold back when a red beat rides through — mistime it and the wager loses precious seconds.',
@@ -162,7 +173,7 @@ export const CHANGELOG = [
   {
     v: 142,
     title: 'Around the World in 80 Days: Kiouni rebuilt as a stealth rescue',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-28T09:17:37.958Z',
     items: [
       'The India elephant-dodge lane is now a free-roam stealth rescue: creep past two patrolling priests\' torchlight at the Pillaji pyre, reach the drugged Aouda, then carry her back to Kiouni before the dawn drums sound.',
@@ -172,7 +183,7 @@ export const CHANGELOG = [
   {
     v: 141,
     title: 'Around the World in 80 Days: The Mongolia rebuilt as a route-planning leg',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-28T07:31:32.397Z',
     items: [
       'The steer-and-dodge sea chase to Suez is now a chart-the-course strategy leg: at each strait, choose STEAM (fast, burns coal) or the SAFE lane (spares the reserve, costs days) across a real waypoint map.',
@@ -183,7 +194,7 @@ export const CHANGELOG = [
   {
     v: 140,
     title: 'Snow White: Forest Flight rebuilt as a hide-from-the-Huntsman stealth chapter',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-28T07:20:05.497Z',
     items: [
       'The dodge-the-falling-tree-claws lane is now real stealth: the Huntsman\'s lantern telegraphs which of three hiding spots (bush, hollow tree, rock) it\'s about to sweep, and you duck to a safe one before it lands.',
@@ -194,7 +205,7 @@ export const CHANGELOG = [
   {
     v: 139,
     title: 'Snow White: The Poisoned Apple rebuilt as a potion-brewing puzzle',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-28T05:34:48.502Z',
     items: [
       'The dodge-and-catch falling-apples lane is now the Evil Queen\'s own work: tap jars of nightshade, raven\'s eye, hemlock and wolfsbane to match an exact recipe in the cauldron, round after round with more ingredients in play.',
@@ -205,7 +216,7 @@ export const CHANGELOG = [
   {
     v: 138,
     title: 'Snow White: Hi-Ho Mine rebuilt as a dwarf mine-management chapter',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-28T05:20:50.887Z',
     items: [
       'The catch-gems/dodge-boulders cart lane is now a foreman\'s job: send idle dwarfs into one of three shafts, then pull them back out before rising instability caves the vein in.',
@@ -216,7 +227,7 @@ export const CHANGELOG = [
   {
     v: 137,
     title: 'The Little Mermaid: two tides rebuilt for The Sea King\'s Daughter',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-28T03:42:32.864Z',
     items: [
       'The Sea Witch\'s Cave is now a Simon-says potion-brewing memory game: watch Ursula stir five glowing ingredients into the cauldron, then tap them back in the same order as the spell grows — the tentacles stay, but purely as menace, not a hazard.',
@@ -227,7 +238,7 @@ export const CHANGELOG = [
   {
     v: 136,
     title: 'Oliver Twist: The Workhouse rebuilt as a stealth pickpocket sim',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-28T03:22:58.437Z',
     items: [
       'The dodge-the-cane opener is now a grid of gruel bowls: tap a glowing bowl for a stolen second helping, but never while the beadle\'s watching eye has swept onto its column.',
@@ -238,7 +249,7 @@ export const CHANGELOG = [
   {
     v: 135,
     title: 'A Christmas Carol: Christmas Morning rebuilt as a redemption dash',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-28T02:11:00.841Z',
     items: [
       'The plain jump-the-obstacles runner is now a checklist dash through London: hop the snowdrifts on the way, then stop to keep three of Scrooge\'s real vows — buy the prize turkey the instant the poulterer\'s shutter opens, toss a coin to the gentleman when your timing lands in the sweet spot, and greet the neighbors on the beat.',
@@ -249,7 +260,7 @@ export const CHANGELOG = [
   {
     v: 134,
     title: 'A Christmas Carol: Christmas Past rebuilt as a redemption-ledger choice',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-28T01:47:59.344Z',
     items: [
       'The catch-the-falling-wisps chapter is now six scenes from Scrooge\'s own youth — the schoolroom, Fezziwig\'s ball, Belle by the fire — and for each one you tap the warm memory or watch the cold ledger claim it before time runs out.',
@@ -260,7 +271,7 @@ export const CHANGELOG = [
   {
     v: 133,
     title: 'A Christmas Carol: Yet to Come rebuilt as an Old Joe\'s-den search',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-28T01:12:59.500Z',
     items: [
       'The lane-dodge chapter is now a hidden-goods hunt: Old Joe\'s den is scattered with bundled parcels, and you have to pick out the dead man\'s own things — his curtains, shirt, seals, pencil-case, sleeve-buttons — from a pile of junk before the candle gutters out.',
@@ -271,7 +282,7 @@ export const CHANGELOG = [
   {
     v: 132,
     title: 'A Christmas Carol: Marley\'s Chains rebuilt as a memory puzzle',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-28T00:57:28.599Z',
     items: [
       'The dodge-chains-and-catch-coins opener is now a Simon-Says memory game: watch Marley\'s chain of cash-boxes, ledgers, padlocks and purses light up link by link, then tap them back in the same order.',
@@ -282,7 +293,7 @@ export const CHANGELOG = [
   {
     v: 131,
     title: 'A Christmas Carol: Christmas Present rebuilt as a gift-sorting puzzle',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-27T23:56:00.180Z',
     items: [
       'The catch-anything-on-a-sliding-table chapter is now a grab-and-carry sort: gifts drift down and you drag each one to where it belongs — Tiny Tim\'s medicine, the Cratchit table, or the hearth.',
@@ -293,7 +304,7 @@ export const CHANGELOG = [
   {
     v: 130,
     title: 'Great Expectations: The Marshes rebuilt as a branching provisions trek',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-27T23:36:02.296Z',
     items: [
       'The free-move stealth-dodge opener is now four checkpoints between the forge and Magwitch\'s hideout, each a QUIET (spend stolen provisions, stay hidden) or BOLD (free, raises the soldiers\' alarm) choice.',
@@ -304,7 +315,7 @@ export const CHANGELOG = [
   {
     v: 129,
     title: 'Great Expectations: The Confrontation rebuilt as a reactive grip-read duel',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-27T22:54:50.543Z',
     items: [
       'The dodge-and-tap fight with Compeyson is now a read-and-react grapple: he telegraphs a brace side (LEFT, CENTER or RIGHT) and a shrinking ring times your response.',
@@ -315,7 +326,7 @@ export const CHANGELOG = [
   {
     v: 128,
     title: 'Great Expectations: Down the Thames rebuilt as a branching river-escape',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-27T22:39:44.494Z',
     items: [
       'The lane-dodge boat chase is now four reaches, each a QUIET (spend coin, stay safe) or BOLD (free, raises suspicion) route choice down the river.',
@@ -326,7 +337,7 @@ export const CHANGELOG = [
   {
     v: 127,
     title: 'Great Expectations: Satis House rebuilt as a class-ladder life-choice chapter',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-22T17:06:38.320Z',
     items: [
       'The cake-catching minigame at Satis House is now five encounters with Estella — pick a Gentleman or Blacksmith response each round, building STATUS and LOYALTY stats.',
@@ -336,7 +347,7 @@ export const CHANGELOG = [
   {
     v: 126,
     title: 'White Fang rebuilt: a hunger/cold survival-sim and a pack-dominance strategy chapter replace two near-identical dodges',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-22T16:57:05.949Z',
     items: [
       'The lone cub\'s opening chapter is now a resource-sim: forage fish and firewood against dueling HUNGER and COLD meters, dodge the eagle\'s telegraphed swoop, and pick a route at a mid-trail fork.',
@@ -347,7 +358,7 @@ export const CHANGELOG = [
   {
     v: 125,
     title: 'The Headless Horseman rebuilt: memory wards, a courting social-sim, and a stealth-horror chase replace three near-identical dodges',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-22T16:49:20.337Z',
     items: [
       'Arrival is now a memory game — watch the old wives\' ward-signs light up and tap them back in the same order, instead of steering to collect falling lanterns.',
@@ -358,7 +369,7 @@ export const CHANGELOG = [
   {
     v: 124,
     title: 'The Invisible Man rebuilt: one unbroken manhunt replaces three near-identical dodges',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-18T20:33:37.750Z',
     items: [
       'Iping Village, Snow Betrayal and the Dark Commons — three separate timed dodge chapters that all played the same — are now ONE contiguous manhunt run on a persistent EXPOSURE meter instead of lives: sight cones, footprints and torch glow raise it, and shadow/mist havens along the route bleed it back down.',
@@ -369,7 +380,7 @@ export const CHANGELOG = [
   {
     v: 123,
     title: 'Beneath the Opera rebuilt: sing across a real staff, outrun the mob by staying quiet',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-18T01:05:16.248Z',
     items: [
       'The Music Lesson scene is a proper rhythm game now: notes drift in along a genuine five-line staff and you sing each one back by touching its height (or UP/LEFT/A/RIGHT/DOWN for the five lines) as it crosses the gold bar, instead of the old three-lane catch.',
@@ -379,7 +390,7 @@ export const CHANGELOG = [
   {
     v: 122,
     title: 'Pride & Prejudice rebuilt as a proper Regency dating-sim',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-17T17:01:42.825Z',
     items: [
       'The arcade\'s most repetitive game got a full genre-shift rebuild: trade branching banter with Mr. Darcy at the Meryton Assembly, step a minuet in time with his lead, complete his letter of explanation as a word puzzle, then answer his second proposal at Pemberley — the ending you get depends on the choices you made.',
@@ -389,7 +400,7 @@ export const CHANGELOG = [
   {
     v: 121,
     title: 'Crisper in-game buttons — fleet icons instead of emoji',
-    kind: 'improvement',
+    kind: 'polish',
     ts: '2026-07-16T20:55:48.479Z',
     items: [
       'The in-game top bar (back, full screen, sound, and restart) and the full-screen exit button now use the shared Polecat icon set — clean single-colour line icons that follow the theme — instead of emoji that looked inconsistent across devices.',
@@ -398,7 +409,7 @@ export const CHANGELOG = [
   {
     v: 120,
     title: 'Tidier game top bar on phones',
-    kind: 'improvement',
+    kind: 'polish',
     ts: '2026-07-16T20:43:55.977Z',
     items: [
       'The ◀ ARCADE back button was wrapping onto two lines on narrow screens, so it looked off-centre. It’s now a clean single-line button that matches the other top-bar buttons, and the bar no longer crowds on small phones.',
@@ -407,7 +418,7 @@ export const CHANGELOG = [
   {
     v: 119,
     title: '16-bit polish: clearer story choices + a distinct look per game',
-    kind: 'improvement',
+    kind: 'polish',
     ts: '2026-07-16T20:25:50.942Z',
     items: [
       'The branching story choice now appears AFTER the tale sets the scene, not cold before it — and each option is a themed card that spells out what it means for how your story ends (with an icon), instead of a bare two-button menu you had to guess at.',
@@ -417,7 +428,7 @@ export const CHANGELOG = [
   {
     v: 118,
     title: 'New 16-bit legend: King Arthur — The Once and Future King',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-16T03:38:54.345Z',
     items: [
       'The sixth 16-bit game — and the Round Table IS the menu: take any seat, in any order. Heave the sword from the stone with alternating taps, keep the skiff inside the Lady of the Lake’s drifting calm, shatter lances in a perspective joust, duel Lancelot and Mordred in high/low parry combat, catch grail-light while letting gold fall past, and hold the dragon standard at Camlann.',
@@ -428,7 +439,7 @@ export const CHANGELOG = [
   {
     v: 117,
     title: 'New 16-bit invasion: The War of the Worlds',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-16T03:04:59.132Z',
     items: [
       'The fifth 16-bit game: answer dispatches on a phosphor war-map of Surrey and London — watch the pit at Horsell without getting caught watching, flee the sweeping heat-ray, lay artillery arcs at Weybridge, duel a hood through the black smoke, out-wait the searching tentacle in the ruined house, ride the exodus past the Thunder Child’s last stand, burn back the red weed, and creep cover-to-cover through dead London.',
@@ -439,7 +450,7 @@ export const CHANGELOG = [
   {
     v: 116,
     title: 'New 16-bit epic: The Odyssey — The Long Way Home',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-16T02:43:54.830Z',
     items: [
       'The fourth 16-bit game: sail an open chart of the wine-dark sea — drive the olive stake and flee the Cyclops’ boulders (taunt him by name for extra glory, if you dare), guard the bag of winds, repeat Circe’s potion rite from memory, row past the Sirens in rhythm, thread Scylla and Charybdis, then string the great bow and clear the hall at Ithaca.',
@@ -450,7 +461,7 @@ export const CHANGELOG = [
   {
     v: 115,
     title: 'New 16-bit mystery: Sherlock Holmes — The Hound of the Baskervilles',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-15T23:27:16.459Z',
     items: [
       'The third 16-bit game: work a pinned case map of Dartmoor in any order — read the walking stick, chase the spy’s cab through gaslit London, piece the pasted warning, catch the candle signal, cross the Grimpen Mire, stalk the convict on the tor, and face the hound in the fog.',
@@ -496,7 +507,7 @@ export const CHANGELOG = [
   {
     v: 111,
     title: '16-bit type now looks 16-bit: period-correct pixel fonts',
-    kind: 'improvement',
+    kind: 'polish',
     ts: '2026-07-15T19:44:49.035Z',
     items: [
       'The 16-bit title cards were using smooth modern serifs that read too new for the era. They now use higher-resolution PIXEL display fonts — an engraved pixel-blackletter for Dracula, a bold pixel display for Robin Hood — with a clean pixel face for body text, so everything looks digital and period-correct while staying crisp.',
@@ -603,7 +614,7 @@ export const CHANGELOG = [
   {
     v: 101,
     title: 'Ivanhoe — the tournament at Ashby is open',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-04T15:09:11.778Z',
     items: [
       'Five knightly chapters from Scott\'s 1819 epic: time your lance at the joust, sneak through Torquilstone\'s torchlit corridors, parry and riposte against Brian de Bois-Guilbert, scale the castle wall through a storm of arrows, and fight at King Richard\'s side.',
@@ -633,7 +644,7 @@ export const CHANGELOG = [
   {
     v: 98,
     title: 'New game: Swiss Family Robinson — Island Bound (Island Survival)',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-04T13:10:04.300Z',
     items: [
       'Five island adventures from Wyss\'s 1812 classic: dodge cargo on the storm-struck ship to survive the wreck; catch planks and rope while swatting hornets to build the treehouse; move the crosshair and hunt 6 animals to feed the family; tap approaching pirate boats to defend New Switzerland with the cannon; then steer the raft through reef rocks to reach the rescue ship.',
@@ -643,7 +654,7 @@ export const CHANGELOG = [
   {
     v: 97,
     title: 'New game: Black Beauty — Five Rides (Racing Adventure)',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-04T12:09:25.851Z',
     items: [
       'Five chapters through Anna Sewell\'s 1877 classic: gallop the Birtwick Park fields jumping fences to collect rosettes; catch apples in the manor yard while freezing when the groom watches (bearing rein chapter); steer through the midnight storm to race the doctor; keep the stamina bar alive hauling the London cab up Ludgate Hill; and catch drifting flower petals in the final peaceful meadow.',
@@ -653,7 +664,7 @@ export const CHANGELOG = [
   {
     v: 96,
     title: 'New game: Hamlet — The Prince of Denmark (Revenge Thriller)',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-04T11:27:11.586Z',
     items: [
       'Five Shakespearean acts: dodge the Ghost\'s spectral sweeps on the battlements and collect his 5 message tokens; tap the timing meter to signal 6 cues in the golden zone and expose Claudius with the Mousetrap; sneak past 3 guard torch-cones in Gertrude\'s chamber to collect 6 royal wax seals; catch Ophelia\'s rosemary and pansies while avoiding fennel and rue; then dodge Laertes\' poisoned rapier lane attacks and counter-strike 5 times in the final duel.',
@@ -663,7 +674,7 @@ export const CHANGELOG = [
   {
     v: 95,
     title: 'New game: The Scarlet Pimpernel — They Seek Him Here (Stealth Swashbuckler)',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-04T10:21:04.292Z',
     items: [
       'Five escapades through revolutionary France: catch falling code letters in sequence to decode Sir Percy\'s BLAKENEY dispatch (8 letters, 3 lives, decoys punish); steer the night carriage past patrol soldiers, barriers, and lantern posts for 22 seconds; tap the pendulum into the gold zone 3 times to launch guillotine diversions (zone narrows, 4 misses lose); navigate the dark inn past 3 guard torch-cones to reach the exit; and dodge Chauvelin\'s thrown lanterns then strike back 4 times during his reload windows on the Dover cliffs.',
@@ -673,7 +684,7 @@ export const CHANGELOG = [
   {
     v: 94,
     title: 'New game: Dante\'s Inferno — The Long Descent (Dark Descent)',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-04T09:24:39.586Z',
     items: [
       'Five circles from Dante Alighieri\'s c.1320 Inferno: dodge three wild beasts (panther, lion, wolf) sweeping across the dark wood in three height lanes for 24 seconds; row Charon\'s ferry across the black river Acheron with a pendulum timing tap (8 strokes, zone narrows, 4 misses lose); free-steer through the boiling blood river Phlegethon dodging centaur arrows from above and blood eruptions from below for 26 seconds; sneak freely past five Malebranche demon torch-cones in Malebolge collecting 8 gold soul-flames in 28 seconds; and tap the pendulum 8 times to climb past Lucifer\'s three-headed frozen form in Cocytus to escape.',
@@ -683,7 +694,7 @@ export const CHANGELOG = [
   {
     v: 93,
     title: 'New game: Romeo & Juliet — Star-Cross\'d (Romance Tragedy)',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-04T08:32:40.960Z',
     items: [
       'Five scenes from Shakespeare\'s c.1594 tragedy: steer Romeo through Capulet guests at the masked feast to catch 12 falling roses in 24 seconds; tap the pendulum into the shrinking gold zone 8 times to climb the garden wall to Juliet\'s balcony; dodge Tybalt\'s telegraphed left/right sword-swings at noon and tap the counter window to strike 5 hits; catch 12 golden herb vials in Friar Lawrence\'s cell while avoiding red poison bottles (26s); and sprint Romeo through scrolling Verona streets dodging watchmen\'s sweeping lantern cones for 28 seconds to reach the Capulet tomb.',
@@ -693,7 +704,7 @@ export const CHANGELOG = [
   {
     v: 92,
     title: 'New game: Gulliver\'s Travels — Into Several Remote Nations (Scale Adventure)',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-04T07:39:21.977Z',
     items: [
       'Five voyages through Jonathan Swift\'s 1726 satire: steer Gulliver on the storm-lashed deck dodging falling mast sections and barrels for 22 seconds (3 lives); tap 14 swarming Lilliputians across three lanes before they trip you (3 misses allowed, 30s); free-move tiny Gulliver around a giant farmhouse dodging telegraphed giant boots and a prowling cat (24s, 3 lives); catch 12 magnetic lodestones dropped by Laputa\'s floating-island scholars while dodging useless philosophical books (3 misses, 30s); and time the pendulum into the gold \'reason zone\' 6 times to convince the noble horse-folk, while Yahoos charge and cost lives.',
@@ -703,7 +714,7 @@ export const CHANGELOG = [
   {
     v: 91,
     title: 'New game: Robinson Crusoe — Island of Fate (Island Survival)',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-04T05:54:43.390Z',
     items: [
       'Five trials of survival on the Island of Despair — steer through the shipwreck storm dodging falling mast debris (22 s, 3 lives); swim to salvage 12 supply crates from the wreck while dodging patrolling sharks (28 s); sneak through dense jungle past three cannibal torch-bearers and their light cones (25 s, 3 lives); tap 10 attackers before they reach Friday on the beach; and time a pendulum bellows to pump the signal fire bright enough (8 hits, zone narrows, 4 misses lose).',
@@ -713,7 +724,7 @@ export const CHANGELOG = [
   {
     v: 90,
     title: 'New game: Bah, Humbug! — A Christmas Carol (Story Arcade)',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-04T03:54:31.893Z',
     items: [
       'Five chapters through Dickens\' 1843 novella: slide left/right to catch gold shillings in Scrooge\'s cold countinghouse (dodge grey farthings, collect 14, 26s); move up/down to dodge Marley\'s flying cash-box chains for 24 seconds (3 lives); tap each candle memory in the shrinking gold timing ring for 8 rounds (ring speeds up each time, 3 misses lose); tap glowing gift boxes in the Spirit\'s 5×2 grid before they fade (12 gifts, 3 expired = lose); and navigate the graveyard in free movement — dodge the cloaked Ghost\'s pointing beam and collect 5 tombstone echoes to escape (30s timer).',
@@ -723,7 +734,7 @@ export const CHANGELOG = [
   {
     v: 89,
     title: 'New game: Song of the Sirens — The Odyssey',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-04T02:25:58.318Z',
     items: [
       'Five crossings through Homer\'s Odyssey — balance the storm-tossed ship when the bag of winds opens, summon the right shades at the underworld\'s edge, resist the Sirens\' golden song while lashed to the mast, dodge Scylla\'s snapping heads in the straits, and steer a desperate raft through Poseidon\'s fury.',
@@ -733,7 +744,7 @@ export const CHANGELOG = [
   {
     v: 88,
     title: 'New game: As I Lay Dying — The Bundren Journey',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-04T01:19:53.744Z',
     items: [
       'Five Mississippi chapters from Faulkner\'s 1930 masterpiece — steer a makeshift raft across the flooding Yoknapatawpha, dodge potholes on the nine-day road, swat buzzards off the coffin, escape Gillespie\'s burning barn, and navigate Jefferson streets to lay Addie to rest.',
@@ -743,7 +754,7 @@ export const CHANGELOG = [
   {
     v: 87,
     title: 'New game: The Masque — Phantom of the Opera (1925)',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-04T00:07:03.660Z',
     items: [
       'Five scenes from Rupert Julian\'s 1925 silent film: stalk the masquerade as the Red Death, entrance Christine at the organ, drop the great chandelier on the mob, steer the gondola through torch-lit catacombs, and outrun the raging Paris crowd.',
@@ -753,7 +764,7 @@ export const CHANGELOG = [
   {
     v: 86,
     title: 'New game: Rip Van Winkle — Twenty Years Asleep',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-03T22:53:40.980Z',
     items: [
       'Five Catskill chapters through Washington Irving\'s 1819 classic: hunt the mountain with Wolf, bowl with the ghostly hollow men, dream away twenty enchanted years, catch the memories of your old life, and prove to the changed village who you really are.',
@@ -794,7 +805,7 @@ export const CHANGELOG = [
   {
     v: 82,
     title: 'New game: The Scarlet Letter — Five Puritan Chapters (Narrative Stealth)',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-03T20:23:54.915Z',
     items: [
       'Five chapters from Hawthorne\'s 1850 novel: tap shame tokens out of the air before they reach Hester on the scaffold (22 s, 3 lives); redirect wild Pearl by tapping her to reverse direction (20 s, speed ramps up); parry Roger Chillingworth\'s eight probing questions by tapping when the spinning pointer enters the calm green arc; steer Hester left/right through the dark forest dodging three sweeping lantern beams; and tap to shore up Dimmesdale\'s oscillating courage until he climbs the full scaffold for his confession.',
@@ -804,7 +815,7 @@ export const CHANGELOG = [
   {
     v: 81,
     title: 'New game: The Prince and the Pauper — Five Tudor Tales (Swap Puzzle)',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-03T19:03:21.157Z',
     items: [
       'Five chapters from Mark Twain\'s 1882 classic: slip past halberd-bearing palace guards by dashing when they turn away (4 gates, 3 lives); copy the herald\'s courtly gestures in growing sequences across 5 rounds (sequence memory, 3 mistakes allowed); dodge cabbages, dogs and market carts as Prince Edward flees London\'s angry streets for 22 seconds; parry left/right sword attacks from alley ruffians to beat 10 opponents (Miles Hendon\'s defense); and race a carriage-dodging, banner-collecting sprint to Westminster Abbey before the coronation begins.',
@@ -814,7 +825,7 @@ export const CHANGELOG = [
   {
     v: 80,
     title: 'New game: White Fang — Five Yukon Chapters (Survival Sim)',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-03T18:08:24.642Z',
     items: [
       'Five chapters from Jack London\'s 1906 novel: dodge eagle strikes as a lone wolf cub in the frozen Yukon wilderness (survive 24 s, 3 lives); free-move to collect 12 fish scraps before sled dogs drive you off in Gray Beaver\'s camp; dodge and counter-attack in the red-flash timing window of Beauty Smith\'s fight pit (beat 3 opponents of rising HP); tap the trust meter\'s green zone 10 times to earn Weedon Scott\'s trust as it oscillates faster each success; then chase escaped convict Jim Hall through a moonlit house to catch him 3 times before he reaches the sleeping judge.',
@@ -824,7 +835,7 @@ export const CHANGELOG = [
   {
     v: 79,
     title: 'New game: Anne of Green Gables — Five Tales from Montgomery\'s Novel (Story Arcade)',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-03T17:04:27.494Z',
     items: [
       'Five tales from L. M. Montgomery\'s 1908 classic: steer Matthew\'s buggy down the White Way of Delight, catching apple blossoms Anne spots and dodging rocks in 22 seconds (collect 10, 3 lives); bake a cake for the Ladies\' Aid Society — catch flour, eggs, butter and vanilla falling from above while dodging the liniment bottles (12 good items, 26s, 3 misses); tap the shrinking dye ring in the dark zone before it turns green in 8 rounds (Anne\'s hair-dye disaster — 3 misses and it\'s green forever); free-move past glowing-eyed shadow shapes through the Haunted Wood to reach the gate in 26 seconds; and catch 15 golden books and letters to win the Avery Scholarship before time runs out (24s, 3 misses lose).',
@@ -834,7 +845,7 @@ export const CHANGELOG = [
   {
     v: 78,
     title: 'New game: Little Women — Five Chapters from Alcott\'s Novel (Story Arcade)',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-03T16:18:33.551Z',
     items: [
       'Five chapters from Louisa May Alcott\'s 1868 classic: catch Christmas gifts and food for the Hummel family (collect 10 in 26 s, 3 lives); hit 7 dramatic beats in Jo\'s Pickwick Club melodrama with a shrinking timing ring (3 misses and the audience sleeps); skate left and right across Amy\'s cracking frozen pond for 22 unbroken seconds; tap glowing medicine vials in Beth\'s dark fever-room before they fade (collect 15, 3 misses lose); then roam freely to catch 15 golden memory tokens while dodging grey shadow clouds as Father walks home through the sunset gate.',
@@ -844,7 +855,7 @@ export const CHANGELOG = [
   {
     v: 77,
     title: 'New game: The Secret Garden — Five Chapters in the Walled Garden (Garden Puzzle)',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-03T15:16:01.891Z',
     items: [
       'Five chapters from Burnett\'s beloved 1911 classic: follow the red-breasted robin to catch feathers and dodge thorns (collect 12 in 22s, 3 lives); tap glowing soil patches before winter frost seals them (plant 14 seeds in 26s); befriend Dickon\'s wild creatures — crow, fox, rabbit, squirrel — by tapping them before they bolt (20 animals, 3 escapes allowed); give Colin courage with a shrinking timing ring (7 perfectly-timed steps); and catch golden magic blooms while dodging grey stones as the garden bursts into full flower (15 blooms in 30s).',
@@ -854,7 +865,7 @@ export const CHANGELOG = [
   {
     v: 76,
     title: 'New game: The Metamorphosis — Die Verwandlung (Survival Puzzle, 5 scenes)',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-03T14:24:55.319Z',
     items: [
       'Five scenes from Kafka\'s 1915 novella: dodge falling alarm clocks, boots, books and bottles as Gregor wakes transformed in his bedroom (survive 22s, 3 lives, spawn rate rises); evade four panicking family members and the chief clerk bouncing chaotically around the room (24s, 4 NPCs, free movement, speed ramps up); crawl to rotten mouldy scraps on the floor while avoiding fresh golden food (collect 10 rot items, 3 fresh touches end the ordeal); creep slowly past three scanning lodgers to reach Grete\'s violin — they sweep their gaze left/right and detection costs a life (30s, 3 lives); make the final exhausted crawl at half-speed across the dark apartment, weaving between patrolling family members, to reach the bedroom door before dawn arrives (28s timer).',
@@ -864,7 +875,7 @@ export const CHANGELOG = [
   {
     v: 75,
     title: 'New game: Heidi — Five Alpine Tales (Adventure, 5 chapters)',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-03T13:18:50.373Z',
     items: [
       'Five Alpine tales from Johanna Spyri\'s beloved 1881 classic: dodge falling boulders as Heidi climbs the steep rocky mountain path to Grandfather\'s alm (survive 24s, 3 lives, rocks spawn faster over time); tap stray goats to startle them back to safety before 3 escape over the cliff edge (herd 14, max 3 escapes); free-move Heidi through gloomy Frankfurt past Miss Rottenmeier\'s 126° vision cone to reach the mailbox in 26 seconds (furniture provides hiding spots, 3 lives); catch 12 golden Alpine memories — wildflowers, goats, stars, pine trees — falling through a dark Frankfurt window while dodging grey city objects (3 bad catches = fail); and tap a contracting ring at the perfect moment to encourage Clara\'s 6 miraculous first steps on the sunny meadow (ring accelerates each step, 4 misses allowed).',
@@ -874,7 +885,7 @@ export const CHANGELOG = [
   {
     v: 74,
     title: 'New game: The Invisible Man — Unseen (Stealth Puzzle, 5 encounters)',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-03T12:24:11.872Z',
     items: [
       'Five encounters from H. G. Wells\' 1897 classic: mix the invisibility compound — tap a pendulum needle into the shrinking blue zone 8 times (3 misses lose, zone narrows and speed ramps each brew); slip through the foggy village of Iping avoiding 4 patrolling townsfolk\'s amber sight cones for 24 seconds (free movement, 3 lives); dodge heavy snow-reveal blobs falling from above for 22 seconds — they make your footprints visible and alert the mob (3 lives, blobs speed up and spawn faster); tap 5 breach points (2 windows, 2 doors, 1 gate) to hold back the soldiers surrounding Kemp\'s house for 28 seconds before 3 doors splinter (HP bars drain faster over time); and survive 26 seconds on the rain-soaked dark commons — move freely to avoid 6 torch-bearers converging from all sides and dodge telegraphed thrown rocks (3 lives, mob tightens over time).',
@@ -884,7 +895,7 @@ export const CHANGELOG = [
   {
     v: 73,
     title: 'New game: Open Sesame — Ali Baba and the Forty Thieves (Heist Puzzle, 5 tales)',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-03T11:24:45.198Z',
     items: [
       'Five tales from One Thousand and One Nights: hide from the forty thieves\' sweeping lanterns in the dark forest for 24 seconds (drag left/right, 3 lives, lanterns accelerate); rush the treasure cave to collect 12 gold bags before the magic door seals in 26 seconds (dodge falling stalactites, 3 lives); tap 14 marked doors on the cobblestone street before their chalk glow fades and the thieves find the right house (3 misses lose, marks speed up); discover 14 thieves hiding in great oil jars by tapping each pair of glowing eyes before they vanish (3 misses lose); and time Morgiana\'s dagger-dance — tap when the swinging pendulum blade enters the shrinking golden zone for 8 strikes (zone narrows and blade speeds up each hit, 4 misses lose).',
@@ -894,7 +905,7 @@ export const CHANGELOG = [
   {
     v: 72,
     title: 'New game: A Trip to the Moon — Five Chapters Through the 1902 Méliès Masterpiece (Cannon Launch)',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-03T09:46:30.304Z',
     items: [
       'Five chapters inspired by Méliès\' 1902 film: time the gavel at the Grand Congress of Astronomers (6 votes, sweep bar, 3 misses lose); tap a contracting ring to the precision target to load the great cannon 5 times (ring accelerates with each load); steer the capsule freely through 24 seconds of star-dancers and comet showers in deep space; tap-to-defeat 20 Selenites erupting from Moon craters before 3 breach the explorers; and steer left/right as the capsule falls through asteroids, lightning, and ocean waves back to Earth — hit the blue Pacific zone to win.',
@@ -904,7 +915,7 @@ export const CHANGELOG = [
   {
     v: 71,
     title: 'New game: Great Expectations — Rise from the Forge (Drama Adventure, 5 acts)',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-03T07:45:31.080Z',
     items: [
       'Five acts from Dickens\' 1861 classic: free-move stealth across the Kent marshes — drag Pip to collect 6 provisions for escaped convict Magwitch while dodging three soldiers\' sweeping lantern cones (3 lives, ~26s); move left/right to catch golden wedding cake slices falling at Satis House while avoiding rotten dark pieces that cost a life (collect 12 to win); tap a swinging gavel into the shrinking golden zone 8 times at Mr. Jaggers\' London office (zone narrows and pendulum speeds up each hit, 4 misses lose); steer a rowboat past police galleys, floating logs and fog banks down the dark Thames for 26 seconds (3 lives, obstacle speed ramps up); and face villain Compeyson on the wharf — read his telegraphed left/right/center attacks, dodge to safety, then tap when he staggers golden to strike him down (5 hits to win, 3 lives).',
@@ -914,7 +925,7 @@ export const CHANGELOG = [
   {
     v: 70,
     title: 'New game: Merlin — Five Trials of the Enchanter (Spell Puzzle)',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-03T05:48:56.222Z',
     items: [
       'Five trials from Arthurian legend: catch 12 glowing gold runes falling through the ancient oakwood while dodging cursed red glyphs (3 lives, spawn rate ramps up); survive 24 seconds in Vortigern\'s underground tower as the Red Dragon and White Dragon sweep fire-breath across three lanes — dodge between them; steer Merlin\'s merlin falcon through arrow-filled skies collecting 10 golden feathers in free movement (3 lives, arrows spawn from all four edges); tap the correct glowing rune from a circle of standing stones in 10 timed rounds — the gold zone timer shrinks each round, 3 misses lose; and finally guide Merlin through crystal spires that close in from both cave walls for 26 seconds — the corridor narrows steadily and one wrong step shatters a life.',
@@ -924,7 +935,7 @@ export const CHANGELOG = [
   {
     v: 69,
     title: 'New game: Sinbad the Sailor (Voyage Adventure, 5 voyages)',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-03T03:48:42.059Z',
     items: [
       'Five voyages from One Thousand and One Nights: dodge whale waterspouts and collect crates before the whale island submerges (22s survive); catch diamonds falling from eagles while serpents close in from the sides (collect 10); cling to the Roc\'s leg through a sky full of falling rocks and stormclouds (dodge 20s); wander a desert island collecting grape clusters to brew wine and trick the Old Man of the Sea off your shoulders (fill 8-grape wine jar); then steer a ship and fire cannons at sea serpents and krakens until 10 monsters are slain.',
@@ -934,7 +945,7 @@ export const CHANGELOG = [
   {
     v: 68,
     title: 'New game: The Pied Piper of Hamelin (Rhythm Lead, 5 tales)',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-03T02:24:08.752Z',
     items: [
       'Five tales of the famous German legend — drive scuttling rats from the town square before they reach the food barrels (tap 12, 3 escape = over, 28s); play the magic pipe for the Mayor by tapping the pendulum tip into the gold zone 8 times (speeds up and zone narrows each success, 4-miss limit); steer the Piper left/right through Hamelin\'s cobblestone streets dodging stone walls while a 14-rat swarm trails behind you, racing to the River Weser in 24 seconds; survive 24 seconds of the Mayor\'s guards charging down three lanes when he tries to pay only 50 guilders; and finally tap falling blue notes in three columns (avoid the red dissonant ones) to lead the children with 12 enchanted notes — the mountain door opens and shuts behind them forever.',
@@ -944,7 +955,7 @@ export const CHANGELOG = [
   {
     v: 67,
     title: 'New game: Please, Sir — Oliver Twist (Pickpocket Stealth, 5 acts)',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-03T01:21:02.467Z',
     items: [
       'Five acts of Dickensian survival: dodge the beadle\'s swinging cane in the workhouse gruel hall while catching falling bowls for bonus shillings (3 lives, 22s); tap Fagin\'s pendulum-swung handkerchief into the golden zone 8 times to graduate as a pickpocket (misses speed the pendulum up); tap lying wigged witnesses at their benches before their time bars drain and they testify against Oliver before Magistrate Fang (10 silenced, 3 testify = over); drag Oliver through the dark Chertsey house past two patrolling guards whose lantern cones sweep in their direction of travel (3 lives, 26s); and survive 28 seconds on the London rooftops dodging Bill Sikes\' stone throws — each one telegraphed by a red warning triangle before it falls.',
@@ -954,7 +965,7 @@ export const CHANGELOG = [
   {
     v: 66,
     title: 'New game: The Call of the Wild — Jack London (Sled Runner, 5 chapters)',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-02T23:59:58.309Z',
     items: [
       'Five stretches of Buck\'s Yukon journey: dodge falling lasso loops at Judge Miller\'s California ranch (survive 22s, 3 lives); steer the sled team down the snow trail collecting 10 frozen fish while dodging drifts; duel lead dog Spitz in a counter-strike timing fight on the ice floe (land 5 counters, 4 hit points); tap rapidly in rhythm to pull John Thornton\'s thousand-pound sled across the finish line before 32 seconds; then follow howling wolf silhouettes through the dark spruce forest while dodging trapper\'s steel jaw-traps to cover the final stretch.',
@@ -964,7 +975,7 @@ export const CHANGELOG = [
   {
     v: 65,
     title: 'New game: Wrath of Achilles — The Iliad (Battle Tactics, 5 books)',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-02T23:00:41.465Z',
     items: [
       'Five books of Homer\'s Iliad: tap Greek ships sailing into Aulis bay to muster the fleet (collect 15 in 26s); steer a bronze-armored hoplite left/right past Trojan spears across the dusty plain (22s); lane-switch to block Trojan warriors at the three-arched gate (block 14); tap to intercept Apollo\'s arrows flying at Patroclus in golden armor (protect for 22s, 3 lives); chase Hector around Troy\'s oval walls by holding to sprint (stamina bar), then time the strike in the oscillating gold-zone gauge — 3 perfect strikes to end the duel.',
@@ -974,7 +985,7 @@ export const CHANGELOG = [
   {
     v: 64,
     title: 'New game: To the Center — Journey to the Center of the Earth (Descent Platformer, 5 chapters)',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-02T22:06:39.467Z',
     items: [
       'Five chapters into Jules Verne\'s 1864 classic: dodge falling rocks descending Snæfellsjökull\'s volcanic shaft for 24 seconds (3 lives, lantern-lit explorer, deepening amber ore crystal collectibles); steer the raft left/right across the underground Lidenbrock Sea dodging rocks, tentacles, and floating logs for 26 seconds; survive 22 seconds of the battling Ichthyosaurus and Plesiosaurus in free-movement — two enormous prehistoric beasts sweeping the water with their bodies; dodge warning-telegraphed lightning columns in the electromagnetic storm for 26 seconds as St. Elmo\'s fire crackles on the mast; and ride the Stromboli volcanic eruption upward, dodging magma jets from the walls while collecting 8 glowing ore crystals to escape.',
@@ -984,7 +995,7 @@ export const CHANGELOG = [
   {
     v: 63,
     title: 'New game: A Thousand Nights — One Thousand and One Nights (Adventure, 5 tales)',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-02T21:05:26.596Z',
     items: [
       'Five tales from One Thousand and One Nights: tap the golden ink zone as Scheherazade\'s quill swings to keep the Sultan enchanted (10 strikes); steer Sinbad\'s ship through Roc feathers and falling rocks for 22 seconds; catch Ali Baba\'s gold bags while dodging daggers in the treasure cave; tap falling soldiers out of the sky to protect the palace with Aladdin\'s Genie; and race the magic carpet through narrowing palace spires to deliver the final tale.',
@@ -994,7 +1005,7 @@ export const CHANGELOG = [
   {
     v: 62,
     title: 'New game: Grimm\'s Path — Grimm\'s Fairy Tales (Story Arcade, 5 chapters)',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-02T20:11:24.096Z',
     items: [
       'Five dark fairy tales from Jacob & Wilhelm Grimm: dodge the Big Bad Wolf through the moonlit forest for 22 seconds (Little Red Riding Hood); tap the pendulum timing zone to climb Rapunzel\'s golden braid 8 levels up to the tower window; whack the witch 12 times before she catches Hansel in the gingerbread house kitchen; steer a basket to catch 12 golden coins flying off Rumpelstiltskin\'s spinning wheel while avoiding plain straw bundles; and finally tap when the enchantment ring closes at its tightest around Sleeping Beauty — 5 kisses to break the spell.',
@@ -1014,7 +1025,7 @@ export const CHANGELOG = [
   {
     v: 60,
     title: 'New game: The Portrait — The Picture of Dorian Gray (Decay Puzzle, 5 chapters)',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-02T18:18:00.000Z',
     items: [
       'Five Victorian Gothic chapters from Oscar Wilde\'s 1890 masterpiece: dodge Lord Henry Wotton\'s poisonous platitudes (falling red orbs labeled VANITY/YIELD/SIN) in Basil\'s studio while collecting gold paint-drop bonuses — survive 22 seconds, 3 lives; catch 12 falling roses in a basket at the Lyceum Theatre while dodging grey programmes thrown by the cold audience — 3 lives, spawn rate ramps over time; sort Lord Henry\'s yellow book pages by tapping the RIGHT half of the screen to ACCEPT gold pages (BEAUTY/MUSIC/ART) and LEFT to REJECT crimson pages (OPIUM/VICE/DECAY) — 10 correct choices to win, 3 mistakes lose, timer bar shrinks for each page; dodge left/right in foggy East London streets hiding in arched doorways when James Vane\'s lantern sweeps across — survive 22 seconds, sweeps accelerate over time, 3 lives; and finally time precise strikes on the corrupted portrait in the locked attic — a golden ring contracts from the edge, tap when it hits the target circle to land a blow, 6 strikes to destroy it, 3 misses lose (ring speeds up each strike).',
@@ -1024,7 +1035,7 @@ export const CHANGELOG = [
   {
     v: 59,
     title: 'New game: They\'re Coming — Night of the Living Dead (1968) (Tower Defense, 5 chapters)',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-02T17:22:00.000Z',
     items: [
       'Five ordeals from Romero\'s 1968 classic: dodge the first zombie through the rural cemetery fleeing to the farmhouse (steer left/right, 3 lives, 20 seconds); tap three windows to hammer boards before zombie pressure causes 3 breaches (26 seconds, HP bars drain faster over time, tapping deactivates the zombie and restores 44HP); catch 15 supplies (canned food, fuel, flashlights) falling through the dark farmhouse while avoiding zombie hands and broken glass (3 lives, catcher mechanic, spawn rate ramps up); hold three breach points (two windows + front door) against the growing horde by tapping surging pressure bars back down before they max out (26 seconds, 3 lives, door pressure builds 25% faster); and guide Ben through a field of 12 wandering zombies to reach the golden dawn at the top of the screen (free movement drag+arrow keys, 3 lives, zombies gradually begin to track you).',
@@ -1034,7 +1045,7 @@ export const CHANGELOG = [
   {
     v: 58,
     title: 'New game: Down the Mississippi — Huckleberry Finn (River Runner, 5 chapters)',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-02T16:18:00.000Z',
     items: [
       'Five tales of Twain\'s classic: dodge Pap\'s swinging lanterns in the dark cabin for 20 seconds (5 lives, invincibility after each catch, two lamp beams patrol opposite halves of the screen so there\'s always a safe corridor); steer Huck and Jim\'s raft left/right past floating logs, sandbars, and steamboat wakes for 22 seconds (3 lives, obstacle speed ramps up); catch 12 gold coins falling from the Duke and King\'s Royal Nonesuch con while dodging rotten tomatoes (left/right movement, 3 lives, coin and tomato spawn rates increase as you score); tap a timing-needle into the gold zone to break 4 underground rocks in Tom Sawyer\'s tunnel scheme (zone shrinks and needle speeds up each rock, 3 misses lose); and survive 25 seconds of Mississippi thunderstorm — dodge pre-warned lightning columns and river debris (3 lives, rain overlay, storm intensity ramps).',
@@ -1044,7 +1055,7 @@ export const CHANGELOG = [
   {
     v: 57,
     title: 'New game: Heart Machine — Metropolis (1927) (Industrial Platformer, 5 chapters)',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-02T15:30:00.000Z',
     items: [
       'Five chapters through Fritz Lang\'s 1927 masterpiece: tap the pressure dial\'s green zone 8 times to stabilise Moloch\'s Heart Machine (needle speeds up, zone shrinks, 3 misses lose — ~20–30 seconds); steer Freder left/right through the vertical workers\' shaft dodging falling gears, bolts, and side-shooting flame jets for 22 seconds; guide Maria left/right to collect 7 scattered children before rising floodwater reaches her (water accelerates over time); tap Rotwang\'s glowing robot-Maria at the Yoshiwara revel to expose it 6 times — avoid tapping the real Maria (3 wrong taps lose, 30-second time limit); platform-climb the cathedral with jump and steer controls, dodge stones and Rotwang patrolling a mid-level platform, and land on the bell platform to ring it for peace.',
@@ -1054,7 +1065,7 @@ export const CHANGELOG = [
   {
     v: 56,
     title: 'New game: Shadow of the Vampyr — Nosferatu (Stealth Horror, 5 chapters)',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-02T14:20:00.000Z',
     items: [
       'Five nights from F. W. Murnau\'s landmark 1922 silent horror film: steer Hutter\'s carriage through a wolf-haunted Transylvanian forest for 20 seconds (drag/arrow left-right, 3 lives, wolves and fallen logs spawn faster over time); explore Count Orlok\'s castle in free-movement top-down, collecting 6 journal pages while Orlok hunts you down — he accelerates with each page found (3 lives, invincibility frames on catch); tap coffin lids on the plague ship Demeter before they breach and Orlok rises — 12 sealed needed, 3 breaches lose (coffin life-bars shown, lid animation opens over 2-3 seconds); guide Orlok\'s iconic shadow up five staircase steps via a shrinking timing-zone needle (3 misses lose, zone narrows and needle speeds up each step); and hold your ground as Ellen — tap to repel Orlok back into darkness with a 0.8s cooldown, holding him at bay across 28 seconds until the sun rises (3 max touches, Orlok shrinks and fades as dawn progresses).',
@@ -1064,7 +1075,7 @@ export const CHANGELOG = [
   {
     v: 55,
     title: 'New game: Poop-Poop! — The Wind in the Willows (Driving Arcade, 5 chapters)',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-02T13:04:00.000Z',
     items: [
       'Five tales from Kenneth Grahame\'s 1908 classic: steer Toad\'s motorcar down the open country lane for 22 seconds, dodging wooden carts, geese, and potholes (drag/arrow left-right, 3 lives); dodge charging weasels through the dark Wild Wood for 20 seconds as Mole\'s lantern-glow is the only light (3 lives, weasels spawn faster and from more angles over time); pick five padlock pins by tapping when the oscillating needle enters the shrinking green zone (prison escape, 3 misses allowed, speeds up each pin); catch 12 of Ratty\'s flying picnic hamper treats — fish, bread, berries, cheese — in the river boat before 3 splash past (drag left-right); and tap 10 weasels as they pop up in Toad Hall\'s windows before 3 escape (whack-a-mole finale with per-weasel life bars and \'BIFF!\' flash).',
@@ -1074,7 +1085,7 @@ export const CHANGELOG = [
   {
     v: 54,
     title: 'New game: Tilting at Windmills — Don Quixote (Joust Arcade, 5 chapters)',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-02T12:21:00.000Z',
     items: [
       'Five adventures through Cervantes\' 1605 classic: tap the lance through rotating windmill arms when the gap faces right (8 charges to win, arms speed up each hit, 4 misses lose — about 20 seconds with good timing); stab 12 wineskin \'enchanted monsters\' at the inn before their life bars empty while avoiding the innkeeper (tapping the innkeeper counts as a miss); dodge rocks hurled by the freed galley slaves for 24 seconds (drag or arrows, 3 lives, spawn rate rises as time passes); navigate the fog-of-war Cave of Montesinos by torchlight in 38 seconds, collecting optional gold gems and finding the glowing exit; and face the Knight of the White Moon in a 3-round lance-timing duel — tap when the needle reaches the gold zone.',
@@ -1084,7 +1095,7 @@ export const CHANGELOG = [
   {
     v: 53,
     title: 'New game: Ballad of Honor — Hua Mulan (Action RPG, 5 chapters)',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-02T11:39:00.000Z',
     items: [
       'Five chapters of Hua Mulan\'s legend: hit the timing needle into the green zone 8 times to don the warrior\'s disguise before inspection (speeds up with each hit, 3 misses lose); steer Mulan through 22 seconds of arrow volleys and training rocks in the army camp (3 lives, catch gold stars for bonus Honor); drag and tap to aim and fire the mountain cannon at Shan-Yu\'s marching Huns — 10 kills triggers the avalanche before 5 slip past; sneak past torch-wielding imperial guards in a scrolling palace corridor (guards sweep torch cones that detect Mulan on contact, 3 lives, reach the throne); then face Shan-Yu in a 6-parry rooftop duel on a vertical strike meter — tap when the blade enters the gold zone or it hits Mulan.',
@@ -1094,7 +1105,7 @@ export const CHANGELOG = [
   {
     v: 52,
     title: 'New game: 802,701 A.D. — The Time Machine (Survival Strategy, 5 eras)',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-02T09:50:00.000Z',
     items: [
       'Five eras from H. G. Wells\' 1895 classic: tap the timing needle into the green zone 8 times to calibrate the time circuits (zone narrows each round, 3 misses lose); drag left/right to catch fruit falling from the Eloi\'s garden while Morlocks climb up from the ground (3 lives, 26s); creep through the night past three rotating Morlock sight-cones to reclaim your machine from the White Sphinx; navigate pitch-dark underground tunnels by the shrinking radius of a single match, collecting 5 machine gears while Morlocks drain your flame on contact; and steer the machine through temporal debris in a 28-second escape countdown as the year counter races from 802,701 back to 1895.',
@@ -1104,7 +1115,7 @@ export const CHANGELOG = [
   {
     v: 51,
     title: 'New game: The Call — Cthulhu (Sanity Survival, 5 chapters)',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-02T07:59:00.000Z',
     items: [
       'Five accounts from Lovecraft\'s 1926 tale: tap the true Cthulhu glyph from a 3×3 tile grid before your 3.5-second round timer expires (10 rounds, 3 misses lose — sanity survival!); drag your investigator through a dark Louisiana bayou, staying out of the roving cultists\' torch halos for 22 seconds without losing all three sanity points; steer the yacht toward R\'lyeh by pointer/arrow, dodging driftwood and rising tentacles for 22 seconds; collect 10 glowing ancient runes in R\'lyeh\'s impossible geometry while the walls intermittently pulsate and shift (26s timer, 3 lives); and finally align the boat under Cthulhu\'s sweeping eye and tap to ram — 5 hits from the timing strike before time runs out.',
@@ -1114,7 +1125,7 @@ export const CHANGELOG = [
   {
     v: 50,
     title: 'New game: King Kong — Eighth Wonder (Climb Defense)',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-02T06:02:00.000Z',
     items: [
       'Five scenes from the 1933 legend, played as Kong himself: dodge skull-island debris and prehistoric jungle dangers for 22 seconds; position Kong on the safe side of the great log while brontosaurus jaws snap from below; break free from five Broadway chains by hitting the timing meter in the green zone (speeds up with each snap); rampage through New York dodging biplane bombs raining from above; and swat eight orbiting biplanes from atop the Empire State Building before three misses end the fight.',
@@ -1124,7 +1135,7 @@ export const CHANGELOG = [
   {
     v: 49,
     title: 'Dracula leaps to 16-bit — the first Gen 4 game',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-02T05:09:00.000Z',
     items: [
       'Games can now level up a whole generation. Dracula is reborn in 16-bit as \'Nights of Blood\': parallax gothic vistas, Mode-7 pseudo-3D sea and mountain-road chases, glowing blood moons, and bigger animated sprites.',
@@ -1134,7 +1145,7 @@ export const CHANGELOG = [
   {
     v: 48,
     title: 'New game: Around the World in 80 Days (Race Manager)',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-02T03:37:00.000Z',
     items: [
       'Five legs of Phileas Fogg\'s legendary wager: seal the £20,000 bet at the Reform Club by tapping when the clock hand lands in the gold zone (3 seals, 4 misses lose, clock accelerates); steer the Mongolia through rocks and cresting waves across the Mediterranean to Suez (3-life dodge runner, ~22s); ride Kiouni the elephant through the Indian jungle dodging fallen logs, mud pools and low branches to reach Allahabad (vertical dodge, 3 lives, ~19s); keep the Henrietta\'s boiler pressure in the green zone for 30 seconds by tapping to add coal — drift increases over time; sprint a night-London carriage to the Reform Club dodging oncoming carriages, barrels and police constables while a countdown timer ticks — each hit costs 2.5 seconds.',
@@ -1144,7 +1155,7 @@ export const CHANGELOG = [
   {
     v: 47,
     title: 'New game: The War of the Worlds — Tripods (Survival Shooter)',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-02T02:22:00.000Z',
     items: [
       'Five dispatches from H. G. Wells\' Martian invasion: dodge the sweeping heat-ray beam on Horsell Common for 24 seconds (ray accelerates over time, 3 lives); run through panicked London streets dodging overturned carts, rubble, and fleeing crowds (runner, 3 lives, ~22s); man the guns of HMS Thunder Child — tap tripods to shoot (2 hits each) while dragging the ironclad to dodge heat-ray fire (5 kills to win, 40s timer); escape the toxic black smoke room-by-room by picking the one open door before time runs out (8 rooms, smoke timer speeds up, 3 lives); and guide five survivors to safety past three toppling tripods with blast-zone countdown arcs (drag to lead, 32s timer).',
@@ -1154,7 +1165,7 @@ export const CHANGELOG = [
   {
     v: 46,
     title: 'New game: Odysseus — The Long Way Home (Voyage Adventure)',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-02T01:59:00.000Z',
     items: [
       'Five crossings through Homer\'s Odyssey: dodge Polyphemus\'s sweeping eye while hiding under sheep in the Cyclops\' cave (3 lanes, 5 sweeps to survive, 3 lives); collect 14 moly herbs on Circe\'s island while dodging her transformation wand beams (free-move, 3 lives, ~22s); dodge falling siren notes while lashed to the mast and survive 22 seconds; steer the ship between Scylla\'s tentacles from the left and Charybdis\'s whirlpool pull from the right (24s, 3 lives); and time the shot to thread 8 arrows through axe-handle rings in Ithaca\'s great hall (swinging aim, 4 misses lose).',
@@ -1164,7 +1175,7 @@ export const CHANGELOG = [
   {
     v: 45,
     title: 'New game: The Hunchback of Notre-Dame — The Bells of Notre-Dame (Climb Rescue)',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-02T00:24:00.000Z',
     items: [
       'Five chapters through Victor Hugo\'s 1831 Notre-Dame de Paris: dodge rotten vegetables and stones hurled by the jeering mob at the Festival of Fools (3 lives, 20s survival); ring the great cathedral carillon by tapping the glowing bell before it fades (14 rings, 4 misses lose); scale Notre-Dame\'s stone face in three lanes to claim sanctuary for Esmeralda — grab flying gargoyle ledges while guards patrol (10 grabs, 3 lives, 22s); defend the cathedral by dropping stones on Frollo\'s climbing soldiers from three column positions (3 lives, 24s); and swing the great pendulum into the shrinking green zone five times to save Esmeralda (5 hits, 4 misses lose).',
@@ -1174,7 +1185,7 @@ export const CHANGELOG = [
   {
     v: 44,
     title: 'New game: Tom Sawyer — Whitewash & Wonder (Adventure Arcade)',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-01T23:09:00.000Z',
     items: [
       'Five chapters through Mark Twain\'s 1876 classic: trick passing kids into painting Aunt Polly\'s fence in 28 seconds (tap-to-convince arcade); dodge Injun Joe\'s sweeping lantern in the midnight graveyard while collecting 5 clues (stealth dodge, 3 lives, 26s); steer the pirate raft down the Mississippi dodging logs and rocks to Jackson\'s Island (river runner, 3 lives, ~21s); navigate a DFS-generated cave maze to find Becky Thatcher then escape before the candle burns out (maze explore, 24s candle); and strike the moving shovel over each X mark to dig up Injun Joe\'s gold before he returns (timing precision, 3 chests, 32s).',
@@ -1184,7 +1195,7 @@ export const CHANGELOG = [
   {
     v: 43,
     title: 'New game: The Little Mermaid — The Sea King\'s Daughter (Swim Collect)',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-01T22:27:00.000Z',
     items: [
       'Five-chapter saga through Andersen\'s 1837 fairy tale: swim up through jellyfish and urchins to reach the surface, navigate the sea witch\'s tentacled cave, rescue the drowning prince in the storm, dance at the palace ball despite the pain, and catch the sea spirits\' gifts at dawn.',
@@ -1195,7 +1206,7 @@ export const CHANGELOG = [
   {
     v: 42,
     title: 'New game: Beowulf (Boss Brawler)',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-01T21:13:00.000Z',
     items: [
       'Five deeds from the Old English epic (c. 700–1000 AD): steer Beowulf\'s longship through falling sea-rocks on the whale-road to Denmark (runner/dodge, 3 lives, ~22s); mash-tap to wrestle Grendel barehanded — push the power bar into the gold zone across 5 rounds against the monster\'s relentless pull; face Grendel\'s Mother in the blood-dark mere with the ancient sword Hrunting — strike the precision ring 6 times before nerve runs out; dodge the fire drake\'s flame in 3 lanes then tap to strike in the open window 8 times; and hold Wiglaf\'s shield wall — block 4-directional blows by tapping the flashing sectors for 24 seconds.',
@@ -1205,7 +1216,7 @@ export const CHANGELOG = [
   {
     v: 41,
     title: 'New game: The Jungle Book — Mowgli\'s Law (Action Adventure)',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-01T20:32:00.000Z',
     items: [
       'Five tales from Kipling\'s 1894 classic, each a distinct mechanic: dodge roots and stones while running with Father Wolf\'s pack for 22 seconds (survival runner, 3 lives); tap a swinging vine into the green zone 8 times to learn the Master Words from Baloo the Bear (pendulum timing, 4 misses); tap when Kaa\'s ring closes on each of 6 Bandar-log monkeys to hypnotize them free (ring precision, 4 misses); creep through the man-village avoiding two patrolling lantern-guards, grab the fire-pot, then sprint back to the jungle (free-move stealth, 3 lives, 26s); and drag a burning torch to block Shere Khan\'s approach while tapping to stoke the flames — survive 28 seconds until the tiger breaks and runs (torch-block survival, 3 lives).',
@@ -1215,7 +1226,7 @@ export const CHANGELOG = [
   {
     v: 40,
     title: 'New game: 20,000 Leagues Under the Sea — Captain Nemo (Submarine Shmup)',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-01T19:11:00.000Z',
     items: [
       'Five voyages through Jules Verne\'s 1870 classic: steer the frigate Abraham Lincoln and fire on the mysterious sea monster crossing your crosshairs — 5 hits before 4 misses (aim/timing, ~20s+); walk the luminous coral seabed in Rouquayrol diving suits collecting 14 glowing specimens while dodging eels and jellyfish (steer/collect, 3 lives, 30s); swat 12 giant squid tentacles slapping the Nautilus\'s hatch before 3 breach through (tap-intercept, whack-a-mole); ram 8 polar ice sheets by tapping the power gauge in the green zone — shrinking band, 4-miss limit (precision timing); then steer the Nautilus outward against the Norway Maelstrom\'s inward pull, dodging spinning debris, until you escape the spiral (spiral dodge, 3 lives).',
@@ -1225,7 +1236,7 @@ export const CHANGELOG = [
   {
     v: 39,
     title: 'New game: Les Misérables — 24601 (Drama)',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-01T18:20:00.000Z',
     items: [
       'Five acts through Victor Hugo\'s 1862 epic: row the galley oar in Toulon prison — tap when the stroke marker lines up with the green zone (12 strokes, 4-miss limit, ~18–22s); steal bread on winter Paris streets — drag Valjean to collect 6 loaves while dodging two patrolling gendarmes\' lanterns (3 lives, 32s); gather water for Cosette — catch 16 falling water drops while avoiding the Thénardiers\' thrown rocks (3 lives, 26s); defend the June barricade — tap advancing soldiers before they breach the rebel line (3 breaches = lose, 28s); then carry wounded Marius through the winding Paris sewers — drag left and right to stay in the narrow corridor as it curves faster and tighter (3 crashes, 26s survive).',
@@ -1235,7 +1246,7 @@ export const CHANGELOG = [
   {
     v: 38,
     title: 'New game: Dr. Jekyll & Mr. Hyde — Two Minds (Transformation Puzzle)',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-01T17:10:00.000Z',
     items: [
       'Five chapters through Stevenson\'s 1886 novella: brew the transformation compound by tapping a pendulum needle into the sweet zone five times (timing precision, 4-miss limit); prowl foggy London as Hyde, dodging police lanterns while collecting walking canes (22s dodge, 3 lives); tap lit windows to silence witnesses before they raise the alarm — 14 silenced before 3 cries (tap intercept); catch 12 falling formula vials in a moving tray before time runs out or 4 drop (catch, 26s); then hold the locked cabinet door as Jekyll and Hyde alternately demand control — hit 8 transformation ring strikes before the meter fills (dual timing QTE).',
@@ -1245,7 +1256,7 @@ export const CHANGELOG = [
   {
     v: 37,
     title: 'New game: The Count of Monte Cristo — The Count\'s Revenge (Escape & Revenge)',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-01T16:41:00.000Z',
     items: [
       'Five acts through Alexandre Dumas\' 1844 novel: dodge blue-coated gendarmes at the Marseille wedding feast to buy time before the arrest (horizontal dodge, 22 seconds, 3 lives); chip through the Château d\'If prison wall with a precision oscillating chisel (tap timing, 10 strikes, 4-miss limit); catch a cave-full of falling gold and gems in Monte Cristo\'s hidden grotto (basket collect, 18 gems, 26-second timer); steer Dantès\' burial sack through Mediterranean night debris toward the distant shore (obstacle dodge, 20 seconds, 3 lives); then expose Fernand, Danglars, and Villefort with a closing precision ring — one stroke of justice each (timing precision, 5-miss limit).',
@@ -1255,7 +1266,7 @@ export const CHANGELOG = [
   {
     v: 36,
     title: 'New game: The Great Gatsby — The Green Light (Rhythm Party)',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-01T15:41:00.000Z',
     items: [
       'Five scenes from Fitzgerald\'s 1925 novel — each a completely different mechanic: move your champagne tray left and right to catch 15 falling glasses to the jazz beat at Gatsby\'s West Egg party (catch/rhythm, 5 miss limit, ~25s), steer Gatsby\'s cream-yellow roadster through 3 lanes of oncoming traffic and collect green-light pickups to survive 26 seconds to Manhattan (lane dodge, 3 lives), tap precisely when an expanding golden ring passes over Daisy\'s green dock light across the bay (timing precision, 6 successes, 4 miss limit), tap to hold Gatsby\'s position in a horizontal tension bar as Tom\'s accusations push it left — don\'t over-correct or Daisy panics (balance, 24s), then dodge falling ash chunks and Wilson\'s sweeping silhouette across the grey Valley of Ashes to make it through (free-move dodge, 3 lives, 22s).',
@@ -1265,7 +1276,7 @@ export const CHANGELOG = [
   {
     v: 35,
     title: 'New game: Sleepy Hollow — The Headless Horseman (Night Chase)',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-01T13:36:00.000Z',
     items: [
       'Five moonlit chapters through Washington Irving\'s tale: collect lanterns in the haunted hollow, run the schoolroom, feast at the harvest party, ride for your life at midnight, and race to the covered bridge before the Horseman hurls his pumpkin.',
@@ -1275,7 +1286,7 @@ export const CHANGELOG = [
   {
     v: 34,
     title: 'New game: Pride & Prejudice — A Matter of Pride (Dialogue Strategy)',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-01T11:51:00.000Z',
     items: [
       'Five scenes from Jane Austen\'s 1813 novel — each a distinct mini-game: dodge the eager Mr. Collins across the Meryton ballroom while collecting golden invitation cards (position/dodge, 3 lives, 30 seconds), catch falling roses (Wickham\'s hidden truths) with a fan while avoiding his flattering masks (falling sort), tap the timing meter to deliver five firm refusals of Mr. Collins\' endless proposal as the zone shrinks (precision timing), steer Darcy\'s carriage through London\'s night roads dodging gossip broadsheets while collecting banknotes (runner, 3 lives), and finally meet Darcy on a misty Longbourn morning — tap when the speak-ring reaches the heart to fill all six conversation moments (approach timing).',
@@ -1285,7 +1296,7 @@ export const CHANGELOG = [
   {
     v: 33,
     title: 'New game: Zorro — The Mark of Zorro (Swashbuckler)',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-01T09:50:00.000Z',
     items: [
       'Five chapters through Johnston McCulley\'s legendary 1919 tale: tap glowing waypoints in order to carve Zorro\'s blazing Z on three hacienda walls (precision sequence, 35-second limit), steer Tornado left and right through the dark canyon dodging rocks and soldiers while collecting gold coins (dodge runner, 3 lives, 28 seconds), parry the Commandante\'s sword strikes by tapping the correct direction then counter in a duel of five hits (timing parry/counter), tap to free five chained peons while dodging two sweeping guard torchbeams (stealth tap, 3 lives), then face Alcalde Ramon in the final showdown — read his telegraphed strikes, dodge to either side, and tap center to counter-attack until his five HP is gone (boss dodge-and-strike).',
@@ -1295,7 +1306,7 @@ export const CHANGELOG = [
   {
     v: 32,
     title: 'New game: Moby Dick — The White Whale (Harpoon Action)',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-01T08:07:00.000Z',
     items: [
       'Five chapters through Melville\'s 1851 novel, each a completely different mechanic: dodge sailors and barrels on the Nantucket docks while collecting pay coins to sign on with the Pequod (runner/collect), wait for the sperm whale to surface and tap to throw Queequeg\'s harpoon (precision aim, 4 hits), drag the longboat to survive 22 seconds of giant squid tentacle attacks (dodge, 3 lives), tap a timing gauge in the green zone to trim the sails through a raging typhoon as Ahab lashes himself to the mast (timing/meter, 8 rounds), then face Moby Dick in a three-day final chase — dodge his horizontal breach charges and harpoon him when he surfaces to breathe (boss battle, 5 strikes).',
@@ -1305,7 +1316,7 @@ export const CHANGELOG = [
   {
     v: 31,
     title: 'New game: Thor & Loki — Hammer of the Gods (Brawler)',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-01T06:02:00.000Z',
     items: [
       'Five tales from Norse mythology with five completely distinct mechanics: steer Thor left and right across the rainbow Bifrost bridge to dodge Frost Giant boulders and collect golden runes, hold/release a tension meter to haul the World Serpent Jörmungandr from the deep sea (release when it thrashes or the line snaps), tap the figure with bright green eyes to catch shape-shifting Loki among two imposters (eight rounds, speeding up), seal three Asgard gate arches before Fenrir\'s wolves break through in a frantic 28-second defence, then face fire-giant Surtr — dodge the telegraphed danger zone and tap the strike window to hurl Mjolnir five times and end Ragnarök.',
@@ -1315,7 +1326,7 @@ export const CHANGELOG = [
   {
     v: 30,
     title: 'New game: Pinocchio — No Strings (Story Arcade)',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-01T03:52:00.000Z',
     items: [
       'Five scenes from Collodi\'s 1883 tale: tap blue sparkles falling from the evening star to fill Pinocchio\'s life meter while avoiding the grey ones (the Blue Fairy grants Geppetto\'s wish), steer Pinocchio left and right on the dark road to dodge masked bandits and collect gold coins before the Fox and Cat steal them, turn a timing-bar key in Stromboli\'s cage lock five times to escape before your tries run out, tap green EXIT doors falling from above on Pleasure Island while avoiding ale/sweets/cigars lest your donkey-transformation meter hits 100%, and collect eight floating driftwood logs inside Monstro then fan the flames with a timing bar three times to make the great whale sneeze you both to freedom.',
@@ -1325,7 +1336,7 @@ export const CHANGELOG = [
   {
     v: 29,
     title: 'New game: Steamboat Willie — five scenes on the Mississippi (Rhythm Action)',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-07-01T01:38:00.000Z',
     items: [
       'Five mini-games from the iconic 1928 Mickey Mouse cartoon: steer the steamboat past floating logs and barrels, tap the beat as Mickey whistles \'Steamboat Bill\', tap glowing animals to play the animal orchestra in sequence, drag Mickey to catch Minnie\'s falling parcels as she\'s hoisted aboard by crane, then dodge Captain Pete\'s warning-telegraphed fist swings to escape with the steam whistle!',
@@ -1335,7 +1346,7 @@ export const CHANGELOG = [
   {
     v: 28,
     title: 'New game: The Phantom of the Opera — Beneath the Opera (Stealth Pursuit)',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-06-30T23:17:00.000Z',
     items: [
       'Five scenes beneath the Palais Garnier through Gaston Leroux\'s 1910 novel: slip past sweeping torch-beam guards through the underground catacombs, catch the falling musical notes of Erik\'s aria in three columns, intercept glowing searchlight orbs on the rooftop before they expose Christine, cut three chandelier ropes with precision timing as the pendulum swings, then steer Erik\'s gondola through rocks and lanterns across the underground lake to freedom.',
@@ -1345,7 +1356,7 @@ export const CHANGELOG = [
   {
     v: 27,
     title: 'New game: A Christmas Carol — Scrooge\'s Long Night (Narrative)',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-06-30T21:17:00.000Z',
     items: [
       'Five chapters through Dickens\' 1843 classic: dodge Marley\'s iron chains by dragging Scrooge up and down while collecting shillings, tap glowing golden memory wisps (avoid the dark ones) with the Ghost of Christmas Past, drag the Cratchit table to catch falling Christmas feast items before they hit the floor, dodge the Ghost of Christmas Yet to Come\'s lane-targeting finger in a dark graveyard, then race through London on Christmas morning jumping over snowdrifts and holly lampposts to reach the Cratchits\' door.',
@@ -1355,7 +1366,7 @@ export const CHANGELOG = [
   {
     v: 26,
     title: 'New game: The Three Musketeers — All for One (Fencing Duel)',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-06-30T17:23:00.000Z',
     items: [
       'Five acts through Dumas\' 1844 classic: steer D\'Artagnan on horseback through road hazards to reach Paris, duel Athos, Porthos, and Aramis one by one with a parry timing meter, steal back the Queen\'s diamonds from the Cardinal\'s palace by tapping gems while dodging sweeping guard sight cones, repel waves of attackers at the siege of La Rochelle, then face the Cardinal\'s one-eyed champion Rochefort in a reaction duel — tap PARRY during each golden flash to riposte.',
@@ -1365,7 +1376,7 @@ export const CHANGELOG = [
   {
     v: 25,
     title: 'New game: Hercules — The Twelve Labors (Boss Rush)',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-06-30T13:23:00.000Z',
     items: [
       'Five labors of Greek myth, each a distinct mechanic: tap the Nemean Lion at the perfect moment as it charges faster each round, sever Hydra heads before they multiply past seven (cut one, two grow back), dodge bronze feathers from Stymphalian Birds while timing your bronze clappers to scatter the flock, tap each stall to steer the diverted river through the Augean Stables before time runs out, then face three-headed Cerberus in Hades — tap each glowing head before it bites.',
@@ -1375,7 +1386,7 @@ export const CHANGELOG = [
   {
     v: 24,
     title: 'New game: Tarzan — Lord of the Vines (Swing Platformer)',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-06-30T09:55:00.000Z',
     items: [
       'Five jungle tales through Burroughs\' 1912 novel: dodge falling coconuts and snakes as the infant Tarzan is raised by apes, swing the canopy vine by vine on a pendulum timing challenge, duel the great ape Kerchak for tribal leadership with attack/dodge timing, slip past orange-beam ape-patrol sight cones through the dark forest to rescue Jane, then aim and throw spears at ivory-hunter invaders to defend the jungle.',
@@ -1385,7 +1396,7 @@ export const CHANGELOG = [
   {
     v: 23,
     title: 'New game: Snow White — Seven for the Mine',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-06-30T06:19:00.000Z',
     items: [
       'Five Brothers Grimm chapters: tap Snow White\'s face out of three in the magic mirror (five rounds, getting faster), dodge grabbing tree-claws as Snow White flees the enchanted forest, steer the mine cart to catch falling gems and avoid boulders with the dwarfs, dodge the Evil Queen\'s poisoned apples while catching the golden ones, then mash to fill the love-heart meter before darkness wins.',
@@ -1395,7 +1406,7 @@ export const CHANGELOG = [
   {
     v: 22,
     title: 'New game: Treasure Island — X Marks the Spot',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-06-30T01:35:00.000Z',
     items: [
       'Five chapters through Stevenson\'s classic: snatch the treasure map from the Admiral Benbow Inn before pirates break in, steer the Hispaniola past reefs and cannonballs, defend the log stockade against Silver\'s charging crew, slip through the dark jungle avoiding pirate lantern beams to find marooned Ben Gunn, then dig up Flint\'s hoard — only to find the pit empty — and blast your way to the ship.',
@@ -1405,7 +1416,7 @@ export const CHANGELOG = [
   {
     v: 21,
     title: 'The Wizard of Oz — rebuilt as a full five-chapter story game',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-06-29T21:24:00.000Z',
     items: [
       'L. Frank Baum\'s Oz is back as a proper multi-chapter adventure: dodge flying debris in the twister, run the yellow brick road jumping gaps and rescuing companions (keeps the original mechanic), tap friends awake in the enchanted poppy field before they\'re lost, survive the Great Oz\'s fireballs then pull back the curtain to expose the humbug, and click your ruby heels in perfect rhythm to carry Dorothy home.',
@@ -1415,7 +1426,7 @@ export const CHANGELOG = [
   {
     v: 20,
     title: 'Frankenstein — rebuilt as a full five-chapter gothic game',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-06-29T17:36:00.000Z',
     items: [
       'Mary Shelley\'s classic returns as a proper multi-chapter story: channel lightning bolts in 4 lanes to fill the Creature\'s life meter (the original rhythm mechanic, kept and expanded), flee the frightened village dodging torches while collecting provisions, spy through the De Lacey cottage window collecting words while staying hidden, steer across cracking Arctic ice floes, then time precise leaps across the frozen sea in the Creature\'s final farewell.',
@@ -1425,7 +1436,7 @@ export const CHANGELOG = [
   {
     v: 19,
     title: 'Alice in Wonderland — rebuilt as a full five-chapter game',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-06-29T14:08:00.000Z',
     items: [
       'Alice returns as a proper multi-chapter story: steer through the rabbit hole (the original falling mechanic, kept and polished), swim the pool of tears collecting golden keys, time cups at the Mad Hatter\'s long table, swing a flamingo mallet at the Queen\'s croquet wickets, then dodge flying cards at the trial.',
@@ -1445,7 +1456,7 @@ export const CHANGELOG = [
   {
     v: 17,
     title: 'New game: Cinderella — Before Midnight',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-06-29T10:23:00.000Z',
     items: [
       'Five fairy-tale acts through Perrault\'s Cinderella: tap away chores before the step-sisters wake, catch the Fairy Godmother\'s falling sparkles with a basket, time a waltz on a spinning golden dial, dodge palace guards across three lanes as the midnight bells count to twelve, and drag the glass slipper to Cinderella\'s glowing foot while shooing away grasping step-sisters.',
@@ -1455,7 +1466,7 @@ export const CHANGELOG = [
   {
     v: 16,
     title: 'New game: Peter Pan — Second Star to the Right',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-06-29T06:24:00.000Z',
     items: [
       'Five Neverland adventures: hold to rise and dodge London chimneys at night, drag Pan to intercept Hook\'s pirates at Mermaid Lagoon and rescue Tiger Lily, tap left-right alternately to run Hook away from Tick-Tock the crocodile, defend the Lost Boys\' underground hideout from all sides, and duel Captain Hook on the Jolly Roger\'s deck.',
@@ -1475,7 +1486,7 @@ export const CHANGELOG = [
   {
     v: 14,
     title: 'New game: Winnie-the-Pooh — Hunny Hunt',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-06-29T01:45:00.000Z',
     items: [
       'Five cozy adventures through the Hundred Acre Wood: float on a balloon to steal honey from the bees, follow the mysterious Woozle tracks in the snow, gather gifts for Eeyore\'s birthday, steer Piglet through the Blustery Day, and wiggle Pooh free from Rabbit\'s door.',
@@ -1515,7 +1526,7 @@ export const CHANGELOG = [
   {
     v: 10,
     title: 'New game: King Arthur — The Legend of Camelot',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-06-28T22:55:00.000Z',
     items: [
       'Five chapters of Arthurian legend: pull Excalibur from the stone, fly as Merlin\'s hawk dodging rocks and arrows, joust at the grand tournament, tap-defend Camelot\'s gates against the Saxon siege, and seek the Holy Grail while dark knights patrol.',
@@ -1525,7 +1536,7 @@ export const CHANGELOG = [
   {
     v: 9,
     title: 'New game: Robin Hood — The Sherwood Saga',
-    kind: 'game',
+    kind: 'feature',
     ts: '2026-06-28T22:21:00.000Z',
     items: [
       'Five chapters of Sherwood legends: aim at the tournament, ride through the forest ambush, duel Little John on the log bridge, rob the tax carriage, and face the Sheriff to free Maid Marian.',
