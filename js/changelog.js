@@ -12,6 +12,15 @@
 // format stays identical to the rest of the fleet.
 export const CHANGELOG = [
   {
+    v: 160,
+    title: 'Moby-Dick levels up to 16-bit',
+    kind: 'feature',
+    ts: '2026-07-31T23:14:56.388Z',
+    items: [
+      'The White Whale gets a Gen-4 companion: the Pequod\'s open ship\'s log — stow the hold with Queequeg at Nantucket, stand the masthead panning the horizon for a spout, lower away for the first strike, tend the try-works through the night, then sail into the three days\' chase — where Starbuck\'s plea decides how the tale itself is told.',
+    ],
+  },
+  {
     v: 159,
     title: 'The Jungle Book levels up to 16-bit',
     kind: 'feature',
