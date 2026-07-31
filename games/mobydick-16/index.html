@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <title>Moby-Dick — games.polecat.live</title>
+  <meta name="theme-color" content="#0a141c" />
+  <link rel="icon" href="../../assets/logo.svg" type="image/svg+xml" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Pixelify+Sans:wght@400;500;600;700&family=Tiny5&family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/site.css" />
+  <link rel="stylesheet" href="../../css/game.css" />
+  <style id="game-theme">:root{--g-bg1:#0a141c;--g-bg2:#04080c;--g-bar:rgba(10,20,28,.95);--g-accent:#e8b04a;--g-title:#e8ddc4;--g-panel:rgba(10,22,30,.82);--g-border:#2a3a44;--g-text:#7a94a0;--g-key:#f0b840;--g-stage:#2a3a44;--g-glow:rgba(232,176,74,.28)}</style>
+</head>
+<body class="game-page">
+  <div class="game-bar">
+    <a class="back" href="../../index.html"><span class="ar">◀</span> ARCADE</a>
+    <span class="title">Moby-Dick</span>
+    <span class="src">· Melville</span>
+    <span class="spacer"></span>
+    <button class="icon-btn" id="fullscreenBtn" title="Full screen">⛶</button>
+    <button class="icon-btn" id="muteBtn" title="Mute">🔊</button>
+    <button class="icon-btn" id="restartBtn" title="Restart">↻</button>
+  </div>
+  <div class="game-main">
+    <div id="game"></div>
+    <div class="game-help">
+      <b>Moby-Dick — The White Whale.</b> A 16-bit epic: the Pequod's log lies open on the chart table. Stow the hold at Nantucket, stand the masthead watch panning the horizon for a spout, lower away and strike your first whale, tend the try-works through the night — then sail into the three days' chase against the White Whale itself, where Starbuck's plea decides how the tale is told. Tap <b>Full screen</b> for the full experience.
+      <span class="keys">TAP / DRAG · ARROW KEYS · any log entry, any order · bank OIL across the voyage</span>
+    </div>
+  </div>
+  <script src="../../js/retro-engine.js"></script>
+  <script src="../../js/retro-gfx2.js"></script>
+  <script src="../../js/saga2.js"></script>
+  <script src="game.js"></script>
+  <script type="module" src="../../js/game-chrome.js"></script>
+</body>
+</html>
