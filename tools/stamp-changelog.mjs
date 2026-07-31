@@ -54,8 +54,10 @@ const header = `// Changelog powering the "What's New" panel on games.polecat.li
 // CHANGELOG array of versioned entries with an ISO-8601 UTC \`ts\`.
 //
 // The hourly build loop appends a new entry at the TOP for each user-visible
-// change (bump \`v\`, short \`title\`, a \`kind\` of 'game' | 'feature' | 'fix', and
-// 1-4 \`items\`). Leave \`ts\` as an EMPTY string on the new entry — this script
+// change (bump \`v\`, short \`title\`, a \`kind\` of 'feature' | 'polish' | 'fix' —
+// the shared fleet enum, see polecat-platform SHELL-API.md; a new game ships
+// as 'feature', and 1-4 \`items\`). Leave \`ts\` as an EMPTY string on the new
+// entry — this script
 // (run by the push step) stamps it with the real commit time and rewrites the
 // whole file in this canonical style, so timestamps are never fabricated and the
 // format stays identical to the rest of the fleet.
