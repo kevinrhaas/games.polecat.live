@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <title>Peter Pan — games.polecat.live</title>
+  <meta name="theme-color" content="#0a0a2e" />
+  <link rel="icon" href="../../assets/logo.svg" type="image/svg+xml" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Pixelify+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/site.css" />
+  <link rel="stylesheet" href="../../css/game.css" />
+  <style id="game-theme">:root{--g-bg1:#181458;--g-bg2:#040410;--g-bar:rgba(8,8,34,.95);--g-accent:#2ec4b6;--g-title:#eef2ff;--g-panel:rgba(10,10,40,.82);--g-border:#2a2470;--g-text:#9aa0c8;--g-key:#ffe066;--g-stage:#241f5c;--g-glow:rgba(46,196,182,.28)}</style>
+</head>
+<body class="game-page">
+  <div class="game-bar">
+    <a class="back" href="../../index.html"><span class="ar">◀</span> ARCADE</a>
+    <span class="title">Peter Pan</span>
+    <span class="src">· J. M. Barrie</span>
+    <span class="spacer"></span>
+    <button class="icon-btn" id="fullscreenBtn" title="Full screen">⛶</button>
+    <button class="icon-btn" id="muteBtn" title="Mute">🔊</button>
+    <button class="icon-btn" id="restartBtn" title="Restart">↻</button>
+  </div>
+  <div class="game-main">
+    <div id="game"></div>
+    <div class="game-help">
+      <b>Peter Pan — the 16-bit telling.</b> A night-sky constellation chart is the hub: sew Peter's shadow back on before Nana wakes, hold your altitude past London's chimneys and spires toward the second star to the right, cast a line for Wendy in the Mermaid Lagoon's rising tide, bluff past Hook's crew to free the Lost Boys, and duel Captain Hook blade for blade before the crocodile's tick-tock finds him — with upgrades carried between them and a choice on the Jolly Roger that decides how the final duel plays out. Tap <b>Full screen</b> for the full experience.
+      <span class="keys">TAP / HOLD / DRAG · choose any star · earn STARDUST</span>
+    </div>
+  </div>
+  <script src="../../js/retro-engine.js"></script>
+  <script src="../../js/retro-gfx2.js"></script>
+  <script src="../../js/saga2.js"></script>
+  <script src="game.js"></script>
+  <script type="module" src="../../js/game-chrome.js"></script>
+</body>
+</html>
