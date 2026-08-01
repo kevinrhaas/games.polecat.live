@@ -8,10 +8,11 @@ Gen-4 game: add its row to the shipped table (hub concept + typeface + the
 mechanics it used), delete its queue line, and keep the claimed lists current —
 **in the same PR as the build**.
 
-## Shipped (10 of ~83)
+## Shipped (11 of ~83)
 
 | Property | 16-bit id | 8-bit partner | Hub concept | Title face |
 |---|---|---|---|---|
+| A Christmas Carol | scrooge-16 | scrooge-carol | Scrooge's own bracket clock on the counting-house wall — nodes mounted at the story's true hours (XII, I, II, III) with dawn breaking below the case for Christmas Morning | Rubik Pixels |
 | Dracula | dracula-castle | dracula-8bit | Gothic route map, Transylvania→England | Micro 5 (was Jacquard 24, retired) |
 | Robin Hood | robinhood-16 | robinhood-archer | Sherwood forest map | Jersey 25 |
 | Sherlock Holmes | sherlock-16 | sherlock-hound | Sepia ordnance case-map, pinned photos + red string | Silkscreen (was Jacquard 12, retired) |
@@ -31,14 +32,17 @@ mechanics it used), delete its queue line, and keep the claimed lists current �
   riveted brass instrument panel with five circular glass portholes (Nemo),
   vertical canopy-to-floor cross-section with a vine trail (Jungle Book),
   an open journal page (ship's log) with a decorative chart strip above
-  wax-seal dated entries (Moby-Dick — the "book/scroll" idea, spent).
+  wax-seal dated entries (Moby-Dick — the "book/scroll" idea, spent), a
+  bracket clock face with nodes mounted at the story's true hours, an
+  asymmetric sweep rather than an evenly-spaced ring (A Christmas Carol).
   Fresh ideas for next builds: a constellation chart, a train/route timetable,
   a family tree, a shop counter, a river descending the screen.
 - **Pixel display faces used:** Silkscreen (Sherlock), Handjet (Arthur),
   Micro 5 (Dracula), Jersey 25, Jersey 20 (Treasure Island), Jersey 15,
   Workbench, Sixtyfour (Nemo — the digital/techy face, justified by the
   Nautilus's instruments; not reused for anything non-techy), Jersey 10
-  (Jungle Book), Tiny5 (Moby-Dick) (+ Pixelify Sans as the shared UI face).
+  (Jungle Book), Tiny5 (Moby-Dick), Rubik Pixels (A Christmas Carol)
+  (+ Pixelify Sans as the shared UI face).
   Jacquard 24 / Jacquard 12 / Jacquarda Bastarda 9 were RETIRED 2026-07-28 —
   their blackletter forms rendered hero titles illegible ("SHERLOCK HOLMES" as
   "SHCRLDCR / HDLMCS" etc., UX-sweep #34/#37 finding 1, carried 4+ sweeps) —
@@ -64,7 +68,15 @@ mechanics it used), delete its queue line, and keep the claimed lists current �
   aim (Moby-Dick's harpoon throws — pull back and release, distinct from the
   artillery arc-shot meter), ✦ dual-meter tending management (Moby-Dick's
   try-works — keep a drifting gauge banded while reacting to skim cues, first
-  real use of the under-used tycoon/management genre).
+  real use of the under-used tycoon/management genre), timing-bar grip/strike
+  (Marley's chain), candle-juggle defend (Christmas Past's three memories),
+  catch/avoid lane-sort (the Cratchits' table — gift good, coal decoy),
+  hold-to-creep freeze-when-watched stealth reused once more (the Phantom),
+  ✦ drag-scrub reveal against regrowing frost (Christmas Yet to Come's
+  gravestone — a new "clear it before it creeps back" verb, distinct from the
+  artillery/fling/tending meters already spent), 3-station timed sequence
+  chase (Christmas Morning's redemption dash — reaction tap, timing-bar,
+  rhythm tap chained in one node).
 - **Under-used genres for the next wave:** route-planning strategy, fishing,
   tower defense, roguelite runs, disguise/bluff. (Card/board play drawn on by
   Treasure Island's black-spot table, but still has room for a full board.
@@ -75,15 +87,23 @@ mechanics it used), delete its queue line, and keep the claimed lists current �
 
 ## Queue (best next candidates, in order)
 
-1. **A Christmas Carol** (`scrooge-carol` or `scrooge-ledger`) — the LEDGER as
-   hub (entries = nodes). Past/Present/Future branch choices; also crosses off
-   REBUILD_QUEUE #11 in spirit.
-2. **Frankenstein** (`frankenstein-spark`) — laboratory wall of instruments as
+1. **Frankenstein** (`frankenstein-spark`) — laboratory wall of instruments as
    hub. Assembly puzzle, lightning-timing revival, alpine pursuit, arctic
    finale; monster-sympathy flag for endings. (Also clears a legacy rebuild.)
-3. **Alice in Wonderland** (`alice-rabbithole`) — playing-card hub (deal a
+2. **Alice in Wonderland** (`alice-rabbithole`) — playing-card hub (deal a
    hand). Falling, croquet aim, tea-party rhythm, EAT ME/DRINK ME size puzzle,
    card-soldier defense; brightest palette in the set.
+
+### Note on A Christmas Carol (shipped 2026-08-01)
+
+Two unrelated 8-bit Christmas Carol games already existed pre-dating the
+Gen-3/Gen-4 pairing convention: `scrooge-carol` ("Scrooge's Long Night") and
+`scrooge-ledger` ("Bah, Humbug!"). The new Gen-4 (`scrooge-16`) pairs with
+`scrooge-carol` via `property: "A Christmas Carol"` (more actively maintained
+— see its REBUILD_QUEUE #11 rebuild history); `scrooge-ledger` stays live as
+its own standalone card, unpaired. If this reads as confusing on a future
+sweep, consider retiring or merging `scrooge-ledger` rather than adding a
+third generation to the property.
 
 ## House standards locked in (2026-07-15/16 session)
 
