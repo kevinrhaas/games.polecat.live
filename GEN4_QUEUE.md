@@ -8,10 +8,11 @@ Gen-4 game: add its row to the shipped table (hub concept + typeface + the
 mechanics it used), delete its queue line, and keep the claimed lists current —
 **in the same PR as the build**.
 
-## Shipped (14 of ~83)
+## Shipped (15 of ~83)
 
 | Property | 16-bit id | 8-bit partner | Hub concept | Title face |
 |---|---|---|---|---|
+| Peter Pan | peterpan-16 | peterpan-flight | A night-sky constellation chart — five star-clusters (the nursery window, London's rooftops, the Mermaid Lagoon, the Jolly Roger, the final duel) linked by a dashed silver flight path, "second star to the right" made literal | Press Start 2P |
 | The Wizard of Oz | oz-16 | oz-yellowbrick | Dorothy's own patchwork quilt spread out at bedtime — five patches (Kansas, the cornfield, the poppies, the Witch's castle, the Emerald City) stitched together by a dashed gold thread trail | DotGothic16 |
 | Frankenstein | frankenstein-16 | frankenstein-spark | Victor's own laboratory wall of mounted instruments — a Leyden jar, a cracked shutter, a spyglass, an altimeter, a frost-rimed compass — linked by a copper wire the eye can trace | Bitcount Prop Single |
 | A Christmas Carol | scrooge-16 | scrooge-carol | Scrooge's own bracket clock on the counting-house wall — nodes mounted at the story's true hours (XII, I, II, III) with dawn breaking below the case for Christmas Morning | Rubik Pixels |
@@ -42,9 +43,11 @@ mechanics it used), delete its queue line, and keep the claimed lists current �
   (Frankenstein — the "workshop wall" idea, spent), a fanned hand of playing
   cards dealt across a felt table (Alice in Wonderland), a stitched patchwork
   quilt of story patches joined by a dashed gold thread trail (The Wizard of
-  Oz — the "textile/craft" idea, spent).
-  Fresh ideas for next builds: a constellation chart, a train/route timetable,
-  a family tree, a shop counter, a river descending the screen.
+  Oz — the "textile/craft" idea, spent), a night-sky constellation chart
+  linking five story star-clusters with a dashed silver flight path (Peter
+  Pan — the "second star to the right" made literal, spent).
+  Fresh ideas for next builds: a train/route timetable, a family tree, a shop
+  counter, a river descending the screen.
 - **Pixel display faces used:** Silkscreen (Sherlock), Handjet (Arthur),
   Micro 5 (Dracula), Jersey 25, Jersey 20 (Treasure Island), Jersey 15,
   Workbench, Sixtyfour (Nemo — the digital/techy face, justified by the
@@ -69,7 +72,11 @@ mechanics it used), delete its queue line, and keep the claimed lists current �
   size 2026-08-01 and fully legible; picked for a whimsical non-techy property
   as a further exception to the "CRT/dot faces are for techy properties"
   guideline, same precedent as VT323 on Alice in Wonderland) was added to the
-  used list, not retired.
+  used list, not retired. Press Start 2P (Peter Pan — the classic,
+  highly-legible arcade pixel font; every other Gen-4 game so far used it only
+  as a fallback in their font stack, so this is its first use as an actual
+  titleFont; already proven legible across the whole fleet, so no legibility
+  risk) was added to the used list.
 - **Mechanics well-spent so far** (avoid stacking more of these; the standouts
   are marked ✦): timing stop-in-band, drag-runner + dodge, whack pop-ups,
   ✦ risk/reward taunt (Odyssey), ✦ simon-says memory (Circe, Nemo's valve oath),
@@ -120,16 +127,31 @@ mechanics it used), delete its queue line, and keep the claimed lists current �
   "fuller build" the under-used-genres note called for), ✦ triage defense of
   multiple named, individually-tracked allies (the Flying Monkeys — three
   companions with their own HP, forcing quick attention-switching between
-  threatened targets, distinct from a single-target whack/defend).
-- **Under-used genres for the next wave:** route-planning strategy, fishing,
-  roguelite runs, disguise/bluff. (Card/board play drawn on by Treasure
-  Island's black-spot table AND Alice's dealt-hand hub, but still has room for
-  a full board. Racing/mode7 now spent by Nemo's ice field — still room for a
-  full lap-based version. Social deduction now drawn on lightly by Jungle
-  Book's Council Rock. Tycoon/management now drawn on by Moby-Dick's
-  try-works — still room for a fuller multi-resource sim. Tower defense now
-  drawn on twice — Alice's single-dock Trial, then Oz's three-lane Cornfield
-  Watch — still room for a bigger multi-wave build.)
+  threatened targets, distinct from a single-target whack/defend), trace-path
+  precision (Peter Pan's shadow-stitching — hold/drag a needle along a glowing
+  dotted outline, filling progress via dwell-time-in-tolerance rather than
+  simple overlap, a new "follow a precise path" verb), ✦ cast-and-reel fishing
+  tension (Peter Pan's Mermaid Lagoon — a pull-back-and-release cast followed
+  by a tension gauge that must stay banded while tapping rhythmically,
+  distinct from the artillery arc-shot/sling-release fling/dual-meter tending
+  families already spent — first real use of the under-used fishing genre),
+  disguise/bluff decoy-tap (Peter Pan's Jolly Roger — tap the correct response
+  among 2-3 decoys within a shrinking window while a suspicion meter fills on
+  wrong taps or timeouts, a new social-deception verb — first real use of the
+  under-used disguise/bluff genre).
+- **Under-used genres for the next wave:** route-planning strategy, roguelite
+  runs. (Card/board play drawn on by Treasure Island's black-spot table AND
+  Alice's dealt-hand hub, but still has room for a full board. Racing/mode7
+  now spent by Nemo's ice field — still room for a full lap-based version.
+  Social deduction now drawn on lightly by Jungle Book's Council Rock.
+  Tycoon/management now drawn on by Moby-Dick's try-works — still room for a
+  fuller multi-resource sim. Tower defense now drawn on twice — Alice's
+  single-dock Trial, then Oz's three-lane Cornfield Watch — still room for a
+  bigger multi-wave build. Fishing now drawn on once by Peter Pan's Mermaid
+  Lagoon cast-and-reel — still room for a full multi-catch angling build.
+  Disguise/bluff now drawn on once by Peter Pan's Jolly Roger decoy-tap —
+  still room for a fuller multi-round bluffing build with escalating
+  suspicion stakes.)
 
 ## Queue (best next candidates, in order)
 
@@ -184,6 +206,26 @@ budget (curious grants extra grace seconds) and by the finale's ending
 selection; the Rabbit Hole's `goldenkey` and the Trial's `stoutmallet`
 upgrades likewise carry forward into later nodes' difficulty, per the
 "every upgrade must be read by a later phase" standard below.
+
+### Note on Peter Pan (shipped 2026-08-01)
+
+`peterpan-16` pairs with the existing 8-bit `peterpan-flight` via
+`property: "Peter Pan"` (the 8-bit game had no `property`/`gen` key at all
+until now; `gen: 3` was added alongside it in the same commit — it was
+already a five-chapter saga, not a legacy single-mechanic game, so no
+`legacy:true` flag to drop). The upgrade chain runs the full length of the
+hub: `threadneedle` (nursery) widens the safe altitude band in the flight
+node; `starlight` (flight) both widens/highlights the safe tension band in
+the Mermaid Lagoon's reel AND gives a faint telegraph hint in the final
+duel's parry phase — the one upgrade read in two separate later phases;
+`silverline` (lagoon) lengthens the response window on the Jolly Roger's
+bluff rounds; `lostboys` (ship, granted unconditionally regardless of the
+node's choice) forgives one extra miss in both of the duel's phases. The
+Jolly Roger's choice (crow in triumph / slip away quiet) sets `cocky`/
+`humble` flags read by the duel's parry phase itself (cocky ramps the tempo
+faster and shrinks the block window, not just cosmetic) as well as by the
+ending selection — the same "choice changes gameplay AND ending" standard as
+Frankenstein's cottage-window choice and Odyssey's name-shout.
 
 ## House standards locked in (2026-07-15/16 session)
 

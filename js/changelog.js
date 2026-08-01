@@ -12,6 +12,15 @@
 // format stays identical to the rest of the fleet.
 export const CHANGELOG = [
   {
+    v: 166,
+    title: 'Peter Pan levels up to 16-bit',
+    kind: 'feature',
+    ts: '2026-08-01T16:16:14.915Z',
+    items: [
+      'A night-sky constellation chart becomes the hub: sew Peter\'s shadow back on, hold your altitude over London\'s rooftops toward the second star to the right, cast a line for Wendy in the Mermaid Lagoon, bluff past Hook\'s crew to free the Lost Boys, and duel the Captain blade for blade before the crocodile\'s tick-tock finds him — a choice on the Jolly Roger shapes both the final duel and how the tale ends.',
+    ],
+  },
+  {
     v: 165,
     title: 'The Wizard of Oz levels up to 16-bit',
     kind: 'feature',
