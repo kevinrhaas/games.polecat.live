@@ -12,6 +12,15 @@
 // format stays identical to the rest of the fleet.
 export const CHANGELOG = [
   {
+    v: 162,
+    title: 'A Christmas Carol levels up to 16-bit',
+    kind: 'feature',
+    ts: '2026-08-01T06:26:16.322Z',
+    items: [
+      'Scrooge\'s own bracket clock becomes the hub map: brace against Marley\'s chain at midnight, keep three memories burning with the Ghost of Christmas Past, fill the Cratchits\' table for Christmas Present, creep past a silent Phantom and scrub the frost from an unnamed stone at Christmas Yet to Come, then race through a changed London on Christmas morning — a choice at the Cratchits\' table shapes both the finale and which ending closes the tale.',
+    ],
+  },
+  {
     v: 161,
     title: 'Bigger tap targets on the genre rail and 8-bit/16-bit switch',
     kind: 'fix',

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <title>A Christmas Carol — games.polecat.live</title>
+  <meta name="theme-color" content="#0c0a16" />
+  <link rel="icon" href="../../assets/logo.svg" type="image/svg+xml" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Pixelify+Sans:wght@400;500;600;700&family=Rubik+Pixels&family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/site.css" />
+  <link rel="stylesheet" href="../../css/game.css" />
+  <style id="game-theme">:root{--g-bg1:#151022;--g-bg2:#070a14;--g-bar:rgba(16,12,26,.95);--g-accent:#e8b84a;--g-title:#f0e6cc;--g-panel:rgba(16,12,26,.82);--g-border:#3a2a44;--g-text:#8a86a6;--g-key:#e8b84a;--g-stage:#3a2a44;--g-glow:rgba(232,184,74,.28)}</style>
+</head>
+<body class="game-page">
+  <div class="game-bar">
+    <a class="back" href="../../index.html"><span class="ar">◀</span> ARCADE</a>
+    <span class="title">A Christmas Carol</span>
+    <span class="src">· Charles Dickens</span>
+    <span class="spacer"></span>
+    <button class="icon-btn" id="fullscreenBtn" title="Full screen">⛶</button>
+    <button class="icon-btn" id="muteBtn" title="Mute">🔊</button>
+    <button class="icon-btn" id="restartBtn" title="Restart">↻</button>
+  </div>
+  <div class="game-main">
+    <div id="game"></div>
+    <div class="game-help">
+      <b>A Christmas Carol — the 16-bit telling.</b> Scrooge's own bracket clock is the map: brace against Marley's rattling chain at midnight, keep three candlelit memories burning with the Ghost of Christmas Past, fill the Cratchits' table for the Ghost of Christmas Present, creep past a silent Phantom and scrub the frost from an unnamed stone at Christmas Yet to Come, then race through a changed London on Christmas morning — a choice at the Cratchits' table decides how the tale ends. Tap <b>Full screen</b> for the full experience.
+      <span class="keys">TAP / HOLD / DRAG · choose any hour · bank the LEDGER</span>
+    </div>
+  </div>
+  <script src="../../js/retro-engine.js"></script>
+  <script src="../../js/retro-gfx2.js"></script>
+  <script src="../../js/saga2.js"></script>
+  <script src="game.js"></script>
+  <script type="module" src="../../js/game-chrome.js"></script>
+</body>
+</html>
