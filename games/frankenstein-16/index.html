@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <title>Frankenstein — games.polecat.live</title>
+  <meta name="theme-color" content="#0d0818" />
+  <link rel="icon" href="../../assets/logo.svg" type="image/svg+xml" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Pixelify+Sans:wght@400;500;600;700&family=Bitcount+Prop+Single&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/site.css" />
+  <link rel="stylesheet" href="../../css/game.css" />
+  <style id="game-theme">:root{--g-bg1:#190f2c;--g-bg2:#05030a;--g-bar:rgba(16,10,26,.95);--g-accent:#5dff8f;--g-title:#e8f5ea;--g-panel:rgba(20,12,32,.82);--g-border:#3a2a54;--g-text:#8a86a6;--g-key:#5dff8f;--g-stage:#3a2a54;--g-glow:rgba(93,255,143,.28)}</style>
+</head>
+<body class="game-page">
+  <div class="game-bar">
+    <a class="back" href="../../index.html"><span class="ar">◀</span> ARCADE</a>
+    <span class="title">Frankenstein</span>
+    <span class="src">· Mary Shelley</span>
+    <span class="spacer"></span>
+    <button class="icon-btn" id="fullscreenBtn" title="Full screen">⛶</button>
+    <button class="icon-btn" id="muteBtn" title="Mute">🔊</button>
+    <button class="icon-btn" id="restartBtn" title="Restart">↻</button>
+  </div>
+  <div class="game-main">
+    <div id="game"></div>
+    <div class="game-help">
+      <b>Frankenstein — the 16-bit telling.</b> Victor's own laboratory wall is the map: assemble the Creature and channel the storm to wake him, flee a torch-lit village, watch the De Laceys through a cottage window, climb to a glacial reckoning in the Alps, and outrun Victor across the Arctic ice — a choice at the cottage window decides how the tale ends. Tap <b>Full screen</b> for the full experience.
+      <span class="keys">TAP / HOLD / DRAG · choose any instrument · earn VITALITY</span>
+    </div>
+  </div>
+  <script src="../../js/retro-engine.js"></script>
+  <script src="../../js/retro-gfx2.js"></script>
+  <script src="../../js/saga2.js"></script>
+  <script src="game.js"></script>
+  <script type="module" src="../../js/game-chrome.js"></script>
+</body>
+</html>

@@ -8,10 +8,11 @@ Gen-4 game: add its row to the shipped table (hub concept + typeface + the
 mechanics it used), delete its queue line, and keep the claimed lists current —
 **in the same PR as the build**.
 
-## Shipped (11 of ~83)
+## Shipped (12 of ~83)
 
 | Property | 16-bit id | 8-bit partner | Hub concept | Title face |
 |---|---|---|---|---|
+| Frankenstein | frankenstein-16 | frankenstein-spark | Victor's own laboratory wall of mounted instruments — a Leyden jar, a cracked shutter, a spyglass, an altimeter, a frost-rimed compass — linked by a copper wire the eye can trace | Bitcount Prop Single |
 | A Christmas Carol | scrooge-16 | scrooge-carol | Scrooge's own bracket clock on the counting-house wall — nodes mounted at the story's true hours (XII, I, II, III) with dawn breaking below the case for Christmas Morning | Rubik Pixels |
 | Dracula | dracula-castle | dracula-8bit | Gothic route map, Transylvania→England | Micro 5 (was Jacquard 24, retired) |
 | Robin Hood | robinhood-16 | robinhood-archer | Sherwood forest map | Jersey 25 |
@@ -34,14 +35,18 @@ mechanics it used), delete its queue line, and keep the claimed lists current �
   an open journal page (ship's log) with a decorative chart strip above
   wax-seal dated entries (Moby-Dick — the "book/scroll" idea, spent), a
   bracket clock face with nodes mounted at the story's true hours, an
-  asymmetric sweep rather than an evenly-spaced ring (A Christmas Carol).
+  asymmetric sweep rather than an evenly-spaced ring (A Christmas Carol), a
+  wall of mounted brass instruments linked by a copper wire the eye can trace
+  (Frankenstein — the "workshop wall" idea, spent).
   Fresh ideas for next builds: a constellation chart, a train/route timetable,
   a family tree, a shop counter, a river descending the screen.
 - **Pixel display faces used:** Silkscreen (Sherlock), Handjet (Arthur),
   Micro 5 (Dracula), Jersey 25, Jersey 20 (Treasure Island), Jersey 15,
   Workbench, Sixtyfour (Nemo — the digital/techy face, justified by the
   Nautilus's instruments; not reused for anything non-techy), Jersey 10
-  (Jungle Book), Tiny5 (Moby-Dick), Rubik Pixels (A Christmas Carol)
+  (Jungle Book), Tiny5 (Moby-Dick), Rubik Pixels (A Christmas Carol),
+  Bitcount Prop Single (Frankenstein — a modular circuit-board face, justified
+  by the lab's galvanism; not reused for anything non-technical)
   (+ Pixelify Sans as the shared UI face).
   Jacquard 24 / Jacquard 12 / Jacquarda Bastarda 9 were RETIRED 2026-07-28 —
   their blackletter forms rendered hero titles illegible ("SHERLOCK HOLMES" as
@@ -76,7 +81,12 @@ mechanics it used), delete its queue line, and keep the claimed lists current �
   gravestone — a new "clear it before it creeps back" verb, distinct from the
   artillery/fling/tending meters already spent), 3-station timed sequence
   chase (Christmas Morning's redemption dash — reaction tap, timing-bar,
-  rhythm tap chained in one node).
+  rhythm tap chained in one node), diagram-guided assembly (Frankenstein's
+  anatomy table — a permanently visible reference order, not a memorized
+  simon-says sequence, a new "sort to a visible plan" verb), falling-note lane
+  tap reused once more (the storm's revival), hold-lean stealth reused once
+  more (the De Laceys' window), timing-band leap-to-next-ledge (the glacier
+  ascent, a bounded on-screen variant of the timing-bar family).
 - **Under-used genres for the next wave:** route-planning strategy, fishing,
   tower defense, roguelite runs, disguise/bluff. (Card/board play drawn on by
   Treasure Island's black-spot table, but still has room for a full board.
@@ -87,12 +97,18 @@ mechanics it used), delete its queue line, and keep the claimed lists current �
 
 ## Queue (best next candidates, in order)
 
-1. **Frankenstein** (`frankenstein-spark`) — laboratory wall of instruments as
-   hub. Assembly puzzle, lightning-timing revival, alpine pursuit, arctic
-   finale; monster-sympathy flag for endings. (Also clears a legacy rebuild.)
-2. **Alice in Wonderland** (`alice-rabbithole`) — playing-card hub (deal a
+1. **Alice in Wonderland** (`alice-rabbithole`) — playing-card hub (deal a
    hand). Falling, croquet aim, tea-party rhythm, EAT ME/DRINK ME size puzzle,
    card-soldier defense; brightest palette in the set.
+
+### Note on Frankenstein (shipped 2026-08-01)
+
+`frankenstein-16` pairs with `frankenstein-spark` via `property: "Frankenstein"`
+(the 8-bit game was already a five-chapter saga, not a legacy single-mechanic
+game — its `legacy:true` flag had already been dropped in an earlier session).
+The De Laceys' cottage-window choice (step into the light / stay in shadow)
+sets a `sympathy`/`vengeance` flag read both by that node's own detection
+tolerance and by the finale's ending selection.
 
 ### Note on A Christmas Carol (shipped 2026-08-01)
 
