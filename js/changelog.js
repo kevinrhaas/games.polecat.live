@@ -12,6 +12,15 @@
 // format stays identical to the rest of the fleet.
 export const CHANGELOG = [
   {
+    v: 165,
+    title: 'The Wizard of Oz levels up to 16-bit',
+    kind: 'feature',
+    ts: '2026-08-01T15:32:12.751Z',
+    items: [
+      'Dorothy\'s own patchwork quilt becomes the hub: spin the cyclone\'s wall, keep the crows off the Scarecrow\'s cornfield, stay awake in the poppies, protect Scarecrow, Tin Man and Lion from the Witch\'s flying monkeys and douse her tower, then click the ruby heels three times home — a choice behind the curtain shapes how the tale ends.',
+    ],
+  },
+  {
     v: 164,
     title: 'Alice in Wonderland levels up to 16-bit',
     kind: 'feature',
