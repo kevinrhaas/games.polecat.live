@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <title>The Wizard of Oz — games.polecat.live</title>
+  <meta name="theme-color" content="#0d2a1a" />
+  <link rel="icon" href="../../assets/logo.svg" type="image/svg+xml" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Pixelify+Sans:wght@400;500;600;700&family=DotGothic16&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/site.css" />
+  <link rel="stylesheet" href="../../css/game.css" />
+  <style id="game-theme">:root{--g-bg1:#123322;--g-bg2:#050d08;--g-bar:rgba(10,26,16,.95);--g-accent:#20e070;--g-title:#eafff0;--g-panel:rgba(12,28,18,.82);--g-border:#1e5636;--g-text:#8ab6a0;--g-key:#20e070;--g-stage:#1e5636;--g-glow:rgba(32,224,112,.28)}</style>
+</head>
+<body class="game-page">
+  <div class="game-bar">
+    <a class="back" href="../../index.html"><span class="ar">◀</span> ARCADE</a>
+    <span class="title">The Wizard of Oz</span>
+    <span class="src">· L. Frank Baum</span>
+    <span class="spacer"></span>
+    <button class="icon-btn" id="fullscreenBtn" title="Full screen">⛶</button>
+    <button class="icon-btn" id="muteBtn" title="Mute">🔊</button>
+    <button class="icon-btn" id="restartBtn" title="Restart">↻</button>
+  </div>
+  <div class="game-main">
+    <div id="game"></div>
+    <div class="game-help">
+      <b>The Wizard of Oz — the 16-bit telling.</b> Dorothy's own patchwork quilt is the map: ride out the cyclone, watch the Scarecrow's cornfield, stay awake in the poppies, march past the Witch's Winkies and douse her tower, then click the ruby heels three times home — a choice behind the curtain decides how the tale ends. Tap <b>Full screen</b> for the full experience.
+      <span class="keys">TAP / HOLD / DRAG · choose any patch · earn WISHES</span>
+    </div>
+  </div>
+  <script src="../../js/retro-engine.js"></script>
+  <script src="../../js/retro-gfx2.js"></script>
+  <script src="../../js/saga2.js"></script>
+  <script src="game.js"></script>
+  <script type="module" src="../../js/game-chrome.js"></script>
+</body>
+</html>

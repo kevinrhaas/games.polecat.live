@@ -8,10 +8,11 @@ Gen-4 game: add its row to the shipped table (hub concept + typeface + the
 mechanics it used), delete its queue line, and keep the claimed lists current —
 **in the same PR as the build**.
 
-## Shipped (13 of ~83)
+## Shipped (14 of ~83)
 
 | Property | 16-bit id | 8-bit partner | Hub concept | Title face |
 |---|---|---|---|---|
+| The Wizard of Oz | oz-16 | oz-yellowbrick | Dorothy's own patchwork quilt spread out at bedtime — five patches (Kansas, the cornfield, the poppies, the Witch's castle, the Emerald City) stitched together by a dashed gold thread trail | DotGothic16 |
 | Frankenstein | frankenstein-16 | frankenstein-spark | Victor's own laboratory wall of mounted instruments — a Leyden jar, a cracked shutter, a spyglass, an altimeter, a frost-rimed compass — linked by a copper wire the eye can trace | Bitcount Prop Single |
 | A Christmas Carol | scrooge-16 | scrooge-carol | Scrooge's own bracket clock on the counting-house wall — nodes mounted at the story's true hours (XII, I, II, III) with dawn breaking below the case for Christmas Morning | Rubik Pixels |
 | Dracula | dracula-castle | dracula-8bit | Gothic route map, Transylvania→England | Micro 5 (was Jacquard 24, retired) |
@@ -39,7 +40,9 @@ mechanics it used), delete its queue line, and keep the claimed lists current �
   asymmetric sweep rather than an evenly-spaced ring (A Christmas Carol), a
   wall of mounted brass instruments linked by a copper wire the eye can trace
   (Frankenstein — the "workshop wall" idea, spent), a fanned hand of playing
-  cards dealt across a felt table (Alice in Wonderland).
+  cards dealt across a felt table (Alice in Wonderland), a stitched patchwork
+  quilt of story patches joined by a dashed gold thread trail (The Wizard of
+  Oz — the "textile/craft" idea, spent).
   Fresh ideas for next builds: a constellation chart, a train/route timetable,
   a family tree, a shop counter, a river descending the screen.
 - **Pixel display faces used:** Silkscreen (Sherlock), Handjet (Arthur),
@@ -61,7 +64,12 @@ mechanics it used), delete its queue line, and keep the claimed lists current �
   overlay renders as dense illegible hatching at hero-title size, not text —
   do not reuse it for title faces either. **Screenshot-check any new title
   face at actual render size before committing to it** — this class of bug
-  doesn't show up in code review, only in a rendered frame.
+  doesn't show up in code review, only in a rendered frame. DotGothic16 (The
+  Wizard of Oz — a clean geometric dot-matrix face, screenshot-checked at hero
+  size 2026-08-01 and fully legible; picked for a whimsical non-techy property
+  as a further exception to the "CRT/dot faces are for techy properties"
+  guideline, same precedent as VT323 on Alice in Wonderland) was added to the
+  used list, not retired.
 - **Mechanics well-spent so far** (avoid stacking more of these; the standouts
   are marked ✦): timing stop-in-band, drag-runner + dodge, whack pop-ups,
   ✦ risk/reward taunt (Odyssey), ✦ simon-says memory (Circe, Nemo's valve oath),
@@ -104,7 +112,15 @@ mechanics it used), delete its queue line, and keep the claimed lists current �
   shrinking onto a fixed target, a circular variant of the timing-band family),
   ✦ tower-defense tap-to-repel waves (the Trial's dock defense — first real
   use of the under-used tower-defense genre, with a decoy the player must
-  learn NOT to tap).
+  learn NOT to tap), ✦ orbit-dodge (the Cyclone's spinning funnel wall — drag/
+  arrow to travel around a ring instead of along a lane or plane, a new
+  circular-locomotion verb, distinct from the timing-band/lane-dodge
+  families), a fuller multi-lane tower-defense build (the Cornfield Watch —
+  three lanes instead of one dock, reused from Alice's Trial but at the
+  "fuller build" the under-used-genres note called for), ✦ triage defense of
+  multiple named, individually-tracked allies (the Flying Monkeys — three
+  companions with their own HP, forcing quick attention-switching between
+  threatened targets, distinct from a single-target whack/defend).
 - **Under-used genres for the next wave:** route-planning strategy, fishing,
   roguelite runs, disguise/bluff. (Card/board play drawn on by Treasure
   Island's black-spot table AND Alice's dealt-hand hub, but still has room for
@@ -112,12 +128,30 @@ mechanics it used), delete its queue line, and keep the claimed lists current �
   full lap-based version. Social deduction now drawn on lightly by Jungle
   Book's Council Rock. Tycoon/management now drawn on by Moby-Dick's
   try-works — still room for a fuller multi-resource sim. Tower defense now
-  drawn on by Alice's Trial dock — still room for a fuller multi-lane build.)
+  drawn on twice — Alice's single-dock Trial, then Oz's three-lane Cornfield
+  Watch — still room for a bigger multi-wave build.)
 
 ## Queue (best next candidates, in order)
 
 (empty — pick the next property by fame + genre variety per BUILD_LOOP.md
 when this list is empty)
+
+### Note on The Wizard of Oz (shipped 2026-08-01)
+
+`oz-16` pairs with `oz-yellowbrick` via `property: "The Wizard of Oz"` (the
+8-bit game was already a five-chapter saga, not a legacy single-mechanic game
+— no `legacy:true` flag to drop; it previously had no `property` key at all,
+now added alongside an explicit `gen: 3`). Kept to the book (not the 1939
+film) for the Witch's-castle beat — the flying monkeys attack and the
+water-splash melting are both in Baum's text, so no invented "Winkie guard
+disguise" scene was needed. Four upgrades (`steadyfooting`, `scarecrowwit`,
+`wideawake`, `meltcourage`, one granted per node) all converge on the single
+finale phase (the heel-click timing game), each widening the timing band,
+revealing a hint, forgiving a mistake, or forgiving the very first miss
+respectively — satisfying the "every upgrade must be read by a later phase"
+standard without spreading small reads across every node. The curtain-reveal
+choice (forgive the humbug / call out the fraud) is read only by the ending
+selection, same pattern as Frankenstein's cottage-window choice below.
 
 ### Note on Frankenstein (shipped 2026-08-01)
 
