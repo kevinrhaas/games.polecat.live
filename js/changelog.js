@@ -12,6 +12,15 @@
 // format stays identical to the rest of the fleet.
 export const CHANGELOG = [
   {
+    v: 161,
+    title: 'Bigger tap targets on the genre rail and 8-bit/16-bit switch',
+    kind: 'fix',
+    ts: '2026-08-01T03:51:32.808Z',
+    items: [
+      'The left nav rail\'s genre links and each card\'s 8-bit/16-bit play switch were a bit small to tap on a phone — both now meet the 44px touch-target minimum.',
+    ],
+  },
+  {
     v: 160,
     title: 'Moby-Dick levels up to 16-bit',
     kind: 'feature',

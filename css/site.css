@@ -224,7 +224,8 @@ img { max-width: 100%; display: block; }
 .badge.new   { color: #0b0420; background: var(--green); border-color:#000; }
 /* per-generation play switch on a multi-generation property card */
 .gen-switch { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
-.gen-play { font-family: var(--font-pixel); font-size: 9px; padding: 6px 8px; border-radius: 7px; color: #0b0420; border: 1px solid #000; cursor: pointer; }
+/* min-height 44px + box-sizing: WCAG touch target — was 28px tall (UX-sweep #63 finding 1) */
+.gen-play { font-family: var(--font-pixel); font-size: 9px; padding: 6px 8px; min-height: 44px; box-sizing: border-box; display: inline-flex; align-items: center; border-radius: 7px; color: #0b0420; border: 1px solid #000; cursor: pointer; }
 .gen-play.gen4 { background: linear-gradient(90deg,#ffd966,#ff8a3d); }
 .gen-play.gen3 { background: linear-gradient(90deg,#aab0c0,#d6dcea); }
 .gen-play:active { transform: translateY(1px); }

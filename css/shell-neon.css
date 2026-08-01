@@ -75,6 +75,11 @@ body.ps-shell {
 .ps-topbar .btn.icon { width: 44px; height: 44px; }
 .wn-kinds .filter-chip { min-height: 44px; padding: 10px 14px; box-sizing: border-box; }
 
+/* the left nav rail's genre/family links were 36px tall (UX-sweep #63
+   finding 1) — bump to the 44px WCAG-minimum touch target; width is
+   already >=44px (the rail is 210px open, an icon column collapsed) */
+.ps-rail-item { min-height: 44px; box-sizing: border-box; }
+
 /* unseen dot on the topbar What's-New sparkle */
 .ps-topbar .btn.has-unseen { position: relative; }
 .ps-topbar .btn.has-unseen::after {
