@@ -12,6 +12,15 @@
 // format stays identical to the rest of the fleet.
 export const CHANGELOG = [
   {
+    v: 163,
+    title: 'Frankenstein levels up to 16-bit',
+    kind: 'feature',
+    ts: '2026-08-01T09:55:02.458Z',
+    items: [
+      'Victor\'s own laboratory wall becomes the hub map: assemble the Creature from a diagram and channel the storm to wake him, flee a torch-lit village, watch the De Laceys through a cottage window, climb to a glacial reckoning in the Alps, and outrun Victor across the Arctic ice — a choice at the cottage window shapes both the De Laceys chapter and which ending closes the tale.',
+    ],
+  },
+  {
     v: 162,
     title: 'A Christmas Carol levels up to 16-bit',
     kind: 'feature',

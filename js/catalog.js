@@ -39,7 +39,9 @@ window.POLECAT_CATALOG = [
     blurb: "Five Wonderland tales — tumble down the rabbit hole, swim the pool of tears, time the Mad Hatter's cups, swing a flamingo at the Queen's croquet, and dodge flying cards at the trial!", tags: ["arcade","adventure","multi-chapter"] },
   { id: "oz-yellowbrick", title: "The Wizard of Oz", source: "The Wizard of Oz — L. Frank Baum", genre: "Story Arcade", style: "8-bit", accent: "#ffe14d", status: "live",
     blurb: "Five Oz tales — survive the twister, run the yellow brick road, wake friends in the poppy field, dodge the Wizard's fire, and click ruby heels to get home.", tags: ["arcade","adventure","multi-chapter"] },
-  { id: "frankenstein-spark", title: "Frankenstein", source: "Frankenstein — Mary Shelley", genre: "Horror Adventure", style: "8-bit", accent: "#5dff8f", status: "live",
+  { id: "frankenstein-16", title: "Frankenstein", source: "Frankenstein — Mary Shelley", genre: "Action Adventure", style: "16-bit", gen: 4, property: "Frankenstein", accent: "#5dff8f", status: "live",
+    blurb: "THE LABORATORY WALL — the 16-bit telling. Work Victor's own wall of instruments as a hub: assemble the Creature from a diagram and channel the storm to wake him, flee a torch-lit village, watch the De Laceys through a cottage window, climb to a glacial reckoning in the Alps, and outrun Victor across the Arctic ice — with upgrades carried between them and a choice at the cottage window that decides how the tale ends.", tags: ["horror","multi-chapter","gothic","16-bit","hub"] },
+  { id: "frankenstein-spark", title: "Frankenstein", source: "Frankenstein — Mary Shelley", genre: "Horror Adventure", style: "8-bit", gen: 3, property: "Frankenstein", accent: "#5dff8f", status: "live",
     blurb: "Five gothic chapters: channel lightning to birth the Creature, flee the frightened village, spy on the De Laceys, chase across Arctic ice, and make the final leap into darkness.", tags: ["horror","multi-chapter","gothic"] },
 
   // ---------------------------- SOON (planned) ----------------------------
