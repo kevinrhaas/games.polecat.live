@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <title>Alice in Wonderland — games.polecat.live</title>
+  <meta name="theme-color" content="#140a26" />
+  <link rel="icon" href="../../assets/logo.svg" type="image/svg+xml" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Pixelify+Sans:wght@400;500;600;700&family=VT323&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/site.css" />
+  <link rel="stylesheet" href="../../css/game.css" />
+  <style id="game-theme">:root{--g-bg1:#2a1450;--g-bg2:#140a26;--g-bar:rgba(24,12,44,.95);--g-accent:#ff2e5f;--g-title:#fff6e0;--g-panel:rgba(28,14,50,.82);--g-border:#5c2a8c;--g-text:#c8b8e8;--g-key:#ffd23f;--g-stage:#5c2a8c;--g-glow:rgba(255,46,95,.28)}</style>
+</head>
+<body class="game-page">
+  <div class="game-bar">
+    <a class="back" href="../../index.html"><span class="ar">◀</span> ARCADE</a>
+    <span class="title">Alice in Wonderland</span>
+    <span class="src">· Lewis Carroll</span>
+    <span class="spacer"></span>
+    <button class="icon-btn" id="fullscreenBtn" title="Full screen">⛶</button>
+    <button class="icon-btn" id="muteBtn" title="Mute">🔊</button>
+    <button class="icon-btn" id="restartBtn" title="Restart">↻</button>
+  </div>
+  <div class="game-main">
+    <div id="game"></div>
+    <div class="game-help">
+      <b>Alice in Wonderland — the 16-bit telling.</b> A dealt hand of five cards is the map: tumble down the rabbit hole, match your size to the Hall of Doors, catch the Mad Tea Party's rhythm, aim a flamingo through the Queen's croquet ground, then defend the dock from a marching deck of cards — a choice at the Caterpillar's mushroom decides how the tale ends. Tap <b>Full screen</b> for the full experience.
+      <span class="keys">TAP / HOLD / DRAG · choose any card · earn CURIOSITY</span>
+    </div>
+  </div>
+  <script src="../../js/retro-engine.js"></script>
+  <script src="../../js/retro-gfx2.js"></script>
+  <script src="../../js/saga2.js"></script>
+  <script src="game.js"></script>
+  <script type="module" src="../../js/game-chrome.js"></script>
+</body>
+</html>

@@ -8,7 +8,7 @@ Gen-4 game: add its row to the shipped table (hub concept + typeface + the
 mechanics it used), delete its queue line, and keep the claimed lists current —
 **in the same PR as the build**.
 
-## Shipped (12 of ~83)
+## Shipped (13 of ~83)
 
 | Property | 16-bit id | 8-bit partner | Hub concept | Title face |
 |---|---|---|---|---|
@@ -24,6 +24,7 @@ mechanics it used), delete its queue line, and keep the claimed lists current �
 | 20,000 Leagues | nemo-16 | nemo-nautilus | Captain's brass console — five glass portholes in a riveted instrument panel | Sixtyfour |
 | The Jungle Book | junglebook-mowgli-16 | junglebook-mowgli | Canopy-to-floor jungle cross-section — a vine trail running Council Rock down to Shere Khan's gorge | Jersey 10 |
 | Moby-Dick | mobydick-16 | mobydick-hunt | The Pequod's ship's log — a parchment journal page with a decorative chart strip, wax-seal dated entries | Tiny5 |
+| Alice in Wonderland | alice-16 | alice-rabbithole | A dealt hand of five playing cards, fanned across the felt table | VT323 |
 
 ## Claimed conventions — do NOT reuse
 
@@ -37,7 +38,8 @@ mechanics it used), delete its queue line, and keep the claimed lists current �
   bracket clock face with nodes mounted at the story's true hours, an
   asymmetric sweep rather than an evenly-spaced ring (A Christmas Carol), a
   wall of mounted brass instruments linked by a copper wire the eye can trace
-  (Frankenstein — the "workshop wall" idea, spent).
+  (Frankenstein — the "workshop wall" idea, spent), a fanned hand of playing
+  cards dealt across a felt table (Alice in Wonderland).
   Fresh ideas for next builds: a constellation chart, a train/route timetable,
   a family tree, a shop counter, a river descending the screen.
 - **Pixel display faces used:** Silkscreen (Sherlock), Handjet (Arthur),
@@ -46,12 +48,20 @@ mechanics it used), delete its queue line, and keep the claimed lists current �
   Nautilus's instruments; not reused for anything non-techy), Jersey 10
   (Jungle Book), Tiny5 (Moby-Dick), Rubik Pixels (A Christmas Carol),
   Bitcount Prop Single (Frankenstein — a modular circuit-board face, justified
-  by the lab's galvanism; not reused for anything non-technical)
+  by the lab's galvanism; not reused for anything non-technical), VT323
+  (Alice in Wonderland — a tall CRT-terminal face; picked deliberately for a
+  non-techy property, an exception to the "CRT faces are for techy properties"
+  guideline made only after a first pick failed the legibility gate below)
   (+ Pixelify Sans as the shared UI face).
   Jacquard 24 / Jacquard 12 / Jacquarda Bastarda 9 were RETIRED 2026-07-28 —
   their blackletter forms rendered hero titles illegible ("SHERLOCK HOLMES" as
   "SHCRLDCR / HDLMCS" etc., UX-sweep #34/#37 finding 1, carried 4+ sweeps) —
-  do not reuse them for title faces.
+  do not reuse them for title faces. Micro 5 Charted was tried and REJECTED
+  for Alice in Wonderland 2026-08-01 for the same reason: its ruled graph-paper
+  overlay renders as dense illegible hatching at hero-title size, not text —
+  do not reuse it for title faces either. **Screenshot-check any new title
+  face at actual render size before committing to it** — this class of bug
+  doesn't show up in code review, only in a rendered frame.
 - **Mechanics well-spent so far** (avoid stacking more of these; the standouts
   are marked ✦): timing stop-in-band, drag-runner + dodge, whack pop-ups,
   ✦ risk/reward taunt (Odyssey), ✦ simon-says memory (Circe, Nemo's valve oath),
@@ -86,20 +96,28 @@ mechanics it used), delete its queue line, and keep the claimed lists current �
   simon-says sequence, a new "sort to a visible plan" verb), falling-note lane
   tap reused once more (the storm's revival), hold-lean stealth reused once
   more (the De Laceys' window), timing-band leap-to-next-ledge (the glacier
-  ascent, a bounded on-screen variant of the timing-bar family).
+  ascent, a bounded on-screen variant of the timing-bar family), reaction
+  size-match against a shrinking window (Alice's Hall of Doors — drink/wait/
+  eat to become the right size before the door shuts, a new "state-match under
+  a deadline" verb, distinct from the timing-bar/falling-note families),
+  closing-ring timing catch (the Mad Tea Party's pour — a concentric ring
+  shrinking onto a fixed target, a circular variant of the timing-band family),
+  ✦ tower-defense tap-to-repel waves (the Trial's dock defense — first real
+  use of the under-used tower-defense genre, with a decoy the player must
+  learn NOT to tap).
 - **Under-used genres for the next wave:** route-planning strategy, fishing,
-  tower defense, roguelite runs, disguise/bluff. (Card/board play drawn on by
-  Treasure Island's black-spot table, but still has room for a full board.
-  Racing/mode7 now spent by Nemo's ice field — still room for a full
-  lap-based version. Social deduction now drawn on lightly by Jungle Book's
-  Council Rock. Tycoon/management now drawn on by Moby-Dick's try-works —
-  still room for a fuller multi-resource sim.)
+  roguelite runs, disguise/bluff. (Card/board play drawn on by Treasure
+  Island's black-spot table AND Alice's dealt-hand hub, but still has room for
+  a full board. Racing/mode7 now spent by Nemo's ice field — still room for a
+  full lap-based version. Social deduction now drawn on lightly by Jungle
+  Book's Council Rock. Tycoon/management now drawn on by Moby-Dick's
+  try-works — still room for a fuller multi-resource sim. Tower defense now
+  drawn on by Alice's Trial dock — still room for a fuller multi-lane build.)
 
 ## Queue (best next candidates, in order)
 
-1. **Alice in Wonderland** (`alice-rabbithole`) — playing-card hub (deal a
-   hand). Falling, croquet aim, tea-party rhythm, EAT ME/DRINK ME size puzzle,
-   card-soldier defense; brightest palette in the set.
+(empty — pick the next property by fame + genre variety per BUILD_LOOP.md
+when this list is empty)
 
 ### Note on Frankenstein (shipped 2026-08-01)
 
@@ -120,6 +138,18 @@ Gen-3/Gen-4 pairing convention: `scrooge-carol` ("Scrooge's Long Night") and
 its own standalone card, unpaired. If this reads as confusing on a future
 sweep, consider retiring or merging `scrooge-ledger` rather than adding a
 third generation to the property.
+
+### Note on Alice in Wonderland (shipped 2026-08-01)
+
+`alice-16` pairs with `alice-rabbithole` via `property: "Alice in Wonderland"`
+(the 8-bit game was already a five-chapter saga, not a legacy single-mechanic
+game — no `legacy:true` flag to drop). The Caterpillar's mushroom choice at
+the Hall of Doors (nibble left to shrink / right to grow) sets a
+`curious`/`bold` flag read both by that same node's own per-round time
+budget (curious grants extra grace seconds) and by the finale's ending
+selection; the Rabbit Hole's `goldenkey` and the Trial's `stoutmallet`
+upgrades likewise carry forward into later nodes' difficulty, per the
+"every upgrade must be read by a later phase" standard below.
 
 ## House standards locked in (2026-07-15/16 session)
 

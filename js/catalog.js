@@ -35,8 +35,10 @@ window.POLECAT_CATALOG = [
   // ----------- LEGACY single-mechanic games (hidden from the home grid &
   // search via legacy:true until they're rebuilt in the multi-chapter story
   // mode). Still playable by direct URL; drop the flag once upgraded. -----------
-  { id: "alice-rabbithole", title: "Alice in Wonderland", source: "Alice in Wonderland — Lewis Carroll", genre: "Story Arcade", style: "8-bit", accent: "#21e6ff", status: "live",
+  { id: "alice-rabbithole", title: "Alice in Wonderland", source: "Alice in Wonderland — Lewis Carroll", genre: "Story Arcade", style: "8-bit", gen: 3, property: "Alice in Wonderland", accent: "#21e6ff", status: "live",
     blurb: "Five Wonderland tales — tumble down the rabbit hole, swim the pool of tears, time the Mad Hatter's cups, swing a flamingo at the Queen's croquet, and dodge flying cards at the trial!", tags: ["arcade","adventure","multi-chapter"] },
+  { id: "alice-16", title: "Alice in Wonderland", source: "Alice in Wonderland — Lewis Carroll", genre: "Action Adventure", style: "16-bit", gen: 4, property: "Alice in Wonderland", accent: "#ff2e5f", status: "live",
+    blurb: "A DEALT HAND — the 16-bit telling. A fanned hand of five cards is the hub: tumble down the rabbit hole, match your size to the Hall of Doors, catch the Mad Tea Party's rhythm, aim a flamingo through the Queen's croquet ground, then defend the dock from a marching deck of cards — with upgrades carried between them and a bite of the Caterpillar's mushroom that decides how the tale ends.", tags: ["adventure","multi-chapter","whimsy","16-bit","hub"] },
   { id: "oz-yellowbrick", title: "The Wizard of Oz", source: "The Wizard of Oz — L. Frank Baum", genre: "Story Arcade", style: "8-bit", accent: "#ffe14d", status: "live",
     blurb: "Five Oz tales — survive the twister, run the yellow brick road, wake friends in the poppy field, dodge the Wizard's fire, and click ruby heels to get home.", tags: ["arcade","adventure","multi-chapter"] },
   { id: "frankenstein-16", title: "Frankenstein", source: "Frankenstein — Mary Shelley", genre: "Action Adventure", style: "16-bit", gen: 4, property: "Frankenstein", accent: "#5dff8f", status: "live",

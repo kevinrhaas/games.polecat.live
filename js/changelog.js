@@ -12,6 +12,15 @@
 // format stays identical to the rest of the fleet.
 export const CHANGELOG = [
   {
+    v: 164,
+    title: 'Alice in Wonderland levels up to 16-bit',
+    kind: 'feature',
+    ts: '2026-08-01T12:46:48.464Z',
+    items: [
+      'A dealt hand of five playing cards becomes the hub: tumble down the rabbit hole, match your size to the Hall of Doors, catch the Mad Tea Party\'s rhythm, aim a flamingo through the Queen\'s croquet ground, and defend the dock from a marching deck of cards — a bite of the Caterpillar\'s mushroom shapes both the Hall of Doors and which ending closes the tale.',
+    ],
+  },
+  {
     v: 163,
     title: 'Frankenstein levels up to 16-bit',
     kind: 'feature',
